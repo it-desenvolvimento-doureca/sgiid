@@ -718,7 +718,7 @@ Copyright (c) 2015 Daniel Eden
  .main-panel .main-content {
    /* margin-top: 93px;*/
    padding: 0px 15px;
-/*   min-height: calc(100% - 123px);*/
+   /*   min-height: calc(100% - 123px);*/
    min-height: calc(100% - 174px);
  }
  
@@ -1596,7 +1596,7 @@ Copyright (c) 2015 Daniel Eden
  
  .form-control, .form-group .form-control {
    border: 0;
-   background-image: linear-gradient(#9c27b0, #9c27b0), linear-gradient(#D2D2D2, #D2D2D2);
+   /*background-image: linear-gradient(#9c27b0, #9c27b0), linear-gradient(#D2D2D2, #D2D2D2);*/
    background-size: 0 2px, 100% 1px;
    background-repeat: no-repeat;
    background-position: center bottom, center calc(100% - 1px);
@@ -1632,8 +1632,8 @@ Copyright (c) 2015 Daniel Eden
    border-bottom: 1px dotted #212020;
  }
  
- .form-group {
-   position: relative;
+ .row .form-group {
+     position: relative;
  }
  
  .form-group.label-static label.control-label, .form-group.label-placeholder label.control-label, .form-group.label-floating label.control-label {
@@ -1871,7 +1871,7 @@ Copyright (c) 2015 Daniel Eden
  .form-group.label-static label.control-label, .form-group.label-floating.is-focused label.control-label, .form-group.label-floating:not(.is-empty) label.control-label {
    top: -28px;
    left: 0;
-   font-size: 11px;
+   font-size: 13px;
    line-height: 1.07143;
  }
  
@@ -3696,7 +3696,7 @@ Copyright (c) 2015 Daniel Eden
    /* margin-bottom: 0;*/
    margin-top: 8px;
    margin-bottom: -9px;
-   color: rgba(255, 255, 255, 0.62);
+   color: rgba(255, 255, 255, 0.88);
  }
  
  .card .card-header.card-chart {
@@ -3840,8 +3840,10 @@ Copyright (c) 2015 Daniel Eden
  }
  
  .card [data-background-color="red"] {
-   background: linear-gradient(60deg, rgba(11, 88, 255, 0.79), rgba(45, 108, 249, 0.73));
-   box-shadow: 0 12px 20px -10px rgba(244, 67, 54, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2);
+   /* background: linear-gradient(60deg, rgba(11, 88, 255, 0.79), rgba(45, 108, 249, 0.73));*/
+   background: linear-gradient(60deg, rgba(146, 148, 153, 0.79), rgba(190, 195, 206, 0.73));
+   box-shadow: 0 12px 20px -10px rgba(42, 37, 37, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(122, 113, 112, 0.2);
+   /*0 12px 20px -10px rgba(244, 67, 54, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2);*/
  }
  
  .card [data-background-color] {
@@ -4981,7 +4983,7 @@ Copyright (c) 2015 Daniel Eden
      height: 100%;
      width: 100%;
      position: absolute;
-     background-color: #282828;
+     /*background-color: #282828;*/
      display: block;
      content: "";
      z-index: 1;

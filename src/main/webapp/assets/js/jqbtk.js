@@ -274,3 +274,9 @@ $('#editarclick3').click(function () {
     $("#editarclick5").trigger("click");
 });
 
+$('#btvalidar').click(function () {
+    $("#btvalidartrue").trigger("click");
+});
+$('#btvalidafalse').click(function () {
+    $("#btvalidarfalse").trigger("click");
+});

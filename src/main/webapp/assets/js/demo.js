@@ -17,7 +17,7 @@
 
 var waitingDialog = waitingDialog || (function ($) {
     'use strict';
-
+    
     // Creating modal dialog's DOM
     var $dialog = $(
         '<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
@@ -131,16 +131,21 @@ $(document).ready(function () {
     $('#imprime').click(function () {
         $("#printf").get(0).contentWindow.print();
     });
-    $('.main-panel').scroll(function () {
+    /*$('.main-panel').scroll(function () {
         if ($(this).scrollTop() > 100) {
             $('.scrollup').fadeIn();
         } else {
             $('.scrollup').fadeOut();
         }
-    });
-
+    });*/
+    $('.scrollup').fadeIn();
+    $('.scrolldown').fadeIn();
     $('.scrollup').click(function () {
-        $(".main-panel").animate({ scrollTop: 0 }, 600);
+        $(".main-panel").animate({ scrollTop: '-=200' }, 100);
+        return false;
+    });
+    $('.scrolldown').click(function () {
+        $(".main-panel").animate({ scrollTop: '+=200' }, 100);
         return false;
     });
 

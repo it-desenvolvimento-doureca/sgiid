@@ -374,6 +374,15 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getallAB_MOV_ANALISEidbanho/{idbanho}/{inicio}/{fim}/{id_analise}")
+	@Produces("application/json")
+	public List<AB_MOV_ANALISE> getallbyidbanho(@PathParam("idbanho") Integer idbanho,
+			@PathParam("inicio") Integer inicio, @PathParam("fim") Integer fim,
+			@PathParam("id_analise") Integer id_analise) {
+		return dao6.getallbyidbanho(idbanho, inicio, fim, id_analise);
+	}
+
+	@GET
 	@Path("/getAB_MOV_ANALISEbyid/{id}/{linha}")
 	@Produces("application/json")
 	public List<AB_MOV_ANALISE> getAB_MOV_ANALISEbyid_tina(@PathParam("id") Integer id,
@@ -419,6 +428,15 @@ public class SIRB {
 	@Produces("application/json")
 	public List<AB_MOV_ANALISE_LINHA> getAB_MOV_ANALISE_LINHAbyid(@PathParam("id") Integer id) {
 		return dao7.getbyid(id);
+	}
+
+	@POST
+	@Path("/getAB_MOV_ANALISE_LINHAbyid_analise_comp/{id}/{id_banho}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<AB_MOV_ANALISE_LINHA> getbyid_analise_comp(@PathParam("id") Integer id,
+			@PathParam("id_banho") Integer id_banho, final ArrayList<Integer> data) {
+		return dao7.getbyid_analise_comp(id, id_banho, data);
 	}
 
 	@GET

@@ -33,6 +33,7 @@ public class AB_MOV_ANALISE {
 	private Timestamp DATA_VALIDA;
 	private Integer UTZ_VALIDA;
 	private String COR_LIMITES;
+	private Boolean PLANEADA;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -145,6 +146,15 @@ public class AB_MOV_ANALISE {
 	@Column(name = "COR_LIMITES")
 	public String getCOR_LIMITES() {
 		return COR_LIMITES;
+	}
+
+	@Column(name = "PLANEADA")
+	public Boolean getPLANEADA() {
+		return PLANEADA;
+	}
+
+	public void setPLANEADA(Boolean pLANEADA) {
+		PLANEADA = pLANEADA;
 	}
 
 	public void setCOR_LIMITES(String cOR_LIMITES) {

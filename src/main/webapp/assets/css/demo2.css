@@ -313,15 +313,27 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-list-item {
     border-radius: 0;
 }
 
+.droplinha {
+    display: -webkit-inline-box;
+    border-radius: 6px;
+}
+
 body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-group {
     padding: 0.375em 0.75em;
     background-color: #e6e6e6;
     color: #373a3c;
 }
 
+.analisepag input  {
+    width: 99px;
+    height: 31.2px;
+    padding: 7px 0px 6px 3px;
+}
+
 body .ui-dropdown {
     border: 1px solid #d6d6d6;
-    background: white;
+    height: 31px;
+    /* background: white;*/
 }
 
 body .ui-dropdown:not(.ui-state-disabled):hover {
@@ -330,7 +342,7 @@ body .ui-dropdown:not(.ui-state-disabled):hover {
 }
 
 body .ui-dropdown .ui-dropdown-label {
-    background: #ffffff;
+    background: transparent;
 }
 
 body .ui-dropdown .ui-dropdown-trigger {
@@ -3400,6 +3412,19 @@ input[type="date"]::-webkit-input-placeholder {
     width: 40px;
     height: 40px;
     opacity: 0.5;
+    bottom: 105px;
+    position: fixed;
+    right: 29px;
+    text-indent: -999px;
+    background: url('http://i66.tinypic.com/6t3jba.png') no-repeat;
+    display: none;
+    cursor: pointer;
+}
+
+.scrolldown {
+    width: 40px;
+    height: 40px;
+    opacity: 0.5;
     bottom: 55px;
     position: fixed;
     right: 29px;
@@ -3407,6 +3432,7 @@ input[type="date"]::-webkit-input-placeholder {
     background: url('http://i66.tinypic.com/6t3jba.png') no-repeat;
     display: none;
     cursor: pointer;
+    transform: rotate(180deg);
 }
 
 .radio, .checkbox {
@@ -4125,6 +4151,7 @@ checkbox {
 }
 
 .ui-multiselect .ui-multiselect-label {
+    max-height: 20px;
     display: block;
     color: black !important;
     width: auto;
@@ -4225,4 +4252,138 @@ checkbox {
 .ui-fluid .ui-multiselect {
     width: 100%;
     box-sizing: border-box
+}
+
+.ui-autocomplete {
+    width: auto;
+    zoom: 1;
+    cursor: pointer;
+    box-shadow: none;
+    position: relative;
+    display: inline-block
+}
+
+.ui-autocomplete .ui-autocomplete-dropdown {
+    height: 100%;
+    width: 2em;
+    margin-right: 0;
+    vertical-align: top
+}
+
+.ui-autocomplete-query {
+    font-weight: 700
+}
+
+.ui-autocomplete-panel {
+    position: absolute;
+    overflow: auto
+}
+
+.ui-autocomplete-panel .ui-autocomplete-list {
+    padding: .4em;
+    border: 0 none
+}
+
+.ui-autocomplete-panel .ui-autocomplete-list-item {
+    border: 0 none;
+    cursor: pointer;
+    font-weight: 400;
+    margin: 1px 0;
+    padding: .186em .313em;
+    text-align: left
+}
+
+.ui-autocomplete .ui-button-icon-only, .ui-autocomplete .ui-button-icon-only:active, .ui-autocomplete .ui-button-icon-only:focus, .ui-autocomplete .ui-button-icon-only:hover {
+    border-left: 0 none
+}
+
+.ui-autocomplete-multiple-container {
+    display: inline-block;
+    padding: 0.3em 0.5em !important;
+}
+
+.ui-autocomplete-multiple-container.ui-inputtext {
+    clear: left;
+    cursor: text;
+    list-style-type: none;
+    margin: 0;
+    overflow: hidden;
+    padding: 0 .25em
+}
+
+.ui-autocomplete-token {
+    cursor: default;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    padding: 0.2em 1em;
+    white-space: nowrap;
+    position: relative;
+    margin-right: .125em;
+    border: 0 none;
+    font-size: .9em;
+    background-color: #e0e6ea !important;
+    border: 1px solid !important;
+}
+
+.ui-autocomplete-token-label {
+    display: block;
+    margin-right: 2em
+}
+
+.ui-autocomplete-token-icon {
+    margin-top: -.5em;
+    position: absolute;
+    right: .2em;
+    top: 50%;
+    cursor: pointer
+}
+
+.ui-autocomplete-input-token {
+    display: inline-block;
+    vertical-align: middle;
+    list-style-type: none;
+    margin: 0 0 0 .125em;
+    padding: .25em .25em .25em 0
+}
+
+.ui-autocomplete-input-token input {
+    border: 0 none;
+    width: 10em;
+    outline: medium none;
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0
+}
+
+.ui-autocomplete-dd .ui-autocomplete-multiple-container.ui-corner-all, .ui-autocomplete-dd input.ui-corner-all {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0
+}
+
+.ui-autocomplete-dd .ui-autocomplete-dropdown.ui-corner-all {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    width: 100%
+}
+
+.ui-fluid .ui-autocomplete.ui-autocomplete-dd .ui-autocomplete-input, .ui-fluid .ui-autocomplete.ui-autocomplete-dd .ui-autocomplete-multiple-container {
+    width: calc(100% - 2em)
+}
+
+.ui-fluid .ui-autocomplete .ui-autocomplete-dropdown.ui-button {
+    width: 2em
+}
+
+.wid100 {
+    width: 100%;
+}
+
+.wid100 input {
+    width: 102%;
 }
