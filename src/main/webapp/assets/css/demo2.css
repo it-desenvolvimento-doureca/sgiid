@@ -330,6 +330,12 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-group {
     padding: 7px 0px 6px 3px;
 }
 
+.calendarmanu input  {
+    width: 105px;
+    height: 31.2px;
+    padding: 7px 0px 6px 3px;
+}
+
 body .ui-dropdown {
     border: 1px solid #d6d6d6;
     height: 31px;

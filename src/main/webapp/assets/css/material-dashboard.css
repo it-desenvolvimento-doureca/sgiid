@@ -1633,7 +1633,11 @@ Copyright (c) 2015 Daniel Eden
  }
  
  .row .form-group {
-     position: relative;
+   position: relative;
+ }
+ 
+ #formBanho .row .form-group {
+   position: inherit  !important;
  }
  
  .form-group.label-static label.control-label, .form-group.label-placeholder label.control-label, .form-group.label-floating label.control-label {
