@@ -32312,14 +32312,14 @@ var RelatoriosService = (function () {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return webUrl; });
 var webUrl = {
-    /*host: 'http://192.168.40.101:8080/sgiid',
+    host: 'http://192.168.40.101:8080/sgiid',
     mod_pro: true
-  
-    host: 'http://localhost:8080/sgiid',
-     mod_pro: false,
-  */
-    mod_pro: false,
-    host: 'http://192.168.40.101:8080/sgiid_dev'
+    /*
+      host: 'http://localhost:8080/sgiid',
+       mod_pro: false,
+    
+      mod_pro: false,
+      host: 'http://192.168.40.101:8080/sgiid_dev'*/
 };
 //# sourceMappingURL=webUrl.js.map
 

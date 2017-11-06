@@ -44,6 +44,7 @@ import pt.example.dao.AB_MOV_MANUTENCAODao;
 import pt.example.dao.AB_MOV_MANUTENCAO_CABDao;
 import pt.example.dao.AB_MOV_MANUTENCAO_LINHADao;
 import pt.example.dao.AB_MOV_REG_PARAM_OPERACAODao;
+import pt.example.dao.GER_ANALISESDao;
 import pt.example.dao.GER_ARMAZEMDao;
 import pt.example.dao.GER_EVENTOS_CONFDao;
 import pt.example.dao.GER_FORNECEDORDao;
@@ -72,6 +73,7 @@ import pt.example.entity.AB_MOV_MANUTENCAO_CAB;
 import pt.example.entity.AB_MOV_MANUTENCAO_LINHA;
 import pt.example.entity.AB_MOV_REG_PARAM_OPERACAO;
 import pt.example.entity.EMAIL;
+import pt.example.entity.GER_ANALISES;
 import pt.example.entity.GER_ARMAZEM;
 import pt.example.entity.GER_EVENTOS_CONF;
 import pt.example.entity.GER_FORNECEDOR;
@@ -141,6 +143,8 @@ public class SIRB {
 	private GER_LOG_EVENTOSDao dao27;
 	@Inject
 	private GER_EVENTOS_CONFDao dao28;
+	@Inject
+	private GER_ANALISESDao dao29;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -1379,6 +1383,46 @@ public class SIRB {
 	public GER_EVENTOS_CONF updateAB_MOV_ANALISE_LINHA(final GER_EVENTOS_CONF GER_EVENTOS_CONF) {
 		GER_EVENTOS_CONF.setID_EVENTO(GER_EVENTOS_CONF.getID_EVENTO());
 		return dao28.update(GER_EVENTOS_CONF);
+	}
+
+	/************************************* GER_ANALISES */
+	@POST
+	@Path("/createGER_ANALISES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_ANALISES insertGER_ANALISESA(final GER_ANALISES data) {
+		return dao29.create(data);
+	}
+
+	@GET
+	@Path("/getGER_ANALISES")
+	@Produces("application/json")
+	public List<GER_ANALISES> getAGER_ANALISES() {
+		return dao29.getall();
+	}
+
+	@GET
+	@Path("/getGER_ANALISESbyid/{id}")
+	@Produces("application/json")
+	public List<GER_ANALISES> getGER_ANALISESbyid(@PathParam("id") Integer id) {
+		return dao29.getbyId(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_ANALISES/{id}")
+	public void deleteGER_ANALISES(@PathParam("id") Integer id) {
+		GER_ANALISES GER_ANALISES = new GER_ANALISES();
+		GER_ANALISES.setID(id);
+		dao29.delete(GER_ANALISES);
+	}
+
+	@PUT
+	@Path("/updateGER_ANALISES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_ANALISES updateAB_MOV_ANALISE_LINHA(final GER_ANALISES GER_ANALISES) {
+		GER_ANALISES.setID(GER_ANALISES.getID());
+		return dao29.update(GER_ANALISES);
 	}
 
 	/* FICHEIRO ************************************/
