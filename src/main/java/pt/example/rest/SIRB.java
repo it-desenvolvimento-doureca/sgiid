@@ -1407,6 +1407,13 @@ public class SIRB {
 	public List<GER_ANALISES> getGER_ANALISESbyid(@PathParam("id") Integer id) {
 		return dao29.getbyId(id);
 	}
+	
+	@GET
+	@Path("/getGER_ANALISESbyidmodulo/{id_modulo}")
+	@Produces("application/json")
+	public List<GER_ANALISES> getGER_ANALISESbyidmodulo(@PathParam("id_modulo") Integer id_modulo) {
+		return dao29.getbyId_modulo(id_modulo);
+	}
 
 	@DELETE
 	@Path("/deleteGER_ANALISES/{id}")

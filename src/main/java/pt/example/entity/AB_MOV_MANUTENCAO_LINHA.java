@@ -25,6 +25,7 @@ public class AB_MOV_MANUTENCAO_LINHA {
 	private String HORA_PREVISTA;
 	private String OBS_PLANEAMENTO;
 	private Float STOCK;
+	private Float VALOR_AGUA;
 	private String STKUNIT;
 
 	@Id
@@ -87,6 +88,15 @@ public class AB_MOV_MANUTENCAO_LINHA {
 	@Column(name = "STKUNIT")
 	public String getSTKUNIT() {
 		return STKUNIT;
+	}
+	
+	@Column(name = "VALOR_AGUA")
+	public Float getVALOR_AGUA() {
+		return VALOR_AGUA;
+	}
+
+	public void setVALOR_AGUA(Float vALOR_AGUA) {
+		VALOR_AGUA = vALOR_AGUA;
 	}
 
 	public void setSTKUNIT(String sTKUNIT) {

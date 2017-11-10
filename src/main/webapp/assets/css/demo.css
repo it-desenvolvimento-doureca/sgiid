@@ -384,3 +384,7 @@ my-app .main-panel .main-content .card{
 .tim-row h3{
     margin-top: 0;
 }
+
+.toggle-children-wrapper {
+    padding: 2px 0px 5px 1px ! important;
+}

@@ -20,7 +20,16 @@ public class GER_ANALISESDao extends GenericDaoJpaImpl<GER_ANALISES, Integer>
 		return data;
 
 	}
+	
+	public List<GER_ANALISES> getbyId_modulo( Integer id_modulo) {
+		Query query = entityManager.createQuery("select a from GER_ANALISES a "
+				+ "where a.MODULO = :id_modulo");
+		query.setParameter("id_modulo", id_modulo);
+		List<GER_ANALISES> data = query.getResultList();
+		return data;
 
+	}
+	
 	public List<GER_ANALISES> getall() {
 		Query query = entityManager
 				.createQuery("select a from GER_ANALISES a");

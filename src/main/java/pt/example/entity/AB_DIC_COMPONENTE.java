@@ -31,6 +31,7 @@ public class AB_DIC_COMPONENTE {
 	private Integer ID_FORNECEDOR;
 	private String TIPO;
 	private String OBRIGATORIO;
+	private Float FACTOR_MULTIPLICACAO_AGUA;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -129,6 +130,15 @@ public class AB_DIC_COMPONENTE {
 	@Column(name = "OBRIGATORIO")
 	public String getOBRIGATORIO() {
 		return OBRIGATORIO;
+	}
+	
+	@Column(name = "FACTOR_MULTIPLICACAO_AGUA")
+	public Float getFACTOR_MULTIPLICACAO_AGUA() {
+		return FACTOR_MULTIPLICACAO_AGUA;
+	}
+
+	public void setFACTOR_MULTIPLICACAO_AGUA(Float fACTOR_MULTIPLICACAO_AGUA) {
+		FACTOR_MULTIPLICACAO_AGUA = fACTOR_MULTIPLICACAO_AGUA;
 	}
 
 	public void setOBRIGATORIO(String oBRIGATORIO) {

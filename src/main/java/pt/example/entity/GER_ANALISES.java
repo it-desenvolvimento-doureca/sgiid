@@ -18,6 +18,7 @@ public class GER_ANALISES {
 	private String LINK;
 	private String DESCRICAO;
 	private Boolean ATIVO;
+	private Integer MODULO;
 
 	@Id
 	@Column(name = "ID")
@@ -44,6 +45,15 @@ public class GER_ANALISES {
 	@Column(name = "ID_PAI")
 	public Integer getID_PAI() {
 		return ID_PAI;
+	}
+
+	@Column(name = "MODULO")
+	public Integer getMODULO() {
+		return MODULO;
+	}
+
+	public void setMODULO(Integer mODULO) {
+		MODULO = mODULO;
 	}
 
 	public void setID_PAI(Integer iD_PAI) {
