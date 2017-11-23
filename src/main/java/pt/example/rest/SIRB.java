@@ -1,6 +1,12 @@
 package pt.example.rest;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,6 +15,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -19,8 +26,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
+import com.lowagie.text.pdf.codec.Base64;
+import com.sun.jersey.core.header.FormDataContentDisposition;
 
 import net.sf.jasperreports.engine.JRException;
 import pt.example.bootstrap.ConnectProgress;
@@ -50,6 +63,7 @@ import pt.example.dao.GER_EVENTOS_CONFDao;
 import pt.example.dao.GER_FORNECEDORDao;
 import pt.example.dao.GER_LOG_EVENTOSDao;
 import pt.example.dao.GER_MODULODao;
+import pt.example.dao.GER_PARAMETROSDao;
 import pt.example.dao.GER_PERFIL_CABDao;
 import pt.example.dao.GER_PERFIL_LINDao;
 import pt.example.dao.GER_UTILIZADORESDao;
@@ -79,6 +93,7 @@ import pt.example.entity.GER_EVENTOS_CONF;
 import pt.example.entity.GER_FORNECEDOR;
 import pt.example.entity.GER_LOG_EVENTOS;
 import pt.example.entity.GER_MODULO;
+import pt.example.entity.GER_PARAMETROS;
 import pt.example.entity.GER_PERFIL_CAB;
 import pt.example.entity.GER_PERFIL_LIN;
 import pt.example.entity.GER_UTILIZADORES;
@@ -145,6 +160,8 @@ public class SIRB {
 	private GER_EVENTOS_CONFDao dao28;
 	@Inject
 	private GER_ANALISESDao dao29;
+	@Inject
+	private GER_PARAMETROSDao dao30;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -544,6 +561,14 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getAB_MOV_MANUTENCAO_CABbyid_banho/{idbanho}/{inicio}/{fim}/{id_man}")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO_CAB> getAB_MOV_MANUTENCAO_CABbyid_banho(@PathParam("idbanho") Integer idbanho,
+			@PathParam("inicio") Integer inicio, @PathParam("fim") Integer fim, @PathParam("id_man") Integer id_man) {
+		return dao15.getbyidbanho(idbanho, inicio, fim, id_man);
+	}
+
+	@GET
 	@Path("/getAB_MOV_MANUTENCAO_CABbyid/{id}")
 	@Produces("application/json")
 	public List<AB_MOV_MANUTENCAO_CAB> getAB_MOV_MANUTENCAO_CABbyid(@PathParam("id") Integer id) {
@@ -588,6 +613,15 @@ public class SIRB {
 	@Produces("application/json")
 	public List<AB_MOV_MANUTENCAO_LINHA> getAB_MOV_MANUTENCAO_LINHAbyidmanutencaocab(@PathParam("id") Integer id) {
 		return dao9.getbyidmanutencaocab(id);
+	}
+
+	@POST
+	@Path("/getAB_MOV_MANUTENCAO_LINHAbyid_analise_comp/{id}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO_LINHA> getbyid_analise_comp(@PathParam("id") Integer id,
+			final ArrayList<Integer> data) {
+		return dao9.getbyid_manut_comp(id, data);
 	}
 
 	@GET
@@ -1407,7 +1441,7 @@ public class SIRB {
 	public List<GER_ANALISES> getGER_ANALISESbyid(@PathParam("id") Integer id) {
 		return dao29.getbyId(id);
 	}
-	
+
 	@GET
 	@Path("/getGER_ANALISESbyidmodulo/{id_modulo}")
 	@Produces("application/json")
@@ -1430,6 +1464,64 @@ public class SIRB {
 	public GER_ANALISES updateAB_MOV_ANALISE_LINHA(final GER_ANALISES GER_ANALISES) {
 		GER_ANALISES.setID(GER_ANALISES.getID());
 		return dao29.update(GER_ANALISES);
+	}
+
+	/************************************* GER_PARAMETROS */
+
+	@GET
+	@Path("/getGER_PARAMETROS")
+	@Produces("application/json")
+	public List<GER_PARAMETROS> getGER_PARAMETROS() {
+		return dao30.getall();
+	}
+
+	@PUT
+	@Path("/updateGER_PARAMETROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_PARAMETROS updateAB_MOV_ANALISE_LINHA(final GER_PARAMETROS GER_PARAMETROS) {
+		GER_PARAMETROS.setID(GER_PARAMETROS.getID());
+		return dao30.update(GER_PARAMETROS);
+	}
+
+	@POST
+	@Consumes("*/*")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/upload/{nome}/{formato}")
+	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @PathParam("nome") String nome,
+			@PathParam("formato") String formato) {
+
+		String uploadedFileLocation = "c://teste/" + nome + '.' + formato;
+		// save it
+		writeToFile(uploadedInputStream, uploadedFileLocation);
+
+		String output = "File uploaded to : " + uploadedFileLocation;
+
+		
+		return Response.status(200).entity(output).build();
+
+	}
+
+	// save uploaded file to new location
+	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
+
+		try {
+			OutputStream out = new FileOutputStream(new File(uploadedFileLocation));
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			out = new FileOutputStream(new File(uploadedFileLocation));
+			while ((read = uploadedInputStream.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+			out.flush();
+			out.close();
+			uploadedInputStream.close();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
 	}
 
 	/* FICHEIRO ************************************/

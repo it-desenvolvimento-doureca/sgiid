@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.json.JsonObject;
 
+import pt.example.entity.conf;
+
 public class ConnectProgress {
 
 	private static final String QUERY = "select * from PUB.\"SOFA\" where utimod= 'recep1'";
@@ -28,7 +30,8 @@ public class ConnectProgress {
 			// the openedge url
 			// String url =
 			// "jdbc:datadirect:openedge://192.168.40.112:20613;DatabaseName=silv-ver;User=SYSPROGRESS;Password=SYSPROGRESS;";
-			String url = "jdbc:datadirect:openedge://192.168.40.112:20612;DatabaseName=silv-exp;User=SYSPROGRESS;Password=SYSPROGRESS;";
+			conf conf_url = new conf();
+			String url = conf_url.url;
 			// get the openedge database connection
 			globalconnection = DriverManager.getConnection(url);
 
