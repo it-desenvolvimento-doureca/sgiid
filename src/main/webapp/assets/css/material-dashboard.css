@@ -2780,7 +2780,8 @@ Copyright (c) 2015 Daniel Eden
  }
  
  .modal-content {
-   box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+   box-shadow: 0 -18px 55px 0 rgba(0, 0, 0, 0.2), 0px 1px 20px 12px rgba(0, 0, 0, 0.22);
+   /*0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);*/
    border-radius: 6px;
    border: none;
  }
@@ -3780,7 +3781,7 @@ Copyright (c) 2015 Daniel Eden
  }
  
  .card img {
-   width: 100%;
+  /* width: 100%;*/
    height: auto;
  }
  
