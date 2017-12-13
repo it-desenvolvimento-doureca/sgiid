@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.GER_PERFIL_LIN;
 import pt.example.entity.GER_UTZ_PERFIL;
 
 public class GER_UTZ_PERFILDao extends GenericDaoJpaImpl<GER_UTZ_PERFIL,Integer> implements GenericDao<GER_UTZ_PERFIL,Integer> {

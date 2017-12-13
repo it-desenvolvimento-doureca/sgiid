@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.AB_MOV_ANALISE;
 import pt.example.entity.AB_MOV_MANUTENCAO_CAB;
 
 public class AB_MOV_MANUTENCAO_CABDao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO_CAB, Integer>

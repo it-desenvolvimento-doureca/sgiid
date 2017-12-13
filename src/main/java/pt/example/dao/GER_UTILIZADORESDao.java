@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.GER_FORNECEDOR;
 import pt.example.entity.GER_UTILIZADORES;
 
 public class GER_UTILIZADORESDao extends GenericDaoJpaImpl<GER_UTILIZADORES, Integer>

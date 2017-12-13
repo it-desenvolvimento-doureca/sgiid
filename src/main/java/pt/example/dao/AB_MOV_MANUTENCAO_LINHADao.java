@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.AB_MOV_ANALISE;
-import pt.example.entity.AB_MOV_ANALISE_LINHA;
 import pt.example.entity.AB_MOV_MANUTENCAO_LINHA;
 
 public class AB_MOV_MANUTENCAO_LINHADao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO_LINHA, Integer>

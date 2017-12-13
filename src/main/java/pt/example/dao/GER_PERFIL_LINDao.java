@@ -4,10 +4,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.AB_DIC_BANHO;
-import pt.example.entity.AB_DIC_BANHO_ADITIVO;
-import pt.example.entity.GER_FORNECEDOR;
-import pt.example.entity.GER_MODULO;
 import pt.example.entity.GER_PERFIL_LIN;
 
 public class GER_PERFIL_LINDao extends GenericDaoJpaImpl<GER_PERFIL_LIN, Integer>

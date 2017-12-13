@@ -1,5 +1,7 @@
 package pt.example.bootstrap;
 
+import java.io.IOException;
+
 /**
  * Created by tvilasboas on 14-06-2016.
  * Project GMWRH
@@ -9,7 +11,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 
 @Provider
 public class CORSFilter implements ContainerResponseFilter {

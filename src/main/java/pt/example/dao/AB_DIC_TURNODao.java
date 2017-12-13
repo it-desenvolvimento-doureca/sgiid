@@ -4,10 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.AB_DIC_TIPO_ADICAO;
 import pt.example.entity.AB_DIC_TURNO;
-import pt.example.entity.AB_DIC_ZONA;
-import pt.example.entity.GER_FORNECEDOR;
 
 public class AB_DIC_TURNODao extends GenericDaoJpaImpl<AB_DIC_TURNO, Integer>
 		implements GenericDao<AB_DIC_TURNO, Integer> {

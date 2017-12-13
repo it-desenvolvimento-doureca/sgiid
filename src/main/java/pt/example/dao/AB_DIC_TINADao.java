@@ -4,9 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.AB_DIC_BANHO;
 import pt.example.entity.AB_DIC_TINA;
-import pt.example.entity.GER_FORNECEDOR;
 
 public class AB_DIC_TINADao extends GenericDaoJpaImpl<AB_DIC_TINA,Integer> implements GenericDao<AB_DIC_TINA,Integer> {
 	public AB_DIC_TINADao() {

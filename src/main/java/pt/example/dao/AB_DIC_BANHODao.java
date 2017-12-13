@@ -3,6 +3,7 @@ package pt.example.dao;
 import java.util.List;
 
 import javax.persistence.Query;
+
 import pt.example.entity.AB_DIC_BANHO;
 
 public class AB_DIC_BANHODao extends GenericDaoJpaImpl<AB_DIC_BANHO, Integer>

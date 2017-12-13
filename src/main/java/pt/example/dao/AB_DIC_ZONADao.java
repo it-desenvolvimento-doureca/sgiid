@@ -4,9 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.AB_DIC_UNIDADE_MEDIDA;
 import pt.example.entity.AB_DIC_ZONA;
-import pt.example.entity.GER_FORNECEDOR;
 
 public class AB_DIC_ZONADao extends GenericDaoJpaImpl<AB_DIC_ZONA, Integer>
 		implements GenericDao<AB_DIC_ZONA, Integer> {

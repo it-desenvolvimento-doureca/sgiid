@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-
-import pt.example.entity.AB_DIC_BANHO;
 import pt.example.entity.AB_DIC_BANHO_COMPONENTE;
 
 public class AB_DIC_BANHO_COMPONENTEDao extends GenericDaoJpaImpl<AB_DIC_BANHO_COMPONENTE,Integer> implements GenericDao<AB_DIC_BANHO_COMPONENTE,Integer> {

@@ -5,8 +5,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import pt.example.entity.AB_DIC_LINHA;
-import pt.example.entity.AB_DIC_ZONA;
-import pt.example.entity.GER_FORNECEDOR;
 
 public class AB_DIC_LINHADao extends GenericDaoJpaImpl<AB_DIC_LINHA,Integer> implements GenericDao<AB_DIC_LINHA,Integer> {
 	public AB_DIC_LINHADao() {

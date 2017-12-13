@@ -1,8 +1,5 @@
 package pt.example.entity;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

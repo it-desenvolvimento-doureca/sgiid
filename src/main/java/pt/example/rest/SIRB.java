@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,7 +13,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -31,9 +28,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import com.lowagie.text.pdf.codec.Base64;
-import com.sun.jersey.core.header.FormDataContentDisposition;
 
 import net.sf.jasperreports.engine.JRException;
 import pt.example.bootstrap.ConnectProgress;
@@ -68,6 +62,7 @@ import pt.example.dao.GER_PERFIL_CABDao;
 import pt.example.dao.GER_PERFIL_LINDao;
 import pt.example.dao.GER_UTILIZADORESDao;
 import pt.example.dao.GER_UTZ_PERFILDao;
+import pt.example.dao.GER_VISTASDao;
 import pt.example.entity.AB_DIC_BANHO;
 import pt.example.entity.AB_DIC_BANHO_ADITIVO;
 import pt.example.entity.AB_DIC_BANHO_COMPONENTE;
@@ -98,6 +93,7 @@ import pt.example.entity.GER_PERFIL_CAB;
 import pt.example.entity.GER_PERFIL_LIN;
 import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.GER_UTZ_PERFIL;
+import pt.example.entity.GER_VISTAS;
 import pt.example.entity.conf;
 
 @Stateless
@@ -162,7 +158,8 @@ public class SIRB {
 	private GER_ANALISESDao dao29;
 	@Inject
 	private GER_PARAMETROSDao dao30;
-
+	@Inject
+	private GER_VISTASDao dao31;
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
 
@@ -1464,6 +1461,40 @@ public class SIRB {
 	public GER_ANALISES updateAB_MOV_ANALISE_LINHA(final GER_ANALISES GER_ANALISES) {
 		GER_ANALISES.setID(GER_ANALISES.getID());
 		return dao29.update(GER_ANALISES);
+	}
+	
+	/************************************* GER_VISTAS */
+
+	@POST
+	@Path("/createGER_VISTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_VISTAS insertGER_VISTASA(final GER_VISTAS data) {
+		return dao31.create(data);
+	}
+	
+	@GET
+	@Path("/getGER_VISTAS")
+	@Produces("application/json")
+	public List<GER_VISTAS> getGER_VISTAS() {
+		return dao31.getall();
+	}
+	
+	@DELETE
+	@Path("/deleteGER_VISTAS/{id}")
+	public void deleteGER_VISTAS(@PathParam("id") Integer id) {
+		GER_VISTAS GER_VISTAS = new GER_VISTAS();
+		GER_VISTAS.setID(id);
+		dao31.delete(GER_VISTAS);
+	}
+	
+	@PUT
+	@Path("/updateGER_VISTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_VISTAS updateAB_MOV_ANALISE_LINHA(final GER_VISTAS GER_VISTAS) {
+		GER_VISTAS.setID(GER_VISTAS.getID());
+		return dao31.update(GER_VISTAS);
 	}
 
 	/************************************* GER_PARAMETROS */

@@ -1,12 +1,10 @@
 package pt.example.dao;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Query;
 
-import pt.example.entity.AB_DIC_BANHO;
 import pt.example.entity.AB_MOV_ANALISE;
 
 public class AB_MOV_ANALISEDao extends GenericDaoJpaImpl<AB_MOV_ANALISE, Integer>

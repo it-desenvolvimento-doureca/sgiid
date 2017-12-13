@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import pt.example.entity.GER_EVENTOS_CONF;
-import pt.example.entity.GER_UTZ_PERFIL;
 
 public class GER_EVENTOS_CONFDao extends GenericDaoJpaImpl<GER_EVENTOS_CONF, Integer>
 		implements GenericDao<GER_EVENTOS_CONF, Integer> {

@@ -1,6 +1,5 @@
 package pt.example.entity;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
