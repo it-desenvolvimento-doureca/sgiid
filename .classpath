@@ -56,5 +56,6 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-guava-2.13.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-media-multipart-2.13.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-server.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/pdfbox-app-2.0.8.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

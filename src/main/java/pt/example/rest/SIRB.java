@@ -31,6 +31,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import net.sf.jasperreports.engine.JRException;
 import pt.example.bootstrap.ConnectProgress;
+import pt.example.bootstrap.Printer;
 import pt.example.bootstrap.ReportGenerator;
 import pt.example.bootstrap.SendEmail;
 import pt.example.dao.AB_DIC_BANHODao;
@@ -53,6 +54,7 @@ import pt.example.dao.AB_MOV_MANUTENCAO_LINHADao;
 import pt.example.dao.AB_MOV_REG_PARAM_OPERACAODao;
 import pt.example.dao.GER_ANALISESDao;
 import pt.example.dao.GER_ARMAZEMDao;
+import pt.example.dao.GER_CAMPOS_DISPDao;
 import pt.example.dao.GER_EVENTOS_CONFDao;
 import pt.example.dao.GER_FORNECEDORDao;
 import pt.example.dao.GER_LOG_EVENTOSDao;
@@ -84,6 +86,7 @@ import pt.example.entity.AB_MOV_REG_PARAM_OPERACAO;
 import pt.example.entity.EMAIL;
 import pt.example.entity.GER_ANALISES;
 import pt.example.entity.GER_ARMAZEM;
+import pt.example.entity.GER_CAMPOS_DISP;
 import pt.example.entity.GER_EVENTOS_CONF;
 import pt.example.entity.GER_FORNECEDOR;
 import pt.example.entity.GER_LOG_EVENTOS;
@@ -160,6 +163,10 @@ public class SIRB {
 	private GER_PARAMETROSDao dao30;
 	@Inject
 	private GER_VISTASDao dao31;
+
+	@Inject
+	private GER_CAMPOS_DISPDao dao32;
+
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
 
@@ -1462,7 +1469,7 @@ public class SIRB {
 		GER_ANALISES.setID(GER_ANALISES.getID());
 		return dao29.update(GER_ANALISES);
 	}
-	
+
 	/************************************* GER_VISTAS */
 
 	@POST
@@ -1472,14 +1479,14 @@ public class SIRB {
 	public GER_VISTAS insertGER_VISTASA(final GER_VISTAS data) {
 		return dao31.create(data);
 	}
-	
+
 	@GET
 	@Path("/getGER_VISTAS")
 	@Produces("application/json")
 	public List<GER_VISTAS> getGER_VISTAS() {
 		return dao31.getall();
 	}
-	
+
 	@DELETE
 	@Path("/deleteGER_VISTAS/{id}")
 	public void deleteGER_VISTAS(@PathParam("id") Integer id) {
@@ -1487,7 +1494,7 @@ public class SIRB {
 		GER_VISTAS.setID(id);
 		dao31.delete(GER_VISTAS);
 	}
-	
+
 	@PUT
 	@Path("/updateGER_VISTAS")
 	@Consumes("*/*")
@@ -1495,6 +1502,25 @@ public class SIRB {
 	public GER_VISTAS updateAB_MOV_ANALISE_LINHA(final GER_VISTAS GER_VISTAS) {
 		GER_VISTAS.setID(GER_VISTAS.getID());
 		return dao31.update(GER_VISTAS);
+	}
+
+	/************************************* GER_CAMPOS_DISP */
+
+	@GET
+	@Path("/getGER_CAMPOS_DISPbyid/{id}")
+	@Produces("application/json")
+	public List<GER_CAMPOS_DISP> getGER_CAMPOS_DISPbyidmodulo(@PathParam("id") Integer id) {
+		return dao32.getbyId(id);
+	}
+
+	/************************************* IMPRESSORAS */
+
+	@GET
+	@Path("/getImpressoras")
+	@Produces("application/json")
+	public ArrayList<String> getijmpressoras() {
+		Printer impressoras = new Printer();
+		return impressoras.getImpressoras();
 	}
 
 	/************************************* GER_PARAMETROS */
@@ -1528,7 +1554,6 @@ public class SIRB {
 
 		String output = "File uploaded to : " + uploadedFileLocation;
 
-		
 		return Response.status(200).entity(output).build();
 
 	}
@@ -1590,7 +1615,7 @@ public class SIRB {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public EMAIL sendemail(final EMAIL data) {
-		System.out.println(data);
+		// System.out.println(data.getPARA());
 		SendEmail send = new SendEmail();
 		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO());
 		return data;
