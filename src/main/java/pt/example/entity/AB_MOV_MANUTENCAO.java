@@ -32,6 +32,7 @@ public class AB_MOV_MANUTENCAO {
 	private Timestamp DATA_ULT_IMPRES;
 	private Integer UTZ_ULT_IMPRES;
 	private Boolean IMPRESSO;
+	private String CLASSIF;
 
 	@Column(name = "DATA_ULT_IMPRES")
 	public Timestamp getDATA_ULT_IMPRES() {
@@ -195,6 +196,15 @@ public class AB_MOV_MANUTENCAO {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "CLASSIF")
+	public String getCLASSIF() {
+		return CLASSIF;
+	}
+
+	public void setCLASSIF(String cLASSIF) {
+		CLASSIF = cLASSIF;
 	}
 
 }

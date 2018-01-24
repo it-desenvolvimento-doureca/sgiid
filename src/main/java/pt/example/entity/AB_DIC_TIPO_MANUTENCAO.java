@@ -18,6 +18,7 @@ public class AB_DIC_TIPO_MANUTENCAO {
 	private Timestamp DATA_ANULACAO;
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
+	private String CLASSIF;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -64,6 +65,15 @@ public class AB_DIC_TIPO_MANUTENCAO {
 
 	public void setNOME_TIPO_MANUTENCAO(String nOME_TIPO_MANUTENCAO) {
 		NOME_TIPO_MANUTENCAO = nOME_TIPO_MANUTENCAO;
+	}
+
+	@Column(name = "CLASSIF")
+	public String getCLASSIF() {
+		return CLASSIF;
+	}
+
+	public void setCLASSIF(String cLASSIF) {
+		CLASSIF = cLASSIF;
 	}
 
 }

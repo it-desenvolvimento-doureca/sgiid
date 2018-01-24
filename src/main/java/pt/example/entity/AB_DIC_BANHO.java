@@ -28,6 +28,7 @@ public class AB_DIC_BANHO {
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
 	private Boolean CELULAHULL;
+	private String EMAIL_PARA;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -164,6 +165,15 @@ public class AB_DIC_BANHO {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "EMAIL_PARA")
+	public String getEMAIL_PARA() {
+		return EMAIL_PARA;
+	}
+
+	public void setEMAIL_PARA(String eMAIL_PARA) {
+		EMAIL_PARA = eMAIL_PARA;
 	}
 
 }

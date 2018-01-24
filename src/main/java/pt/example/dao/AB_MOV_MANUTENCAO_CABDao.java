@@ -41,7 +41,16 @@ public class AB_MOV_MANUTENCAO_CABDao extends GenericDaoJpaImpl<AB_MOV_MANUTENCA
 		return data;
 
 	}
+	
+	
+	public List<AB_MOV_MANUTENCAO_CAB> getbyidbanhoall(Integer idbanho) {
+		Query query = entityManager.createQuery(
+				"SELECT a FROM AB_MOV_MANUTENCAO_CAB a where a.ID_BANHO = :idbanho");
+		query.setParameter("idbanho", idbanho);
+		List<AB_MOV_MANUTENCAO_CAB> data = query.getResultList();
+		return data;
 
+	}
 	public List<AB_MOV_MANUTENCAO_CAB> getbyid(Integer id) {
 		Query query = entityManager.createQuery(
 				"Select DISTINCT a ,CASE WHEN a.ID_ANALISE IS NULL THEN '' ELSE (select c.NOME_BANHO from AB_MOV_ANALISE b, AB_DIC_BANHO c where b.ID_BANHO = c.ID_BANHO and b.ID_ANALISE = a.ID_ANALISE)END as nome, "

@@ -19,6 +19,7 @@ public class AB_DIC_TIPO_ADICAO {
 	private Timestamp DATA_ANULACAO;
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
+	private String CLASSIF;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -74,6 +75,15 @@ public class AB_DIC_TIPO_ADICAO {
 
 	public void setNOME_TIPO_ADICAO(String nOME_TIPO_ADICAO) {
 		NOME_TIPO_ADICAO = nOME_TIPO_ADICAO;
+	}
+
+	@Column(name = "CLASSIF")
+	public String getCLASSIF() {
+		return CLASSIF;
+	}
+
+	public void setCLASSIF(String cLASSIF) {
+		CLASSIF = cLASSIF;
 	}
 
 }

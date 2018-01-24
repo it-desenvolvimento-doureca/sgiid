@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -62,6 +64,7 @@ import pt.example.dao.GER_MODULODao;
 import pt.example.dao.GER_PARAMETROSDao;
 import pt.example.dao.GER_PERFIL_CABDao;
 import pt.example.dao.GER_PERFIL_LINDao;
+import pt.example.dao.GER_POSTOSDao;
 import pt.example.dao.GER_UTILIZADORESDao;
 import pt.example.dao.GER_UTZ_PERFILDao;
 import pt.example.dao.GER_VISTASDao;
@@ -94,6 +97,7 @@ import pt.example.entity.GER_MODULO;
 import pt.example.entity.GER_PARAMETROS;
 import pt.example.entity.GER_PERFIL_CAB;
 import pt.example.entity.GER_PERFIL_LIN;
+import pt.example.entity.GER_POSTOS;
 import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.GER_UTZ_PERFIL;
 import pt.example.entity.GER_VISTAS;
@@ -166,6 +170,9 @@ public class SIRB {
 
 	@Inject
 	private GER_CAMPOS_DISPDao dao32;
+
+	@Inject
+	private GER_POSTOSDao dao33;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -407,6 +414,16 @@ public class SIRB {
 		return dao6.getallbyidbanho(idbanho, inicio, fim, id_analise);
 	}
 
+	@POST
+	@Path("/getallAB_MOV_ANALISEidbanho_comp/{idbanho}/{inicio}/{fim}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<AB_MOV_ANALISE> getallbyidbanho_comp(@PathParam("idbanho") Integer idbanho,
+			@PathParam("inicio") Integer inicio, @PathParam("fim") Integer fim,
+			final List<HashMap<String, String>> data) throws ParseException {
+		return dao6.getallbyidbanho_manut(idbanho, inicio, fim, data);
+	}
+
 	@GET
 	@Path("/getAB_MOV_ANALISEbyid/{id}/{linha}")
 	@Produces("application/json")
@@ -499,21 +516,21 @@ public class SIRB {
 	}
 
 	@POST
-	@Path("/getAB_MOV_MANUTENCAO/{linha}")
+	@Path("/getAB_MOV_MANUTENCAO/{linha}/{classif}")
 	@Consumes("*/*")
 	@Produces("application/json")
 	public List<AB_MOV_MANUTENCAO> getAB_MOV_MANUTENCAO(@PathParam("linha") Integer linha,
-			final ArrayList<String> query) {
-		return dao8.getall(linha, query);
+			@PathParam("classif") String classif, final ArrayList<String> query) {
+		return dao8.getall(linha, query, classif);
 	}
 
 	@POST
-	@Path("/getAB_MOV_MANUTENCAOsorid/{linha}")
+	@Path("/getAB_MOV_MANUTENCAOsorid/{linha}/{classif}")
 	@Consumes("*/*")
 	@Produces("application/json")
 	public List<AB_MOV_MANUTENCAO> getAB_MOV_MANUTENCAOsorid(@PathParam("linha") Integer linha,
-			final ArrayList<String> query) {
-		return dao8.getallsortid(linha, query);
+			@PathParam("classif") String classif, final ArrayList<String> query) {
+		return dao8.getallsortid(linha, query, classif);
 	}
 
 	@GET
@@ -570,6 +587,13 @@ public class SIRB {
 	public List<AB_MOV_MANUTENCAO_CAB> getAB_MOV_MANUTENCAO_CABbyid_banho(@PathParam("idbanho") Integer idbanho,
 			@PathParam("inicio") Integer inicio, @PathParam("fim") Integer fim, @PathParam("id_man") Integer id_man) {
 		return dao15.getbyidbanho(idbanho, inicio, fim, id_man);
+	}
+
+	@GET
+	@Path("/getAB_MOV_MANUTENCAO_CABbyid_banhoall/{idbanho}")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO_CAB> getAB_MOV_MANUTENCAO_CABbyid_banhoall(@PathParam("idbanho") Integer idbanho) {
+		return dao15.getbyidbanhoall(idbanho);
 	}
 
 	@GET
@@ -908,11 +932,12 @@ public class SIRB {
 		return dao16.create(data);
 	}
 
-	@GET
+	@POST
 	@Path("/getAB_DIC_TIPO_ADICAO")
+	@Consumes("*/*")
 	@Produces("application/json")
-	public List<AB_DIC_TIPO_ADICAO> getAB_DIC_TIPO_ADICAO() {
-		return dao16.getall();
+	public List<AB_DIC_TIPO_ADICAO> getAB_DIC_TIPO_ADICAO(final ArrayList<String> classif) {
+		return dao16.getall(classif);
 	}
 
 	@DELETE
@@ -942,11 +967,12 @@ public class SIRB {
 		return dao17.create(data);
 	}
 
-	@GET
+	@POST
 	@Path("/getAB_DIC_TIPO_MANUTENCAO")
+	@Consumes("*/*")
 	@Produces("application/json")
-	public List<AB_DIC_TIPO_MANUTENCAO> getAB_DIC_TIPO_MANUTENCAO() {
-		return dao17.getall();
+	public List<AB_DIC_TIPO_MANUTENCAO> getAB_DIC_TIPO_MANUTENCAO(final ArrayList<String> classif) {
+		return dao17.getall(classif);
 	}
 
 	@DELETE
@@ -976,11 +1002,12 @@ public class SIRB {
 		return dao18.create(data);
 	}
 
-	@GET
+	@POST
 	@Path("/getAB_DIC_TIPO_OPERACAO")
+	@Consumes("*/*")
 	@Produces("application/json")
-	public List<AB_DIC_TIPO_OPERACAO> getAB_DIC_TIPO_OPERACAO() {
-		return dao18.getall();
+	public List<AB_DIC_TIPO_OPERACAO> getAB_DIC_TIPO_OPERACAO(final ArrayList<String> classif) {
+		return dao18.getall(classif);
 	}
 
 	@DELETE
@@ -1504,6 +1531,47 @@ public class SIRB {
 		return dao31.update(GER_VISTAS);
 	}
 
+	/************************************* GER_POSTOS */
+
+	@POST
+	@Path("/createGER_POSTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_POSTOS insertGER_POSTOSA(final GER_POSTOS data) {
+		return dao33.create(data);
+	}
+
+	@GET
+	@Path("/getGER_POSTOS")
+	@Produces("application/json")
+	public List<GER_POSTOS> getGER_POSTOS() {
+		return dao33.getall();
+	}
+
+	@GET
+	@Path("/getGER_POSTOSbyip/{ip}")
+	@Produces("application/json")
+	public List<GER_POSTOS> getGER_POSTOSbyip(@PathParam("ip") String ip) {
+		return dao33.getByIp(ip);
+	}
+
+	@DELETE
+	@Path("/deleteGER_POSTOS/{id}")
+	public void deleteGER_POSTOS(@PathParam("id") Integer id) {
+		GER_POSTOS GER_POSTOS = new GER_POSTOS();
+		GER_POSTOS.setID_POSTO(id);
+		dao33.delete(GER_POSTOS);
+	}
+
+	@PUT
+	@Path("/updateGER_POSTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_POSTOS updateGER_POSTOS(final GER_POSTOS GER_POSTOS) {
+		GER_POSTOS.setID_POSTO(GER_POSTOS.getID_POSTO());
+		return dao33.update(GER_POSTOS);
+	}
+
 	/************************************* GER_CAMPOS_DISP */
 
 	@GET
@@ -1518,9 +1586,18 @@ public class SIRB {
 	@GET
 	@Path("/getImpressoras")
 	@Produces("application/json")
-	public ArrayList<String> getijmpressoras() {
+	public ArrayList<String> getimpressoras() {
 		Printer impressoras = new Printer();
 		return impressoras.getImpressoras();
+	}
+
+	@GET
+	@Path("/imprimir/{nomeficheiro}/{impressora}")
+	@Produces("application/json")
+	public Response imprimir(@PathParam("nomeficheiro") String nomeficheiro,
+			@PathParam("impressora") String impressora) {
+		Printer impressoras = new Printer();
+		return impressoras.imprimir(nomeficheiro, impressora);
 	}
 
 	/************************************* GER_PARAMETROS */
@@ -1536,7 +1613,7 @@ public class SIRB {
 	@Path("/updateGER_PARAMETROS")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public GER_PARAMETROS updateAB_MOV_ANALISE_LINHA(final GER_PARAMETROS GER_PARAMETROS) {
+	public GER_PARAMETROS updateGER_PARAMETROS(final GER_PARAMETROS GER_PARAMETROS) {
 		GER_PARAMETROS.setID(GER_PARAMETROS.getID());
 		return dao30.update(GER_PARAMETROS);
 	}
@@ -1589,7 +1666,7 @@ public class SIRB {
 		String fileName = null;
 		ReportGenerator report = new ReportGenerator();
 		try {
-			fileName = report.relatorio(format, Name, ID, relatorio);
+			fileName = report.relatorio(format, Name, ID, relatorio, getURL());
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1609,6 +1686,19 @@ public class SIRB {
 
 	}
 
+	public String getURL() {
+		String url = "";
+		Query query_folder = entityManager.createNativeQuery("select top 1 * from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			url = content[3].toString();
+		}
+
+		return url;
+	}
+
 	/* Email ************************************/
 	@POST
 	@Path("/sendemail")
@@ -1620,5 +1710,50 @@ public class SIRB {
 		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO());
 		return data;
 
+	}
+
+	@POST
+	@Path("/verficaEventos")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<HashMap<String, String>> verficaEventos(final List<HashMap<String, String>> data) {
+		HashMap<String, String> firstMap = data.get(0);
+
+		String value = firstMap.get("DADOS");
+		value = value.substring(1, value.length() - 1);
+		String[] keyValuePairs = value.split(",");
+
+		Query query3 = entityManager.createQuery("Select a from GER_EVENTOS_CONF a where MODULO = "
+				+ firstMap.get("MODULO") + " and MOMENTO = '" + firstMap.get("MOMENTO") + "' " + "and PAGINA = '"
+				+ firstMap.get("PAGINA") + "' and ESTADO = " + firstMap.get("ESTADO") + "");
+		List<GER_EVENTOS_CONF> dados = query3.getResultList();
+
+		for (GER_EVENTOS_CONF borderTypes : dados) {
+
+			// System.out.println(borderTypes.getEMAIL_ASSUNTO());
+			EMAIL email = new EMAIL();
+			email.setDE("alertas.it.doureca@gmail.com");
+
+			String email_para = (firstMap.get("EMAIL_PARA") != null && !firstMap.get("EMAIL_PARA").toString().isEmpty())
+					? "," + firstMap.get("EMAIL_PARA") : "";
+
+			email.setPARA(borderTypes.getEMAIL_PARA() + email_para);
+			String mensagem = borderTypes.getEMAIL_MENSAGEM();
+			String assunto = borderTypes.getEMAIL_ASSUNTO();
+
+			// System.out.println(email.getPARA());
+			for (String pair : keyValuePairs) {
+				String[] entry = pair.split(":");
+
+				mensagem = mensagem.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
+				assunto = assunto.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
+			}
+
+			email.setASSUNTO(assunto);
+			email.setMENSAGEM(mensagem);
+			sendemail(email);
+		}
+
+		return data;
 	}
 }

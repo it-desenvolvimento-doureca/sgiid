@@ -6,6 +6,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -39,7 +44,7 @@ public class ReportGenerator {
 	}
 
 	@SuppressWarnings("deprecation")
-	public String relatorio(String format,String Name, Integer ID, String relatorio) throws JRException, SQLException {
+	public String relatorio(String format,String Name, Integer ID, String relatorio, String url2) throws JRException, SQLException {
 		HashMap hm = null;
 		String fileName = null;
 
@@ -58,7 +63,8 @@ public class ReportGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String url = "jdbc:jtds:sqlserver://192.168.40.101/"+pasta.database+";instance=DOURECA;User=sa;Password=DourecA2@;";
+		//String url = "jdbc:jtds:sqlserver://192.168.40.101/"+pasta.database+";instance=DOURECA;User=sa;Password=DourecA2@;";
+		String url = url2;
 		Connection conn = DriverManager.getConnection(url);
 
 		// Create parametros
@@ -84,7 +90,7 @@ public class ReportGenerator {
 			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(exportFileName));
 			exporter.exportReport();
 		}
-
+		conn.close();
 		// System.out.println("Done exporting reports to pdf");
 		deleteoldfiles();
 		return fileName;
@@ -106,4 +112,6 @@ public class ReportGenerator {
 			}
 		}
 	}
+	
+
 }

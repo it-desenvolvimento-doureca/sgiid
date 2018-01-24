@@ -19,6 +19,7 @@ public class AB_DIC_TIPO_OPERACAO {
 	private Timestamp DATA_ANULACAO;
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
+	private String CLASSIF;
 
 	@Id
 	@Column(name = "ID_TIPO_OPERACAO")
@@ -74,6 +75,15 @@ public class AB_DIC_TIPO_OPERACAO {
 
 	public void setINATIVO(Boolean iNATIVO) {
 		INATIVO = iNATIVO;
+	}
+
+	@Column(name = "CLASSIF")
+	public String getCLASSIF() {
+		return CLASSIF;
+	}
+
+	public void setCLASSIF(String cLASSIF) {
+		CLASSIF = cLASSIF;
 	}
 
 }

@@ -10,6 +10,10 @@ body .ui-widget button {
     font-size: 1em;
 }
 
+.tabelaPostos .ui-button .ui-button-text {
+    display: none !important;
+}
+
 body .ui-widget-content {
     background-color: #ffffff;
     /*border: 1px solid #c7c7c7;*/
@@ -554,9 +558,14 @@ body .ui-listbox .ui-listbox-item:last-child {
     border-bottom: none;
 }
 
-body .ui-listbox:not(.ui-state-disabled) .ui-listbox-item:hover {
+body .ui-listbox:not(.ui-state-disabled) .ui-listbox-item:not(.ui-state-highlight):hover {
     background-color: #f4f3f4;
     color: #373a3c;
+}
+
+body .ui-listbox:not(.ui-state-disabled) .ui-listbox-item:focus:hover {
+    background-color: #0275d8 !important;
+    color: #ffffff;
 }
 
 body .ui-listbox .ui-listbox-item.ui-state-highlight {
@@ -4929,4 +4938,91 @@ input[type="file"] {
 
 .ui-button.ui-button-danger:enabled:active {
     background-color: #c9302c
+}
+
+.ui-listbox {
+    overflow: auto;
+    padding: .25em;
+    width: 10em
+}
+
+.ui-listbox .ui-listbox-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0
+}
+
+.ui-listbox .ui-listbox-item {
+    padding: .25em;
+    border: 0 none;
+    cursor: pointer;
+    font-weight: 400;
+    margin-bottom: 1px
+}
+
+.ui-listbox .ui-listbox-item>span {
+    vertical-align: middle
+}
+
+.ui-listbox .ui-listbox-item:last-child {
+    margin-bottom: 0
+}
+
+.ui-listbox.ui-state-disabled .ui-listbox-item {
+    cursor: default
+}
+
+.ui-listbox-header {
+    margin-bottom: .3em;
+    padding: .125em .2em;
+    position: relative
+}
+
+.ui-listbox-header .ui-chkbox {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer
+}
+
+.ui-listbox-header .ui-listbox-filter-container {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    width: 100%
+}
+
+.ui-listbox-header.ui-listbox-header-w-checkbox .ui-listbox-filter-container {
+    width: calc(100% - 2em)
+}
+
+.ui-listbox-header .ui-listbox-filter-container .fa {
+    position: absolute;
+    top: .25em;
+    left: .25em
+}
+
+.ui-fluid .ui-listbox .ui-listbox-filter-container,
+.ui-fluid .ui-listbox .ui-listbox-filter-container input {
+    width: calc(100% - 32px)
+}
+
+.ui-button.ui-button-warning.ui-state-default,
+.ui-splitbutton.ui-button-warning .ui-button.ui-state-default {
+    background-color: #f0ad4e;
+    border-color: #f0ad4e;
+    color: #fff
+}
+
+.ui-button.ui-button-warning:enabled:hover,
+.ui-button.ui-button-warning:focus,
+.ui-splitbutton.ui-button-warning .ui-button:enabled:hover,
+.ui-splitbutton.ui-button-warning .ui-button:focus {
+    background-color: #eea236;
+    border-color: #f0ad4e
+}
+
+.ui-button.ui-button-warning:enabled:active,
+.ui-splitbutton.ui-button-warning .ui-button:enabled:active {
+    background-color: #ec971f;
+    border-color: #f0ad4e
 }

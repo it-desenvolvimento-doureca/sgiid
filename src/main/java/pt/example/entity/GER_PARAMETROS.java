@@ -14,6 +14,7 @@ public class GER_PARAMETROS {
 	private Integer ID;
 	private String PASTA_FICHEIRO;
 	private String URL_SILVER;
+	private String URL_JASPER;
 
 	@Id
 	@Column(name = "ID")
@@ -42,6 +43,15 @@ public class GER_PARAMETROS {
 
 	public void setURL_SILVER(String uRL_SILVER) {
 		URL_SILVER = uRL_SILVER;
+	}
+
+	@Column(name = "URL_JASPER")
+	public String getURL_JASPER() {
+		return URL_JASPER;
+	}
+
+	public void setURL_JASPER(String uRL_JASPER) {
+		URL_JASPER = uRL_JASPER;
 	}
 
 }

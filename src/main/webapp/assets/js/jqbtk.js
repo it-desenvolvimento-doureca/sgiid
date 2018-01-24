@@ -252,6 +252,7 @@
 
 $('[id^="number"]').keyboard();
 
+$('#default').keyboard();
 
 
 $('.main-panel').scroll(function () {

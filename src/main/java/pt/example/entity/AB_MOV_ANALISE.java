@@ -34,6 +34,7 @@ public class AB_MOV_ANALISE {
 	private Integer UTZ_VALIDA;
 	private String COR_LIMITES;
 	private Boolean PLANEADA;
+	private String MENSAGEM;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -215,6 +216,15 @@ public class AB_MOV_ANALISE {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "MENSAGEM")
+	public String getMENSAGEM() {
+		return MENSAGEM;
+	}
+
+	public void setMENSAGEM(String mENSAGEM) {
+		MENSAGEM = mENSAGEM;
 	}
 
 }
