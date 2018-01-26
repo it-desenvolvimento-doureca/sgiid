@@ -5026,3 +5026,7 @@ input[type="file"] {
     background-color: #ec971f;
     border-color: #f0ad4e
 }
+
+.inputcalen .ui-inputtext{
+    height: 27px;
+}

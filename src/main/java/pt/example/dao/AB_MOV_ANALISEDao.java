@@ -86,12 +86,12 @@ public class AB_MOV_ANALISEDao extends GenericDaoJpaImpl<AB_MOV_ANALISE, Integer
 				"select  a.ID_ANALISE,b.ID_MANUTENCAO_CAB,a.DATA_ANALISE,a.HORA_ANALISE,b.DATA_EXECUCAO,ROW_NUMBER() OVER (ORDER BY b.DATA_EXECUCAO desc) as row, "
 						+ "( SELECT COUNT(*) AS totalPayments  " + "FROM  "
 						+ "(select * from AB_MOV_ANALISE where ((not'"+date+"' != 'null') or (DATA_ANALISE <='"+date+"')) and ((not '"+date2+"' != 'null') or (DATA_ANALISE >= '"+date2+"'))) a " + "FULL join  "
-						+ "(select f.* from AB_MOV_MANUTENCAO_CAB f,AB_MOV_MANUTENCAO g where f.ID_MANUTENCAO = g.ID_MANUTENCAO and g.CLASSIF='M' and ((not '"+date+"' != 'null') or (f.DATA_EXECUCAO <='"+date+"')) and ((not '"+date2+"' != 'null') or (f.DATA_EXECUCAO >= '"+date2+"')) ) b on a.ID_ANALISE = b.ID_ANALISE),b.ID_MANUTENCAO "
+						+ "(select f.* from AB_MOV_MANUTENCAO_CAB f,AB_MOV_MANUTENCAO g where f.id_banho= :idbanho and f.ID_MANUTENCAO = g.ID_MANUTENCAO and g.CLASSIF='M' and ((not '"+date+"' != 'null') or (f.DATA_EXECUCAO <='"+date+"')) and ((not '"+date2+"' != 'null') or (f.DATA_EXECUCAO >= '"+date2+"')) ) b on a.ID_ANALISE = b.ID_ANALISE),b.ID_MANUTENCAO "
 						+ "FROM  " + "(select * from AB_MOV_ANALISE where ((not '"+date+"' != 'null') or (DATA_ANALISE <= '"+date+"')) and ((not '"+date2+"' != 'null') or (DATA_ANALISE >= '"+date2+"'))) a "
 						+ "FULL join  "
-						+ "(select f.* from AB_MOV_MANUTENCAO_CAB f,AB_MOV_MANUTENCAO g where f.ID_MANUTENCAO = g.ID_MANUTENCAO and g.CLASSIF='M' and ((not '"+date+"' != 'null') or (f.DATA_EXECUCAO <= '"+date+"')) and ((not '"+date2+"' != 'null') or (f.DATA_EXECUCAO >= '"+date2+"')) ) b on a.ID_ANALISE = b.ID_ANALISE "
-						+ "order by b.DATA_EXECUCAO desc " + "OFFSET :inicio ROWS " + "FETCH NEXT :fim ROWS ONLY ");
-		//query.setParameter("idbanho", idbanho);
+						+ "(select f.* from AB_MOV_MANUTENCAO_CAB f,AB_MOV_MANUTENCAO g where f.ID_BANHO= :idbanho and f.ID_MANUTENCAO = g.ID_MANUTENCAO and g.CLASSIF='M' and ((not '"+date+"' != 'null') or (f.DATA_EXECUCAO <= '"+date+"')) and ((not '"+date2+"' != 'null') or (f.DATA_EXECUCAO >= '"+date2+"')) ) b on a.ID_ANALISE = b.ID_ANALISE "
+						+ "order by b.DATA_EXECUCAO desc, a.DATA_ANALISE desc " + "OFFSET :inicio ROWS " + "FETCH NEXT :fim ROWS ONLY ");
+		query.setParameter("idbanho", idbanho);
 		query.setParameter("inicio", inicio);
 		query.setParameter("fim", fim);
 

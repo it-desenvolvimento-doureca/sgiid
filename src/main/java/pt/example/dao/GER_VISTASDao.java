@@ -13,7 +13,7 @@ public class GER_VISTASDao extends GenericDaoJpaImpl<GER_VISTAS,Integer> impleme
 	
 	public List<GER_VISTAS> getall() {
 		Query query = entityManager
-				.createQuery("select a from GER_VISTAS a order by a.DESCRICAO");
+				.createQuery("select a from GER_VISTAS a order by a.ID");
 		List<GER_VISTAS> data = query.getResultList();
 		return data;
 

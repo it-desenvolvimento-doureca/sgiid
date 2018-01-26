@@ -29,4 +29,14 @@ public class GER_PERFIL_CABDao extends GenericDaoJpaImpl<GER_PERFIL_CAB, Integer
 		return data;
 
 	}
+	
+	public List<GER_PERFIL_CAB> getallperfilmodulo(Integer modulo) {
+		Query query = entityManager.createQuery("select a,b from GER_PERFIL_CAB a,GER_MODULO b "
+				+ "where a.ID_MODULO = b.ID_MODULO "
+				+ "and a.INATIVO != 1 and ((not :modulo != 0) or (a.ID_MODULO = :modulo))");
+		query.setParameter("modulo", modulo);
+		List<GER_PERFIL_CAB> data = query.getResultList();
+		return data;
+
+	}
 }

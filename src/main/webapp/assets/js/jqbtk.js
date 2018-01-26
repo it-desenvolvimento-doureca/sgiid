@@ -115,7 +115,7 @@
             btnClasses: 'btn btn-default',
             btnActiveClasses: 'active btn-primary',
             initCaps: false,
-            placement: 'bottom'
+            placement: 'auto'
         }, options);
         if (!settings.layout) {
             if (($(this).attr('type') === 'tel' && $(this).hasClass('keyboard-numpad')) || settings.type === 'numpad') {
@@ -252,18 +252,31 @@
 
 $('[id^="number"]').keyboard();
 
-$('#default').keyboard();
+$('[id^="default"]').keyboard();
 
+$('[id^="default"]').click(function() {
+    var w = window.innerWidth;
+    $(".popover").css('width', 632.4);
+});
 
 $('.main-panel').scroll(function () {
     var container = $(".popover");
     var top = 0;
     if (container[0] != null) {
+        if (container[0].className.indexOf('bottom') > -1) {
 
-        var eTop = $('[aria-describedby=' + container[0].id + ']').offset().top;
-        top = $('[aria-describedby=' + container[0].id + ']');
+            var eTop = $('[aria-describedby=' + container[0].id + ']').offset().top;
+            top = $('[aria-describedby=' + container[0].id + ']');
 
-        $(".popover").css('top', eTop - $(window).scrollTop()+35);
+            $(".popover").css('top', eTop - $(window).scrollTop() + 35);
+
+        }else if (container[0].className.indexOf('top') > -1) {
+            var eTop = $('[aria-describedby=' + container[0].id + ']').offset().top;
+            var h = $(".popover").height();
+            bottom = $('[aria-describedby=' + container[0].id + ']');
+
+            $(".popover").css('top', eTop - $(window).scrollTop() - h);
+        }
     }
 });
 
@@ -281,3 +294,24 @@ $('#btvalidar').click(function () {
 $('#btvalidafalse').click(function () {
     $("#btvalidarfalse").trigger("click");
 });
+
+//verificar se elemento está dentro da janela
+function elementInViewport2(el) {
+    var top = el.offsetTop;
+    var left = el.offsetLeft;
+    var width = el.offsetWidth;
+    var height = el.offsetHeight;
+  
+    while(el.offsetParent) {
+      el = el.offsetParent;
+      top += el.offsetTop;
+      left += el.offsetLeft;
+    }
+  
+    return (
+      top < (window.pageYOffset + window.innerHeight) &&
+      left < (window.pageXOffset + window.innerWidth) &&
+      (top + height) > window.pageYOffset &&
+      (left + width) > window.pageXOffset
+    );
+  }

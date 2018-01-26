@@ -18,6 +18,7 @@ public class GER_VISTAS {
 	private String GROUPSTATE;
 	private String SORTSTATE;
 	private String DESCRICAO;
+	private String FAMILIAS;
 
 	@Id
 	@Column(name = "ID")
@@ -80,6 +81,15 @@ public class GER_VISTAS {
 	}
 	public void setDESCRICAO(String dESCRICAO) {
 		DESCRICAO = dESCRICAO;
+	}
+
+	@Column(name = "FAMILIAS")
+	public String getFAMILIAS() {
+		return FAMILIAS;
+	}
+
+	public void setFAMILIAS(String fAMILIAS) {
+		FAMILIAS = fAMILIAS;
 	}
 
 }

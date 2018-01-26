@@ -1282,6 +1282,13 @@ public class SIRB {
 		return dao23.getallperfil(id, modulo);
 	}
 
+	@GET
+	@Path("/getGER_PERFIL_CABbymodulo/{modulo}")
+	@Produces("application/json")
+	public List<GER_PERFIL_CAB> getGER_PERFIL_CABbymodulo(@PathParam("modulo") Integer modulo) {
+		return dao23.getallperfilmodulo(modulo);
+	}
+
 	/************************************* GER_ARMAZEM */
 	@POST
 	@Path("/createGER_ARMAZEM")
@@ -1464,6 +1471,13 @@ public class SIRB {
 	@Produces("application/json")
 	public List<GER_ANALISES> getAGER_ANALISES() {
 		return dao29.getall();
+	}
+
+	@GET
+	@Path("/getGER_ANALISESativas")
+	@Produces("application/json")
+	public List<GER_ANALISES> getAGER_ANALISESativas() {
+		return dao29.getallativas();
 	}
 
 	@GET

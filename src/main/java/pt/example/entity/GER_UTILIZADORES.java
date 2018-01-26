@@ -24,6 +24,8 @@ public class GER_UTILIZADORES {
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
 	private Boolean ADMIN;
+	private String USER_JASPER;
+	private String PASS_JASPER;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -124,6 +126,24 @@ public class GER_UTILIZADORES {
 
 	public void setEMAIL(String eMAIL) {
 		EMAIL = eMAIL;
+	}
+
+	@Column(name = "USER_JASPER")
+	public String getUSER_JASPER() {
+		return USER_JASPER;
+	}
+
+	public void setUSER_JASPER(String uSER_JASPER) {
+		USER_JASPER = uSER_JASPER;
+	}
+
+	@Column(name = "PASS_JASPER")
+	public String getPASS_JASPER() {
+		return PASS_JASPER;
+	}
+
+	public void setPASS_JASPER(String pASS_JASPER) {
+		PASS_JASPER = pASS_JASPER;
 	}
 
 }

@@ -37,5 +37,13 @@ public class GER_ANALISESDao extends GenericDaoJpaImpl<GER_ANALISES, Integer>
 		return data;
 
 	}
+	
+	public List<GER_ANALISES> getallativas() {
+		Query query = entityManager
+				.createQuery("select a from GER_ANALISES a where a.ATIVO = 1");
+		List<GER_ANALISES> data = query.getResultList();
+		return data;
+
+	}
 
 }
