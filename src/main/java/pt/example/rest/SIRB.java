@@ -214,6 +214,14 @@ public class SIRB {
 		return dao1.getAllLINHAbylinha(id, linha);
 	}
 
+	@GET
+	@Path("/getAllLINHAbylinha_tipo/{id}/{linha}/{tipo}")
+	@Produces("application/json")
+	public List<AB_DIC_BANHO> getAllLINHAbylinha_tipo(@PathParam("id") Integer id, @PathParam("linha") Integer linha,
+			@PathParam("tipo") String tipo) {
+		return dao1.getAllLINHAbylinha_tipo(id, linha, tipo);
+	}
+
 	@DELETE
 	@Path("/deleteAB_DIC_BANHO/{id}")
 	public void deleteAB_DIC_BANHO(@PathParam("id") Integer id) {
@@ -525,6 +533,16 @@ public class SIRB {
 	}
 
 	@POST
+	@Path("/getAB_MOV_MANUTENCAOidbanho/{linha}/{classif}/{idbanho}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO> getAB_MOV_MANUTENCAOidbanho(@PathParam("linha") Integer linha,
+			@PathParam("classif") String classif, final ArrayList<String> query,
+			@PathParam("idbanho") Integer idbanho) {
+		return dao8.getallidabanho(linha, query, classif, idbanho);
+	}
+
+	@POST
 	@Path("/getAB_MOV_MANUTENCAOsorid/{linha}/{classif}")
 	@Consumes("*/*")
 	@Produces("application/json")
@@ -582,11 +600,12 @@ public class SIRB {
 	}
 
 	@GET
-	@Path("/getAB_MOV_MANUTENCAO_CABbyid_banho/{idbanho}/{inicio}/{fim}/{id_man}")
+	@Path("/getAB_MOV_MANUTENCAO_CABbyid_banho/{idbanho}/{inicio}/{fim}/{id_man}/{classif}")
 	@Produces("application/json")
 	public List<AB_MOV_MANUTENCAO_CAB> getAB_MOV_MANUTENCAO_CABbyid_banho(@PathParam("idbanho") Integer idbanho,
-			@PathParam("inicio") Integer inicio, @PathParam("fim") Integer fim, @PathParam("id_man") Integer id_man) {
-		return dao15.getbyidbanho(idbanho, inicio, fim, id_man);
+			@PathParam("inicio") Integer inicio, @PathParam("fim") Integer fim, @PathParam("id_man") Integer id_man,
+			@PathParam("classif") String classif) {
+		return dao15.getbyidbanho(idbanho, inicio, fim, id_man, classif);
 	}
 
 	@GET
@@ -1492,6 +1511,13 @@ public class SIRB {
 	@Produces("application/json")
 	public List<GER_ANALISES> getGER_ANALISESbyidmodulo(@PathParam("id_modulo") Integer id_modulo) {
 		return dao29.getbyId_modulo(id_modulo);
+	}
+
+	@GET
+	@Path("/getGER_ANALISESbyidmoduloativas/{id_modulo}")
+	@Produces("application/json")
+	public List<GER_ANALISES> getGER_ANALISESbyidmoduloativas(@PathParam("id_modulo") Integer id_modulo) {
+		return dao29.getbyId_moduloativas(id_modulo);
 	}
 
 	@DELETE

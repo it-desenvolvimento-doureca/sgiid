@@ -27,16 +27,17 @@ public class AB_MOV_MANUTENCAO_CABDao extends GenericDaoJpaImpl<AB_MOV_MANUTENCA
 		return data;
 	}
 
-	public List<AB_MOV_MANUTENCAO_CAB> getbyidbanho(Integer idbanho, Integer inicio, Integer fim, Integer id_man) {
+	public List<AB_MOV_MANUTENCAO_CAB> getbyidbanho(Integer idbanho, Integer inicio, Integer fim, Integer id_man,String classif) {
 		Query query = entityManager.createNativeQuery(
-				"SELECT a.ID_MANUTENCAO_CAB,DATA_PLANEAMENTO,HORA_PLANEAMENTO, ( SELECT COUNT(*) AS totalPayments FROM AB_MOV_MANUTENCAO_CAB a,AB_MOV_MANUTENCAO b where a.ID_MANUTENCAO=b.ID_MANUTENCAO and b.CLASSIF='M' and ID_BANHO = :idbanho and ID_MANUTENCAO_CAB not in (:id_man) ) "
-						+ "FROM ( SELECT a.*, ROW_NUMBER() OVER (ORDER BY ID_MANUTENCAO_CAB desc) as row FROM AB_MOV_MANUTENCAO_CAB a,AB_MOV_MANUTENCAO b where a.ID_MANUTENCAO=b.ID_MANUTENCAO and b.CLASSIF='M'and ID_BANHO = :idbanho and ID_MANUTENCAO_CAB not in (:id_man) ) a "
+				"SELECT a.ID_MANUTENCAO_CAB,DATA_PLANEAMENTO,HORA_PLANEAMENTO, ( SELECT COUNT(*) AS totalPayments FROM AB_MOV_MANUTENCAO_CAB a,AB_MOV_MANUTENCAO b where a.ID_MANUTENCAO=b.ID_MANUTENCAO and b.CLASSIF= :classif and ID_BANHO = :idbanho and ID_MANUTENCAO_CAB not in (:id_man) ) "
+						+ "FROM ( SELECT a.*, ROW_NUMBER() OVER (ORDER BY ID_MANUTENCAO_CAB desc) as row FROM AB_MOV_MANUTENCAO_CAB a,AB_MOV_MANUTENCAO b where a.ID_MANUTENCAO=b.ID_MANUTENCAO and b.CLASSIF= :classif and ID_BANHO = :idbanho and ID_MANUTENCAO_CAB not in (:id_man) ) a "
 						+ "inner join AB_MOV_MANUTENCAO b on a.ID_MANUTENCAO = b.ID_MANUTENCAO "
-						+ "WHERE row > :inicio and row <= :fim and b.CLASSIF = 'M' order by b.DATA_PLANEAMENTO desc");
+						+ "WHERE row > :inicio and row <= :fim and b.CLASSIF = :classif order by b.DATA_PLANEAMENTO desc");
 		query.setParameter("idbanho", idbanho);
 		query.setParameter("inicio", inicio);
 		query.setParameter("fim", fim);
 		query.setParameter("id_man", id_man);
+		query.setParameter("classif", classif);
 		List<AB_MOV_MANUTENCAO_CAB> data = query.getResultList();
 		return data;
 

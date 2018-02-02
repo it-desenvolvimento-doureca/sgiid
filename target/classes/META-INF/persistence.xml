@@ -8,8 +8,8 @@
 		<!-- <provider>org.hibernate.ejb.HibernatePersistence</provider> -->
 
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-		<jta-data-source>java:jboss/datasources/SGIID_DEV</jta-data-source>
-		<!-- <jta-data-source>java:jboss/datasources/SGIID</jta-data-source> -->
+		<!--<jta-data-source>java:jboss/datasources/SGIID_DEV</jta-data-source> -->
+		<jta-data-source>java:jboss/datasources/SGIID</jta-data-source>
 		<!-- Package: uk.co.example.domain -->
 
 		<!-- Hibernate properties -->

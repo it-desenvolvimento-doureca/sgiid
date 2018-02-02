@@ -64,6 +64,7 @@ public class ReportGenerator {
 			e.printStackTrace();
 		}
 		//String url = "jdbc:jtds:sqlserver://192.168.40.101/"+pasta.database+";instance=DOURECA;User=sa;Password=DourecA2@;";
+		//String url = "jdbc:jtds:sqlserver://192.168.40.126/SGIID;instance=DEVDOURECA;User=sa;Password=DourecA2@;";
 		String url = url2;
 		Connection conn = DriverManager.getConnection(url);
 

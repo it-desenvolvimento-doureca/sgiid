@@ -29,6 +29,8 @@ public class AB_DIC_BANHO {
 	private Boolean INATIVO;
 	private Boolean CELULAHULL;
 	private String EMAIL_PARA;
+	private Boolean MANUTENCAOREPOSICAO;
+	private Boolean MANUTENCAONAOPROGRAMADA;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -174,6 +176,24 @@ public class AB_DIC_BANHO {
 
 	public void setEMAIL_PARA(String eMAIL_PARA) {
 		EMAIL_PARA = eMAIL_PARA;
+	}
+
+	@Column(name = "MANUTENCAONAOPROGRAMADA")
+	public Boolean getMANUTENCAONAOPROGRAMADA() {
+		return MANUTENCAONAOPROGRAMADA;
+	}
+
+	public void setMANUTENCAONAOPROGRAMADA(Boolean mANUTENCAONAOPROGRAMADA) {
+		MANUTENCAONAOPROGRAMADA = mANUTENCAONAOPROGRAMADA;
+	}
+
+	@Column(name = "MANUTENCAOREPOSICAO")
+	public Boolean getMANUTENCAOREPOSICAO() {
+		return MANUTENCAOREPOSICAO;
+	}
+
+	public void setMANUTENCAOREPOSICAO(Boolean mANUTENCAOREPOSICAO) {
+		MANUTENCAOREPOSICAO = mANUTENCAOREPOSICAO;
 	}
 
 }

@@ -61,7 +61,7 @@ public class AB_MOV_ANALISEDao extends GenericDaoJpaImpl<AB_MOV_ANALISE, Integer
 
 	public List<AB_MOV_ANALISE> getallbyidbanho(Integer idbanho, Integer inicio, Integer fim, Integer id_analise) {
 		Query query = entityManager.createNativeQuery(
-				"SELECT ID_ANALISE,DATA_ANALISE,HORA_ANALISE, ( SELECT COUNT(*) AS totalPayments FROM AB_MOV_ANALISE where ID_BANHO = :idbanho and ID_ANALISE not in (:id_analise) ) FROM ( SELECT *, ROW_NUMBER() OVER (ORDER BY DATA_ANALISE desc) as row FROM AB_MOV_ANALISE where ID_BANHO = :idbanho and ID_ANALISE not in (:id_analise) ) a WHERE row > :inicio and row <= :fim");
+				"SELECT ID_ANALISE,DATA_ANALISE,HORA_ANALISE, ( SELECT COUNT(*) AS totalPayments FROM AB_MOV_ANALISE where ID_BANHO = :idbanho and ID_ANALISE not in (:id_analise) and inativo != 1 ) FROM ( SELECT *, ROW_NUMBER() OVER (ORDER BY DATA_ANALISE desc) as row FROM AB_MOV_ANALISE where ID_BANHO = :idbanho and ID_ANALISE not in (:id_analise) and inativo != 1) a WHERE row > :inicio and row <= :fim");
 		query.setParameter("idbanho", idbanho);
 		query.setParameter("inicio", inicio);
 		query.setParameter("fim", fim);
@@ -71,30 +71,49 @@ public class AB_MOV_ANALISEDao extends GenericDaoJpaImpl<AB_MOV_ANALISE, Integer
 
 	}
 
-	public List<AB_MOV_ANALISE> getallbyidbanho_manut(Integer idbanho, Integer inicio, Integer fim,List<HashMap<String, String>> dados) throws ParseException {
+	public List<AB_MOV_ANALISE> getallbyidbanho_manut(Integer idbanho, Integer inicio, Integer fim,
+			List<HashMap<String, String>> dados) throws ParseException {
 		HashMap<String, String> firstMap = dados.get(0);
 		String date;
 		String date2;
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		
+
 		date = (firstMap.get("date1") == null ? null : firstMap.get("date1").toString());
 
-
 		date2 = (firstMap.get("date2") == null ? null : firstMap.get("date2").toString());
-		
+
 		Query query = entityManager.createNativeQuery(
-				"select  a.ID_ANALISE,b.ID_MANUTENCAO_CAB,a.DATA_ANALISE,a.HORA_ANALISE,b.DATA_EXECUCAO,ROW_NUMBER() OVER (ORDER BY b.DATA_EXECUCAO desc) as row, "
+				"select  a.ID_ANALISE,b.ID_MANUTENCAO_CAB,a.DATA_ANALISE,a.HORA_ANALISE,CASE WHEN b.DATA_EXECUCAO IS NULL THEN b.DATA_PREVISTA ELSE b.DATA_EXECUCAO END as data_manu,ROW_NUMBER() OVER (ORDER BY b.DATA_EXECUCAO desc) as row, "
 						+ "( SELECT COUNT(*) AS totalPayments  " + "FROM  "
-						+ "(select * from AB_MOV_ANALISE where ((not'"+date+"' != 'null') or (DATA_ANALISE <='"+date+"')) and ((not '"+date2+"' != 'null') or (DATA_ANALISE >= '"+date2+"'))) a " + "FULL join  "
-						+ "(select f.* from AB_MOV_MANUTENCAO_CAB f,AB_MOV_MANUTENCAO g where f.id_banho= :idbanho and f.ID_MANUTENCAO = g.ID_MANUTENCAO and g.CLASSIF='M' and ((not '"+date+"' != 'null') or (f.DATA_EXECUCAO <='"+date+"')) and ((not '"+date2+"' != 'null') or (f.DATA_EXECUCAO >= '"+date2+"')) ) b on a.ID_ANALISE = b.ID_ANALISE),b.ID_MANUTENCAO "
-						+ "FROM  " + "(select * from AB_MOV_ANALISE where ((not '"+date+"' != 'null') or (DATA_ANALISE <= '"+date+"')) and ((not '"+date2+"' != 'null') or (DATA_ANALISE >= '"+date2+"'))) a "
-						+ "FULL join  "
-						+ "(select f.* from AB_MOV_MANUTENCAO_CAB f,AB_MOV_MANUTENCAO g where f.ID_BANHO= :idbanho and f.ID_MANUTENCAO = g.ID_MANUTENCAO and g.CLASSIF='M' and ((not '"+date+"' != 'null') or (f.DATA_EXECUCAO <= '"+date+"')) and ((not '"+date2+"' != 'null') or (f.DATA_EXECUCAO >= '"+date2+"')) ) b on a.ID_ANALISE = b.ID_ANALISE "
-						+ "order by b.DATA_EXECUCAO desc, a.DATA_ANALISE desc " + "OFFSET :inicio ROWS " + "FETCH NEXT :fim ROWS ONLY ");
+						+ "(select * from AB_MOV_ANALISE where ID_BANHO = :idbanho and inativo != 1 and ((not'" + date
+						+ "' != 'null') or (DATA_ANALISE <='" + date + "')) and ((not '" + date2
+						+ "' != 'null') or (DATA_ANALISE >= '" + date2 + "'))) a " + "FULL join  "
+						+ "(select f.* from AB_MOV_MANUTENCAO_CAB f,AB_MOV_MANUTENCAO g where f.id_banho= :idbanho and g.inativo != 1 and f.ID_MANUTENCAO = g.ID_MANUTENCAO and g.CLASSIF='M' and "
+						+ "((f.DATA_EXECUCAO is not null) 	  and (" + "((not '" + date
+						+ "' != 'null') or (f.DATA_EXECUCAO <='" + date + "')) and ((not '" + date2
+						+ "' != 'null') or (f.DATA_EXECUCAO >= '" + date2 + "'))) "
+						+ "or (f.DATA_EXECUCAO is null) and ( " + "((not '" + date
+						+ "' != 'null') or (f.DATA_PREVISTA <='" + date + "')) and ((not '" + date2
+						+ "' != 'null') or (f.DATA_PREVISTA >= '" + date2 + "')) "
+						+ "))) b on a.ID_ANALISE = b.ID_ANALISE),b.ID_MANUTENCAO, "
+						+ " CASE WHEN (b.DATA_EXECUCAO IS NULL and b.DATA_PREVISTA IS NULL ) THEN  a.DATA_ANALISE  WHEN (b.DATA_EXECUCAO IS NULL ) THEN b.DATA_PREVISTA ElSE b.DATA_EXECUCAO  END as data "
+						+ "FROM  "
+						+ "(select * from AB_MOV_ANALISE where ID_BANHO = :idbanho and inativo != 1 and ((not '" + date
+						+ "' != 'null') or (DATA_ANALISE <= '" + date + "')) and ((not '" + date2
+						+ "' != 'null') or (DATA_ANALISE >= '" + date2 + "'))) a " + "FULL join  "
+						+ "(select f.* from AB_MOV_MANUTENCAO_CAB f,AB_MOV_MANUTENCAO g where f.ID_BANHO= :idbanho and g.inativo != 1 and f.ID_MANUTENCAO = g.ID_MANUTENCAO and g.CLASSIF='M' and "
+						+ "((f.DATA_EXECUCAO is not null) 	  and (" + "((not '" + date
+						+ "' != 'null') or (f.DATA_EXECUCAO <= '" + date + "')) and ((not '" + date2
+						+ "' != 'null') or (f.DATA_EXECUCAO >= '" + date2 + "')) )"
+						+ "or (f.DATA_EXECUCAO is null) and ( " + "((not '" + date
+						+ "' != 'null') or (f.DATA_PREVISTA <='" + date + "')) and ((not '" + date2
+						+ "' != 'null') or (f.DATA_PREVISTA >= '" + date2 + "')) "
+						+ "))) b on a.ID_ANALISE = b.ID_ANALISE "
+						+ "order by data desc , a.ID_ANALISE desc,b.ID_MANUTENCAO desc " + "OFFSET :inicio ROWS "
+						+ "FETCH NEXT :fim ROWS ONLY ");
 		query.setParameter("idbanho", idbanho);
 		query.setParameter("inicio", inicio);
 		query.setParameter("fim", fim);
-
 
 		List<AB_MOV_ANALISE> data = query.getResultList();
 		return data;
