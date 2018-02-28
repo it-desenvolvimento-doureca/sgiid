@@ -42,6 +42,7 @@ public class AB_MOV_MANUTENCAO_CAB {
 	private Timestamp DATA_ULT_IMPRES;
 	private Integer UTZ_ULT_IMPRES;
 	private Boolean IMPRESSO;
+	private String DOSEADOR;
 
 	@Column(name = "DATA_ULT_IMPRES")
 	public Timestamp getDATA_ULT_IMPRES() {
@@ -295,6 +296,15 @@ public class AB_MOV_MANUTENCAO_CAB {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "DOSEADOR")
+	public String getDOSEADOR() {
+		return DOSEADOR;
+	}
+
+	public void setDOSEADOR(String dOSEADOR) {
+		DOSEADOR = dOSEADOR;
 	}
 
 }

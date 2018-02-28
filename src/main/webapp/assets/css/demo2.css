@@ -5027,6 +5027,10 @@ input[type="file"] {
     border-color: #f0ad4e
 }
 
-.inputcalen .ui-inputtext{
+.inputcalen .ui-inputtext {
     height: 27px;
+}
+
+.tabelabanhosaditivos .ui-datatable-header {
+    padding: 0 !important;
 }

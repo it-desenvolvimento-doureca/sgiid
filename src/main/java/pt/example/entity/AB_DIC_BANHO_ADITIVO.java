@@ -22,8 +22,13 @@ public class AB_DIC_BANHO_ADITIVO {
 	private Integer UTZ_CRIA;
 	private Timestamp DATA_ULT_MODIF;
 	private Integer UTZ_ULT_MODIF;
-	private Boolean MANUTENCAOREPOSICAO;
 	private Boolean MANUTENCAONAOPROGRAMADA;
+	private Float VALOR_DOSE1;
+	private Float VALOR_DOSE2;
+	private Float VALOR_DOSE3;
+	private Float VALOR_DOSE4;
+	private Float VALOR_DOSE5;
+	private Float QUANTIDADE_DEFEITO;
 
 	@Id
 	@Column(name = "ID_BANHO_ADITIVO")
@@ -107,7 +112,7 @@ public class AB_DIC_BANHO_ADITIVO {
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
 	}
-	
+
 	@Column(name = "MANUTENCAONAOPROGRAMADA")
 	public Boolean getMANUTENCAONAOPROGRAMADA() {
 		return MANUTENCAONAOPROGRAMADA;
@@ -116,14 +121,59 @@ public class AB_DIC_BANHO_ADITIVO {
 	public void setMANUTENCAONAOPROGRAMADA(Boolean mANUTENCAONAOPROGRAMADA) {
 		MANUTENCAONAOPROGRAMADA = mANUTENCAONAOPROGRAMADA;
 	}
-	
-	@Column(name = "MANUTENCAOREPOSICAO")
-	public Boolean getMANUTENCAOREPOSICAO() {
-		return MANUTENCAOREPOSICAO;
+
+	@Column(name = "VALOR_DOSE1")
+	public Float getVALOR_DOSE1() {
+		return VALOR_DOSE1;
 	}
 
-	public void setMANUTENCAOREPOSICAO(Boolean mANUTENCAOREPOSICAO) {
-		MANUTENCAOREPOSICAO = mANUTENCAOREPOSICAO;
+	@Column(name = "VALOR_DOSE2")
+	public Float getVALOR_DOSE2() {
+		return VALOR_DOSE2;
+	}
+
+	@Column(name = "VALOR_DOSE3")
+	public Float getVALOR_DOSE3() {
+		return VALOR_DOSE3;
+	}
+
+	@Column(name = "VALOR_DOSE4")
+	public Float getVALOR_DOSE4() {
+		return VALOR_DOSE4;
+	}
+
+	@Column(name = "VALOR_DOSE5")
+	public Float getVALOR_DOSE5() {
+		return VALOR_DOSE5;
+	}
+
+	public void setVALOR_DOSE1(Float vALOR_DOSE1) {
+		VALOR_DOSE1 = vALOR_DOSE1;
+	}
+
+	public void setVALOR_DOSE2(Float vALOR_DOSE2) {
+		VALOR_DOSE2 = vALOR_DOSE2;
+	}
+
+	public void setVALOR_DOSE3(Float vALOR_DOSE3) {
+		VALOR_DOSE3 = vALOR_DOSE3;
+	}
+
+	public void setVALOR_DOSE4(Float vALOR_DOSE4) {
+		VALOR_DOSE4 = vALOR_DOSE4;
+	}
+
+	public void setVALOR_DOSE5(Float vALOR_DOSE5) {
+		VALOR_DOSE5 = vALOR_DOSE5;
+	}
+	
+	@Column(name = "QUANTIDADE_DEFEITO")
+	public Float getQUANTIDADE_DEFEITO() {
+		return QUANTIDADE_DEFEITO;
+	}
+
+	public void setQUANTIDADE_DEFEITO(Float qUANTIDADE_DEFEITO) {
+		QUANTIDADE_DEFEITO = qUANTIDADE_DEFEITO;
 	}
 
 }

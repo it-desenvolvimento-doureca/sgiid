@@ -36,6 +36,7 @@ import pt.example.bootstrap.ConnectProgress;
 import pt.example.bootstrap.Printer;
 import pt.example.bootstrap.ReportGenerator;
 import pt.example.bootstrap.SendEmail;
+import pt.example.bootstrap.SomeQuarterlyJob;
 import pt.example.dao.AB_DIC_BANHODao;
 import pt.example.dao.AB_DIC_BANHO_ADITIVODao;
 import pt.example.dao.AB_DIC_BANHO_COMPONENTEDao;
@@ -1178,7 +1179,7 @@ public class SIRB {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getArmazem();
+		List<HashMap<String, String>> dados = connectionProgress.getArmazem(getURLSILVER());
 		return dados;
 	}
 
@@ -1189,7 +1190,7 @@ public class SIRB {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getFornecedores();
+		List<HashMap<String, String>> dados = connectionProgress.getFornecedores(getURLSILVER());
 		return dados;
 	}
 
@@ -1201,7 +1202,7 @@ public class SIRB {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getStock(proref, liecod);
+		List<HashMap<String, String>> dados = connectionProgress.getStock(proref, liecod,getURLSILVER());
 		return dados;
 	}
 
@@ -1212,7 +1213,7 @@ public class SIRB {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getComponentes();
+		List<HashMap<String, String>> dados = connectionProgress.getComponentes(getURLSILVER());
 		return dados;
 	}
 
@@ -1223,7 +1224,7 @@ public class SIRB {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getUsers();
+		List<HashMap<String, String>> dados = connectionProgress.getUsers(getURLSILVER());
 		return dados;
 	}
 
@@ -1674,6 +1675,20 @@ public class SIRB {
 		return Response.status(200).entity(output).build();
 
 	}
+	
+	@POST
+	@Consumes("*/*")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/uploadRAKS")
+	public Response uploadFileRAKS(@FormDataParam("file") InputStream uploadedInputStream) {
+
+				
+		Response output = SomeQuarterlyJob.importar(uploadedInputStream);
+
+		return output;
+
+	}
+
 
 	// save uploaded file to new location
 	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
@@ -1795,5 +1810,18 @@ public class SIRB {
 		}
 
 		return data;
+	}
+
+	public String getURLSILVER() {
+		String url = "";
+		Query query_folder = entityManager.createNativeQuery("select top 1 * from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			url = content[2].toString();
+		}
+
+		return url;
 	}
 }
