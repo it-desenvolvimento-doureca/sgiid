@@ -6,7 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.ws.rs.core.Response;
@@ -184,9 +187,21 @@ public class SomeQuarterlyJob{
 			hist.put("SEQUENCIA", linha.substring(36, 38));
 			hist.put("TINA", linha.substring(49, 52));
 			hist.put("TEMPO_INICIO", linha.substring(56, 64));
-			hist.put("TEMPO_FIM", linha.substring(68, 76));
+			
+			Boolean vazio = false;
+			if(linha.substring(68, 76).equals("--:--:--")){
+				hist.put("TEMPO_FIM", linha.substring(56, 64));
+				vazio = true;
+			}else{
+				hist.put("TEMPO_FIM", linha.substring(68, 76));
+			}
+			
 			if(linha.substring(80, 81).equals("D")){
-				hist.put("DURACAO", linha.substring(85, 93));
+				if(vazio){
+					hist.put("DURACAO", linha.substring(85, 93));
+				}else{
+					hist.put("DURACAO","00:00:00");
+				}
 				hist.put("LIMITE_INCIO", linha.substring(97, 105));
 				hist.put("LIMITE_FIM", linha.substring(106, 114));
 				
@@ -196,7 +211,11 @@ public class SomeQuarterlyJob{
 					}
 				}			
 			}else{
-				hist.put("DURACAO", linha.substring(80, 88));
+				if(vazio){
+					hist.put("DURACAO", linha.substring(80, 88));
+				}else{
+					hist.put("DURACAO","00:00:00");
+				}
 				hist.put("LIMITE_INCIO", linha.substring(92, 100));
 				hist.put("LIMITE_FIM", linha.substring(101, 109));
 				
@@ -237,6 +256,32 @@ public class SomeQuarterlyJob{
 		String campo = (linha.trim().length() > 0) ? linha.substring(5, 25).trim() : "";
 
 		String valor = (linha.trim().length() > 0) ? linha.substring(36, linha.length()).trim() : "";
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		if(linha.substring(5, 9).equals("DH/I")){
+			Date date = null;
+			try {
+				date = formatter.parse(linha.substring(22, 32));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			cab.put("DATA_INICIO",  new java.sql.Date(date.getTime()).toString());
+			cab.put("HORA_INICIO", linha.substring(10, 18));
+		}
+		if(linha.substring(33, 37).equals("DH/F")){
+			Date date2 = null;
+			try {
+				date2 = formatter.parse(linha.substring(50, 60));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			cab.put("DATA_FIM",  new java.sql.Date(date2.getTime()).toString());
+			cab.put("HORA_FIM", linha.substring(38, 46));
+		}
+		
 		switch (campo) {
 		case "Title":
 			cab.put("TITLE", valor);
