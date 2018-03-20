@@ -3,6 +3,7 @@ package pt.example.bootstrap;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -23,13 +24,13 @@ public class ConnectProgress {
 	private Connection getConnection(String url) throws SQLException {
 		try {
 			// the openedge driver string
-			//Class.forName("com.ddtek.jdbcx.openedge.OpenEdgeDataSource40");
+			// Class.forName("com.ddtek.jdbcx.openedge.OpenEdgeDataSource40");
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			// the openedge url
 			// String url =
 			// "jdbc:datadirect:openedge://192.168.40.112:20613;DatabaseName=silv-ver;User=SYSPROGRESS;Password=SYSPROGRESS;";
-			//conf conf_url = new conf();
-			//String url = conf_url.url;
+			// conf conf_url = new conf();
+			// String url = conf_url.url;
 			// get the openedge database connection
 			globalconnection = DriverManager.getConnection(url);
 
@@ -103,7 +104,7 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getStock(String proref, String liecod,String url) throws SQLException {
+	public List<HashMap<String, String>> getStock(String proref, String liecod, String url) throws SQLException {
 		if (proref == null)
 			proref = "";
 		String query = "select SUM(a.STOQTE) as STOQTE,b.UNIUTI  from STOLIE  a LEFT JOIN SDTPRA  b ON a.proref = b.proref "
@@ -178,6 +179,77 @@ public class ConnectProgress {
 				HashMap<String, String> x = new HashMap<>();
 				x.put("RESCOD", rs.getString("RESCOD"));
 				x.put("RESDES", rs.getString("RESDES"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getCartelas(String url, List<HashMap<String, String>> data)
+			throws SQLException {
+		HashMap<String, String> firstMap = data.get(0);
+
+		String query = "select top 10000 *,c.DESCRICAO as DESCRICAO_HIST from CART_CAB a inner join CART_LINHA_ARTIGO b on a.ID_CART_CAB = b.ID_CART_CAB "
+				+ "inner join CART_LINHA_HISTORICO c on a.ID_CART_CAB = c.ID_CART_CAB inner join CART_LINHA_RACK d on a.ID_CART_CAB = d.ID_CART_CAB "
+				+ "inner join CART_LOAD_RAW e on b.ID_CART_LINHA_ARTIGO = e.ID_CART_LINHA_ARTIGO inner join CART_LOAD_USER f on a.ID_CART_CAB = f.ID_CART_CAB "
+				+ "where  ((not ('" + firstMap.get("utilizador") + "' != 'null' and '" + firstMap.get("utilizador")
+				+ "' != '')) or (f.LOAD_USER = '" + firstMap.get("utilizador") + "')) and " + "((not ('"
+				+ firstMap.get("ref") + "' != 'null' and '" + firstMap.get("ref") + "' != '')) or (b.ID_ARTIGO like '%"
+				+ firstMap.get("ref") + "%')) and " + "((not ('" + firstMap.get("lote") + "' != 'null' and '"
+				+ firstMap.get("lote") + "' != '')) or (a.CARREGAR_ID = '" + firstMap.get("lote") + "')) and "
+				+ "((not ('" + firstMap.get("tina") + "' != 'null' and '" + firstMap.get("tina")
+				+ "' != '')) or (c.TINA = '" + firstMap.get("tina") + "'))";
+		/*
+		 * String query = "select * from " +
+		 * "(select a.*,c.DURACAO,c.LIMITE_FIM,c.LIMITE_INCIO,c.SEQUENCIA,c.TEMPERATURA_BANHO,c.TEMPO_FIM,c.TINA,c.DESCRICAO as DESCRICAO_HIST  from CART_CAB a inner join CART_LINHA_HISTORICO c on a.ID_CART_CAB = c.ID_CART_CAB) t, "
+		 * +
+		 * "(select c.ID_ARTIGO, c.LOAD_PIECES,f.* from CART_CAB f inner join CART_LINHA_ARTIGO b on  f.ID_CART_CAB = b.ID_CART_CAB inner join CART_LINHA_ARTIGO c on b.ID_CART_LINHA_ARTIGO = c.ID_CART_LINHA_ARTIGO ) y, "
+		 * +
+		 * "(select c.* from CART_CAB g inner join CART_LINHA_RACK c on g.ID_CART_CAB = c.ID_CART_CAB ) u, "
+		 * +
+		 * "(select c.* from CART_CAB h inner join CART_LOAD_USER c on h.ID_CART_CAB = c.ID_CART_CAB ) i "
+		 * +
+		 * "where t.ID_CART_CAB = y.ID_CART_CAB and y.ID_CART_CAB = u.ID_CART_CAB and u.ID_CART_CAB = i.ID_CART_CAB and "
+		 * + "((not ('"+firstMap.get("utilizador")+"' != 'null' and '"+firstMap.
+		 * get("utilizador")+"' != '')) or (i.LOAD_USER = '"+firstMap.get(
+		 * "utilizador")+"')) and " +
+		 * "((not ('"+firstMap.get("ref")+"' != 'null' and '"+firstMap.get("ref"
+		 * )+"' != '')) or (y.ID_ARTIGO like '%"+firstMap.get("ref")+"%')) and "
+		 * + "((not ('"+firstMap.get("lote")+"' != 'null' and '"+firstMap.get(
+		 * "lote")+"' != '')) or (t.CARREGAR_ID = '"+firstMap.get("lote")
+		 * +"')) and " +
+		 * "((not ('"+firstMap.get("tina")+"' != 'null' and '"+firstMap.get(
+		 * "tina")+"' != '')) or (t.TINA = '"+firstMap.get("tina")+"'))";
+		 */
+
+		// System.out.println(query);
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			ResultSetMetaData metaData = rs.getMetaData();
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+
+				int count = metaData.getColumnCount();
+				for (int i = 1; i <= count; i++) {
+					String columnName = metaData.getColumnName(i);
+					x.put(columnName, rs.getString(columnName));
+				}
+				// x.put("TITLE", rs.getString("TITLE"));
+				// x.put("CARREGAR_ID", rs.getString("CARREGAR_ID"));
 				list.add(x);
 			}
 

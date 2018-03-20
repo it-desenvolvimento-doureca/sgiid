@@ -1227,7 +1227,18 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getUsers(getURLSILVER());
 		return dados;
 	}
+	
+	/************************* CARTELAS ************************/
+	@POST
+	@Path("/getCartelas")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getCartelas(final List<HashMap<String, String>> data) throws SQLException, ClassNotFoundException {
 
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getCartelas(getURL(),data);
+		return dados;
+	}
 	/************************************* GER_MODULO */
 	@POST
 	@Path("/createGER_MODULO")
@@ -1554,6 +1565,20 @@ public class SIRB {
 	public List<GER_VISTAS> getGER_VISTAS() {
 		return dao31.getall();
 	}
+	@GET
+	@Path("/getGER_VISTASbyid/{id}")
+	@Produces("application/json")
+	public List<GER_VISTAS> getGER_VISTASbyid(@PathParam("id") Integer id) {
+		return dao31.getGER_VISTASbyid(id);
+	}
+
+	@GET
+	@Path("/getbyid_pagina/{id}")
+	@Produces("application/json")
+	public List<GER_VISTAS> getbyid_pagina(@PathParam("id") Integer id) {
+		return dao31.getbyid_pagina(id);
+	}
+
 
 	@DELETE
 	@Path("/deleteGER_VISTAS/{id}")
@@ -1759,10 +1784,10 @@ public class SIRB {
 	@Path("/sendemail")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public EMAIL sendemail(final EMAIL data) {
+	public EMAIL sendemail(final EMAIL data,String[] fic) {
 		// System.out.println(data.getPARA());
 		SendEmail send = new SendEmail();
-		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO());
+		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO(),fic);
 		return data;
 
 	}
@@ -1776,7 +1801,7 @@ public class SIRB {
 
 		String value = firstMap.get("DADOS");
 		value = value.substring(1, value.length() - 1);
-		String[] keyValuePairs = value.split(",");
+		String[] keyValuePairs = value.split("\n/");
 
 		Query query3 = entityManager.createQuery("Select a from GER_EVENTOS_CONF a where MODULO = "
 				+ firstMap.get("MODULO") + " and MOMENTO = '" + firstMap.get("MOMENTO") + "' " + "and PAGINA = '"
@@ -1798,15 +1823,20 @@ public class SIRB {
 
 			// System.out.println(email.getPARA());
 			for (String pair : keyValuePairs) {
-				String[] entry = pair.split(":");
-
+				String[] entry = pair.split("::");
 				mensagem = mensagem.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
 				assunto = assunto.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
 			}
 
 			email.setASSUNTO(assunto);
 			email.setMENSAGEM(mensagem);
-			sendemail(email);
+			
+			String[] keyValuePairs3 = {};
+			if(firstMap.get("FICHEIROS") != null){
+				keyValuePairs3 = firstMap.get("FICHEIROS").split("<:>");
+			}
+			
+			sendemail(email,keyValuePairs3);
 		}
 
 		return data;

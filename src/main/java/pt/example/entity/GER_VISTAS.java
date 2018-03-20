@@ -19,6 +19,7 @@ public class GER_VISTAS {
 	private String SORTSTATE;
 	private String DESCRICAO;
 	private String FAMILIAS;
+	private Integer PAGINA;
 
 	@Id
 	@Column(name = "ID")
@@ -90,6 +91,15 @@ public class GER_VISTAS {
 
 	public void setFAMILIAS(String fAMILIAS) {
 		FAMILIAS = fAMILIAS;
+	}
+
+	@Column(name = "PAGINA")
+	public Integer getPAGINA() {
+		return PAGINA;
+	}
+
+	public void setPAGINA(Integer pAGINA) {
+		PAGINA = pAGINA;
 	}
 
 }

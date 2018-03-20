@@ -15,6 +15,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+import javax.xml.bind.DatatypeConverter;
 
 import pt.example.entity.conf;
 
@@ -26,8 +28,9 @@ public class SendEmail {
 
 	}
 
-	public void enviarEmail(String de, String para, String assunto, String mensagem, String nome_ficheiro) {
-
+	public void enviarEmail(String de, String para, String assunto, String mensagem, String nome_ficheiro,
+			String[] files) {
+		
 		final String username = "alertas.it.doureca@gmail.com";
 		final String password = "DourecA2@";
 
@@ -71,7 +74,22 @@ public class SendEmail {
 
 				multipart.addBodyPart(attachPart);
 			}
+			if (files.length > 0) {
 
+				for (String pair : files) {
+					//System.out.println(pair);
+
+					String[] pairs = pair.split("<//>");
+					String temp = pairs[1].split(",")[1];
+					byte[] tile = DatatypeConverter.parseBase64Binary(temp);
+					MimeBodyPart att = new MimeBodyPart();
+					DataSource ds = new ByteArrayDataSource(tile, "image/*");
+					att.setDataHandler(new DataHandler(ds));
+					att.setFileName(pairs[0]);
+					multipart.addBodyPart(att);
+
+				}
+			}
 			message.setContent(multipart);
 
 			Transport.send(message);
