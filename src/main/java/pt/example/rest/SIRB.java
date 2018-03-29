@@ -1,13 +1,17 @@
 package pt.example.rest;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +46,7 @@ import pt.example.dao.AB_DIC_BANHO_ADITIVODao;
 import pt.example.dao.AB_DIC_BANHO_COMPONENTEDao;
 import pt.example.dao.AB_DIC_COMPONENTEDao;
 import pt.example.dao.AB_DIC_LINHADao;
+import pt.example.dao.AB_DIC_LINHA_OFDao;
 import pt.example.dao.AB_DIC_TINADao;
 import pt.example.dao.AB_DIC_TIPO_ADICAODao;
 import pt.example.dao.AB_DIC_TIPO_MANUTENCAODao;
@@ -53,6 +58,7 @@ import pt.example.dao.AB_MOV_ANALISEDao;
 import pt.example.dao.AB_MOV_ANALISE_LINHADao;
 import pt.example.dao.AB_MOV_MANUTENCAODao;
 import pt.example.dao.AB_MOV_MANUTENCAO_CABDao;
+import pt.example.dao.AB_MOV_MANUTENCAO_ETIQDao;
 import pt.example.dao.AB_MOV_MANUTENCAO_LINHADao;
 import pt.example.dao.AB_MOV_REG_PARAM_OPERACAODao;
 import pt.example.dao.GER_ANALISESDao;
@@ -74,6 +80,7 @@ import pt.example.entity.AB_DIC_BANHO_ADITIVO;
 import pt.example.entity.AB_DIC_BANHO_COMPONENTE;
 import pt.example.entity.AB_DIC_COMPONENTE;
 import pt.example.entity.AB_DIC_LINHA;
+import pt.example.entity.AB_DIC_LINHA_OF;
 import pt.example.entity.AB_DIC_TINA;
 import pt.example.entity.AB_DIC_TIPO_ADICAO;
 import pt.example.entity.AB_DIC_TIPO_MANUTENCAO;
@@ -85,6 +92,7 @@ import pt.example.entity.AB_MOV_ANALISE;
 import pt.example.entity.AB_MOV_ANALISE_LINHA;
 import pt.example.entity.AB_MOV_MANUTENCAO;
 import pt.example.entity.AB_MOV_MANUTENCAO_CAB;
+import pt.example.entity.AB_MOV_MANUTENCAO_ETIQ;
 import pt.example.entity.AB_MOV_MANUTENCAO_LINHA;
 import pt.example.entity.AB_MOV_REG_PARAM_OPERACAO;
 import pt.example.entity.EMAIL;
@@ -168,12 +176,14 @@ public class SIRB {
 	private GER_PARAMETROSDao dao30;
 	@Inject
 	private GER_VISTASDao dao31;
-
 	@Inject
 	private GER_CAMPOS_DISPDao dao32;
-
 	@Inject
 	private GER_POSTOSDao dao33;
+	@Inject
+	private AB_DIC_LINHA_OFDao dao34;
+	@Inject
+	private AB_MOV_MANUTENCAO_ETIQDao dao35;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -1202,7 +1212,19 @@ public class SIRB {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getStock(proref, liecod,getURLSILVER());
+		List<HashMap<String, String>> dados = connectionProgress.getStock(proref, liecod, getURLSILVER());
+		return dados;
+	}
+
+	@GET
+	@Path("/getDadosEtiqueta/{etiqueta}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosEtiqueta(@PathParam("etiqueta") String etiqueta)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiqueta(getURLSILVER(), etiqueta);
 		return dados;
 	}
 
@@ -1227,18 +1249,44 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getUsers(getURLSILVER());
 		return dados;
 	}
-	
+
+	@GET
+	@Path("/verificaOF/{of}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> verificaOF(@PathParam("of") String of)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.verificaOF(getURLSILVER(), of);
+		return dados;
+	}
+
+	@GET
+	@Path("/verificaREF/{proref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> verificaREF(@PathParam("proref") String proref)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.verificaREF(getURLSILVER(), proref);
+		return dados;
+	}
+
 	/************************* CARTELAS ************************/
 	@POST
 	@Path("/getCartelas")
 	@Produces("application/json")
-	public List<HashMap<String, String>> getCartelas(final List<HashMap<String, String>> data) throws SQLException, ClassNotFoundException {
+	public List<HashMap<String, String>> getCartelas(final List<HashMap<String, String>> data)
+			throws SQLException, ClassNotFoundException {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getCartelas(getURL(),data);
+		List<HashMap<String, String>> dados = connectionProgress.getCartelas(getURL(), data);
 		return dados;
 	}
+
 	/************************************* GER_MODULO */
 	@POST
 	@Path("/createGER_MODULO")
@@ -1565,6 +1613,7 @@ public class SIRB {
 	public List<GER_VISTAS> getGER_VISTAS() {
 		return dao31.getall();
 	}
+
 	@GET
 	@Path("/getGER_VISTASbyid/{id}")
 	@Produces("application/json")
@@ -1578,7 +1627,6 @@ public class SIRB {
 	public List<GER_VISTAS> getbyid_pagina(@PathParam("id") Integer id) {
 		return dao31.getbyid_pagina(id);
 	}
-
 
 	@DELETE
 	@Path("/deleteGER_VISTAS/{id}")
@@ -1666,6 +1714,94 @@ public class SIRB {
 		return impressoras.imprimir(nomeficheiro, impressora);
 	}
 
+	/************************************* AB_DIC_LINHA_OF */
+	@POST
+	@Path("/createAB_DIC_LINHA_OF")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AB_DIC_LINHA_OF insertAB_DIC_LINHA_OFA(final AB_DIC_LINHA_OF data) {
+		return dao34.create(data);
+	}
+
+	@GET
+	@Path("/getAB_DIC_LINHA_OF")
+	@Produces("application/json")
+	public List<AB_DIC_LINHA_OF> getAB_DIC_LINHA_OF() {
+		return dao34.getall();
+	}
+
+	@GET
+	@Path("/getAB_DIC_LINHA_OFbyidlinha/{id}")
+	@Produces("application/json")
+	public List<AB_DIC_LINHA_OF> getAB_DIC_LINHA_OFbyip(@PathParam("id") Integer id) {
+		return dao34.getbyidlinha(id);
+	}
+
+	@DELETE
+	@Path("/deleteAB_DIC_LINHA_OF/{id}")
+	public void deleteAB_DIC_LINHA_OF(@PathParam("id") Integer id) {
+		AB_DIC_LINHA_OF AB_DIC_LINHA_OF = new AB_DIC_LINHA_OF();
+		AB_DIC_LINHA_OF.setID_LINHA_OF(id);
+		dao34.delete(AB_DIC_LINHA_OF);
+	}
+
+	@PUT
+	@Path("/updateAB_DIC_LINHA_OF")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AB_DIC_LINHA_OF updateAB_DIC_LINHA_OF(final AB_DIC_LINHA_OF AB_DIC_LINHA_OF) {
+		AB_DIC_LINHA_OF.setID_LINHA_OF(AB_DIC_LINHA_OF.getID_LINHA_OF());
+		return dao34.update(AB_DIC_LINHA_OF);
+	}
+
+	/************************************* AB_MOV_MANUTENCAO_ETIQ */
+	@POST
+	@Path("/createAB_MOV_MANUTENCAO_ETIQ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AB_MOV_MANUTENCAO_ETIQ insertAB_MOV_MANUTENCAO_ETIQA(final AB_MOV_MANUTENCAO_ETIQ data) {
+		return dao35.create(data);
+	}
+
+	@GET
+	@Path("/getAB_MOV_MANUTENCAO_ETIQbyidmanu/{id}")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO_ETIQ> getAB_MOV_MANUTENCAO_ETIQbyip(@PathParam("id") Integer id) {
+		return dao35.getbyid_manu(id);
+	}
+
+	@GET
+	@Path("/getAB_MOV_MANUTENCAO_ETIQbyid/{id}")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO_ETIQ> getAB_MOV_MANUTENCAO_ETIQbyid(@PathParam("id") Integer id) {
+		return dao35.getbyid(id);
+	}
+
+	@GET
+	@Path("/getAB_MOV_MANUTENCAO_ETIQbyref/{id}/{ref}")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO_ETIQ> getAB_MOV_MANUTENCAO_ETIQbyref(@PathParam("id") Integer id,
+			@PathParam("ref") String ref) {
+		return dao35.getbyRef(id, ref);
+	}
+
+	@DELETE
+	@Path("/deleteAB_MOV_MANUTENCAO_ETIQ/{id}")
+	public void deleteAB_MOV_MANUTENCAO_ETIQ(@PathParam("id") Integer id) {
+		AB_MOV_MANUTENCAO_ETIQ AB_MOV_MANUTENCAO_ETIQ = new AB_MOV_MANUTENCAO_ETIQ();
+		AB_MOV_MANUTENCAO_ETIQ.setID_MOV_MANU_ETIQUETA(id);
+		dao35.delete(AB_MOV_MANUTENCAO_ETIQ);
+	}
+
+	@PUT
+	@Path("/updateAB_MOV_MANUTENCAO_ETIQ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AB_MOV_MANUTENCAO_ETIQ updateAB_MOV_MANUTENCAO_ETIQ(final AB_MOV_MANUTENCAO_ETIQ AB_MOV_MANUTENCAO_ETIQ) {
+		AB_MOV_MANUTENCAO_ETIQ.setID_MANUTENCAO_LIN(AB_MOV_MANUTENCAO_ETIQ.getID_MANUTENCAO_LIN());
+		return dao35.update(AB_MOV_MANUTENCAO_ETIQ);
+	}
+
 	/************************************* GER_PARAMETROS */
 
 	@GET
@@ -1700,20 +1836,18 @@ public class SIRB {
 		return Response.status(200).entity(output).build();
 
 	}
-	
+
 	@POST
 	@Consumes("*/*")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/uploadRAKS")
 	public Response uploadFileRAKS(@FormDataParam("file") InputStream uploadedInputStream) {
 
-				
 		Response output = SomeQuarterlyJob.importar(uploadedInputStream);
 
 		return output;
 
 	}
-
 
 	// save uploaded file to new location
 	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
@@ -1784,10 +1918,11 @@ public class SIRB {
 	@Path("/sendemail")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public EMAIL sendemail(final EMAIL data,String[] fic) {
+	public EMAIL sendemail(final EMAIL data, String[] fic) {
 		// System.out.println(data.getPARA());
 		SendEmail send = new SendEmail();
-		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO(),fic);
+		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO(),
+				fic);
 		return data;
 
 	}
@@ -1830,13 +1965,13 @@ public class SIRB {
 
 			email.setASSUNTO(assunto);
 			email.setMENSAGEM(mensagem);
-			
+
 			String[] keyValuePairs3 = {};
-			if(firstMap.get("FICHEIROS") != null){
+			if (firstMap.get("FICHEIROS") != null) {
 				keyValuePairs3 = firstMap.get("FICHEIROS").split("<:>");
 			}
-			
-			sendemail(email,keyValuePairs3);
+
+			sendemail(email, keyValuePairs3);
 		}
 
 		return data;
@@ -1854,4 +1989,382 @@ public class SIRB {
 
 		return url;
 	}
+
+	// CRIAR
+	// FICHEIRO****************************************************************
+
+	@GET
+	@Path("/ficheiro/{id}")
+	@Produces("application/json")
+	public void getFicheiro(@PathParam("id") Integer id) throws IOException, ParseException {
+		try {
+			// Thread.sleep(3000);
+			Integer comp_num = 1;
+
+			String data = new SimpleDateFormat("yyyyMMddHHmmss_").format(new java.util.Date());
+			String nome_ficheiro = "";
+
+			/*
+			 * Query query = entityManager.createNativeQuery(
+			 * "Select f.ID_MANUTENCAO_LIN,d.OF_NUM,c.SECCAO,c.SUBSECCAO,c.REF_COMPOSTO from AB_MOV_MANUTENCAO_CAB a "
+			 * +
+			 * "inner join AB_MOV_MANUTENCAO_LINHA f on a.ID_MANUTENCAO_CAB = f.ID_MANUTENCAO_CAB "
+			 * +
+			 * "inner join AB_MOV_MANUTENCAO b on  a.ID_MANUTENCAO = b.ID_MANUTENCAO "
+			 * + "inner join AB_DIC_LINHA c on  b.ID_LINHA = c.ID_LINHA " +
+			 * "inner join (select top 1 * from AB_DIC_LINHA_OF e order by e.DATA) d on c.ID_LINHA = d.ID_LINHA "
+			 * + "where a.ID_MANUTENCAO_CAB = " + id);
+			 */
+			Query query = entityManager.createNativeQuery(
+					"Select a.ID_MANUTENCAO_CAB,d.OF_NUM,c.SECCAO,c.SUBSECCAO,c.REF_COMPOSTO from AB_MOV_MANUTENCAO_CAB a "
+							+ "inner join AB_MOV_MANUTENCAO b on  a.ID_MANUTENCAO = b.ID_MANUTENCAO "
+							+ "inner join AB_DIC_LINHA c on  b.ID_LINHA = c.ID_LINHA "
+							+ "inner join (select top 1 * from AB_DIC_LINHA_OF e order by e.DATA) d on c.ID_LINHA = d.ID_LINHA "
+							+ "where a.ID_MANUTENCAO_CAB = " + id);
+
+			List<Object[]> dados = query.getResultList();
+
+			for (Object[] content : dados) {
+				nome_ficheiro = data + "_ETIQUETA_" + content[0].toString() + ".txt";
+				criarFicheiro(content[0].toString(), nome_ficheiro, content[1].toString(), content[2].toString(),
+						content[3].toString(), content[4].toString());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void criarFicheiro(String id, String nome_ficheiro, String of, String SECCAO, String SUBSECCAO,
+			String REF_COMPOSTO) {
+
+		SimpleDateFormat formate = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat horaformate = new SimpleDateFormat("HHmmss");
+		String datatual = formate.format(new java.util.Date());
+		String horatual = horaformate.format(new java.util.Date());
+		String sequencia = "000000000";
+		String path = "";
+		/*
+		 * Query query = entityManager.createNativeQuery(
+		 * "select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO from AB_MOV_MANUTENCAO_ETIQ a where ID_MANUTENCAO_LIN = "
+		 * + id + "");
+		 */
+
+		Query query = entityManager.createNativeQuery(
+				"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD "
+						+ "from AB_MOV_MANUTENCAO_ETIQ a "
+						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
+						+ "where b.ID_MANUTENCAO_CAB  = " + id + "");
+
+		Query query_folder = entityManager.createNativeQuery("select top 1 * from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			path = content[1] + nome_ficheiro;
+		}
+
+		sequencia = sequencia();
+
+		List<Object[]> dados = query.getResultList();
+		ConnectProgress connectionProgress = new ConnectProgress();
+		List<HashMap<String, String>> lista = null;
+		Boolean Orig_Composant = false;
+		Integer count = 0;
+		String data = "";
+		String INDNUMCSE = "";
+		String NCLRANG = "";
+		for (Object[] content : dados) {
+
+			try {
+				lista = connectionProgress.getOrigineComposant(getURLSILVER(), content[7].toString(), of);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (lista.size() > 0) {
+				count = Integer.parseInt(lista.get(0).get("total"));
+				INDNUMCSE = lista.get(0).get("INDNUMCSE");
+				NCLRANG = lista.get(0).get("NCLRANG");
+			}
+			// System.out.println(content[0]);
+			data += "01        ";// Société
+			data += datatual; // Date suivi
+			data += sequencia; // N° séquence
+
+			data += "    ";// + Ligne de production
+
+			data += "1";// Type N° OF
+			data += (of + "         ").substring(0, 10); // N° OF
+
+			data += "1";// Type opération
+
+			// OP_NUM
+			data += ("0010").substring(0, 4);// N° Opération
+
+			data += "1";// Position ( S12 )
+
+			// Code section
+			data += (SECCAO + "         ").substring(0, 10);
+
+			// Code sous-section
+			data += (SUBSECCAO + "         ").substring(0, 10);
+
+			data += "  "; // N° d'équipe
+
+			// Type de ressource
+			data += ("    ").substring(0, 4);
+
+			// Code ressource
+			data += ("          ").substring(0, 10);
+
+			data += "   C"; // N° établissement + Type d'élément C
+
+			// Date début
+			data += datatual;
+			// Heure début
+			data += horatual.substring(0, 6);
+			// Date fin
+			data += datatual;
+			// Heure fin
+			data += horatual.substring(0, 6);
+
+			// Origine composant
+			if (count > 0) {
+				Orig_Composant = true;
+				data += "0";
+			} else {
+				Orig_Composant = false;
+				data += "1";
+			}
+
+			// Référence composé
+			data += (REF_COMPOSTO + "                  ").substring(0, 17);
+
+			// Variante composé (1)
+			data += ("          ").substring(0, 10);
+
+			// Variante composé (2)
+			data += ("          ").substring(0, 10);
+
+			// Indice du composé
+			data += ("          ").substring(0, 10);
+
+			// N° enregistrement Csé
+			String enregistrementcse = "000000000";
+			String sizecse = enregistrementcse + INDNUMCSE;
+			enregistrementcse = (sizecse).substring(sizecse.length() - 9, sizecse.length());
+			data += enregistrementcse;
+
+			// N° de rang
+			String rang = "00000";
+			if (Orig_Composant) {
+				String size = rang + NCLRANG;
+				rang = (size).substring(size.length() - 5, size.length());
+				data += rang;
+			} else {
+				data += rang;
+			}
+
+			// Référence composant
+			data += (content[7] + "                  ").substring(0, 17);
+
+			// Variante composant (1)
+			if (Orig_Composant && content[5] != null) {
+				data += (content[5] + "        ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Variante composant (2)
+			if (Orig_Composant && content[6] != null) {
+				data += (content[6] + "        ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Indice du composant
+			if (Orig_Composant && content[44] != null) {
+				data += (content[4] + "        ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// N° enregistrement Cst
+			String enregistrement = "000000000";
+			if (Orig_Composant && content[14] != null) {
+				String size = enregistrement + content[14];
+				enregistrement = (size).substring(size.length() - 9, size.length());
+				data += enregistrement;
+			} else {
+				data += enregistrement;
+			}
+
+			// Type quantité
+			data += "1"; // Signe
+
+			// Quantité
+			if (content[2] != null) {
+				String result = String.format("%.4f", content[2]).replace("$", ",");
+				String[] parts = result.split(",");
+				String part1 = "00000000000";
+				String part2 = "0000";
+				if (parts.length > 0) {
+					if (parts[0] != null) {
+						String size = part1 + parts[0];
+						part1 = (size).substring(size.length() - 11, size.length());
+					}
+					if (parts.length > 1) {
+						String size = part2 + parts[1];
+						part2 = (size).substring(size.length() - 4, size.length());
+					}
+				}
+				data += (part1 + part2 + "  ").substring(0, 17);
+			} else {
+				data += "000000000000000  ";
+			}
+
+			data += "+"; // Signe
+
+			// Unité
+			if (content[8] != null) {
+				data += (content[8] + "    ").substring(0, 4);
+			} else {
+				data += "    ";
+			}
+
+			// Quantité (US2)
+			data += "               ";
+
+			// Lieu origine
+			if (content[9] != null) {
+				data += (content[9] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Emplacement origine
+			if (content[15] != null) {
+				data += (content[15] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Référence du lot
+			if (content[10] != null) {
+				data += (content[10] + "                                   ").substring(0, 35);
+			} else {
+				data += "                                   ";
+			}
+
+			// N° de lot interne
+			String lotinterne = "000000000";
+			if (content[12] != null) {
+				String size = lotinterne + content[12];
+				lotinterne = (size).substring(size.length() - 9, size.length());
+				data += lotinterne;
+			} else {
+				data += lotinterne;
+			}
+
+			// N° d'étiquette
+			if (content[0] != null) {
+				data += (content[0] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// N° enreg. étiquette
+			String etiquette = "000000000";
+			if (content[1] != null) {
+				String size = etiquette + content[11];
+				etiquette = (size).substring(size.length() - 9, size.length());
+				data += etiquette;
+			} else {
+				data += etiquette;
+			}
+
+			// Texte libre
+			data += "                                        \r\n";
+
+		}
+
+		criar_ficheiro(data, path);
+
+	}
+
+	public String sequencia() {
+		String sequencia = "000000000";
+		Query query_seq = entityManager.createNativeQuery(
+				"select top 1 NUMERO_SEQUENCIA,DATA_SEQUENCIA from GER_SEQUENCIA_FICHEIRO where DATA_SEQUENCIA = CONVERT (date, GETDATE())");
+
+		List<Object[]> dados_seq = query_seq.getResultList();
+		if (dados_seq.size() > 0) {
+			Integer val = 1;
+			for (Object[] contentseq : dados_seq) {
+				val = Integer.parseInt(contentseq[0].toString()) + 1;
+				sequencia = ("000000000" + val).substring(("000000000" + val).length() - 9,
+						("000000000" + val).length());
+			}
+			entityManager.createNativeQuery("UPDATE GER_SEQUENCIA_FICHEIRO SET NUMERO_SEQUENCIA = " + val
+					+ " where DATA_SEQUENCIA = CONVERT (date, GETDATE())").executeUpdate();
+		} else {
+			sequencia = "000000001";
+			entityManager
+					.createNativeQuery(
+							"INSERT INTO GER_SEQUENCIA_FICHEIRO (DATA_SEQUENCIA,NUMERO_SEQUENCIA) VALUES (GETDATE(),1)")
+					.executeUpdate();
+		}
+		return sequencia;
+	}
+
+	public void criar_ficheiro(String data, String path) {
+		File file2 = new File(path + ".txt");
+
+		// if file doesnt exists, then create it
+
+		try {
+			file2.createNewFile();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		BufferedWriter bw2 = null;
+		FileWriter fw2 = null;
+		// true = append file
+		try {
+			fw2 = new FileWriter(file2.getAbsoluteFile(), true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		bw2 = new BufferedWriter(fw2);
+		try {
+			bw2.write(data);
+			if (bw2 != null) {
+				bw2.close();
+			}
+			if (fw2 != null) {
+				fw2.close();
+			}
+		} catch (IOException e) {
+			if (bw2 != null) {
+				try {
+					bw2.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			if (fw2 != null) {
+				try {
+					fw2.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			e.printStackTrace();
+		}
+	}
+
 }

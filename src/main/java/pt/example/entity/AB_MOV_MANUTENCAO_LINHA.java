@@ -16,6 +16,7 @@ public class AB_MOV_MANUTENCAO_LINHA {
 	private Integer ID_ADITIVO;
 	private Integer ID_UNIDADE1;
 	private String COD_REF;
+	private String NOME_REF;
 	private Integer ID_UNIDADE2;
 	private String VALOR1;
 	private String VALOR2;
@@ -142,6 +143,15 @@ public class AB_MOV_MANUTENCAO_LINHA {
 
 	public void setID_ADITIVO(Integer iD_ADITIVO) {
 		ID_ADITIVO = iD_ADITIVO;
+	}
+
+	@Column(name = "NOME_REF")
+	public String getNOME_REF() {
+		return NOME_REF;
+	}
+
+	public void setNOME_REF(String nOME_REF) {
+		NOME_REF = nOME_REF;
 	}
 
 }

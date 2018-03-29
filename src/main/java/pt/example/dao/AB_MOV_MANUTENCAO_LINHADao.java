@@ -16,7 +16,9 @@ public class AB_MOV_MANUTENCAO_LINHADao extends GenericDaoJpaImpl<AB_MOV_MANUTEN
 	public List<AB_MOV_MANUTENCAO_LINHA> getbyidmanutencaocab(Integer id) {
 		Query query = entityManager.createQuery("Select a,b,"
 				+ "(select c.MEDIDA from AB_DIC_UNIDADE_MEDIDA c where a.ID_UNIDADE1 = c.ID_MEDIDA)  as Medida,  "
-				+ "(select distinct d.MANUTENCAONAOPROGRAMADA from AB_DIC_BANHO_ADITIVO d,AB_MOV_MANUTENCAO_CAB x where x.ID_MANUTENCAO_CAB = a.ID_MANUTENCAO_CAB and x.ID_BANHO = d.ID_BANHO and a.ID_ADITIVO = d.ID_ADITIVO)  as NAOP  "
+				+ "(select distinct d.MANUTENCAONAOPROGRAMADA from AB_DIC_BANHO_ADITIVO d,AB_MOV_MANUTENCAO_CAB x where x.ID_MANUTENCAO_CAB = a.ID_MANUTENCAO_CAB and x.ID_BANHO = d.ID_BANHO and a.ID_ADITIVO = d.ID_ADITIVO)  as NAOP,  "
+				+ "(Select SUM(p.CONSUMIR) from AB_MOV_MANUTENCAO_ETIQ p where p.ID_MANUTENCAO_LIN = a.ID_MANUTENCAO_LIN ) as total_etiquetas, "
+				+ "(select COUNT(h.ID_MOV_MANU_ETIQUETA) from AB_MOV_MANUTENCAO_ETIQ h where h.ID_MANUTENCAO_LIN = a.ID_MANUTENCAO_LIN and h.CONSUMIR = 0) as vazios "
 				+ "from AB_MOV_MANUTENCAO_LINHA a, AB_DIC_COMPONENTE b where a.ID_MANUTENCAO_CAB = :id and a.ID_ADITIVO = b.ID_COMPONENTE order by a.ID_ADITIVO");
 		query.setParameter("id", id);
 		List<AB_MOV_MANUTENCAO_LINHA> data = query.getResultList();

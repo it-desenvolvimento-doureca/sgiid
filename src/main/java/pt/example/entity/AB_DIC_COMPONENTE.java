@@ -31,6 +31,8 @@ public class AB_DIC_COMPONENTE {
 	private String TIPO;
 	private String OBRIGATORIO;
 	private Float FACTOR_MULTIPLICACAO_AGUA;
+	private Float FACTOR_CONVERSAO;
+	private String UNISTO;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -130,7 +132,7 @@ public class AB_DIC_COMPONENTE {
 	public String getOBRIGATORIO() {
 		return OBRIGATORIO;
 	}
-	
+
 	@Column(name = "FACTOR_MULTIPLICACAO_AGUA")
 	public Float getFACTOR_MULTIPLICACAO_AGUA() {
 		return FACTOR_MULTIPLICACAO_AGUA;
@@ -194,6 +196,24 @@ public class AB_DIC_COMPONENTE {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "FACTOR_CONVERSAO")
+	public Float getFACTOR_CONVERSAO() {
+		return FACTOR_CONVERSAO;
+	}
+
+	public void setFACTOR_CONVERSAO(Float fACTOR_CONVERSAO) {
+		FACTOR_CONVERSAO = fACTOR_CONVERSAO;
+	}
+
+	@Column(name = "UNISTO")
+	public String getUNISTO() {
+		return UNISTO;
+	}
+
+	public void setUNISTO(String uNISTO) {
+		UNISTO = uNISTO;
 	}
 
 }

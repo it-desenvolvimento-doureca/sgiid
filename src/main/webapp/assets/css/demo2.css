@@ -3549,7 +3549,7 @@ input[type="date"]::-webkit-input-placeholder {
 
 .ui-widget-overlay {
     position: absolute;
-    top: 50px;
+    /*top: 50px;*/
     left: 0;
     bottom: 0;
     width: 100%;

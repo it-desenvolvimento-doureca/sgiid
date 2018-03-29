@@ -19,6 +19,36 @@ public class AB_DIC_LINHA {
 	private Timestamp DATA_ANULACAO;
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
+	private String SECCAO;
+	private String SUBSECCAO;
+	private String REF_COMPOSTO;
+
+	@Column(name = "SECCAO")
+	public String getSECCAO() {
+		return SECCAO;
+	}
+
+	@Column(name = "SUBSECCAO")
+	public String getSUBSECCAO() {
+		return SUBSECCAO;
+	}
+
+	@Column(name = "REF_COMPOSTO")
+	public String getREF_COMPOSTO() {
+		return REF_COMPOSTO;
+	}
+
+	public void setSECCAO(String sECCAO) {
+		SECCAO = sECCAO;
+	}
+
+	public void setSUBSECCAO(String sUBSECCAO) {
+		SUBSECCAO = sUBSECCAO;
+	}
+
+	public void setREF_COMPOSTO(String rEF_COMPOSTO) {
+		REF_COMPOSTO = rEF_COMPOSTO;
+	}
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {

@@ -417,6 +417,17 @@ my-app .main-panel .main-content .card {
 .next {
     cursor: pointer;
 }
+
 .previous {
     cursor: pointer;
+}
+
+.btetiqueta .green {
+    color: green;
+}
+.btetiqueta .red {
+    color: red;
+}
+.btetiqueta .yellow {
+    color: yellow;
 }
