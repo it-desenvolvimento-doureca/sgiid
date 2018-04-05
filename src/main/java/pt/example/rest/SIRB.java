@@ -1229,6 +1229,18 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getDadosEtiquetabyREF/{ref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosEtiquetabyREF(@PathParam("ref") String ref)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiquetabyREF(getURLSILVER(), ref);
+		return dados;
+	}
+
+	@GET
 	@Path("/getComponentes")
 	@Produces("application/json")
 	public List<HashMap<String, String>> getComponentes() throws SQLException, ClassNotFoundException {
@@ -1878,9 +1890,10 @@ public class SIRB {
 	public Response getFile(@PathParam("format") String format, @PathParam("filename") String Name,
 			@PathParam("id") Integer ID, @PathParam("relatorio") String relatorio) {
 		String fileName = null;
+		String filepath = getFILEPATH();
 		ReportGenerator report = new ReportGenerator();
 		try {
-			fileName = report.relatorio(format, Name, ID, relatorio, getURL());
+			fileName = report.relatorio(format, Name, ID, relatorio, getURL(), filepath);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1889,8 +1902,7 @@ public class SIRB {
 			e.printStackTrace();
 		}
 		if (fileName != null) {
-			conf pasta = new conf();
-			File file = new File("/" + pasta.nomepasta + "/relatorios/" + fileName);
+			File file = new File("/" + filepath + "/relatorios/" + fileName);
 			ResponseBuilder response = Response.ok((Object) file);
 			response.header("Content-Disposition", "attachment; filename=report." + format + "");
 			return response.build();
@@ -1911,6 +1923,20 @@ public class SIRB {
 		}
 
 		return url;
+	}
+
+	public String getFILEPATH() {
+		String filepath = "";
+		Query query_folder = entityManager
+				.createNativeQuery("select top 1 PASTA_JASPERREPORT,PASTA_FICHEIRO from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			filepath = content[0].toString();
+		}
+
+		return filepath;
 	}
 
 	/* Email ************************************/

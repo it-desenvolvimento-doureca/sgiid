@@ -44,16 +44,16 @@ public class ReportGenerator {
 	}
 
 	@SuppressWarnings("deprecation")
-	public String relatorio(String format,String Name, Integer ID, String relatorio, String url2) throws JRException, SQLException {
+	public String relatorio(String format,String Name, Integer ID, String relatorio, String url2,String filepath) throws JRException, SQLException {
 		HashMap hm = null;
 		String fileName = null;
 
 		// System.out.println("Start ....");
 		fileName = Name+"." + format;
-		conf pasta = new conf();
-		String jrxmlFileName = ""+pasta.filePath+"jasperfiles/"+relatorio+".jrxml";
-		String jasperFileName = ""+pasta.filePath+"jasperfiles/"+relatorio+".jasper";
-		String exportFileName = ""+pasta.filePath+"" + fileName;
+
+		String jrxmlFileName = "c:/"+filepath+"/relatorios/jasperfiles/"+relatorio+".jrxml";
+		String jasperFileName = "c:/"+filepath+"/relatorios/"+relatorio+".jasper";
+		String exportFileName = "c:/"+filepath+"/relatorios/"+ fileName;
 
 		JasperCompileManager.compileReportToFile(jrxmlFileName, jasperFileName);
 
@@ -93,14 +93,13 @@ public class ReportGenerator {
 		}
 		conn.close();
 		// System.out.println("Done exporting reports to pdf");
-		deleteoldfiles();
+		deleteoldfiles(filepath);
 		return fileName;
 
 	}
 
-	public void deleteoldfiles() {
-		conf pasta = new conf();
-		File directory = new File(pasta.filePath);
+	public void deleteoldfiles(String filepath) {
+		File directory = new File("c:/"+filepath+"/relatorios/");
 		File files[] = directory.listFiles();
 		for (int index = 0; index < files.length; index++) {
 					

@@ -3901,8 +3901,8 @@ checkbox {
 #burst-8 {
     border-radius: 0px;
     background: green;
-    width: 40px;
-    height: 40px;
+    width: 25px;
+    height: 25px;
     position: relative;
     text-align: center;
 }
@@ -3913,8 +3913,8 @@ checkbox {
     position: absolute;
     top: 0;
     left: 0;
-    height: 40px;
-    width: 40px;
+    height: 25px;
+    width: 25px;
     background: green;
 }
 

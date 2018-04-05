@@ -33,6 +33,7 @@ public class AB_DIC_COMPONENTE {
 	private Float FACTOR_MULTIPLICACAO_AGUA;
 	private Float FACTOR_CONVERSAO;
 	private String UNISTO;
+	private Boolean CISTERNA;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -214,6 +215,15 @@ public class AB_DIC_COMPONENTE {
 
 	public void setUNISTO(String uNISTO) {
 		UNISTO = uNISTO;
+	}
+
+	@Column(name = "CISTERNA")
+	public Boolean getCISTERNA() {
+		return CISTERNA;
+	}
+
+	public void setCISTERNA(Boolean cISTERNA) {
+		CISTERNA = cISTERNA;
 	}
 
 }
