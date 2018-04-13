@@ -2,6 +2,10 @@
     color: red;
 }
 
+.cabecalho_manu label{
+    width:  100%;
+}
+
 .loader {
     border: 5px solid #f3f3f3;
     border-top: 5px solid #002068;
@@ -303,7 +307,6 @@
     -webkit-box-shadow: none;
 }
 
-
 /* Responsive */
 
 @media (max-width: 35em) {
@@ -311,7 +314,6 @@
         display: none;
     }
 }
-
 
 /* ************************************************** */
 
@@ -425,9 +427,15 @@ my-app .main-panel .main-content .card {
 .btetiqueta .green {
     color: green;
 }
+
 .btetiqueta .red {
     color: red;
 }
+
 .btetiqueta .yellow {
     color: yellow;
+}
+
+.manu_cor_vermelho {
+    color: red;
 }

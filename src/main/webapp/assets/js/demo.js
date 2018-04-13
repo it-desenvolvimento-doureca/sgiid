@@ -151,6 +151,20 @@ $(document).ready(function () {
         return false;
     });
 
+
+    $('.main-panel').scroll(function () {
+        if ($(this).scrollTop() > 300) {
+         $(".ag-header").css("position", "fixed");
+         $(".ag-header").css("z-index", "1");
+         $(".ag-header").css("top", $(this).scrollTop()+50);
+         $(".ag-header").css("transition","all 1s ease 0s");
+        } else {
+         $(".ag-header").css("position", "initial");     
+        }
+    });
+
+    
+
 });
 
 /* ************************************************** */

@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -33,6 +34,8 @@ public class AB_MOV_MANUTENCAO_ETIQ {
 	private Timestamp DATA_CRIA;
 	private Integer UTZ_CRIA;
 	private Integer INDNUMENR;
+	private Date DATCRE;
+	private String PRODES;
 
 	@Column(name = "DATA_CRIA")
 	public Timestamp getDATA_CRIA() {
@@ -132,6 +135,24 @@ public class AB_MOV_MANUTENCAO_ETIQ {
 	@Column(name = "LOTNUMENR")
 	public Integer getLOTNUMENR() {
 		return LOTNUMENR;
+	}
+
+	@Column(name = "DATCRE")
+	public Date getDATCRE() {
+		return DATCRE;
+	}
+
+	@Column(name = "PRODES")
+	public String getPRODES() {
+		return PRODES;
+	}
+
+	public void setDATCRE(Date dATCRE) {
+		DATCRE = dATCRE;
+	}
+
+	public void setPRODES(String pRODES) {
+		PRODES = pRODES;
 	}
 
 	public void setID_MOV_MANU_ETIQUETA(Integer iD_MOV_MANU_ETIQUETA) {

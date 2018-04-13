@@ -35,7 +35,7 @@ public class Printer {
 
 		//PDDocument document = PDDocument.load(new File("C:/sgiid_dev/relatorios/22012018143309.pdf"));
 
-		//imprimir("22012018143309", "PDF");
+		//imprimir("11042018094628", "PDF");
 		//document.close();
 
 	}
@@ -118,12 +118,11 @@ public class Printer {
 		    p.setImageableArea(0, 0,pf0.getWidth(), pf0.getHeight());
 		    pf1.setPaper(p);
 		    PageFormat pf2 = job.validatePage(pf1);
-		    System.out.println(pf2.getHeight()+ "-"+pf2.getWidth());
+		   // System.out.println(pf2.getHeight()+ "-"+pf2.getWidth());
 		   // book.append(new PDFPrintable(document));
 		    //job.setPrintable(new PDFPrintable(document,Scaling.SCALE_TO_FIT,false),);
-		    book.append(new PDFPrintable(document,Scaling.ACTUAL_SIZE,false), pf2);
+		    book.append(new PDFPrintable(document,Scaling.ACTUAL_SIZE,false),pf2, document.getNumberOfPages());
 		    job.setPageable(book);
-			
 			
 			job.print();
 		} else {

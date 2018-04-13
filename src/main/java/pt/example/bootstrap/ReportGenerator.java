@@ -4,19 +4,23 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.enterprise.inject.spi.Bean;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
@@ -31,29 +35,29 @@ import pt.example.entity.conf;
 public class ReportGenerator {
 	public static void main(String[] args) {
 		/*
-		try {
-			 report.relatorio("docx");
-			
-		} catch (JRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		 * try { report.relatorio("docx");
+		 * 
+		 * } catch (JRException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } catch (SQLException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); }
+		 */
 	}
 
 	@SuppressWarnings("deprecation")
-	public String relatorio(String format,String Name, Integer ID, String relatorio, String url2,String filepath) throws JRException, SQLException {
+	public String relatorio(String format, String Name, Integer ID, String relatorio, String url2, String filepath)
+			throws JRException, SQLException {
 		HashMap hm = null;
 		String fileName = null;
 
 		// System.out.println("Start ....");
-		fileName = Name+"." + format;
+		fileName = Name + "." + format;
 
-		String jrxmlFileName = "c:/"+filepath+"/relatorios/jasperfiles/"+relatorio+".jrxml";
-		String jasperFileName = "c:/"+filepath+"/relatorios/"+relatorio+".jasper";
-		String exportFileName = "c:/"+filepath+"/relatorios/"+ fileName;
+		String jrxmlFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jrxml";
+		String jasperFileName = "c:/" + filepath + "/relatorios/" + relatorio + ".jasper";
+		String exportFileName = "c:/" + filepath + "/relatorios/" + fileName;
+
+		List<Bean> beans = new ArrayList<Bean>();
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(beans);
 
 		JasperCompileManager.compileReportToFile(jrxmlFileName, jasperFileName);
 
@@ -63,8 +67,10 @@ public class ReportGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//String url = "jdbc:jtds:sqlserver://192.168.40.101/"+pasta.database+";instance=DOURECA;User=sa;Password=DourecA2@;";
-		//String url = "jdbc:jtds:sqlserver://192.168.40.126/SGIID;instance=DEVDOURECA;User=sa;Password=DourecA2@;";
+		// String url =
+		// "jdbc:jtds:sqlserver://192.168.40.101/"+pasta.database+";instance=DOURECA;User=sa;Password=DourecA2@;";
+		// String url =
+		// "jdbc:jtds:sqlserver://192.168.40.126/SGIID;instance=DEVDOURECA;User=sa;Password=DourecA2@;";
 		String url = url2;
 		Connection conn = DriverManager.getConnection(url);
 
@@ -99,19 +105,19 @@ public class ReportGenerator {
 	}
 
 	public void deleteoldfiles(String filepath) {
-		File directory = new File("c:/"+filepath+"/relatorios/");
+		File directory = new File("c:/" + filepath + "/relatorios/");
 		File files[] = directory.listFiles();
 		for (int index = 0; index < files.length; index++) {
-					
-			if (!files[index].isDirectory()){
+
+			if (!files[index].isDirectory()) {
 				long diff = new Date().getTime() - files[index].lastModified();
-				int x = 15; //se o ficheiro não for modificado à 15 dias é apagado
-				if(diff > x * 24 * 60 * 60 * 1000){
+				int x = 15; // se o ficheiro não for modificado à 15 dias é
+							// apagado
+				if (diff > x * 24 * 60 * 60 * 1000) {
 					boolean wasDeleted = files[index].delete();
 				}
 			}
 		}
 	}
-	
 
 }

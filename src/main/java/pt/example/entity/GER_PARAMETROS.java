@@ -15,6 +15,9 @@ public class GER_PARAMETROS {
 	private String PASTA_FICHEIRO;
 	private String URL_SILVER;
 	private String URL_JASPER;
+	private String PASTA_ETIQUETAS;
+	private String MODELO_REPORT;
+	private String PASTA_JASPERREPORT;
 
 	@Id
 	@Column(name = "ID")
@@ -52,6 +55,33 @@ public class GER_PARAMETROS {
 
 	public void setURL_JASPER(String uRL_JASPER) {
 		URL_JASPER = uRL_JASPER;
+	}
+
+	@Column(name = "PASTA_ETIQUETAS")
+	public String getPASTA_ETIQUETAS() {
+		return PASTA_ETIQUETAS;
+	}
+
+	public void setPASTA_ETIQUETAS(String pASTA_ETIQUETAS) {
+		PASTA_ETIQUETAS = pASTA_ETIQUETAS;
+	}
+	
+	@Column(name = "MODELO_REPORT")
+	public String getMODELO_REPORT() {
+		return MODELO_REPORT;
+	}
+
+	public void setMODELO_REPORT(String mODELO_REPORT) {
+		MODELO_REPORT = mODELO_REPORT;
+	}
+	
+	@Column(name = "PASTA_JASPERREPORT")
+	public String getPASTA_JASPERREPORT() {
+		return PASTA_JASPERREPORT;
+	}
+
+	public void setPASTA_JASPERREPORT(String pASTA_JASPERREPORT) {
+		PASTA_JASPERREPORT = pASTA_JASPERREPORT;
 	}
 
 }

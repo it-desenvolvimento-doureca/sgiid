@@ -29,7 +29,7 @@ public class SendEmail {
 	}
 
 	public void enviarEmail(String de, String para, String assunto, String mensagem, String nome_ficheiro,
-			String[] files) {
+			String[] files,String nomepasta) {
 		
 		final String username = "alertas.it.doureca@gmail.com";
 		final String password = "DourecA2@";
@@ -66,8 +66,8 @@ public class SendEmail {
 
 			if (nome_ficheiro != null) {
 				MimeBodyPart attachPart = new MimeBodyPart();
-				conf pasta = new conf();
-				String filename = "/" + pasta.nomepasta + "/relatorios/" + nome_ficheiro + ".pdf";
+				
+				String filename = "/" + nomepasta + "/relatorios/" + nome_ficheiro + ".pdf";
 				DataSource source = new FileDataSource(filename);
 				attachPart.setDataHandler(new DataHandler(source));
 				attachPart.setFileName("Report.pdf");

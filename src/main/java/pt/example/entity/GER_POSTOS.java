@@ -17,6 +17,8 @@ public class GER_POSTOS {
 	private String DESCRICAO;
 	private String IMPRESSORA;
 	private String IP_POSTO;
+	private String IP_IMPRESSORA;
+	private String NOME_IMPRESSORA;
 
 	@Id
 	@Column(name = "ID_POSTO")
@@ -38,6 +40,24 @@ public class GER_POSTOS {
 	@Column(name = "IP_POSTO")
 	public String getIP_POSTO() {
 		return IP_POSTO;
+	}
+	
+	@Column(name = "IP_IMPRESSORA")
+	public String getIP_IMPRESSORA() {
+		return IP_IMPRESSORA;
+	}
+	
+	@Column(name = "NOME_IMPRESSORA")
+	public String getNOME_IMPRESSORA() {
+		return NOME_IMPRESSORA;
+	}
+
+	public void setIP_IMPRESSORA(String iP_IMPRESSORA) {
+		IP_IMPRESSORA = iP_IMPRESSORA;
+	}
+
+	public void setNOME_IMPRESSORA(String nOME_IMPRESSORA) {
+		NOME_IMPRESSORA = nOME_IMPRESSORA;
 	}
 
 	public void setID_POSTO(Integer iD_POSTO) {

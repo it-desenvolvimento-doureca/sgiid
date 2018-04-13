@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1241,6 +1242,18 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getDadosEtiquetabyREFcisterna/{ref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosEtiquetabyREFcisterna(@PathParam("ref") String ref)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiquetabyREFcisterna(getURLSILVER(), ref);
+		return dados;
+	}
+
+	@GET
 	@Path("/getComponentes")
 	@Produces("application/json")
 	public List<HashMap<String, String>> getComponentes() throws SQLException, ClassNotFoundException {
@@ -1948,7 +1961,7 @@ public class SIRB {
 		// System.out.println(data.getPARA());
 		SendEmail send = new SendEmail();
 		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO(),
-				fic);
+				fic, getFILEPATH());
 		return data;
 
 	}
@@ -2042,18 +2055,19 @@ public class SIRB {
 			 * + "where a.ID_MANUTENCAO_CAB = " + id);
 			 */
 			Query query = entityManager.createNativeQuery(
-					"Select a.ID_MANUTENCAO_CAB,d.OF_NUM,c.SECCAO,c.SUBSECCAO,c.REF_COMPOSTO from AB_MOV_MANUTENCAO_CAB a "
+					"Select a.ID_MANUTENCAO_CAB,(select top 1 OF_NUM from AB_DIC_LINHA_OF e where ID_LINHA = c.id_linha and DATA <= GETDATE() order by e.DATA desc) as ofnum,c.SECCAO,c.SUBSECCAO,c.REF_COMPOSTO,a.ID_MANUTENCAO "
+							+ "from AB_MOV_MANUTENCAO_CAB a "
 							+ "inner join AB_MOV_MANUTENCAO b on  a.ID_MANUTENCAO = b.ID_MANUTENCAO "
-							+ "inner join AB_DIC_LINHA c on  b.ID_LINHA = c.ID_LINHA "
-							+ "inner join (select top 1 * from AB_DIC_LINHA_OF e order by e.DATA) d on c.ID_LINHA = d.ID_LINHA "
-							+ "where a.ID_MANUTENCAO_CAB = " + id);
+							+ "inner join AB_DIC_LINHA c on  b.ID_LINHA = c.ID_LINHA " + "where a.ID_MANUTENCAO_CAB = "
+							+ id);
 
 			List<Object[]> dados = query.getResultList();
 
 			for (Object[] content : dados) {
-				nome_ficheiro = data + "_ETIQUETA_" + content[0].toString() + ".txt";
+				//nome_ficheiro = data + "_ETIQUETA_" + content[0].toString() + ".txt";
+				nome_ficheiro = "ETIQUETA_ID" + content[0].toString() + ".txt";
 				criarFicheiro(content[0].toString(), nome_ficheiro, content[1].toString(), content[2].toString(),
-						content[3].toString(), content[4].toString());
+						content[3].toString(), content[4].toString(),content[5].toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2061,7 +2075,7 @@ public class SIRB {
 	}
 
 	public void criarFicheiro(String id, String nome_ficheiro, String of, String SECCAO, String SUBSECCAO,
-			String REF_COMPOSTO) {
+			String REF_COMPOSTO,String num_manutencao) {
 
 		SimpleDateFormat formate = new SimpleDateFormat("yyyyMMdd");
 		SimpleDateFormat horaformate = new SimpleDateFormat("HHmmss");
@@ -2069,6 +2083,11 @@ public class SIRB {
 		String horatual = horaformate.format(new java.util.Date());
 		String sequencia = "000000000";
 		String path = "";
+		String path2 = "";
+		String modelo_REPORT = "";
+		String nomeimpressora = "";
+		String ipimpressora = "";
+		String data_etiq = "";
 		/*
 		 * Query query = entityManager.createNativeQuery(
 		 * "select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO from AB_MOV_MANUTENCAO_ETIQ a where ID_MANUTENCAO_LIN = "
@@ -2076,17 +2095,23 @@ public class SIRB {
 		 */
 
 		Query query = entityManager.createNativeQuery(
-				"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD "
-						+ "from AB_MOV_MANUTENCAO_ETIQ a "
+				"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES,a.DATCRE"
+						+ ",(select ID_MANUTENCAO from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB) as id2 "
+						+ ",(a.QUANT - a.QUANT_FINAL) as qtt " + "from AB_MOV_MANUTENCAO_ETIQ a "
 						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
 						+ "where b.ID_MANUTENCAO_CAB  = " + id + "");
 
-		Query query_folder = entityManager.createNativeQuery("select top 1 * from GER_PARAMETROS a");
+		Query query_folder = entityManager.createNativeQuery(
+				"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,NOME_IMPRESSORA,IP_IMPRESSORA,MODELO_REPORT from GER_PARAMETROS a,GER_POSTOS b");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		for (Object[] content : dados_folder) {
-			path = content[1] + nome_ficheiro;
+			path = content[0] + nome_ficheiro;
+			path2 = content[1].toString();
+			nomeimpressora = content[2].toString();
+			ipimpressora = content[3].toString();
+			modelo_REPORT = content[4].toString();
 		}
 
 		sequencia = sequencia();
@@ -2099,7 +2124,22 @@ public class SIRB {
 		String data = "";
 		String INDNUMCSE = "";
 		String NCLRANG = "";
+		Integer size_etiq = 0;
+		data_etiq += "LAB_NAME=" + modelo_REPORT + "\r\n";
+		if (!ipimpressora.isEmpty() && ipimpressora != null) {
+			ipimpressora = ",->" + ipimpressora;
+		}
+		String data_path = new SimpleDateFormat("yyyyMMddHHmmss_").format(new java.util.Date());
+		path2 = path2 + "ETIQUETA"+id;
+		data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
+		data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
 		for (Object[] content : dados) {
+			if (Float.parseFloat(content[3].toString()) != 0 && !content[3].toString().equals(content[1].toString())) {
+
+				// path2 = path2 + data_path + "_" + content[0].toString();
+				data_etiq += criaFicheiroEtiqueta(content);
+				size_etiq++;
+			}
 
 			try {
 				lista = connectionProgress.getOrigineComposant(getURLSILVER(), content[7].toString(), of);
@@ -2120,7 +2160,7 @@ public class SIRB {
 			data += "    ";// + Ligne de production
 
 			data += "1";// Type N° OF
-			data += (of + "         ").substring(0, 10); // N° OF
+			data += (of + "          ").substring(0, 10); // N° OF
 
 			data += "1";// Type opération
 
@@ -2130,10 +2170,10 @@ public class SIRB {
 			data += "1";// Position ( S12 )
 
 			// Code section
-			data += (SECCAO + "         ").substring(0, 10);
+			data += (SECCAO + "          ").substring(0, 10);
 
 			// Code sous-section
-			data += (SUBSECCAO + "         ").substring(0, 10);
+			data += (SUBSECCAO + "          ").substring(0, 10);
 
 			data += "  "; // N° d'équipe
 
@@ -2164,7 +2204,7 @@ public class SIRB {
 			}
 
 			// Référence composé
-			data += (REF_COMPOSTO + "                  ").substring(0, 17);
+			data += (REF_COMPOSTO + "                 ").substring(0, 17);
 
 			// Variante composé (1)
 			data += ("          ").substring(0, 10);
@@ -2182,42 +2222,46 @@ public class SIRB {
 			data += enregistrementcse;
 
 			// N° de rang
-			String rang = "00000";
+			/*
+			 * String rang = "00000"; if (Orig_Composant) { String size = rang +
+			 * NCLRANG; rang = (size).substring(size.length() - 5,
+			 * size.length()); data += rang; } else { data += rang; }
+			 */
+
 			if (Orig_Composant) {
-				String size = rang + NCLRANG;
-				rang = (size).substring(size.length() - 5, size.length());
-				data += rang;
+				data += (NCLRANG + "     ").substring(0, 5);
 			} else {
-				data += rang;
+				data += ("     ").substring(0, 5);
 			}
 
 			// Référence composant
-			data += (content[7] + "                  ").substring(0, 17);
+			data += (content[7] + "                 ").substring(0, 17);
 
 			// Variante composant (1)
-			if (Orig_Composant && content[5] != null) {
-				data += (content[5] + "        ").substring(0, 10);
+			if (content[5] != null) {
+				data += (content[5] + "          ").substring(0, 10);
 			} else {
 				data += "          ";
 			}
 
 			// Variante composant (2)
-			if (Orig_Composant && content[6] != null) {
-				data += (content[6] + "        ").substring(0, 10);
+			if (content[6] != null) {
+				data += (content[6] + "          ").substring(0, 10);
 			} else {
 				data += "          ";
 			}
 
 			// Indice du composant
-			if (Orig_Composant && content[44] != null) {
-				data += (content[4] + "        ").substring(0, 10);
+			if (content[4] != null) {
+				data += (content[4] + "          ").substring(0, 10);
 			} else {
 				data += "          ";
 			}
 
 			// N° enregistrement Cst
+
 			String enregistrement = "000000000";
-			if (Orig_Composant && content[14] != null) {
+			if (content[14] != null) {
 				String size = enregistrement + content[14];
 				enregistrement = (size).substring(size.length() - 9, size.length());
 				data += enregistrement;
@@ -2225,12 +2269,18 @@ public class SIRB {
 				data += enregistrement;
 			}
 
+			/*
+			 * if (content[14] != null) { data += (content[14] +
+			 * "         ").substring(0, 9); } else { data +=
+			 * ("         ").substring(0, 9); }
+			 */
+
 			// Type quantité
 			data += "1"; // Signe
 
 			// Quantité
-			if (content[2] != null) {
-				String result = String.format("%.4f", content[2]).replace("$", ",");
+			if (content[19] != null) {
+				String result = String.format("%.4f", content[19]).replace("$", ",");
 				String[] parts = result.split(",");
 				String part1 = "00000000000";
 				String part2 = "0000";
@@ -2310,12 +2360,80 @@ public class SIRB {
 			}
 
 			// Texte libre
-			data += "                                        \r\n";
+			data += (num_manutencao + "                                        ").substring(0, 40);
+			data += "\r\n";
 
 		}
 
 		criar_ficheiro(data, path);
+		if (size_etiq > 0) {
+			criar_ficheiro(data_etiq, path2);
+		}
 
+	}
+
+	public String criaFicheiroEtiqueta(Object[] content) {
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		java.util.Date date1 = null;
+		try {
+			date1 = formatter.parse(content[17].toString());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		formatter = new SimpleDateFormat("yyMMdd");
+		String datas = formatter.format(date1);
+		String data = "";
+		data += "DOURECA - PT- 4940;DOURECA - PT- 4940;;EW93 404D52 DA;P;";
+		data += content[3] + ";" // AF3
+				+ ";" // A3
+				+ ";" // AF4
+				+ ";" // A4
+				+ content[0] + ";" // AF5
+				+ "S;" // A5
+				+ content[16] + ";" // AF6
+				+ content[7] + ";" // AF7
+				+ ";" // A7
+				+ ";" // AF8
+				+ ";" // AF9
+				+ ";" // AF10
+				+ ";" // AF11
+				+ ";" // AF24
+				+ ";" // AF12
+				+ "D" + datas + ";" // AF16
+				+ ";" // A16
+				+ ";" // AF17
+				+ ";" // AF18
+				+ ";" // AF19
+				+ ";" // AF20
+				+ ";" // A20
+				+ content[12] + ";" // AF21
+				+ ";" // A21
+				+ ";" // AF22
+				+ ";" // AF23
+				+ ";" // AF25
+				+ ";" // AF26
+				+ ";" // AF27
+				+ ";" // AF28
+				+ ";" // AF29
+				+ ";" // AF30
+				+ ";" // AF31
+				+ ";" // AF32
+				+ ";" // AF33
+				+ ";" // AF34
+				+ ";" // AF35
+				+ ";" // AF36
+				+ ";" // AF37
+				+ ";" // AF38
+				+ ";" // AF39
+				+ ";" // AF40
+				+ ";" // AF41
+				+ ";" // AF42
+				+ ";" // AF43
+				+ content[18] + ";" // AF44
+				+ ";\r\n";
+
+		return data;
 	}
 
 	public String sequencia() {
@@ -2345,7 +2463,7 @@ public class SIRB {
 
 	public void criar_ficheiro(String data, String path) {
 		File file2 = new File(path + ".txt");
-
+		if(file2.delete())
 		// if file doesnt exists, then create it
 
 		try {
