@@ -33,7 +33,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/it2/Downloads/jdbc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/it2/Downloads/openedge.jar"/>
 	<classpathentry kind="lib" path="C:/Users/it2/wildfly-10.0.0.Final/modules/system/layers/base/javax/persistence/api/main/hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Jaspersoft/iReport-5.6.0/ireport/modules/ext/commons-digester-2.1.jar"/>
@@ -61,5 +60,6 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-6.5.1.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-javaflow-6.5.1.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-digester-1.7.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jdbc.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -1998,7 +1998,9 @@ public class SIRB {
 			// System.out.println(email.getPARA());
 			for (String pair : keyValuePairs) {
 				String[] entry = pair.split("::");
+
 				mensagem = mensagem.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
+
 				assunto = assunto.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
 			}
 
@@ -2064,18 +2066,32 @@ public class SIRB {
 			List<Object[]> dados = query.getResultList();
 
 			for (Object[] content : dados) {
-				//nome_ficheiro = data + "_ETIQUETA_" + content[0].toString() + ".txt";
+				// nome_ficheiro = data + "_ETIQUETA_" + content[0].toString() +
+				// ".txt";
 				nome_ficheiro = "ETIQUETA_ID" + content[0].toString() + ".txt";
+
 				criarFicheiro(content[0].toString(), nome_ficheiro, content[1].toString(), content[2].toString(),
-						content[3].toString(), content[4].toString(),content[5].toString());
+						content[3].toString(), content[4].toString(), content[5].toString());
+
 			}
+
+			Query query2 = entityManager.createNativeQuery(
+					"select ID_MANUTENCAO_LIN,ID_MANUTENCAO_CAB from AB_MOV_MANUTENCAO_LINHA where ID_MANUTENCAO_CAB = "
+							+ id);
+
+			List<Object[]> dados2 = query2.getResultList();
+
+			for (Object[] content2 : dados2) {
+				alerta_etiquetas(Integer.parseInt(content2[0].toString()));
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void criarFicheiro(String id, String nome_ficheiro, String of, String SECCAO, String SUBSECCAO,
-			String REF_COMPOSTO,String num_manutencao) {
+			String REF_COMPOSTO, String num_manutencao) {
 
 		SimpleDateFormat formate = new SimpleDateFormat("yyyyMMdd");
 		SimpleDateFormat horaformate = new SimpleDateFormat("HHmmss");
@@ -2130,7 +2146,7 @@ public class SIRB {
 			ipimpressora = ",->" + ipimpressora;
 		}
 		String data_path = new SimpleDateFormat("yyyyMMddHHmmss_").format(new java.util.Date());
-		path2 = path2 + "ETIQUETA"+id;
+		path2 = path2 + "ETIQUETA" + id;
 		data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
 		data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
 		for (Object[] content : dados) {
@@ -2436,6 +2452,95 @@ public class SIRB {
 		return data;
 	}
 
+	public void alerta_etiquetas(Integer id) {
+
+		DecimalFormat decimalFormat = new DecimalFormat("#0.000");
+
+		String email_para = "", numero_manutencao = "", data_manutencao = "", nome_banho = "", tina = "",
+				utilizador = "", total_consumido = "", valor_aditivo = "", linha = "", tipo_manutencao = "",
+				ref_aditivo = "", nome_aditivo = "";
+
+		String etiquetas = "<table  border='1'><tr><th><b>Nº Etiqueta</b></th><th><b>Qtd.</b></th><th><b>Consumido</b></th><th><b>Qtd. Final</b></th></tr>";
+		String valor = null, total = null;
+		Query query = entityManager.createNativeQuery(
+				"select d.ID_MANUTENCAO,c.ETQNUM,c.CONSUMIR,b.VALOR1,d.DATA_PLANEAMENTO,d.HORA_PLANEAMENTO, "
+						+ "(select SUM(v.CONSUMIR) from AB_MOV_MANUTENCAO_ETIQ v where v.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN) as total, "
+						+ "(select MEDIDA from AB_DIC_UNIDADE_MEDIDA where ID_MEDIDA = b.ID_UNIDADE1) as unidade, "
+						+ "(select f.NOME_BANHO from AB_DIC_BANHO f where f.ID_BANHO = a.ID_BANHO) as banho, a.ID_BANHO, "
+						+ "(select f.EMAIL_PARA from AB_DIC_BANHO f where f.ID_BANHO = a.ID_BANHO) as email_banho, "
+						+ "(select g.COD_TINA from AB_DIC_TINA g where g.ID_TINA = a.ID_TINA) as tina,  "
+						+ "(select h.NOME_TIPO_MANUTENCAO from AB_DIC_TIPO_MANUTENCAO h where h.ID_TIPO_MANUTENCAO = d.ID_TIPO_MANUTENCAO) as tipo, "
+						+ "(select NOME_UTILIZADOR from GER_UTILIZADORES h where ID_UTILIZADOR = d.UTZ_ULT_MODIF) as utilizador, "
+						+ "(select NOME_LINHA from AB_DIC_LINHA h where ID_LINHA = d.ID_LINHA) as linha, "
+						+ "(c.QUANT - c.QUANT_FINAL) as qtt, c.UNICOD,c.QUANT, t.FACTOR_CONVERSAO,b.NOME_REF,b.COD_REF,c.QUANT_FINAL "
+						+ "from AB_MOV_MANUTENCAO_CAB a "
+						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB "
+						+ "inner join AB_MOV_MANUTENCAO_ETIQ c on b.ID_MANUTENCAO_LIN = c.ID_MANUTENCAO_LIN "
+						+ "inner join AB_MOV_MANUTENCAO d on a.ID_MANUTENCAO = d.ID_MANUTENCAO "
+						+ "inner join AB_DIC_COMPONENTE t on b.ID_ADITIVO =  t.ID_COMPONENTE "
+						+ "where b.ID_MANUTENCAO_LIN =" + id);
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+
+			Double valor2 = Double.valueOf(content[3].toString().replace(",", "."));
+			Double total2 = Double.valueOf(content[6].toString().replace(",", "."));
+			valor = decimalFormat.format(valor2);
+			total = decimalFormat.format(total2);
+
+			numero_manutencao = content[0].toString();
+			valor_aditivo = valor + " " + content[7].toString();
+			data_manutencao = content[4].toString() + " " + content[5].toString().substring(0, 8);
+			total_consumido = total + " " + content[7].toString();
+			nome_banho = content[9].toString() + "/" + content[8].toString();
+			email_para = (content[10] != null) ? content[10].toString() : "";
+			tina = content[11].toString();
+			tipo_manutencao = content[12].toString();
+			utilizador = content[13].toString();
+			linha = content[14].toString();
+			nome_aditivo = content[19].toString();
+			ref_aditivo = content[20].toString();
+
+			Double total3 = Double.valueOf(content[2].toString().replace(",", "."));
+			Double total4 = Double.valueOf(content[15].toString().replace(",", "."));
+			Double total5 = Double.valueOf(content[17].toString().replace(",", "."));
+			Double factor = Double.valueOf(((content[18] != null) ? content[18].toString() : "0").replace(",", "."));
+			Double qtdfinal = Double.valueOf(content[21].toString().replace(",", "."));
+
+			factor = (factor == 0 || factor == null) ? 1 : factor;
+
+			String qtd = decimalFormat.format(total5) + " " + content[16].toString() + "/"
+					+ decimalFormat.format(total5 * factor) + " " + content[7].toString();
+
+			etiquetas += "<tr><td style='padding: 0px 5px 0px 5px;'>" + content[1].toString()
+					+ "</td><td style='padding: 0px 5px 0px 5px;'>" + qtd
+					+ "</td><td style='padding: 0px 5px 0px 5px;'>" + decimalFormat.format(total3) + " "
+					+ content[16].toString() + "/" + decimalFormat.format(total3) + " " + content[7].toString()
+					+ "</td><td style='padding: 0px 5px 0px 5px;'>" + decimalFormat.format(qtdfinal) + " "
+					+ content[16].toString() + "</td></tr>";
+		}
+
+		etiquetas += "</table>";
+		List<HashMap<String, String>> data = new ArrayList<>();
+		HashMap<String, String> n = new HashMap<String, String>();
+		n.put("MODULO", "1");
+		n.put("MOMENTO", "Ao Finalizar Preparação");
+		n.put("PAGINA", "Manutenções");
+		n.put("ESTADO", "1");
+		n.put("EMAIL_PARA", email_para);
+
+		n.put("DADOS", "{numero_manutencao::" + numero_manutencao + "\n/data_manutencao::" + data_manutencao + ""
+				+ "\n/nome_banho::" + nome_banho + "" + "\n/tina::" + tina + "\n/utilizador::" + utilizador + ""
+				+ "\n/dados_etiquetas::" + etiquetas + "" + "" + "\n/total_consumido::" + total_consumido
+				+ "\n/valor_aditivo::" + valor_aditivo + "" + "\n/linha::" + linha + "" + "\n/tipo_manutencao::"
+				+ tipo_manutencao + "\n/nome_aditivo::" + nome_aditivo + "\n/ref_aditivo::" + ref_aditivo + "}");
+		data.add(n);
+
+		if (valor != null && !valor.equals(total))
+			verficaEventos(data);
+	}
+
 	public String sequencia() {
 		String sequencia = "000000000";
 		Query query_seq = entityManager.createNativeQuery(
@@ -2463,15 +2568,15 @@ public class SIRB {
 
 	public void criar_ficheiro(String data, String path) {
 		File file2 = new File(path + ".txt");
-		if(file2.delete())
-		// if file doesnt exists, then create it
+		if (file2.delete())
+			// if file doesnt exists, then create it
 
-		try {
-			file2.createNewFile();
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+			try {
+				file2.createNewFile();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 		BufferedWriter bw2 = null;
 		FileWriter fw2 = null;
 		// true = append file

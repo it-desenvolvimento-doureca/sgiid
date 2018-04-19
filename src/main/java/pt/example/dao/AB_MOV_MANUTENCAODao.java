@@ -24,14 +24,16 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		if (classif.equals("B")) {
 			Squery = " ,(select distinct x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as id_banho "
 					+ ",(select distinct x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho "
-					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho";
+					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_tina";
 		}
 
-		Query query = entityManager.createQuery("Select a,b,c,d,CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+		Query query = entityManager.createNativeQuery("Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
 				+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 				+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
-				+ " from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
+				+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev "
+				+ "from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
 				+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
 				+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
 				+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF = :classif  order by B,a.ID_MANUTENCAO desc");
@@ -56,13 +58,15 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		if (classif.equals("B")) {
 			Squery = " ,(select distinct x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as id_banho "
 					+ ",(select distinct x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho "
-					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho";
+					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_tina";
 		}
 
-		Query query = entityManager.createQuery("Select a,b,c,d,CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+		Query query = entityManager.createNativeQuery("Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
 				+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 				+ "WHEN a.ESTADO = 'Em Preparação' THEN '3' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
+				+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev "
 				+ " from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
 				+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
 				+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
@@ -91,13 +95,15 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		if (classif.equals("B")) {
 			Squery = " ,(select distinct x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as id_banho "
 					+ ",(select distinct x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho "
-					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho";
+					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_tina";
 		}
 
-		Query query = entityManager.createQuery("Select a,b,c,d,CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+		Query query = entityManager.createNativeQuery("Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
 				+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 				+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
+				+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev "
 				+ " from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
 				+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
 				+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
