@@ -18,6 +18,9 @@ public class GER_PARAMETROS {
 	private String PASTA_ETIQUETAS;
 	private String MODELO_REPORT;
 	private String PASTA_JASPERREPORT;
+	private Integer TEMPO_PLANEADAS;
+	private Boolean CARTELAS_ATIVO;
+	private Integer TEMPO_SINCRO_CARTELAS;
 
 	@Id
 	@Column(name = "ID")
@@ -65,7 +68,7 @@ public class GER_PARAMETROS {
 	public void setPASTA_ETIQUETAS(String pASTA_ETIQUETAS) {
 		PASTA_ETIQUETAS = pASTA_ETIQUETAS;
 	}
-	
+
 	@Column(name = "MODELO_REPORT")
 	public String getMODELO_REPORT() {
 		return MODELO_REPORT;
@@ -74,7 +77,7 @@ public class GER_PARAMETROS {
 	public void setMODELO_REPORT(String mODELO_REPORT) {
 		MODELO_REPORT = mODELO_REPORT;
 	}
-	
+
 	@Column(name = "PASTA_JASPERREPORT")
 	public String getPASTA_JASPERREPORT() {
 		return PASTA_JASPERREPORT;
@@ -82,6 +85,33 @@ public class GER_PARAMETROS {
 
 	public void setPASTA_JASPERREPORT(String pASTA_JASPERREPORT) {
 		PASTA_JASPERREPORT = pASTA_JASPERREPORT;
+	}
+
+	@Column(name = "TEMPO_PLANEADAS")
+	public Integer getTEMPO_PLANEADAS() {
+		return TEMPO_PLANEADAS;
+	}
+
+	public void setTEMPO_PLANEADAS(Integer tEMPO_PLANEADAS) {
+		TEMPO_PLANEADAS = tEMPO_PLANEADAS;
+	}
+
+	@Column(name = "CARTELAS_ATIVO")
+	public Boolean getCARTELAS_ATIVO() {
+		return CARTELAS_ATIVO;
+	}
+
+	@Column(name = "TEMPO_SINCRO_CARTELAS")
+	public Integer getTEMPO_SINCRO_CARTELAS() {
+		return TEMPO_SINCRO_CARTELAS;
+	}
+
+	public void setCARTELAS_ATIVO(Boolean cARTELAS_ATIVO) {
+		CARTELAS_ATIVO = cARTELAS_ATIVO;
+	}
+
+	public void setTEMPO_SINCRO_CARTELAS(Integer tEMPO_SINCRO_CARTELAS) {
+		TEMPO_SINCRO_CARTELAS = tEMPO_SINCRO_CARTELAS;
 	}
 
 }

@@ -25,6 +25,7 @@ public class AB_MOV_MANUTENCAO_LINHA {
 	private Float STOCK;
 	private Float VALOR_AGUA;
 	private String STKUNIT;
+	private String LIECOD;
 
 	@Id
 	@Column(name = "ID_MANUTENCAO_LIN")
@@ -87,7 +88,7 @@ public class AB_MOV_MANUTENCAO_LINHA {
 	public String getSTKUNIT() {
 		return STKUNIT;
 	}
-	
+
 	@Column(name = "VALOR_AGUA")
 	public Float getVALOR_AGUA() {
 		return VALOR_AGUA;
@@ -152,6 +153,15 @@ public class AB_MOV_MANUTENCAO_LINHA {
 
 	public void setNOME_REF(String nOME_REF) {
 		NOME_REF = nOME_REF;
+	}
+
+	@Column(name = "LIECOD")
+	public String getLIECOD() {
+		return LIECOD;
+	}
+
+	public void setLIECOD(String lIECOD) {
+		LIECOD = lIECOD;
 	}
 
 }

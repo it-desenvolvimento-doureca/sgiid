@@ -31,11 +31,11 @@ public class AB_DIC_BANHO {
 	private String EMAIL_PARA;
 	private Boolean MANUTENCAOREPOSICAO;
 	private Boolean MANUTENCAONAOPROGRAMADA;
-	private Float DOSE1;
-	private Float DOSE2;
-	private Float DOSE3;
-	private Float DOSE4;
-	private Float DOSE5;
+	private String DOSE1;
+	private String DOSE2;
+	private String DOSE3;
+	private String DOSE4;
+	private String DOSE5;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -202,47 +202,47 @@ public class AB_DIC_BANHO {
 	}
 
 	@Column(name = "DOSE1")
-	public Float getDOSE1() {
+	public String getDOSE1() {
 		return DOSE1;
 	}
 
 	@Column(name = "DOSE2")
-	public Float getDOSE2() {
+	public String getDOSE2() {
 		return DOSE2;
 	}
 
 	@Column(name = "DOSE3")
-	public Float getDOSE3() {
+	public String getDOSE3() {
 		return DOSE3;
 	}
 
 	@Column(name = "DOSE4")
-	public Float getDOSE4() {
+	public String getDOSE4() {
 		return DOSE4;
 	}
 
 	@Column(name = "DOSE5")
-	public Float getDOSE5() {
+	public String getDOSE5() {
 		return DOSE5;
 	}
 
-	public void setDOSE1(Float dOSE1) {
+	public void setDOSE1(String dOSE1) {
 		DOSE1 = dOSE1;
 	}
 
-	public void setDOSE2(Float dOSE2) {
+	public void setDOSE2(String dOSE2) {
 		DOSE2 = dOSE2;
 	}
 
-	public void setDOSE3(Float dOSE3) {
+	public void setDOSE3(String dOSE3) {
 		DOSE3 = dOSE3;
 	}
 
-	public void setDOSE4(Float dOSE4) {
+	public void setDOSE4(String dOSE4) {
 		DOSE4 = dOSE4;
 	}
 
-	public void setDOSE5(Float dOSE5) {
+	public void setDOSE5(String dOSE5) {
 		DOSE5 = dOSE5;
 	}
 

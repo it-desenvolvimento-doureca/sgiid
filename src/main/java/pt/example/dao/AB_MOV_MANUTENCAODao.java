@@ -32,7 +32,8 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 				+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 				+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev "
+				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+				+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla "
 				+ "from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
 				+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
 				+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
@@ -66,7 +67,8 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 				+ "WHEN a.ESTADO = 'Em Preparação' THEN '3' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 				+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev "
+				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+				+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla "
 				+ " from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
 				+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
 				+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
@@ -103,7 +105,8 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 				+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 				+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev "
+				+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+				+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla "
 				+ " from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
 				+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
 				+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery

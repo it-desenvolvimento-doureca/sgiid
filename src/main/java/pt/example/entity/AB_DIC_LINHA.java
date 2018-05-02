@@ -22,6 +22,10 @@ public class AB_DIC_LINHA {
 	private String SECCAO;
 	private String SUBSECCAO;
 	private String REF_COMPOSTO;
+	private String PASTA;
+	private String UTILIZADOR;
+	private String SENHA;
+	private String DOMINIO;
 
 	@Column(name = "SECCAO")
 	public String getSECCAO() {
@@ -104,6 +108,42 @@ public class AB_DIC_LINHA {
 
 	public void setCOR(String cOR) {
 		COR = cOR;
+	}
+
+	@Column(name = "PASTA")
+	public String getPASTA() {
+		return PASTA;
+	}
+
+	@Column(name = "UTILIZADOR")
+	public String getUTILIZADOR() {
+		return UTILIZADOR;
+	}
+
+	@Column(name = "SENHA")
+	public String getSENHA() {
+		return SENHA;
+	}
+
+	@Column(name = "DOMINIO")
+	public String getDOMINIO() {
+		return DOMINIO;
+	}
+
+	public void setPASTA(String pASTA) {
+		PASTA = pASTA;
+	}
+
+	public void setUTILIZADOR(String uTILIZADOR) {
+		UTILIZADOR = uTILIZADOR;
+	}
+
+	public void setSENHA(String sENHA) {
+		SENHA = sENHA;
+	}
+
+	public void setDOMINIO(String dOMINIO) {
+		DOMINIO = dOMINIO;
 	}
 
 }

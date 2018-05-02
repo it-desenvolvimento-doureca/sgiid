@@ -35,16 +35,16 @@ public class Printer {
 
 	}
 
-	public static Response imprimir(String documento, String impressora) {
+	public static Response imprimir(String documento, String impressora,String localizacao) {
 		PDDocument document = null;
 
-		File f = new File("C:/sgiid_dev/relatorios/" + documento + ".pdf");
+		File f = new File("C:/"+localizacao+"/relatorios/" + documento + ".pdf");
 		if (!f.exists()) {
 			 return Response.status(404).entity("Ficheiro não existe").build();
 		}
 
 		try {
-			document = PDDocument.load(new File("C:/sgiid_dev/relatorios/" + documento + ".pdf"));
+			document = PDDocument.load(new File("C:/"+localizacao+"/relatorios/" + documento + ".pdf"));
 		} catch (InvalidPasswordException e1) {
 			// TODO Auto-generated catch block
 			// e1.printStackTrace();

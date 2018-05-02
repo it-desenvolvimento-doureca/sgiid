@@ -190,11 +190,15 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getStock(String proref, String liecod, String url) throws SQLException {
+	public List<HashMap<String, String>> getStock(List<HashMap<String, String>> data ,String url) throws SQLException {
+		
+		HashMap<String, String> firstMap = data.get(0);
+		String proref = firstMap.get("proref");
+		String liecod = firstMap.get("liecod");
 		if (proref == null)
 			proref = "";
-		String query = "select SUM(a.STOQTE) as STOQTE,b.UNIUTI  from STOLIE  a LEFT JOIN SDTPRA  b ON a.proref = b.proref "
-				+ "where a.LIECOD in (" + liecod + ") GROUP BY b.UNIUTI, a.proref HAVING (((a.proref)='" + proref
+		String query = "select SUM(a.STOQTE) as STOQTE,b.UNIUTI,a.LIECOD  from STOLIE  a LEFT JOIN SDTPRA  b ON a.proref = b.proref "
+				+ "where a.LIECOD in (" + liecod + ") GROUP BY b.UNIUTI, a.proref,a.liecod HAVING (((a.proref)='" + proref
 				+ "'))";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
@@ -207,6 +211,7 @@ public class ConnectProgress {
 				HashMap<String, String> x = new HashMap<>();
 				x.put("STOQTE", rs.getString("STOQTE"));
 				x.put("UNIUTI", rs.getString("UNIUTI"));
+				x.put("LIECOD", rs.getString("LIECOD"));
 				list.add(x);
 			}
 			stmt.close();

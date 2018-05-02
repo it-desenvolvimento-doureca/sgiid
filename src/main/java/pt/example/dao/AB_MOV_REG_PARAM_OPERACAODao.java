@@ -16,8 +16,11 @@ public class AB_MOV_REG_PARAM_OPERACAODao extends GenericDaoJpaImpl<AB_MOV_REG_P
 
 		Query query = entityManager.createQuery("Select a,"
 				+ "CASE WHEN a.UTZ_CRIA IS NULL THEN '' ELSE (select b.NOME_UTILIZADOR from GER_UTILIZADORES b where b.ID_UTILIZADOR = a.UTZ_CRIA)END as nome ,"
-				+ "CASE WHEN a.UTZ_VALIDA IS NULL THEN '' ELSE (select b.NOME_UTILIZADOR from GER_UTILIZADORES b where b.ID_UTILIZADOR = a.UTZ_VALIDA)END as nome2 "
-				+ " from AB_MOV_REG_PARAM_OPERACAO a where a.ID_REG_PARAM_OPERA = :id ");
+				+ "CASE WHEN a.UTZ_VALIDA IS NULL THEN '' ELSE (select b.NOME_UTILIZADOR from GER_UTILIZADORES b where b.ID_UTILIZADOR = a.UTZ_VALIDA)END as nome2, "
+				+ "b.ID_MANUTENCAO,"
+				+ "(select d.NOME_TIPO_MANUTENCAO from AB_DIC_TIPO_MANUTENCAO d where d.ID_TIPO_MANUTENCAO = (select c.ID_TIPO_MANUTENCAO from AB_MOV_MANUTENCAO c where c.ID_MANUTENCAO = b.ID_MANUTENCAO )) as tipomanutencao"
+				+ " from AB_MOV_REG_PARAM_OPERACAO a , AB_MOV_MANUTENCAO_CAB b "
+				+ " where a.ID_REG_PARAM_OPERA = :id and a.ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB");
 		query.setParameter("id", id);
 		List<AB_MOV_REG_PARAM_OPERACAO> data = query.getResultList();
 		return data;

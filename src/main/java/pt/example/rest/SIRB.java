@@ -1205,15 +1205,15 @@ public class SIRB {
 		return dados;
 	}
 
-	@GET
-	@Path("/getStock/{proref}/{liecod}")
+	@POST
+	@Path("/getStock")
+	@Consumes("*/*")
 	@Produces("application/json")
-	public List<HashMap<String, String>> getStock(@PathParam("proref") String proref,
-			@PathParam("liecod") String liecod) throws SQLException, ClassNotFoundException {
+	public List<HashMap<String, String>> getStock(final List<HashMap<String, String>> data) throws SQLException, ClassNotFoundException {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getStock(proref, liecod, getURLSILVER());
+		List<HashMap<String, String>> dados = connectionProgress.getStock(data, getURLSILVER());
 		return dados;
 	}
 
@@ -1736,7 +1736,7 @@ public class SIRB {
 	public Response imprimir(@PathParam("nomeficheiro") String nomeficheiro,
 			@PathParam("impressora") String impressora) {
 		Printer impressoras = new Printer();
-		return impressoras.imprimir(nomeficheiro, impressora);
+		return impressoras.imprimir(nomeficheiro, impressora,getFILEPATH());
 	}
 
 	/************************************* AB_DIC_LINHA_OF */
@@ -2003,7 +2003,10 @@ public class SIRB {
 
 				assunto = assunto.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
 			}
-
+			
+			if(borderTypes.getEMAIL_ANEXO()){
+				email.setNOME_FICHEIRO(firstMap.get("FICHEIRO"));
+			}
 			email.setASSUNTO(assunto);
 			email.setMENSAGEM(mensagem);
 
@@ -2115,7 +2118,8 @@ public class SIRB {
 						+ ",(select ID_MANUTENCAO from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB) as id2 "
 						+ ",(a.QUANT - a.QUANT_FINAL) as qtt " + "from AB_MOV_MANUTENCAO_ETIQ a "
 						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
-						+ "where b.ID_MANUTENCAO_CAB  = " + id + "");
+						+ "inner join AB_DIC_COMPONENTE t on  t.ID_COMPONENTE = b.ID_ADITIVO "
+						+ "where b.ID_MANUTENCAO_CAB  = " + id + " and (t.cisterna = 0 or t.CISTERNA is null)");
 
 		Query query_folder = entityManager.createNativeQuery(
 				"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,NOME_IMPRESSORA,IP_IMPRESSORA,MODELO_REPORT from GER_PARAMETROS a,GER_POSTOS b");

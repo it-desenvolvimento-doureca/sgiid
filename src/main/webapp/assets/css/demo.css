@@ -2,8 +2,24 @@
     color: red;
 }
 
-.cabecalho_manu label{
-    width:  100%;
+.cabecalho_manu label {
+    width: 100%;
+}
+
+body #formArranque .ui-dropdown {
+    background: white;
+}
+
+body #formArranque .ui-state-disabled {
+    background: #ebebe4;
+}
+
+body #formArranque .ui-dropdown .ui-dropdown-trigger {
+    background: white;
+}
+
+body #formArranque .ui-state-disabled .ui-dropdown-trigger {
+    background: #ebebe4;
 }
 
 .loader {

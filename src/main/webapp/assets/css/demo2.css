@@ -10,6 +10,37 @@ body .ui-widget button {
     font-size: 1em;
 }
 
+/*calendario*/
+
+.fc-left {
+    margin-top: 20px;
+}
+
+.fc-right {
+    margin-top: 20px;
+}
+
+.fc-next-button {
+    padding: 0px 16px 3px 16px !important;
+    border-left: 1px solid !important;
+}
+
+.fc-prev-button {
+    padding: 0px 16px 3px 16px !important;
+    border-right: 1px solid !important;
+}
+
+.fc-right .fc-button-group button {
+    border-left: 1px solid !important;
+    border-right: 1px solid !important;
+}
+
+.fc-right .fc-button-group button:first-child  {
+    border-right: 1px solid !important;
+    border-left: 0px solid !important;
+}
+/***********/
+
 .tabelaPostos .ui-button .ui-button-text {
     display: none !important;
 }
@@ -28,7 +59,8 @@ body .ui-widget-header {
 
 body .ui-state-active,
 body .ui-state-highlight {
-    background-color: #0275d8;
+    /* background-color: #0275d8;*/
+    background-color: #fcf8e3;
     /* color: #ffffff;*/
 }
 
@@ -177,7 +209,7 @@ body .ui-togglebutton.ui-state-active:hover {}
 body .ui-togglebutton.ui-state-active {
     background-color: #8ec165;
     color: #ffffff;
-    border: 1px solid #8ec165!important;
+    border: 1px solid #8ec165 !important;
     cursor: pointer;
 }
 
@@ -1560,7 +1592,6 @@ body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
     border-bottom-color: #0275d8;
 }
 
-
 /* TIAGO PEREIRA */
 
 .gestao>.ui-widget-content {
@@ -2074,7 +2105,6 @@ body .fc .fc-toolbar .fc-next-button .ui-icon {
     top: 0.186em;
 }
 
-
 /* Messages */
 
 .ui-messages.ui-messages-success {
@@ -2116,7 +2146,6 @@ body .fc .fc-toolbar .fc-next-button .ui-icon {
 .ui-messages.ui-messages-error .ui-messages-close {
     color: #a94442;
 }
-
 
 /* Growl */
 
@@ -2747,7 +2776,6 @@ body .ui-slidemenu .ui-slidemenu-backward {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
-
 
 /* Validation */
 
@@ -3455,7 +3483,6 @@ input[type="date"]::-webkit-input-placeholder {
     color: black !important;
 }
 
-
 /*Radio and Checkbox START*/
 
 .checkbox label:after,
@@ -3919,7 +3946,7 @@ checkbox {
 }
 
 #burst-9 {
-    display: inline-block!important;
+    display: inline-block !important;
 }
 
 #burst-8.disabled {
@@ -4125,7 +4152,7 @@ checkbox {
     }
     .ui-picklist.ui-picklist-responsive>div {
         display: block;
-        width: 100%!important
+        width: 100% !important
     }
     .ui-picklist.ui-picklist-responsive .ui-picklist-buttons {
         text-align: center;
@@ -4580,7 +4607,6 @@ checkbox {
     font-weight: 700
 }
 
-
 /*
  * FileUpload
  */
@@ -4643,7 +4669,6 @@ checkbox {
     border: 0 none;
 }
 
-
 /* Simple */
 
 .ui-fileupload-choose {
@@ -4673,7 +4698,6 @@ checkbox {
 .ui-fileupload-choose.ui-fileupload-choose-selected input[type=file] {
     display: none;
 }
-
 
 /* ui-fluid */
 
@@ -4757,7 +4781,6 @@ checkbox {
     margin: 0 .25em;
     padding: .125em .25em
 }
-
 
 /*
     Image credits:
