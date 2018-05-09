@@ -19,6 +19,7 @@ public class GER_PARAMETROS {
 	private String MODELO_REPORT;
 	private String PASTA_JASPERREPORT;
 	private Integer TEMPO_PLANEADAS;
+	private Integer TEMPO_MAX_PLANEADAS;
 	private Boolean CARTELAS_ATIVO;
 	private Integer TEMPO_SINCRO_CARTELAS;
 
@@ -112,6 +113,15 @@ public class GER_PARAMETROS {
 
 	public void setTEMPO_SINCRO_CARTELAS(Integer tEMPO_SINCRO_CARTELAS) {
 		TEMPO_SINCRO_CARTELAS = tEMPO_SINCRO_CARTELAS;
+	}
+
+	@Column(name = "TEMPO_MAX_PLANEADAS")
+	public Integer getTEMPO_MAX_PLANEADAS() {
+		return TEMPO_MAX_PLANEADAS;
+	}
+
+	public void setTEMPO_MAX_PLANEADAS(Integer tEMPO_MAX_PLANEADAS) {
+		TEMPO_MAX_PLANEADAS = tEMPO_MAX_PLANEADAS;
 	}
 
 }

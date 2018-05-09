@@ -545,6 +545,23 @@ public class SIRB {
 	}
 
 	@POST
+	@Path("/getAB_MOV_MANUTENCAOall/{linha}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO> getAB_MOV_MANUTENCAOall(@PathParam("linha") Integer linha,
+			final List<HashMap<String, String>> query) {
+		return dao8.getallmanu(linha, query);
+	}
+
+	@POST
+	@Path("/getallAnaliseConsumos")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO> getallAnaliseConsumos(final List<HashMap<String, String>> data) {
+		return dao8.getallAnaliseConsumos(data);
+	}
+
+	@POST
 	@Path("/getAB_MOV_MANUTENCAOidbanho/{linha}/{classif}/{idbanho}")
 	@Consumes("*/*")
 	@Produces("application/json")
@@ -1209,7 +1226,8 @@ public class SIRB {
 	@Path("/getStock")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public List<HashMap<String, String>> getStock(final List<HashMap<String, String>> data) throws SQLException, ClassNotFoundException {
+	public List<HashMap<String, String>> getStock(final List<HashMap<String, String>> data)
+			throws SQLException, ClassNotFoundException {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
@@ -1736,7 +1754,7 @@ public class SIRB {
 	public Response imprimir(@PathParam("nomeficheiro") String nomeficheiro,
 			@PathParam("impressora") String impressora) {
 		Printer impressoras = new Printer();
-		return impressoras.imprimir(nomeficheiro, impressora,getFILEPATH());
+		return impressoras.imprimir(nomeficheiro, impressora, getFILEPATH());
 	}
 
 	/************************************* AB_DIC_LINHA_OF */
@@ -2003,8 +2021,8 @@ public class SIRB {
 
 				assunto = assunto.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
 			}
-			
-			if(borderTypes.getEMAIL_ANEXO()){
+
+			if (borderTypes.getEMAIL_ANEXO()) {
 				email.setNOME_FICHEIRO(firstMap.get("FICHEIRO"));
 			}
 			email.setASSUNTO(assunto);
@@ -2037,10 +2055,13 @@ public class SIRB {
 	// CRIAR
 	// FICHEIRO****************************************************************
 
-	@GET
-	@Path("/ficheiro/{id}")
+	@POST
+	@Path("/ficheiro")
 	@Produces("application/json")
-	public void getFicheiro(@PathParam("id") Integer id) throws IOException, ParseException {
+	public void getFicheiro(final List<HashMap<String, String>> data2) throws IOException, ParseException {
+		HashMap<String, String> firstMap = data2.get(0);
+		String ip_posto = firstMap.get("ip_posto");
+		String id = firstMap.get("id");
 		try {
 			// Thread.sleep(3000);
 			Integer comp_num = 1;
@@ -2074,7 +2095,7 @@ public class SIRB {
 				nome_ficheiro = "ETIQUETA_ID" + content[0].toString() + ".txt";
 
 				criarFicheiro(content[0].toString(), nome_ficheiro, content[1].toString(), content[2].toString(),
-						content[3].toString(), content[4].toString(), content[5].toString());
+						content[3].toString(), content[4].toString(), content[5].toString(), ip_posto);
 
 			}
 
@@ -2094,7 +2115,7 @@ public class SIRB {
 	}
 
 	public void criarFicheiro(String id, String nome_ficheiro, String of, String SECCAO, String SUBSECCAO,
-			String REF_COMPOSTO, String num_manutencao) {
+			String REF_COMPOSTO, String num_manutencao, String ip_posto) {
 
 		SimpleDateFormat formate = new SimpleDateFormat("yyyyMMdd");
 		SimpleDateFormat horaformate = new SimpleDateFormat("HHmmss");
@@ -2116,13 +2137,14 @@ public class SIRB {
 		Query query = entityManager.createNativeQuery(
 				"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES,a.DATCRE"
 						+ ",(select ID_MANUTENCAO from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB) as id2 "
-						+ ",(a.QUANT - a.QUANT_FINAL) as qtt " + "from AB_MOV_MANUTENCAO_ETIQ a "
+						+ ",(a.QUANT - a.QUANT_FINAL) as qtt, t.CISTERNA " + "from AB_MOV_MANUTENCAO_ETIQ a "
 						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
 						+ "inner join AB_DIC_COMPONENTE t on  t.ID_COMPONENTE = b.ID_ADITIVO "
-						+ "where b.ID_MANUTENCAO_CAB  = " + id + " and (t.cisterna = 0 or t.CISTERNA is null)");
+						+ "where b.ID_MANUTENCAO_CAB  = " + id + "");
 
 		Query query_folder = entityManager.createNativeQuery(
-				"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,NOME_IMPRESSORA,IP_IMPRESSORA,MODELO_REPORT from GER_PARAMETROS a,GER_POSTOS b");
+				"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,NOME_IMPRESSORA,IP_IMPRESSORA,MODELO_REPORT from GER_PARAMETROS a,GER_POSTOS b where IP_POSTO ='"
+						+ ip_posto + "'");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -2130,7 +2152,9 @@ public class SIRB {
 			path = content[0] + nome_ficheiro;
 			path2 = content[1].toString();
 			nomeimpressora = content[2].toString();
-			ipimpressora = content[3].toString();
+			if (content[3] != null) {
+				ipimpressora = content[3].toString();
+			}
 			modelo_REPORT = content[4].toString();
 		}
 
@@ -2139,6 +2163,7 @@ public class SIRB {
 		List<Object[]> dados = query.getResultList();
 		ConnectProgress connectionProgress = new ConnectProgress();
 		List<HashMap<String, String>> lista = null;
+		List<HashMap<String, String>> lista2 = null;
 		Boolean Orig_Composant = false;
 		Integer count = 0;
 		String data = "";
@@ -2153,9 +2178,21 @@ public class SIRB {
 		path2 = path2 + "ETIQUETA" + id;
 		data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
 		data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
-		for (Object[] content : dados) {
-			if (Float.parseFloat(content[3].toString()) != 0 && !content[3].toString().equals(content[1].toString())) {
 
+		try {
+			lista2 = connectionProgress.getOrigineComposant2(getURLSILVER(), REF_COMPOSTO, of);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (lista2.size() > 0) {
+			INDNUMCSE = lista2.get(0).get("INDNUMENR");
+		}
+
+		for (Object[] content : dados) {
+			String cisterna = (content[20] != null) ? content[20].toString() : "false";
+			if (Float.parseFloat(content[3].toString()) != 0 && !content[3].toString().equals(content[1].toString())
+					&& !cisterna.equals("true")) {
 				// path2 = path2 + data_path + "_" + content[0].toString();
 				data_etiq += criaFicheiroEtiqueta(content);
 				size_etiq++;
@@ -2169,9 +2206,9 @@ public class SIRB {
 			}
 			if (lista.size() > 0) {
 				count = Integer.parseInt(lista.get(0).get("total"));
-				INDNUMCSE = lista.get(0).get("INDNUMCSE");
 				NCLRANG = lista.get(0).get("NCLRANG");
 			}
+
 			// System.out.println(content[0]);
 			data += "01        ";// Société
 			data += datatual; // Date suivi
@@ -2215,7 +2252,7 @@ public class SIRB {
 			data += horatual.substring(0, 6);
 
 			// Origine composant
-			if (count > 0) {
+			if (count > 0 && NCLRANG != null) {
 				Orig_Composant = true;
 				data += "0";
 			} else {
@@ -2385,7 +2422,10 @@ public class SIRB {
 
 		}
 
-		criar_ficheiro(data, path);
+		if (data.length() > 0) {
+			criar_ficheiro(data, path);
+		}
+
 		if (size_etiq > 0) {
 			criar_ficheiro(data_etiq, path2);
 		}
@@ -2476,10 +2516,10 @@ public class SIRB {
 						+ "(select h.NOME_TIPO_MANUTENCAO from AB_DIC_TIPO_MANUTENCAO h where h.ID_TIPO_MANUTENCAO = d.ID_TIPO_MANUTENCAO) as tipo, "
 						+ "(select NOME_UTILIZADOR from GER_UTILIZADORES h where ID_UTILIZADOR = d.UTZ_ULT_MODIF) as utilizador, "
 						+ "(select NOME_LINHA from AB_DIC_LINHA h where ID_LINHA = d.ID_LINHA) as linha, "
-						+ "(c.QUANT - c.QUANT_FINAL) as qtt, c.UNICOD,c.QUANT, t.FACTOR_CONVERSAO,b.NOME_REF,b.COD_REF,c.QUANT_FINAL "
+						+ "(c.QUANT - c.QUANT_FINAL) as qtt, c.UNICOD,c.QUANT, t.FACTOR_CONVERSAO,t.NOME_REF,t.COD_REF,c.QUANT_FINAL "
 						+ "from AB_MOV_MANUTENCAO_CAB a "
 						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB "
-						+ "inner join AB_MOV_MANUTENCAO_ETIQ c on b.ID_MANUTENCAO_LIN = c.ID_MANUTENCAO_LIN "
+						+ "left join AB_MOV_MANUTENCAO_ETIQ c on b.ID_MANUTENCAO_LIN = c.ID_MANUTENCAO_LIN "
 						+ "inner join AB_MOV_MANUTENCAO d on a.ID_MANUTENCAO = d.ID_MANUTENCAO "
 						+ "inner join AB_DIC_COMPONENTE t on b.ID_ADITIVO =  t.ID_COMPONENTE "
 						+ "where b.ID_MANUTENCAO_LIN =" + id);
@@ -2487,9 +2527,10 @@ public class SIRB {
 		List<Object[]> dados = query.getResultList();
 
 		for (Object[] content : dados) {
-
-			Double valor2 = Double.valueOf(content[3].toString().replace(",", "."));
-			Double total2 = Double.valueOf(content[6].toString().replace(",", "."));
+			String vv = (content[3] != null) ? content[3].toString() : "0";
+			String tt = (content[6] != null) ? content[6].toString() : "0";
+			Double valor2 = Double.valueOf(vv.replace(",", "."));
+			Double total2 = Double.valueOf(tt.replace(",", "."));
 			valor = decimalFormat.format(valor2);
 			total = decimalFormat.format(total2);
 
@@ -2503,26 +2544,33 @@ public class SIRB {
 			tipo_manutencao = content[12].toString();
 			utilizador = content[13].toString();
 			linha = content[14].toString();
-			nome_aditivo = content[19].toString();
-			ref_aditivo = content[20].toString();
+			nome_aditivo = (content[19] != null) ? content[19].toString() : "";
+			ref_aditivo = (content[20] != null) ? content[20].toString() : "";
 
-			Double total3 = Double.valueOf(content[2].toString().replace(",", "."));
-			Double total4 = Double.valueOf(content[15].toString().replace(",", "."));
-			Double total5 = Double.valueOf(content[17].toString().replace(",", "."));
+			String cc = (content[2] != null) ? content[2].toString() : "0";
+			Double total3 = Double.valueOf(cc.replace(",", "."));
+			String qq = (content[15] != null) ? content[15].toString() : "0";
+			Double total4 = Double.valueOf(qq.replace(",", "."));
+			String dd = (content[17] != null) ? content[17].toString() : "0";
+			Double total5 = Double.valueOf(dd.replace(",", "."));
 			Double factor = Double.valueOf(((content[18] != null) ? content[18].toString() : "0").replace(",", "."));
-			Double qtdfinal = Double.valueOf(content[21].toString().replace(",", "."));
+			String qf = (content[21] != null) ? content[21].toString() : "0";
+			Double qtdfinal = Double.valueOf(qf.replace(",", "."));
 
 			factor = (factor == 0 || factor == null) ? 1 : factor;
 
-			String qtd = decimalFormat.format(total5) + " " + content[16].toString() + "/"
-					+ decimalFormat.format(total5 * factor) + " " + content[7].toString();
+			String yy = (content[16] != null) ? content[16].toString() : "--";
+			String qtd = decimalFormat.format(total5).replace("$", ",") + " " + yy + "/"
+					+ decimalFormat.format(total5 / factor).replace("$", ",") + " " + content[7].toString();
 
-			etiquetas += "<tr><td style='padding: 0px 5px 0px 5px;'>" + content[1].toString()
+			String etn = (content[1] != null) ? content[1].toString() : "Sem Etiqueta";
+			String etn1 = (content[7] != null) ? content[7].toString() : "0";
+			etiquetas += "<tr><td style='padding: 0px 5px 0px 5px;'>" + etn
 					+ "</td><td style='padding: 0px 5px 0px 5px;'>" + qtd
-					+ "</td><td style='padding: 0px 5px 0px 5px;'>" + decimalFormat.format(total3) + " "
-					+ content[16].toString() + "/" + decimalFormat.format(total3) + " " + content[7].toString()
-					+ "</td><td style='padding: 0px 5px 0px 5px;'>" + decimalFormat.format(qtdfinal) + " "
-					+ content[16].toString() + "</td></tr>";
+					+ "</td><td style='padding: 0px 5px 0px 5px;'>" + decimalFormat.format(total3).replace("$", ",")
+					+ " " + yy + "/" + decimalFormat.format(total3).replace("$", ",") + " " + etn1
+					+ "</td><td style='padding: 0px 5px 0px 5px;'>" + decimalFormat.format(qtdfinal).replace("$", ",")
+					+ " " + yy + "</td></tr>";
 		}
 
 		etiquetas += "</table>";
@@ -2534,11 +2582,13 @@ public class SIRB {
 		n.put("ESTADO", "1");
 		n.put("EMAIL_PARA", email_para);
 
-		n.put("DADOS", "{numero_manutencao::" + numero_manutencao + "\n/data_manutencao::" + data_manutencao + ""
-				+ "\n/nome_banho::" + nome_banho + "" + "\n/tina::" + tina + "\n/utilizador::" + utilizador + ""
-				+ "\n/dados_etiquetas::" + etiquetas + "" + "" + "\n/total_consumido::" + total_consumido
-				+ "\n/valor_aditivo::" + valor_aditivo + "" + "\n/linha::" + linha + "" + "\n/tipo_manutencao::"
-				+ tipo_manutencao + "\n/nome_aditivo::" + nome_aditivo + "\n/ref_aditivo::" + ref_aditivo + "}");
+		n.put("DADOS",
+				"{numero_manutencao::" + numero_manutencao + "\n/data_manutencao::" + data_manutencao + ""
+						+ "\n/nome_banho::" + nome_banho + "" + "\n/tina::" + tina + "\n/utilizador::" + utilizador + ""
+						+ "\n/dados_etiquetas::" + etiquetas + "" + "" + "\n/total_consumido::"
+						+ total_consumido.replace("$", ",") + "\n/valor_aditivo::" + valor_aditivo.replace("$", ",")
+						+ "" + "\n/linha::" + linha + "" + "\n/tipo_manutencao::" + tipo_manutencao
+						+ "\n/nome_aditivo::" + nome_aditivo + "\n/ref_aditivo::" + ref_aditivo + "}");
 		data.add(n);
 
 		if (valor != null && !valor.equals(total))

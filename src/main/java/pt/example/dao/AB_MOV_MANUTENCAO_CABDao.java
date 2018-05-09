@@ -21,7 +21,8 @@ public class AB_MOV_MANUTENCAO_CABDao extends GenericDaoJpaImpl<AB_MOV_MANUTENCA
 						+ "CASE WHEN a.UTZ_PREPARACAO IS NULL THEN '' ELSE (select f.NOME_UTILIZADOR from GER_UTILIZADORES f where f.ID_UTILIZADOR = a.UTZ_PREPARACAO)END as nomeutz2, "
 						+ "CASE WHEN a.ID_TINA IS NULL THEN '' ELSE (select b.COD_TINA from AB_DIC_TINA b where b.ID_TINA = a.ID_TINA)END as cod_tina, "
 						+ "CASE WHEN d.ID195 IS NULL THEN '' ELSE (select m.DATA_VALIDA from AB_MOV_REG_PARAM_OPERACAO m where m.ID_MANUTENCAO_CAB = a.ID_MANUTENCAO_CAB and m.INATIVO != 1 )END as dataoperacao "
-						+ "from AB_MOV_MANUTENCAO_CAB a,AB_DIC_TIPO_OPERACAO d  where  (( a.ID_TIPO_OPERACAO is null) or (d.ID_TIPO_OPERACAO = a.ID_TIPO_OPERACAO)) and a.ID_MANUTENCAO = :id and a.INATIVO != 1 order by a.DATA_CRIA");
+						+ ", CASE WHEN a.DATA_PREPARACAO IS NULL THEN '1' WHEN a.DATA_EXECUCAO is null THEN '2' WHEN a.DATA_EXECUCAO is not null THEN '4' WHEN a.DATA_PREPARACAO is not null THEN '3' END AS B "
+						+ "from AB_MOV_MANUTENCAO_CAB a,AB_DIC_TIPO_OPERACAO d  where  (( a.ID_TIPO_OPERACAO is null) or (d.ID_TIPO_OPERACAO = a.ID_TIPO_OPERACAO)) and a.ID_MANUTENCAO = :id and a.INATIVO != 1 order by B,DATA_PREVISTA,HORA_PREVISTA,DATA_CRIA");
 		query.setParameter("id", id);
 		List<AB_MOV_MANUTENCAO_CAB> data = query.getResultList();
 		return data;

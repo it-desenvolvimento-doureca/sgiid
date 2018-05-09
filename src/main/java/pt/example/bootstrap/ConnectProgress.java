@@ -162,7 +162,18 @@ public class ConnectProgress {
 
 		String query = "select (select COUNT(a.PROREF) from SOFC a inner join SOFA b  on a.OFANUMENR = b.OFANUMENR where a.PROREF = '"
 				+ PROREF + "' and b.OFNUM = '" + OF + "') as total, " + "a.INDNUMCSE,a.NCLRANG "
-				+ "from SOFC a inner join SOFA b  on a.OFANUMENR = b.OFANUMENR where b.OFNUM = '" + OF + "'";
+				+ "from SOFC a inner join SOFA b  on a.OFANUMENR = b.OFANUMENR where a.PROREF = '" + PROREF
+				+ "' and b.OFNUM = '" + OF + "'";
+
+		/*
+		 * String query = "select " +
+		 * "(select COUNT(b.INDNUMENR) from  SOFA a inner join SOFB b ON b.OFANUMENR = a.OFANUMENR left JOIN SOFC c ON c.ofanumenr = a.ofanumenr where b.PROREF  = '"
+		 * +PROREF+"' and a.OFNUM = '"+OF+"') as total, " +
+		 * "b.INDNUMENR,c.NCLRANG " +
+		 * "from SOFA a  inner join SOFB b ON b.OFANUMENR = a.OFANUMENR " +
+		 * "left JOIN SOFC c ON c.ofanumenr = a.ofanumenr where a.OFNUM = '"
+		 * +OF+"' and b.PROREF = '"+PROREF+"'";
+		 */
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -190,16 +201,46 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getStock(List<HashMap<String, String>> data ,String url) throws SQLException {
-		
+	public List<HashMap<String, String>> getOrigineComposant2(String url, String PROREF, String OF)
+			throws SQLException {
+
+		String query = "select a.INDNUMENR from SOFB a inner join SOFA b  on a.OFANUMENR = b.OFANUMENR where a.PROREF = '"
+				+ PROREF + "' and b.OFNUM ='" + OF + "'";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+
+			while (rs.next()) {
+				HashMap<String, String> x = new HashMap<>();
+				x.put("INDNUMENR", rs.getString("INDNUMENR"));
+				list.add(x);
+			}
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getStock(List<HashMap<String, String>> data, String url) throws SQLException {
+
 		HashMap<String, String> firstMap = data.get(0);
 		String proref = firstMap.get("proref");
 		String liecod = firstMap.get("liecod");
 		if (proref == null)
 			proref = "";
 		String query = "select SUM(a.STOQTE) as STOQTE,b.UNIUTI,a.LIECOD  from STOLIE  a LEFT JOIN SDTPRA  b ON a.proref = b.proref "
-				+ "where a.LIECOD in (" + liecod + ") GROUP BY b.UNIUTI, a.proref,a.liecod HAVING (((a.proref)='" + proref
-				+ "'))";
+				+ "where a.LIECOD in (" + liecod + ") GROUP BY b.UNIUTI, a.proref,a.liecod HAVING (((a.proref)='"
+				+ proref + "'))";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 

@@ -35,10 +35,11 @@ body .ui-widget button {
     border-right: 1px solid !important;
 }
 
-.fc-right .fc-button-group button:first-child  {
+.fc-right .fc-button-group button:first-child {
     border-right: 1px solid !important;
     border-left: 0px solid !important;
 }
+
 /***********/
 
 .tabelaPostos .ui-button .ui-button-text {
@@ -4794,7 +4795,8 @@ checkbox {
 .reviews {
     color: #555;
     font-weight: bold;
-    margin: 10px auto 11px;
+    /*margin: 10px auto 11px;*/
+    margin: 0px auto 2px;
 }
 
 .notes {
