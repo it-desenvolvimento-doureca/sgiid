@@ -299,7 +299,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getDadosEtiqueta(String url, String etiqueta) throws SQLException {
 
-		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE "
+		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1  "
 				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
 				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
 				+ "where b.ETQNUM = '" + etiqueta + "'";
@@ -327,6 +327,7 @@ public class ConnectProgress {
 				x.put("ETQNUMENR", rs.getString("ETQNUMENR"));
 				x.put("INDNUMENR", rs.getString("INDNUMENR"));
 				x.put("DATCRE", rs.getString("DATCRE"));
+				x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
 				list.add(x);
 			}
 			stmt.close();
@@ -343,7 +344,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getDadosEtiquetabyREF(String url, String PROREF) throws SQLException {
 
-		String query = "select  b.ETQNUM,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE "
+		String query = "select  b.ETQNUM,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
 				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
 				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
 				+ "where b.PROREF = '" + PROREF + "' and b.ETQEMBQTE > 0 order by b.DATCRE";
@@ -372,6 +373,8 @@ public class ConnectProgress {
 				x.put("INDNUMENR", rs.getString("INDNUMENR"));
 				x.put("ETQNUM", rs.getString("ETQNUM"));
 				x.put("DATCRE", rs.getString("DATCRE"));
+				x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
+				
 				list.add(x);
 			}
 			stmt.close();
@@ -388,7 +391,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getDadosEtiquetabyREFcisterna(String url, String PROREF) throws SQLException {
 
-		String query = "select  b.ETQNUM,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE "
+		String query = "select  b.ETQNUM,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
 				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
 				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
 				+ "where b.PROREF = '" + PROREF + "' and b.ETQEMBQTE > 0 and b.ETQETAT = 1 order by b.DATCRE";
@@ -417,6 +420,8 @@ public class ConnectProgress {
 				x.put("INDNUMENR", rs.getString("INDNUMENR"));
 				x.put("ETQNUM", rs.getString("ETQNUM"));
 				x.put("DATCRE", rs.getString("DATCRE"));
+				x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
+				
 				list.add(x);
 			}
 			stmt.close();

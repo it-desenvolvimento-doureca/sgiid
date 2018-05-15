@@ -23,9 +23,9 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 			varquery = 0;
 		}
 		if (classif.equals("B")) {
-			Squery = " ,(select distinct x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as id_banho "
-					+ ",(select distinct x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho "
-					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_tina";
+			Squery = " ,(select top 1 x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select top 1 y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as id_banho "
+					+ ",(select top 1 x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select top 1 y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as nome_banho "
+					+ ",(select top 1 x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select top 1 y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as nome_tina";
 		}
 
 		Query query = entityManager.createNativeQuery(
@@ -33,8 +33,8 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
-						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
 						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla "
 						+ "from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
@@ -67,8 +67,8 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF "
-						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO  and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla,"
 						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla "
 						+ "from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
@@ -87,6 +87,21 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 
 	public List<AB_MOV_MANUTENCAO> getallAnaliseConsumos(List<HashMap<String, String>> querydata) {
 		HashMap<String, String> firstMap = querydata.get(0);
+		String ESTADO = "''";
+		String ESTADO2 = "''";
+		if (!firstMap.get("ESTADO").equals("'null'")) {
+			ESTADO = firstMap.get("ESTADO");
+			ESTADO2 = "'estado'";
+		}
+		
+		String NUMEROSEMANA = "''";
+		String NUMEROSEMANA2 = "''";
+		if (!firstMap.get("NUMEROSEMANA").equals("'null'")) {
+			NUMEROSEMANA = firstMap.get("NUMEROSEMANA");
+			NUMEROSEMANA2 = "'NUMEROSEMANA'";
+		}
+		
+		
 		Query query = entityManager
 				.createNativeQuery("select a.ID_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,a.ESTADO,a.CLASSIF, "
 						+ "k.NOME_TIPO_MANUTENCAO, g.NOME_LINHA,h.NOME_TURNO, "
@@ -100,7 +115,7 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "(select top 1 x.MEDIDA from AB_DIC_UNIDADE_MEDIDA x where x.ID_MEDIDA = c.ID_UNIDADE1) as unid1, "
 						+ "c.VALOR2, "
 						+ "(select top 1 x.MEDIDA from AB_DIC_UNIDADE_MEDIDA x where x.ID_MEDIDA = c.ID_UNIDADE2) as unid2, "
-						+ "c.VALOR_AGUA,c.LIECOD,d.ETQNUM,d.QUANT,d.QUANT_FINAL,e.FACTOR_CONVERSAO,d.CONSUMIR "
+						+ "c.VALOR_AGUA,c.LIECOD,d.ETQNUM,d.QUANT,d.QUANT_FINAL,e.FACTOR_CONVERSAO,d.CONSUMIR,DATEPART( wk,b.DATA_PREPARACAO) as numerosemana "
 						+ "from AB_MOV_MANUTENCAO a left join AB_MOV_MANUTENCAO_CAB b on a.ID_MANUTENCAO = b.ID_MANUTENCAO "
 						+ " left join AB_MOV_MANUTENCAO_LINHA c on b.ID_MANUTENCAO_CAB = c.ID_MANUTENCAO_CAB "
 						+ "left join AB_MOV_MANUTENCAO_ETIQ d on c.ID_MANUTENCAO_LIN = d.ID_MANUTENCAO_LIN "
@@ -111,17 +126,39 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "left join AB_DIC_TIPO_ADICAO j on b.ID_TIPO_ADICAO = j.ID_TIPO_ADICAO "
 						+ "left join AB_DIC_TIPO_MANUTENCAO k on  a.ID_TIPO_MANUTENCAO = k.ID_TIPO_MANUTENCAO "
 						+ "left join AB_DIC_TIPO_OPERACAO l on b.ID_TIPO_OPERACAO = l.ID_TIPO_OPERACAO "
-						+ "left join AB_DIC_TINA t on b.ID_TINA = t.ID_TINA "
-						+ "where ((not ('"+ firstMap.get("DATA_PLANEAMENTO") + "' != 'null' and '" + firstMap.get("DATA_PLANEAMENTO") + "' != '')) or (a.DATA_PLANEAMENTO <= '" + firstMap.get("DATA_PLANEAMENTO") + "')) "
-						+ "and ((not ('"+ firstMap.get("DATA_PLANEAMENTO2") + "' != 'null' and '" + firstMap.get("DATA_PLANEAMENTO2") + "' != '')) or (a.DATA_PLANEAMENTO >= '" + firstMap.get("DATA_PLANEAMENTO2") + "')) "
-						+ "and ((not ('"+ firstMap.get("DATA_PREVISTA") + "' != 'null' and '" + firstMap.get("DATA_PREVISTA") + "' != '')) or (b.DATA_PREVISTA <= '" + firstMap.get("DATA_PREVISTA") + "')) "
-						+ "and ((not ('"+ firstMap.get("DATA_PREVISTA2") + "' != 'null' and '" + firstMap.get("DATA_PREVISTA2") + "' != '')) or (b.DATA_PREVISTA >= '" + firstMap.get("DATA_PREVISTA2") + "')) "
-						+ "and ((not ('"+ firstMap.get("ESTADO") + "' != 'null' and '" + firstMap.get("ESTADO") + "' != '')) or (a.ESTADO = '" + firstMap.get("ESTADO") + "')) "
-						+ "and ((not ('"+ firstMap.get("CLASSIF") + "' != 'null' and '" + firstMap.get("CLASSIF") + "' != '')) or (a.CLASSIF = '" + firstMap.get("CLASSIF") + "')) "
-						+ "and ((not ('"+ firstMap.get("ID_TIPO_MANUTENCAO") + "' != 'null' and '" + firstMap.get("ID_TIPO_MANUTENCAO") + "' != '')) or (a.ID_TIPO_MANUTENCAO = '" + firstMap.get("ID_TIPO_MANUTENCAO") + "')) "
-						+ "and ( ((not ('"+ firstMap.get("NOME_REF") + "' != 'null' and '" + firstMap.get("NOME_REF") + "' != '')) or (e.NOME_REF like '%" + firstMap.get("NOME_REF") + "%')) "
-						+ "and ((not ('"+ firstMap.get("COD_REF") + "' != 'null' and '" + firstMap.get("COD_REF") + "' != '')) or (e.COD_REF like '%" + firstMap.get("COD_REF") + "%')) "
-						+ "and ((not ('"+ firstMap.get("NOME_COMPONENTE") + "' != 'null' and '" + firstMap.get("NOME_COMPONENTE") + "' != '')) or (e.NOME_COMPONENTE like '%" + firstMap.get("NOME_COMPONENTE") + "%')) ) "
+						+ "left join AB_DIC_TINA t on b.ID_TINA = t.ID_TINA " + "where "
+						// + "((not ('"+ firstMap.get("DATA_PLANEAMENTO") + "'
+						// != 'null' and '" + firstMap.get("DATA_PLANEAMENTO") +
+						// "' != '')) or (a.DATA_PLANEAMENTO <= '" +
+						// firstMap.get("DATA_PLANEAMENTO") + "')) "
+						// + "and ((not ('"+ firstMap.get("DATA_PLANEAMENTO2") +
+						// "' != 'null' and '" +
+						// firstMap.get("DATA_PLANEAMENTO2") + "' != '')) or
+						// (a.DATA_PLANEAMENTO >= '" +
+						// firstMap.get("DATA_PLANEAMENTO2") + "')) "
+						+ "((not ('" + firstMap.get("DATA_PLANEAMENTO") + "' != 'null' and '"
+						+ firstMap.get("DATA_PLANEAMENTO") + "' != '')) or (b.DATA_PREPARACAO < '"
+						+ firstMap.get("DATA_PLANEAMENTO") + "')) " + "and ((not ('" + firstMap.get("DATA_PLANEAMENTO2")
+						+ "' != 'null' and '" + firstMap.get("DATA_PLANEAMENTO2")
+						+ "' != '')) or (b.DATA_PREPARACAO > '" + firstMap.get("DATA_PLANEAMENTO2") + "')) "
+						+ "and ((not ('" + firstMap.get("DATA_PREVISTA") + "' != 'null' and '"
+						+ firstMap.get("DATA_PREVISTA") + "' != '')) or (b.DATA_PREVISTA < '"
+						+ firstMap.get("DATA_PREVISTA") + "')) " + "and ((not ('" + firstMap.get("DATA_PREVISTA2")
+						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA2") + "' != '')) or (b.DATA_PREVISTA > '"
+						+ firstMap.get("DATA_PREVISTA2") + "')) " 
+						+ "and ((not (" + ESTADO2 + " != 'null' and "+ ESTADO2 + " != '')) or (a.ESTADO in (" + ESTADO + "))) " 
+						+ "and ((not (" + NUMEROSEMANA2 + " != 'null' and "+ NUMEROSEMANA2 + " != '')) or (DATEPART( wk,b.DATA_PREPARACAO) in (" + NUMEROSEMANA + "))) " 
+						+ "and ((not ('"
+						+ firstMap.get("CLASSIF") + "' != 'null' and '" + firstMap.get("CLASSIF")
+						+ "' != '')) or (a.CLASSIF = '" + firstMap.get("CLASSIF") + "')) " + "and ((not ('"
+						+ firstMap.get("ID_TIPO_MANUTENCAO") + "' != 'null' and '" + firstMap.get("ID_TIPO_MANUTENCAO")
+						+ "' != '')) or (a.ID_TIPO_MANUTENCAO = '" + firstMap.get("ID_TIPO_MANUTENCAO") + "')) "
+						+ "and ( ((not ('" + firstMap.get("NOME_REF") + "' != 'null' and '" + firstMap.get("NOME_REF")
+						+ "' != '')) or (e.NOME_REF like '%" + firstMap.get("NOME_REF") + "%')) " + "and ((not ('"
+						+ firstMap.get("COD_REF") + "' != 'null' and '" + firstMap.get("COD_REF")
+						+ "' != '')) or (e.COD_REF like '%" + firstMap.get("COD_REF") + "%')) " + "and ((not ('"
+						+ firstMap.get("NOME_COMPONENTE") + "' != 'null' and '" + firstMap.get("NOME_COMPONENTE")
+						+ "' != '')) or (e.NOME_COMPONENTE like '%" + firstMap.get("NOME_COMPONENTE") + "%')) ) "
 						+ "and a.INATIVO != 1 and b.INATIVO != 1 "
 						+ "order by a.DATA_PLANEAMENTO desc, a.HORA_PLANEAMENTO desc");
 
@@ -139,9 +176,9 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 			varquery = 0;
 		}
 		if (classif.equals("B")) {
-			Squery = " ,(select distinct x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as id_banho "
-					+ ",(select distinct x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho "
-					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_tina";
+			Squery = " ,(select top 1 x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select top 1 y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as id_banho "
+					+ ",(select top 1 x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select top 1 y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as nome_banho "
+					+ ",(select top 1 x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select top 1 distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as nome_tina";
 		}
 
 		Query query = entityManager.createNativeQuery(
@@ -149,8 +186,8 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '3' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
-						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO  and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
 						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla "
 						+ " from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
@@ -179,9 +216,9 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		}
 
 		if (classif.equals("B")) {
-			Squery = " ,(select distinct x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as id_banho "
-					+ ",(select distinct x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select distinct y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_banho "
-					+ ",(select distinct x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select distinct y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO)) as nome_tina";
+			Squery = " ,(select top 1 x.ID_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select top 1 y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as id_banho "
+					+ ",(select top 1 x.NOME_BANHO from AB_DIC_BANHO x where x.ID_BANHO = (select top 1 y.ID_BANHO from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as nome_banho "
+					+ ",(select top 1 x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select top 1 y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as nome_tina";
 		}
 
 		Query query = entityManager.createNativeQuery(
@@ -189,8 +226,8 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
-						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
 						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla "
 						+ " from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "

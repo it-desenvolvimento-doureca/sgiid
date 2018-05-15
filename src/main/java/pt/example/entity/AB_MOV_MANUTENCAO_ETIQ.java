@@ -36,6 +36,7 @@ public class AB_MOV_MANUTENCAO_ETIQ {
 	private Integer INDNUMENR;
 	private Date DATCRE;
 	private String PRODES;
+	private Integer ETQORIQTE1;
 
 	@Column(name = "DATA_CRIA")
 	public Timestamp getDATA_CRIA() {
@@ -235,6 +236,15 @@ public class AB_MOV_MANUTENCAO_ETIQ {
 
 	public void setINDNUMENR(Integer iNDNUMENR) {
 		INDNUMENR = iNDNUMENR;
+	}
+
+	@Column(name = "ETQORIQTE1")
+	public Integer getETQORIQTE1() {
+		return ETQORIQTE1;
+	}
+
+	public void setETQORIQTE1(Integer eTQORIQTE1) {
+		ETQORIQTE1 = eTQORIQTE1;
 	}
 
 }

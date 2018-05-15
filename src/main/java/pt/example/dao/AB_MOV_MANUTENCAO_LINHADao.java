@@ -45,4 +45,15 @@ public class AB_MOV_MANUTENCAO_LINHADao extends GenericDaoJpaImpl<AB_MOV_MANUTEN
 		return data;
 
 	}
+
+	public int apagar_linhas(Integer id) {
+
+		Query query = entityManager.createNativeQuery(
+				"DELETE a FROM AB_MOV_MANUTENCAO_LINHA a inner join AB_MOV_MANUTENCAO_CAB b on a.ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB "
+						+ "where (a.VALOR1 = '0' or a.VALOR1 = '' or a.VALOR1 is null ) and (a.VALOR2 = '0' or a.VALOR2 = '' or a.VALOR2 is null) and b.ID_MANUTENCAO   = "
+						+ id + " ");
+		int utz = query.executeUpdate();
+		return utz;
+
+	}
 }
