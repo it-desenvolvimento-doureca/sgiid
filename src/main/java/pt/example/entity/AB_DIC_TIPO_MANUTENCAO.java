@@ -19,6 +19,7 @@ public class AB_DIC_TIPO_MANUTENCAO {
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
 	private String CLASSIF;
+	private String COR;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -74,6 +75,15 @@ public class AB_DIC_TIPO_MANUTENCAO {
 
 	public void setCLASSIF(String cLASSIF) {
 		CLASSIF = cLASSIF;
+	}
+
+	@Column(name = "COR")
+	public String getCOR() {
+		return COR;
+	}
+
+	public void setCOR(String cOR) {
+		COR = cOR;
 	}
 
 }

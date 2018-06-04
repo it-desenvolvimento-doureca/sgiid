@@ -53,7 +53,7 @@ public class ReportGenerator {
 		fileName = Name + "." + format;
 
 		String jrxmlFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jrxml";
-		String jasperFileName = "c:/" + filepath + "/relatorios/" + relatorio + ".jasper";
+		String jasperFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jasper";
 		String exportFileName = "c:/" + filepath + "/relatorios/" + fileName;
 
 		List<Bean> beans = new ArrayList<Bean>();
@@ -100,6 +100,64 @@ public class ReportGenerator {
 		conn.close();
 		// System.out.println("Done exporting reports to pdf");
 		deleteoldfiles(filepath);
+		return fileName;
+
+	}
+	
+	@SuppressWarnings("deprecation")
+	public String relatorio2(String format, String Name, Integer ID, String relatorio, String pasta, String filepath,
+			String url) throws JRException, SQLException {
+		HashMap hm = null;
+		String fileName = null;
+
+		// System.out.println("Start ....");
+		fileName = Name + "." + format;
+
+		String jrxmlFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jrxml";
+		String jasperFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jasper";
+		String exportFileName =  pasta + fileName;
+
+		List<Bean> beans = new ArrayList<Bean>();
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(beans);
+
+		JasperCompileManager.compileReportToFile(jrxmlFileName, jasperFileName);
+
+		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// String url =
+		// "jdbc:jtds:sqlserver://192.168.40.101/"+pasta.database+";instance=DOURECA;User=sa;Password=DourecA2@;";
+		// String url =
+		// "jdbc:jtds:sqlserver://192.168.40.126/SGIID;instance=DEVDOURECA;User=sa;Password=DourecA2@;";
+		Connection conn = DriverManager.getConnection(url);
+
+		// Create parametros
+		hm = new HashMap();
+		hm.put("id", ID);
+
+		// Generate jasper print
+		JasperPrint jprint = (JasperPrint) JasperFillManager.fillReport(jasperFileName, hm, conn);
+
+		// Export pdf file
+		if (format.equals("pdf")) {
+			JasperExportManager.exportReportToPdfFile(jprint, exportFileName);
+		} else if (format.equals("xlsx")) {
+
+			JRXlsxExporter exporter = new JRXlsxExporter();
+			exporter.setParameter(JRXlsExporterParameter.JASPER_PRINT, jprint);
+			exporter.setParameter(JRXlsExporterParameter.OUTPUT_FILE_NAME, exportFileName);
+			exporter.exportReport();
+		} else if (format.equals("docx")) {
+
+			Exporter exporter = new JRDocxExporter();
+			exporter.setExporterInput(new SimpleExporterInput(jprint));
+			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(exportFileName));
+			exporter.exportReport();
+		}
+		conn.close();
 		return fileName;
 
 	}

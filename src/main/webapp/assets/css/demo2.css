@@ -3198,12 +3198,20 @@ textarea {
     cursor: default;
 }
 
-.ui-datatable input {
+.ui-datatable input:not(.bordernormal2):not(.bordervermelho2) {
     /* border: 1px dotted #767070 !important;*/
     border-radius: 0.25em !important;
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
 }
+.ui-datatable .bordernormal2 {
+    border-radius: 0.25em !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
 
+.ui-datatable .bordervermelho2 {
+    border-radius: 0.25em !important;
+    border: 1px solid red !important;
+}
 .ui-datatable .form-group {
     margin-bottom: 0px !important;
 }
@@ -3253,7 +3261,7 @@ textarea {
 .ui-colorpicker-panel .ui-colorpicker-color {
     width: 150px;
     height: 150px;
-    background: transparent url(/assets/img/color.c7a33805ffda0d32bd2a.png) no-repeat 0 0
+    background: transparent url(../img/color.c7a33805ffda0d32bd2a.png) no-repeat 0 0
 }
 
 .ui-colorpicker-panel .ui-colorpicker-color-handle {
@@ -3592,7 +3600,7 @@ input[type="date"]::-webkit-input-placeholder {
     position: fixed;
     right: 29px;
     text-indent: -999px;
-    background: url('http://i66.tinypic.com/6t3jba.png') no-repeat;
+    background: url('../../assets/img/6t3jba.png') no-repeat;
     display: none;
     cursor: pointer;
 }
@@ -3605,7 +3613,7 @@ input[type="date"]::-webkit-input-placeholder {
     position: fixed;
     right: 29px;
     text-indent: -999px;
-    background: url('http://i66.tinypic.com/6t3jba.png') no-repeat;
+    background: url('../../assets/img/6t3jba.png') no-repeat;
     display: none;
     cursor: pointer;
     transform: rotate(180deg);
@@ -5058,4 +5066,8 @@ input[type="file"] {
 
 .tabelabanhosaditivos .ui-datatable-header {
     padding: 0 !important;
+}
+
+.utildropref .ui-dropdown-filter-container{
+    width:  100%;
 }

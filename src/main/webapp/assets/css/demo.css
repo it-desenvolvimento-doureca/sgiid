@@ -1,3 +1,23 @@
+#element:-webkit-full-screen {
+    width: 100%;
+    height: 100%;
+    background-color: #EEEEEE;
+    margin: 0;
+    overflow: auto;
+}
+
+.bordervermelho {
+    border: 1px solid red !important;
+}
+
+.bordernormal {
+    border: 1px solid rgb(169, 169, 169) !important;
+}
+
+html {
+    background-color: #EEEEEE;
+}
+
 .num_existe {
     color: red;
 }
@@ -20,6 +40,10 @@ body #formArranque .ui-dropdown .ui-dropdown-trigger {
 
 body #formArranque .ui-state-disabled .ui-dropdown-trigger {
     background: #ebebe4;
+}
+
+.tabelauser .ui-datatable-scrollable-body {
+    overflow-x: auto;
 }
 
 .loader {
@@ -242,8 +266,7 @@ body #formArranque .ui-state-disabled .ui-dropdown-trigger {
     z-index: -2;
 }
 
-.iconmelon,
-.im {
+.iconmelon, .im {
     position: relative;
     text-align: center;
     height: 129px;
@@ -251,8 +274,7 @@ body #formArranque .ui-state-disabled .ui-dropdown-trigger {
     fill: #525151;
 }
 
-.iconmelon:after,
-.im:after {
+.iconmelon:after, .im:after {
     content: '';
     position: absolute;
     top: 0;
@@ -275,13 +297,7 @@ body #formArranque .ui-state-disabled .ui-dropdown-trigger {
     border-top: 0px none;
 }
 
-.ui-paginator .ui-paginator-page,
-.ui-paginator .ui-paginator-pages,
-.ui-paginator .ui-paginator-next,
-.ui-paginator .ui-paginator-last,
-.ui-paginator .ui-paginator-first,
-.ui-paginator .ui-paginator-prev,
-.ui-paginator .ui-paginator-current {
+.ui-paginator .ui-paginator-page, .ui-paginator .ui-paginator-pages, .ui-paginator .ui-paginator-next, .ui-paginator .ui-paginator-last, .ui-paginator .ui-paginator-first, .ui-paginator .ui-paginator-prev, .ui-paginator .ui-paginator-current {
     display: inline-block;
     padding: 2px 6px;
     zoom: 1;
@@ -291,31 +307,22 @@ body #formArranque .ui-state-disabled .ui-dropdown-trigger {
     outline: none;
 }
 
-.ui-paginator .ui-paginator-page,
-.ui-paginator .ui-paginator-next,
-.ui-paginator .ui-paginator-last,
-.ui-paginator .ui-paginator-first,
-.ui-paginator .ui-paginator-prev {
+.ui-paginator .ui-paginator-page, .ui-paginator .ui-paginator-next, .ui-paginator .ui-paginator-last, .ui-paginator .ui-paginator-first, .ui-paginator .ui-paginator-prev {
     cursor: pointer;
 }
 
-.ui-paginator .ui-paginator-current,
-.ui-paginator .ui-paginator-rpp-options {
+.ui-paginator .ui-paginator-current, .ui-paginator .ui-paginator-rpp-options {
     margin-left: 1em;
     margin-right: 1em;
     background-image: none;
 }
 
-.ui-paginator .ui-paginator-next .ui-icon,
-.ui-paginator .ui-paginator-prev .ui-icon,
-.ui-paginator .ui-paginator-first .ui-icon,
-.ui-paginator .ui-paginator-last .ui-icon {
+.ui-paginator .ui-paginator-next .ui-icon, .ui-paginator .ui-paginator-prev .ui-icon, .ui-paginator .ui-paginator-first .ui-icon, .ui-paginator .ui-paginator-last .ui-icon {
     height: auto;
     overflow: inherit;
 }
 
-.ui-paginator .ui-paginator-jtp-select option,
-.ui-paginator .ui-paginator-rpp-options option {
+.ui-paginator .ui-paginator-jtp-select option, .ui-paginator .ui-paginator-rpp-options option {
     background-image: none;
     border: 0 none;
     box-shadow: none;

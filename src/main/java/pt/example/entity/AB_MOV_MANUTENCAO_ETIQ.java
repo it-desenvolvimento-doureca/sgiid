@@ -37,6 +37,8 @@ public class AB_MOV_MANUTENCAO_ETIQ {
 	private Date DATCRE;
 	private String PRODES;
 	private Integer ETQORIQTE1;
+	private String SINAL;
+	private String OBSERVACAO;
 
 	@Column(name = "DATA_CRIA")
 	public Timestamp getDATA_CRIA() {
@@ -245,6 +247,24 @@ public class AB_MOV_MANUTENCAO_ETIQ {
 
 	public void setETQORIQTE1(Integer eTQORIQTE1) {
 		ETQORIQTE1 = eTQORIQTE1;
+	}
+
+	@Column(name = "SINAL")
+	public String getSINAL() {
+		return SINAL;
+	}
+
+	public void setSINAL(String sINAL) {
+		SINAL = sINAL;
+	}
+
+	@Column(name = "OBSERVACAO")
+	public String getOBSERVACAO() {
+		return OBSERVACAO;
+	}
+
+	public void setOBSERVACAO(String oBSERVACAO) {
+		OBSERVACAO = oBSERVACAO;
 	}
 
 }

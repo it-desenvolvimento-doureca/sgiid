@@ -7299,18 +7299,21 @@ button.close {
         height: 100%;
     }
     .top_text>nav>div>div {
-        width: 50%;
+      /*  width: 50%;*/
         float: left;
     }
     .top_text .utz {
         width: 232%;
+    }
+    .top_text .utz {
+       /* width: 232%;*/
     }
     .utz>div {
         margin-top: -26px !important;
         display: block !important;
     }
     .top_text>nav>div>div .versao {
-        width: 312px;
+       /* width: 312px;*/
     }
     .top_text>nav>div>div img {
         width: 100%;

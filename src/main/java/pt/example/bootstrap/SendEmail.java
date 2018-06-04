@@ -1,5 +1,6 @@
 package pt.example.bootstrap;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -18,7 +19,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.bind.DatatypeConverter;
 
-import pt.example.entity.conf;
 
 // import com.mycompany.helper.* ;
 // import com.mycompany.dbi.*;
@@ -100,5 +100,69 @@ public class SendEmail {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public void enviarEmail2(String de, String para, String assunto, String mensagem, List<String> ficheiros,
+			String filepath) {
+
+		final String username = "alertas.it.doureca@gmail.com";
+		final String password = "DourecA2@";
+
+		Properties props = new Properties();
+
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+
+		// 587
+		// ssl off
+		// tls on
+
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		});
+
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(de));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(para));
+			message.setSubject(assunto);
+
+			MimeBodyPart messageBodyPart = new MimeBodyPart();
+			messageBodyPart.setContent(mensagem, "text/html");
+
+			Multipart multipart = new MimeMultipart();
+			multipart.addBodyPart(messageBodyPart);
+
+			// cógigo para ficheiro aqui!
+			if (ficheiros.size() > 0) {
+
+				for (String pair : ficheiros) {
+					MimeBodyPart attachPart = new MimeBodyPart();
+
+					String filename = filepath + pair;
+					DataSource source = new FileDataSource(filename);
+					attachPart.setDataHandler(new DataHandler(source));
+					attachPart.setFileName(pair);
+
+					multipart.addBodyPart(attachPart);
+
+				}
+			}
+
+			message.setContent(multipart);
+
+			Transport.send(message);
+			// LogFile.log("EMAIL ENVIADO! PARA: " + para,false);
+			// System.out.println("Done");
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 
 }
