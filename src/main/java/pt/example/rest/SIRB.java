@@ -2284,7 +2284,7 @@ public class SIRB {
 		formatter = new SimpleDateFormat("yyMMdd");
 		String datas = formatter.format(date1);
 
-		String quant = String.format("%.3f", Float.parseFloat(QUANT)).replace("$", ",");
+		String quant = String.format("%.4f", Float.parseFloat(QUANT)).replace("$", ",");
 		data_etiq += "DOURECA - PT- 4940;DOURECA - PT- 4940;;EW93 404D52 DA;P;";
 		data_etiq += quant + " " + ((UNIDADE != null) ? UNIDADE : "") + ";" // AF3
 				+ ";" // A3
@@ -2780,7 +2780,7 @@ public class SIRB {
 		formatter = new SimpleDateFormat("yyMMdd");
 		String datas = formatter.format(date1);
 		String data = "";
-		String quant = String.format("%.3f", content[21]).replace("$", ",");
+		String quant = String.format("%.4f", content[21]).replace("$", ",");
 		data += "DOURECA - PT- 4940;DOURECA - PT- 4940;;EW93 404D52 DA;P;";
 		data += quant + " " + ((content[22] != null) ? content[22] : "") + ";" // AF3
 				+ ";" // A3
