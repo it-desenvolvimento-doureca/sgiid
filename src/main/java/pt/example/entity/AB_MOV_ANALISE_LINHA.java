@@ -17,6 +17,10 @@ public class AB_MOV_ANALISE_LINHA {
 	private Float RESULTADO;
 	private Float CALCULO;
 	private String SINAL;
+	private Float LIMITE_AMARELO_INF;
+	private Float LIMITE_AMARELO_SUP;
+	private Float LIMITE_VERDE_INF;
+	private Float LIMITE_VERDE_SUP;
 
 	@Id
 	@Column(name = "ID_ANALISE_LIN")
@@ -48,6 +52,42 @@ public class AB_MOV_ANALISE_LINHA {
 	@Column(name = "SINAL")
 	public String getSINAL() {
 		return SINAL;
+	}
+
+	@Column(name = "LIMITE_AMARELO_INF")
+	public Float getLIMITE_AMARELO_INF() {
+		return LIMITE_AMARELO_INF;
+	}
+
+	@Column(name = "LIMITE_AMARELO_SUP")
+	public Float getLIMITE_AMARELO_SUP() {
+		return LIMITE_AMARELO_SUP;
+	}
+
+	@Column(name = "LIMITE_VERDE_INF")
+	public Float getLIMITE_VERDE_INF() {
+		return LIMITE_VERDE_INF;
+	}
+
+	@Column(name = "LIMITE_VERDE_SUP")
+	public Float getLIMITE_VERDE_SUP() {
+		return LIMITE_VERDE_SUP;
+	}
+
+	public void setLIMITE_AMARELO_INF(Float lIMITE_AMARELO_INF) {
+		LIMITE_AMARELO_INF = lIMITE_AMARELO_INF;
+	}
+
+	public void setLIMITE_AMARELO_SUP(Float lIMITE_AMARELO_SUP) {
+		LIMITE_AMARELO_SUP = lIMITE_AMARELO_SUP;
+	}
+
+	public void setLIMITE_VERDE_INF(Float lIMITE_VERDE_INF) {
+		LIMITE_VERDE_INF = lIMITE_VERDE_INF;
+	}
+
+	public void setLIMITE_VERDE_SUP(Float lIMITE_VERDE_SUP) {
+		LIMITE_VERDE_SUP = lIMITE_VERDE_SUP;
 	}
 
 	public void setSINAL(String sINAL) {

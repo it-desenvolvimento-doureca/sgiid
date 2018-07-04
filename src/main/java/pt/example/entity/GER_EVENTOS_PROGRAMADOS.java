@@ -47,6 +47,9 @@ public class GER_EVENTOS_PROGRAMADOS {
 	private Integer UTZ_APAGA;
 	private Timestamp DATA_APAGA;
 	private Boolean INATIVO;
+	private String UTILIZADOR;
+	private String SENHA;
+	private String DOMINIO;
 
 	@Id
 	@Column(name = "ID")
@@ -345,6 +348,33 @@ public class GER_EVENTOS_PROGRAMADOS {
 
 	public void setANEXA_FICHEIROS(Boolean aNEXA_FICHEIROS) {
 		ANEXA_FICHEIROS = aNEXA_FICHEIROS;
+	}
+
+	@Column(name = "UTILIZADOR")
+	public String getUTILIZADOR() {
+		return UTILIZADOR;
+	}
+
+	@Column(name = "SENHA")
+	public String getSENHA() {
+		return SENHA;
+	}
+
+	@Column(name = "DOMINIO")
+	public String getDOMINIO() {
+		return DOMINIO;
+	}
+
+	public void setUTILIZADOR(String uTILIZADOR) {
+		UTILIZADOR = uTILIZADOR;
+	}
+
+	public void setSENHA(String sENHA) {
+		SENHA = sENHA;
+	}
+
+	public void setDOMINIO(String dOMINIO) {
+		DOMINIO = dOMINIO;
 	}
 
 }

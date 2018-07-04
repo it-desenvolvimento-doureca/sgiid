@@ -2,11 +2,15 @@ package pt.example.rest;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -15,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,6 +42,10 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.SmbException;
+import jcifs.smb.SmbFile;
+import jcifs.smb.SmbFileOutputStream;
 import net.sf.jasperreports.engine.JRException;
 import pt.example.bootstrap.ConnectProgress;
 import pt.example.bootstrap.Printer;
@@ -271,11 +280,11 @@ public class SIRB {
 		return dao2.allEntries();
 	}
 
-	@GET
+	@POST
 	@Path("/getAB_DIC_BANHO_COMPONENTEbyid_banho/{id}")
 	@Produces("application/json")
-	public List<AB_DIC_BANHO_COMPONENTE> getAB_DIC_BANHO_COMPONENTEbyid_banho(@PathParam("id") Integer id) {
-		return dao2.getbyid_banho(id);
+	public List<AB_DIC_BANHO_COMPONENTE> getAB_DIC_BANHO_COMPONENTEbyid_banho(@PathParam("id") Integer id,final String data) {
+		return dao2.getbyid_banho(id,data);
 	}
 
 	@GET
@@ -1919,6 +1928,23 @@ public class SIRB {
 		ReportGenerator relatorio = new ReportGenerator();
 		List<String> ficheiros = new ArrayList<String>();
 
+		String pasta_destino = "";
+
+		String senha = "";
+
+		Boolean credencias = false;
+
+		if (evento.getUTILIZADOR() != null && !evento.getUTILIZADOR().isEmpty()) {
+			credencias = true;
+			pasta_destino = "C:\\sgiid\\programador_eventos\\temp_files\\";
+		} else {
+			pasta_destino = evento.getPASTA_DESTINO();
+		}
+
+		if (evento.getSENHA() != null) {
+			senha = new String(Base64.getDecoder().decode(evento.getSENHA()));
+		}
+
 		if (evento.getCRIAR_FICHEIRO()) {
 
 			Query query_folder = entityManager.createNativeQuery(evento.getQUERY());
@@ -1930,11 +1956,17 @@ public class SIRB {
 				try {
 
 					String nome = relatorio.relatorio2("pdf", content[1].toString(),
-							Integer.parseInt(content[0].toString()), evento.getNOME_RELATORIO(),
-							evento.getPASTA_DESTINO(), filepath, getURL());
+							Integer.parseInt(content[0].toString()), evento.getNOME_RELATORIO(), pasta_destino,
+							filepath, getURL());
 
 					if (evento.getANEXA_FICHEIROS() != null && evento.getANEXA_FICHEIROS())
 						ficheiros.add(nome);
+
+					if (credencias)
+						copyfiles(evento.getPASTA_DESTINO() + content[1].toString() + ".pdf",
+								pasta_destino + content[1].toString() + ".pdf", senha, evento.getDOMINIO(),
+								evento.getUTILIZADOR());
+
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1950,9 +1982,63 @@ public class SIRB {
 
 		if (evento.getENVIA_EMAIL()) {
 			email.enviarEmail2("alertas.it.doureca@gmail.com", evento.getEMAIL_PARA(), evento.getEMAIL_ASSUNTO(),
-					evento.getEMAIL_MENSAGEM(), ficheiros, evento.getPASTA_DESTINO());
+					evento.getEMAIL_MENSAGEM(), ficheiros, pasta_destino);
 		}
 		return data;
+	}
+
+	public static void copyfiles(String pastadestino, String ficheiro, String senha, String dominio, String user) {
+		File tempFile = null;
+
+		tempFile = new File(ficheiro);
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(tempFile);
+		} catch (FileNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+
+		NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(dominio, user, senha);
+		String path = "smb://" + pastadestino;
+		SmbFile sFile = null;
+		try {
+			sFile = new SmbFile(path, auth);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		SmbFileOutputStream sfos = null;
+		try {
+			sfos = new SmbFileOutputStream(sFile);
+		} catch (SmbException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			final byte[] buf = new byte[16 * 1024 * 1024];
+			int len;
+			while ((len = fis.read(buf)) > 0) {
+				sfos.write(buf, 0, len);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			fis.close();
+			sfos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@DELETE
@@ -2432,20 +2518,28 @@ public class SIRB {
 						+ ",'correcao'+CONVERT(varchar(10), ID_MOV_MANU_ETIQUETA), a.CONSUMIR as cons, '0' as id2,a.QUANT_FINAL as qtdf,a.UNISTO as unnd,a.sinal "
 						+ "from AB_MOV_MANUTENCAO_ETIQ a where a.ID_MOV_MANU_ETIQUETA in (" + ids + ")");
 
-		Query query_folder = entityManager.createNativeQuery(
-				"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,NOME_IMPRESSORA,IP_IMPRESSORA,MODELO_REPORT from GER_PARAMETROS a,GER_POSTOS b where IP_POSTO ='"
-						+ ip_posto + "'");
+		Query query_folder = entityManager
+				.createNativeQuery("select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,MODELO_REPORT from GER_PARAMETROS a");
+
+		Query query_impressora = entityManager.createNativeQuery(
+				"select top 1  NOME_IMPRESSORA,IP_IMPRESSORA from GER_POSTOS b where IP_POSTO ='" + ip_posto + "'");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
+		List<Object[]> dados_impressora = query_impressora.getResultList();
+		Boolean imprime = false;
 
 		for (Object[] content : dados_folder) {
 			path = content[0] + nome_ficheiro;
 			path2 = content[1].toString();
-			nomeimpressora = content[2].toString();
-			if (content[3] != null) {
-				ipimpressora = content[3].toString();
+			modelo_REPORT = content[2].toString();
+		}
+
+		for (Object[] content2 : dados_impressora) {
+			nomeimpressora = content2[0].toString();
+			if (content2[1] != null) {
+				ipimpressora = content2[1].toString();
 			}
-			modelo_REPORT = content[4].toString();
+			imprime = true;
 		}
 
 		sequencia = sequencia();
@@ -2501,9 +2595,10 @@ public class SIRB {
 				data_etiq += criaFicheiroEtiqueta(content);
 				size_etiq++;
 			}
-			
+
 			try {
-				connectionProgress.EXEC_SINCRO(content[0].toString(),Float.parseFloat(content[3].toString()), getURLSILVER());
+				connectionProgress.EXEC_SINCRO(content[0].toString(), Float.parseFloat(content[3].toString()),
+						getURLSILVER());
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -2744,27 +2839,20 @@ public class SIRB {
 			criar_ficheiro(data, path);
 		}
 
-		if (size_etiq > 0) {
+		if (size_etiq > 0 && imprime) {
 			criar_ficheiro(data_etiq, path2);
 		}
 
-		/*new java.util.Timer().schedule(new java.util.TimerTask() {
-			@Override
-			public void run() {
-				try {
-					connectionProgress.EXEC_SINCRO("SETQDE", getURLSILVER());
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
-					connectionProgress.EXEC_SINCRO("SOFC", getURLSILVER());
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}, 1000);*/
+		/*
+		 * new java.util.Timer().schedule(new java.util.TimerTask() {
+		 * 
+		 * @Override public void run() { try {
+		 * connectionProgress.EXEC_SINCRO("SETQDE", getURLSILVER()); } catch
+		 * (SQLException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } try { connectionProgress.EXEC_SINCRO("SOFC",
+		 * getURLSILVER()); } catch (SQLException e) { // TODO Auto-generated
+		 * catch block e.printStackTrace(); } } }, 1000);
+		 */
 
 	}
 
@@ -2974,7 +3062,7 @@ public class SIRB {
 	}
 
 	public void criar_ficheiro(String data, String path) {
-		File file2 = new File(path + ".txt");
+		File file2 = new File(path);
 		if (file2.delete())
 			// if file doesnt exists, then create it
 
