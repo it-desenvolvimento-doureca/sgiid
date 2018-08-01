@@ -2370,7 +2370,7 @@ public class SIRB {
 		formatter = new SimpleDateFormat("yyMMdd");
 		String datas = formatter.format(date1);
 
-		String quant = String.format("%.4f", Float.parseFloat(QUANT)).replace("$", ",");
+		String quant = String.format("%.3f", Float.parseFloat(QUANT)).replace("$", ",");
 		data_etiq += "DOURECA - PT- 4940;DOURECA - PT- 4940;;EW93 404D52 DA;P;";
 		data_etiq += quant + " " + ((UNIDADE != null) ? UNIDADE : "") + ";" // AF3
 				+ ";" // A3
@@ -2568,9 +2568,9 @@ public class SIRB {
 
 		String data_path = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
 		if (id != null) {
-			path2 = path2 + "ETIQUETA" + id;
+			path2 = path2 + "ETIQUETA" + id + ".txt";
 		} else {
-			path2 = path2 + "ETIQUETA_CORRECAO_IMPRE_" + data_path;
+			path2 = path2 + "ETIQUETA_CORRECAO_IMPRE_" + data_path + ".txt";
 		}
 		data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
 		data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
@@ -2743,7 +2743,7 @@ public class SIRB {
 
 			// Quantité
 			if (content[19] != null) {
-				String result = String.format("%.4f", content[19]).replace("$", ",");
+				String result = String.format("%.3f", content[19]).replace("$", ",");
 				String[] parts = result.split(",");
 				String part1 = "00000000000";
 				String part2 = "0000";
@@ -2868,7 +2868,7 @@ public class SIRB {
 		formatter = new SimpleDateFormat("yyMMdd");
 		String datas = formatter.format(date1);
 		String data = "";
-		String quant = String.format("%.4f", content[21]).replace("$", ",");
+		String quant = String.format("%.3f", content[21]).replace("$", ",");
 		data += "DOURECA - PT- 4940;DOURECA - PT- 4940;;EW93 404D52 DA;P;";
 		data += quant + " " + ((content[22] != null) ? content[22] : "") + ";" // AF3
 				+ ";" // A3

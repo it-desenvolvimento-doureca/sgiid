@@ -144,14 +144,14 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						// (a.DATA_PLANEAMENTO >= '" +
 						// firstMap.get("DATA_PLANEAMENTO2") + "')) "
 						+ "((not ('" + firstMap.get("DATA_PLANEAMENTO") + "' != 'null' and '"
-						+ firstMap.get("DATA_PLANEAMENTO") + "' != '')) or (b.DATA_PREPARACAO < '"
+						+ firstMap.get("DATA_PLANEAMENTO") + "' != '')) or (b.DATA_PREPARACAO <= '"
 						+ firstMap.get("DATA_PLANEAMENTO") + "')) " + "and ((not ('" + firstMap.get("DATA_PLANEAMENTO2")
 						+ "' != 'null' and '" + firstMap.get("DATA_PLANEAMENTO2")
-						+ "' != '')) or (b.DATA_PREPARACAO > '" + firstMap.get("DATA_PLANEAMENTO2") + "')) "
+						+ "' != '')) or (b.DATA_PREPARACAO >= '" + firstMap.get("DATA_PLANEAMENTO2") + "')) "
 						+ "and ((not ('" + firstMap.get("DATA_PREVISTA") + "' != 'null' and '"
-						+ firstMap.get("DATA_PREVISTA") + "' != '')) or (b.DATA_PREVISTA < '"
+						+ firstMap.get("DATA_PREVISTA") + "' != '')) or (b.DATA_PREVISTA <= '"
 						+ firstMap.get("DATA_PREVISTA") + "')) " + "and ((not ('" + firstMap.get("DATA_PREVISTA2")
-						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA2") + "' != '')) or (b.DATA_PREVISTA > '"
+						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA2") + "' != '')) or (b.DATA_PREVISTA >= '"
 						+ firstMap.get("DATA_PREVISTA2") + "')) " + "and ((not (" + ESTADO2 + " != 'null' and "
 						+ ESTADO2 + " != '')) or (a.ESTADO in (" + ESTADO + "))) " + "and ((not (" + NUMEROSEMANA2
 						+ " != 'null' and " + NUMEROSEMANA2 + " != '')) or (DATEPART( wk,b.DATA_PREPARACAO) in ("
@@ -215,13 +215,13 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "left join AB_DIC_TIPO_OPERACAO l on b.ID_TIPO_OPERACAO = l.ID_TIPO_OPERACAO "
 						+ "left join AB_DIC_TINA t on b.ID_TINA = t.ID_TINA " + "where " + "((not ('"
 						+ firstMap.get("DATA_PLANEAMENTO") + "' != 'null' and '" + firstMap.get("DATA_PLANEAMENTO")
-						+ "' != '')) or (b.DATA_PREPARACAO < '" + firstMap.get("DATA_PLANEAMENTO") + "')) "
+						+ "' != '')) or (b.DATA_PREPARACAO <= '" + firstMap.get("DATA_PLANEAMENTO") + "')) "
 						+ "and ((not ('" + firstMap.get("DATA_PLANEAMENTO2") + "' != 'null' and '"
-						+ firstMap.get("DATA_PLANEAMENTO2") + "' != '')) or (b.DATA_PREPARACAO > '"
+						+ firstMap.get("DATA_PLANEAMENTO2") + "' != '')) or (b.DATA_PREPARACAO >= '"
 						+ firstMap.get("DATA_PLANEAMENTO2") + "')) " + "and ((not ('" + firstMap.get("DATA_PREVISTA")
-						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA") + "' != '')) or (b.DATA_PREVISTA < '"
+						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA") + "' != '')) or (b.DATA_PREVISTA <= '"
 						+ firstMap.get("DATA_PREVISTA") + "')) " + "and ((not ('" + firstMap.get("DATA_PREVISTA2")
-						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA2") + "' != '')) or (b.DATA_PREVISTA > '"
+						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA2") + "' != '')) or (b.DATA_PREVISTA >= '"
 						+ firstMap.get("DATA_PREVISTA2") + "')) " + "and ((not (" + ESTADO2 + " != 'null' and "
 						+ ESTADO2 + " != '')) or (a.ESTADO in (" + ESTADO + "))) " + "and ((not (" + NUMEROSEMANA2
 						+ " != 'null' and " + NUMEROSEMANA2 + " != '')) or (DATEPART( wk,b.DATA_PREPARACAO) in ("

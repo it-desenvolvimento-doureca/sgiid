@@ -1,10 +1,22 @@
 @charset "UTF-8";
-body .ui-widget,
-body .ui-widget .ui-widget,
-body .ui-widget input,
-body .ui-widget select,
-body .ui-widget textarea,
-body .ui-widget button {
+.blink {
+    animation: blink 2s steps(5, start) infinite;
+    -webkit-animation: blink 1s steps(5, start) infinite;
+}
+
+@keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
+
+@-webkit-keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
+
+body .ui-widget, body .ui-widget .ui-widget, body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .ui-widget button {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     text-decoration: none;
     font-size: 1em;
@@ -58,15 +70,13 @@ body .ui-widget-header {
     /*border: 1px solid #cdcdcd;*/
 }
 
-body .ui-state-active,
-body .ui-state-highlight {
+body .ui-state-active, body .ui-state-highlight {
     /* background-color: #0275d8;*/
     background-color: #fcf8e3;
     /* color: #ffffff;*/
 }
 
-body .ui-state-error,
-body .ui-state-default.ui-state-error {
+body .ui-state-error, body .ui-state-default.ui-state-error {
     border-bottom-color: #e13131;
 }
 
@@ -80,16 +90,14 @@ body .ui-icon {
     opacity: 1;
 }
 
-body .ui-state-disabled,
-body .ui-widget:disabled {
+body .ui-state-disabled, body .ui-widget:disabled {
     /*/opacity: .35;*/
     filter: Alpha(Opacity=35);
     background-image: none;
     cursor: not-allowed !important;
 }
 
-body .ui-state-disabled *,
-body .ui-widget:disabled * {
+body .ui-state-disabled *, body .ui-widget:disabled * {
     cursor: not-allowed !important;
 }
 
@@ -163,8 +171,7 @@ body .ui-inputtext {
     width: 100%;
 }
 
-body .ui-inputtext.ui-state-focus,
-body .ui-inputtext:focus {
+body .ui-inputtext.ui-state-focus, body .ui-inputtext:focus {
     border: 1px solid #66afe9;
 }
 
@@ -180,8 +187,7 @@ body .ui-button {
     transition: background-color 0.3s;
 }
 
-body .ui-button:focus,
-body .ui-button:enabled:hover {
+body .ui-button:focus, body .ui-button:enabled:hover {
     outline: 0 none;
     background-color: #0267bf;
 }
@@ -317,13 +323,11 @@ body .ui-inputswitch .ui-inputswitch-handle.ui-state-focus {
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
 }
 
-body .ui-inputswitch .ui-inputswitch-on,
-body .ui-inputswitch .ui-inputswitch-off {
+body .ui-inputswitch .ui-inputswitch-on, body .ui-inputswitch .ui-inputswitch-off {
     color: #fff;
 }
 
-body .ui-inputswitch .ui-inputswitch-on span,
-body .ui-inputswitch .ui-inputswitch-off span {
+body .ui-inputswitch .ui-inputswitch-on span, body .ui-inputswitch .ui-inputswitch-off span {
     margin-right: 0.2em;
     position: relative;
     top: -0.1em;
@@ -422,10 +426,7 @@ body .ui-dropdown .ui-dropdown-trigger .fa {
     margin-top: .65em;
 }
 
-body .ui-dropdown:not(.ui-state-disabled):hover .ui-dropdown-trigger,
-body .ui-dropdown.ui-state-focus .ui-dropdown-trigger,
-body .ui-dropdown.ui-state-focus .ui-dropdown-label,
-body .ui-dropdown:not(.ui-state-disabled):hover .ui-dropdown-label {
+body .ui-dropdown:not(.ui-state-disabled):hover .ui-dropdown-trigger, body .ui-dropdown.ui-state-focus .ui-dropdown-trigger, body .ui-dropdown.ui-state-focus .ui-dropdown-label, body .ui-dropdown:not(.ui-state-disabled):hover .ui-dropdown-label {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
@@ -1167,17 +1168,11 @@ body .ui-tabview {
     border-bottom: 1px solid #c7c7c7;
 }
 
-body .ui-tabview.ui-tabview-top,
-body .ui-tabview.ui-tabview-bottom,
-body .ui-tabview.ui-tabview-left,
-body .ui-tabview.ui-tabview-right {
+body .ui-tabview.ui-tabview-top, body .ui-tabview.ui-tabview-bottom, body .ui-tabview.ui-tabview-left, body .ui-tabview.ui-tabview-right {
     border: 0 none;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav, body .ui-tabview.ui-tabview-left .ui-tabview-nav, body .ui-tabview.ui-tabview-right .ui-tabview-nav {
     padding: 0;
     border: 0 none;
     /*background: #ffffff;*/
@@ -1187,10 +1182,7 @@ body .ui-tabview.ui-tabview-right .ui-tabview-nav {
     border-bottom: 1px solid #cccccc;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li, body .ui-tabview.ui-tabview-left .ui-tabview-nav li, body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
     position: static;
     -moz-transition: background-color 0.3s;
     -o-transition: background-color 0.3s;
@@ -1206,94 +1198,58 @@ body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
     border-bottom: none;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-default a,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-default a,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-default a,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-default a {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-default a, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-default a, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-default a, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-default a {
     padding: 0.375em 0.75em;
     color: #2d353c;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-default a:focus,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-default a:focus,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-default a:focus,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-default a:focus {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-default a:focus, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-default a:focus, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-default a:focus, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-default a:focus {
     outline: 0 none;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-left .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-right .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover {
     border-color: #dedede;
     border-bottom: none;
     background-color: #ffffff;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-tabview-outline,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-tabview-outline,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-tabview-outline,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-tabview-outline {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-tabview-outline, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-tabview-outline, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-tabview-outline, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-tabview-outline {
     outline: 0 none;
     background-color: #e6e6e6;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active {
     background-color: #0275d8;
     border-color: #0275d8;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active a,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active a,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active a,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active a {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active a, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active a, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active a, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active a {
     color: #ffffff;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active.ui-tabview-outline,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active.ui-tabview-outline,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active.ui-tabview-outline,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active.ui-tabview-outline {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active.ui-tabview-outline, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active.ui-tabview-outline, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active.ui-tabview-outline, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active.ui-tabview-outline {
     background-color: #0283f1;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn {
     background-color: #ffffff;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover {
     background-color: #f4f3f4;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left {
     left: 0;
     height: 2.063em;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right {
     right: 0;
     height: 2.125em;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn .ui-icon,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn .ui-icon,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn .ui-icon,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn .ui-icon {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn .ui-icon, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn .ui-icon, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn .ui-icon, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn .ui-icon {
     margin-top: 0.5em;
 }
 
@@ -1307,24 +1263,20 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav li {
     border-top-right-radius: 0.25em;
 }
 
-body .ui-tabview.ui-tabview-left .ui-tabview-nav,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav {
+body .ui-tabview.ui-tabview-left .ui-tabview-nav, body .ui-tabview.ui-tabview-right .ui-tabview-nav {
     border-bottom: none;
 }
 
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
+body .ui-tabview.ui-tabview-left .ui-tabview-nav li, body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
     border: 1px solid transparent;
     width: 100%;
 }
 
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li:hover,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li:hover {
+body .ui-tabview.ui-tabview-left .ui-tabview-nav li:hover, body .ui-tabview.ui-tabview-right .ui-tabview-nav li:hover {
     border: 1px solid #dedede;
 }
 
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active {
+body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active {
     border-color: #0275d8;
     border-bottom: none;
 }
@@ -1430,10 +1382,7 @@ body .ui-paginator {
     box-sizing: border-box;
 }
 
-body .ui-paginator .ui-paginator-first,
-body .ui-paginator .ui-paginator-prev,
-body .ui-paginator .ui-paginator-next,
-body .ui-paginator .ui-paginator-last {
+body .ui-paginator .ui-paginator-first, body .ui-paginator .ui-paginator-prev, body .ui-paginator .ui-paginator-next, body .ui-paginator .ui-paginator-last {
     color: #0275d8;
     -moz-transition: background-color 0.3s;
     -o-transition: background-color 0.3s;
@@ -1445,17 +1394,11 @@ body .ui-paginator .ui-paginator-last {
     vertical-align: top;
 }
 
-body .ui-paginator .ui-paginator-first:hover,
-body .ui-paginator .ui-paginator-prev:hover,
-body .ui-paginator .ui-paginator-next:hover,
-body .ui-paginator .ui-paginator-last:hover {
+body .ui-paginator .ui-paginator-first:hover, body .ui-paginator .ui-paginator-prev:hover, body .ui-paginator .ui-paginator-next:hover, body .ui-paginator .ui-paginator-last:hover {
     background-color: #f4f3f4;
 }
 
-body .ui-paginator .ui-paginator-first:before,
-body .ui-paginator .ui-paginator-prev:before,
-body .ui-paginator .ui-paginator-next:before,
-body .ui-paginator .ui-paginator-last:before {
+body .ui-paginator .ui-paginator-first:before, body .ui-paginator .ui-paginator-prev:before, body .ui-paginator .ui-paginator-next:before, body .ui-paginator .ui-paginator-last:before {
     position: relative;
     top: 0.063em;
 }
@@ -1513,8 +1456,7 @@ body .ui-paginator .ui-paginator-pages .ui-paginator-page:hover.ui-state-active 
     background-color: #787474;
 }
 
-body .ui-datatable .ui-datatable-header,
-body .ui-datatable .ui-datatable-footer {
+body .ui-datatable .ui-datatable-header, body .ui-datatable .ui-datatable-footer {
     padding: .75em 1.25em;
     background-color: #f5f5f5;
 }
@@ -1527,8 +1469,7 @@ body .ui-datatable .ui-paginator {
     padding: 0;
 }
 
-body .ui-datatable .ui-datatable-thead>tr>th,
-body .ui-datatable .ui-datatable-tfoot>tr>td {
+body .ui-datatable .ui-datatable-thead>tr>th, body .ui-datatable .ui-datatable-tfoot>tr>td {
     background-color: #ffffff;
     padding: .75em;
     border-color: #c7c7c7;
@@ -1587,8 +1528,7 @@ body .ui-datatable .ui-datatable-data.ui-datatable-hoverable-rows>tr.ui-widget-c
     cursor: pointer;
 }
 
-body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-odd,
-body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
+body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-odd, body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
     border-color: #c7c7c7;
     border-bottom-color: #0275d8;
 }
@@ -1605,8 +1545,7 @@ body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
     background: #c7c7c7;
 }
 
-.gestao .ui-datatable .ui-datatable-thead>tr>th,
-body .ui-datatable .ui-datatable-tfoot>tr>td {
+.gestao .ui-datatable .ui-datatable-thead>tr>th, body .ui-datatable .ui-datatable-tfoot>tr>td {
     background-color: #b2b2b2 !important;
 }
 
@@ -1672,13 +1611,11 @@ body .ui-datatable .ui-datatable-data tr td.ui-editable-column input {
     border-radius: 0;
 }
 
-body .ui-datatable .ui-datatable-scrollable-header,
-body .ui-datatable .ui-datatable-scrollable-footer {
+body .ui-datatable .ui-datatable-scrollable-header, body .ui-datatable .ui-datatable-scrollable-footer {
     background-color: #f5f5f5;
 }
 
-body .ui-datatable .ui-datatable-scrollable-header .ui-datatable-scrollable-header-box td,
-body .ui-datatable .ui-datatable-scrollable-footer .ui-datatable-scrollable-header-box td {
+body .ui-datatable .ui-datatable-scrollable-header .ui-datatable-scrollable-header-box td, body .ui-datatable .ui-datatable-scrollable-footer .ui-datatable-scrollable-header-box td {
     color: #373a3c;
 }
 
@@ -1755,6 +1692,132 @@ body .ui-picklist .ui-picklist-list .ui-picklist-item.ui-state-highlight {
     color: #ffffff;
 }
 
+.ui-orderlist {
+    display: table
+}
+
+.ui-orderlist .ui-orderlist-controls {
+    height: 12.5em;
+    padding: 0 .25em;
+    vertical-align: middle;
+    display: table-cell
+}
+
+.ui-orderlist .ui-orderlist-controls .ui-button {
+    display: block;
+    margin-bottom: .25em
+}
+
+.ui-orderlist .ui-orderlist-container {
+    display: table-cell;
+    vertical-align: top
+}
+
+.ui-orderlist .ui-orderlist-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    height: 12.5em;
+    width: 12.5em
+}
+
+.ui-orderlist .ui-orderlist-caption {
+    text-align: center;
+    padding: .5em .75em;
+    border-bottom: 0
+}
+
+.ui-orderlist .ui-orderlist-list .ui-orderlist-item {
+    margin: 1px;
+    padding: .125em;
+    cursor: pointer;
+    border: 0;
+    font-weight: inherit;
+    background: #80808038;
+}
+
+.ui-orderlist .ui-orderlist-filter-container {
+    position: relative;
+    width: 100%;
+    padding: .5em .6em;
+    border-bottom: 0
+}
+
+.ui-orderlist .ui-orderlist-filter-container .ui-inputtext {
+    text-indent: 1.1em;
+    width: 100%
+}
+
+.ui-orderlist .ui-orderlist-filter-container .ui-orderlist-filter-icon {
+    position: absolute;
+    top: 50%;
+    left: 1em;
+    margin-top: -.6em
+}
+
+.ui-orderlist.ui-state-disabled .ui-button, .ui-orderlist.ui-state-disabled .ui-orderlist-item {
+    cursor: default
+}
+
+.ui-orderlist.ui-state-disabled .ui-orderlist-list {
+    overflow: hidden
+}
+
+.ui-orderlist.ui-orderlist-responsive {
+    width: 100%
+}
+
+.ui-orderlist.ui-orderlist-responsive .ui-orderlist-controls {
+    width: 16.66666%;
+    padding-right: .5em
+}
+
+.ui-orderlist.ui-orderlist-responsive .ui-orderlist-list-container {
+    width: 83.33333%
+}
+
+.ui-orderlist.ui-orderlist-responsive .ui-orderlist-caption, .ui-orderlist.ui-orderlist-responsive .ui-orderlist-controls>.ui-button, .ui-orderlist.ui-orderlist-responsive .ui-orderlist-list {
+    width: 100%
+}
+
+.ui-orderlist .ui-orderlist-droppoint {
+    height: 6px;
+    list-style-type: none
+}
+
+.ui-orderlist .ui-state-highlight {
+    background-color: #0275d8 !important;
+}
+
+.ui-orderlist .ui-button-text {
+    display: none;
+}
+
+.ui-widget-content {
+    border: 1px solid #D5D5D5;
+    background-color: #ffffff;
+    color: #222222;
+}
+
+@media (max-width:40em) {
+    .ui-orderlist.ui-orderlist-responsive .ui-orderlist-controls {
+        text-align: center;
+        width: 100%;
+        display: inline-block;
+        height: auto
+    }
+    .ui-orderlist.ui-orderlist-responsive .ui-orderlist-controls .ui-button {
+        display: inline-block;
+        width: 20%;
+        margin-right: .25em
+    }
+    .ui-orderlist.ui-orderlist-responsive .ui-orderlist-list-container {
+        width: 100%
+    }
+}
+
+/*
 body .ui-orderlist .ui-orderlist-controls button {
     font-size: 1.1em;
 }
@@ -1796,7 +1859,7 @@ body .ui-orderlist .ui-orderlist-list .ui-orderlist-item.ui-state-highlight {
 body .ui-orderlist.ui-grid-responsive .ui-grid-row .ui-orderlist-controls {
     margin-right: 0;
     padding-right: 0.5em;
-}
+}*/
 
 body .ui-carousel {
     padding: 0;
@@ -1965,13 +2028,11 @@ body .ui-treetable .ui-treetable-data tr td .ui-chkbox .ui-chkbox-icon {
     left: 0px;
 }
 
-body .ui-treetable .ui-treetable-scrollable-header,
-body .ui-treetable .ui-treetable-scrollable-footer {
+body .ui-treetable .ui-treetable-scrollable-header, body .ui-treetable .ui-treetable-scrollable-footer {
     background-color: #f0f3f5;
 }
 
-body .ui-treetable .ui-treetable-scrollable-header .ui-treetable-scrollable-header-box td,
-body .ui-treetable .ui-treetable-scrollable-footer .ui-treetable-scrollable-header-box td {
+body .ui-treetable .ui-treetable-scrollable-header .ui-treetable-scrollable-header-box td, body .ui-treetable .ui-treetable-scrollable-footer .ui-treetable-scrollable-header-box td {
     color: #373a3c;
 }
 
@@ -2040,8 +2101,7 @@ body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight {
     color: #ffffff;
 }
 
-body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight .ui-tree-toggler,
-body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight .ui-treenode-icon {
+body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight .ui-tree-toggler, body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight .ui-treenode-icon {
     color: #ffffff;
 }
 
@@ -2536,8 +2596,7 @@ body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link {
     color: #373a3c;
 }
 
-body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link:hover,
-body .ui-menu .ui-menu-list .ui-menuitem.ui-menuitem-active>.ui-menuitem-link {
+body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link:hover, body .ui-menu .ui-menu-list .ui-menuitem.ui-menuitem-active>.ui-menuitem-link {
     background-color: #0275d8;
     color: #ffffff;
 }
@@ -2614,8 +2673,7 @@ body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link {
     padding: 0.375em 0.75em;
 }
 
-body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link .ui-menuitem-icon,
-body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link .ui-menuitem-text {
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link .ui-menuitem-icon, body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link .ui-menuitem-text {
     vertical-align: middle;
     display: inline-block;
     float: none;
@@ -2780,20 +2838,7 @@ body .ui-slidemenu .ui-slidemenu-backward {
 
 /* Validation */
 
-.ui-inputtext.ng-dirty.ng-invalid,
-p-dropdown.ng-dirty.ng-invalid>.ui-dropdown,
-p-autocomplete.ng-dirty.ng-invalid>.ui-autocomplete>.ui-inputtext,
-p-calendar.ng-dirty.ng-invalid>.ui-inputtext,
-p-chips.ng-dirty.ng-invalid>.ui-inputtext,
-p-inputmask.ng-dirty.ng-invalid>.ui-inputtext,
-p-checkbox.ng-dirty.ng-invalid .ui-chkbox-box,
-p-radiobutton.ng-dirty.ng-invalid .ui-radiobutton-box,
-p-inputswitch.ng-dirty.ng-invalid .ui-inputswitch,
-p-listbox.ng-dirty.ng-invalid .ui-inputtext,
-p-multiselect.ng-dirty.ng-invalid>.ui-multiselect,
-p-spinner.ng-dirty.ng-invalid>.ui-inputtext,
-p-selectbutton.ng-dirty.ng-invalid .ui-button,
-p-togglebutton.ng-dirty.ng-invalid .ui-button {
+.ui-inputtext.ng-dirty.ng-invalid, p-dropdown.ng-dirty.ng-invalid>.ui-dropdown, p-autocomplete.ng-dirty.ng-invalid>.ui-autocomplete>.ui-inputtext, p-calendar.ng-dirty.ng-invalid>.ui-inputtext, p-chips.ng-dirty.ng-invalid>.ui-inputtext, p-inputmask.ng-dirty.ng-invalid>.ui-inputtext, p-checkbox.ng-dirty.ng-invalid .ui-chkbox-box, p-radiobutton.ng-dirty.ng-invalid .ui-radiobutton-box, p-inputswitch.ng-dirty.ng-invalid .ui-inputswitch, p-listbox.ng-dirty.ng-invalid .ui-inputtext, p-multiselect.ng-dirty.ng-invalid>.ui-multiselect, p-spinner.ng-dirty.ng-invalid>.ui-inputtext, p-selectbutton.ng-dirty.ng-invalid .ui-button, p-togglebutton.ng-dirty.ng-invalid .ui-button {
     border-bottom-color: #e13131;
 }
 
@@ -2832,13 +2877,11 @@ p-togglebutton.ng-dirty.ng-invalid .ui-button {
     padding-right: 1.5em
 }
 
-.ui-dropdown .ui-dropdown-item-empty,
-.ui-dropdown .ui-dropdown-label-empty {
+.ui-dropdown .ui-dropdown-item-empty, .ui-dropdown .ui-dropdown-label-empty {
     text-indent: -9999px
 }
 
-.ui-dropdown.ui-state-disabled .ui-dropdown-trigger,
-.ui-dropdown.ui-state-disabled .ui-dropdown-label {
+.ui-dropdown.ui-state-disabled .ui-dropdown-trigger, .ui-dropdown.ui-state-disabled .ui-dropdown-label {
     cursor: default
 }
 
@@ -2977,13 +3020,11 @@ textarea {
     padding-right: 1.5em
 }
 
-.ui-dropdown .ui-dropdown-item-empty,
-.ui-dropdown .ui-dropdown-label-empty {
+.ui-dropdown .ui-dropdown-item-empty, .ui-dropdown .ui-dropdown-label-empty {
     text-indent: -9999px
 }
 
-.ui-dropdown.ui-state-disabled .ui-dropdown-trigger,
-.ui-dropdown.ui-state-disabled .ui-dropdown-label {
+.ui-dropdown.ui-state-disabled .ui-dropdown-trigger, .ui-dropdown.ui-state-disabled .ui-dropdown-label {
     cursor: default
 }
 
@@ -3040,8 +3081,7 @@ textarea {
     padding: .2em 0
 }
 
-.ui-datepicker .ui-datepicker-prev,
-.ui-datepicker .ui-datepicker-next {
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
     position: absolute;
     top: .125em;
     width: 1.8em;
@@ -3056,8 +3096,7 @@ textarea {
     right: .125em
 }
 
-.ui-datepicker .ui-datepicker-prev span,
-.ui-datepicker .ui-datepicker-next span {
+.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span {
     display: block;
     position: absolute;
     left: 50%;
@@ -3115,8 +3154,7 @@ textarea {
     padding: .125em
 }
 
-.ui-datepicker td span,
-.ui-datepicker td a {
+.ui-datepicker td span, .ui-datepicker td a {
     display: block;
     padding: .2em;
     text-align: right;
@@ -3170,8 +3208,7 @@ textarea {
     width: 25%
 }
 
-.ui-datepicker-multi .ui-datepicker-group-last .ui-datepicker-header,
-.ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header {
+.ui-datepicker-multi .ui-datepicker-group-last .ui-datepicker-header, .ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header {
     border-left-width: 0
 }
 
@@ -3203,6 +3240,7 @@ textarea {
     border-radius: 0.25em !important;
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
 }
+
 .ui-datatable .bordernormal2 {
     border-radius: 0.25em !important;
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
@@ -3212,6 +3250,7 @@ textarea {
     border-radius: 0.25em !important;
     border: 1px solid red !important;
 }
+
 .ui-datatable .form-group {
     margin-bottom: 0px !important;
 }
@@ -3299,8 +3338,7 @@ textarea {
     cursor: pointer
 }
 
-.ui-colorpicker-panel.ui-state-disabled .ui-colorpicker-color-handle,
-.ui-colorpicker-panel.ui-state-disabled .ui-colorpicker-hue-handle {
+.ui-colorpicker-panel.ui-state-disabled .ui-colorpicker-color-handle, .ui-colorpicker-panel.ui-state-disabled .ui-colorpicker-hue-handle {
     opacity: .5
 }
 
@@ -3333,8 +3371,7 @@ textarea {
     min-width: 1.5em
 }
 
-.ui-timepicker>.ui-minute-picker,
-.ui-timepicker>.ui-second-picker {
+.ui-timepicker>.ui-minute-picker, .ui-timepicker>.ui-second-picker {
     margin-left: 0
 }
 
@@ -3389,8 +3426,7 @@ input[type="date"]::-webkit-input-placeholder {
     margin-top: -1px
 }
 
-.ui-radiobutton,
-.ui-radiobutton-label {
+.ui-radiobutton, .ui-radiobutton-label {
     vertical-align: middle;
     display: inline-block;
     color: black;
@@ -3419,21 +3455,18 @@ input[type="date"]::-webkit-input-placeholder {
     vertical-align: middle
 }
 
-.ui-datatable .ui-selection-column .ui-chkbox,
-.ui-datatable .ui-selection-column .ui-radiobutton {
+.ui-datatable .ui-selection-column .ui-chkbox, .ui-datatable .ui-selection-column .ui-radiobutton {
     margin: 0;
     display: block
 }
 
-.ui-datatable .ui-selection-column .ui-chkbox-box,
-.ui-datatable .ui-selection-column .ui-radiobutton-box {
+.ui-datatable .ui-selection-column .ui-chkbox-box, .ui-datatable .ui-selection-column .ui-radiobutton-box {
     display: block;
     box-sizing: border-box;
     margin: 0
 }
 
-.ui-multiselect-panel .ui-multiselect-item .ui-chkbox,
-.ui-multiselect-panel .ui-multiselect-item label {
+.ui-multiselect-panel .ui-multiselect-item .ui-chkbox, .ui-multiselect-panel .ui-multiselect-item label {
     display: inline-block;
     vertical-align: middle
 }
@@ -3477,8 +3510,7 @@ input[type="date"]::-webkit-input-placeholder {
     color: black;
 }
 
-.ui-datatable .ui-datatable-data tr.ui-rowgroup-header td a,
-.ui-datatable .ui-datatable-data tr.ui-rowgroup-header td span.ui-rowgroup-header-name {
+.ui-datatable .ui-datatable-data tr.ui-rowgroup-header td a, .ui-datatable .ui-datatable-data tr.ui-rowgroup-header td span.ui-rowgroup-header-name {
     display: inline-block;
     vertical-align: middle
 }
@@ -3494,15 +3526,13 @@ input[type="date"]::-webkit-input-placeholder {
 
 /*Radio and Checkbox START*/
 
-.checkbox label:after,
-.radio label:after {
+.checkbox label:after, .radio label:after {
     content: '';
     display: table;
     clear: both;
 }
 
-.checkbox .cr,
-.radio .cr {
+.checkbox .cr, .radio .cr {
     position: relative;
     display: inline-block;
     border: 1px solid #a9a9a9;
@@ -3517,8 +3547,7 @@ input[type="date"]::-webkit-input-placeholder {
     border-radius: 50%;
 }
 
-.checkbox .cr .cr-icon,
-.radio .cr .cr-icon {
+.checkbox .cr .cr-icon, .radio .cr .cr-icon {
     position: absolute;
     font-size: .8em;
     line-height: 0;
@@ -3526,26 +3555,22 @@ input[type="date"]::-webkit-input-placeholder {
     left: 20%;
 }
 
-.checkbox label input[type="checkbox"],
-.radio label input[type="radio"] {
+.checkbox label input[type="checkbox"], .radio label input[type="radio"] {
     display: none;
 }
 
-.checkbox label input[type="checkbox"]+.cr>.cr-icon,
-.radio label input[type="radio"]+.cr>.cr-icon {
+.checkbox label input[type="checkbox"]+.cr>.cr-icon, .radio label input[type="radio"]+.cr>.cr-icon {
     transform: scale(3) rotateZ(-20deg);
     opacity: 0;
     transition: all .3s ease-in;
 }
 
-.checkbox label input[type="checkbox"]:checked+.cr>.cr-icon,
-.radio label input[type="radio"]:checked+.cr>.cr-icon {
+.checkbox label input[type="checkbox"]:checked+.cr>.cr-icon, .radio label input[type="radio"]:checked+.cr>.cr-icon {
     transform: scale(1) rotateZ(0deg);
     opacity: 1;
 }
 
-.checkbox label input[type="checkbox"]:disabled+.cr,
-.radio label input[type="radio"]:disabled+.cr {
+.checkbox label input[type="checkbox"]:disabled+.cr, .radio label input[type="radio"]:disabled+.cr {
     opacity: .5;
 }
 
@@ -3619,16 +3644,14 @@ input[type="date"]::-webkit-input-placeholder {
     transform: rotate(180deg);
 }
 
-.radio,
-.checkbox {
+.radio, .checkbox {
     position: relative;
     display: block;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.radio label,
-.checkbox label {
+.radio label, .checkbox label {
     min-height: 20px;
     padding-left: 20px;
     margin-bottom: 0;
@@ -3943,8 +3966,7 @@ checkbox {
     text-align: center;
 }
 
-#burst-8:before,
-#burst-8:after {
+#burst-8:before, #burst-8:after {
     content: "";
     position: absolute;
     top: 0;
@@ -3970,8 +3992,7 @@ checkbox {
     display: none;
 }
 
-.cor_amarelo:before,
-.cor_amarelo:after {
+.cor_amarelo:before, .cor_amarelo:after {
     background: yellow !important;
 }
 
@@ -4122,8 +4143,7 @@ checkbox {
     list-style-type: none
 }
 
-.ui-picklist-list.ui-picklist-source,
-.ui-picklist-list.ui-picklist-target {
+.ui-picklist-list.ui-picklist-source, .ui-picklist-list.ui-picklist-target {
     outline: none
 }
 
@@ -4222,8 +4242,7 @@ checkbox {
     margin-left: 1px
 }
 
-.ui-multiselect-panel .ui-multiselect-item .ui-chkbox,
-.ui-multiselect-panel .ui-multiselect-item label {
+.ui-multiselect-panel .ui-multiselect-item .ui-chkbox, .ui-multiselect-panel .ui-multiselect-item label {
     display: inline-block;
     vertical-align: middle
 }
@@ -4234,14 +4253,12 @@ checkbox {
     cursor: pointer
 }
 
-.ui-datatable .ui-selection-column .ui-chkbox,
-.ui-datatable .ui-selection-column .ui-radiobutton {
+.ui-datatable .ui-selection-column .ui-chkbox, .ui-datatable .ui-selection-column .ui-radiobutton {
     margin: 0;
     display: block
 }
 
-.ui-datatable .ui-selection-column .ui-chkbox-box,
-.ui-datatable .ui-selection-column .ui-radiobutton-box {
+.ui-datatable .ui-selection-column .ui-chkbox-box, .ui-datatable .ui-selection-column .ui-radiobutton-box {
     display: block;
     box-sizing: border-box;
     margin: 0
@@ -4353,8 +4370,7 @@ checkbox {
     overflow: hidden
 }
 
-.ui-multiselect.ui-state-disabled .ui-multiselect-label,
-.ui-multiselect.ui-state-disabled .ui-multiselect-trigger {
+.ui-multiselect.ui-state-disabled .ui-multiselect-label, .ui-multiselect.ui-state-disabled .ui-multiselect-trigger {
     cursor: auto
 }
 
@@ -4386,8 +4402,7 @@ checkbox {
     position: relative
 }
 
-.ui-multiselect-panel .ui-multiselect-item .ui-chkbox,
-.ui-multiselect-panel .ui-multiselect-item label {
+.ui-multiselect-panel .ui-multiselect-item .ui-chkbox, .ui-multiselect-panel .ui-multiselect-item label {
     display: inline-block;
     vertical-align: middle;
     color: black !important;
@@ -4433,8 +4448,7 @@ checkbox {
     border: 0 none
 }
 
-.ui-multiselect-header a.ui-multiselect-all,
-.ui-multiselect-header a.ui-multiselect-none {
+.ui-multiselect-header a.ui-multiselect-all, .ui-multiselect-header a.ui-multiselect-none {
     float: left;
     margin-right: 10px;
     display: block
@@ -4488,10 +4502,7 @@ checkbox {
     text-align: left
 }
 
-.ui-autocomplete .ui-button-icon-only,
-.ui-autocomplete .ui-button-icon-only:active,
-.ui-autocomplete .ui-button-icon-only:focus,
-.ui-autocomplete .ui-button-icon-only:hover {
+.ui-autocomplete .ui-button-icon-only, .ui-autocomplete .ui-button-icon-only:active, .ui-autocomplete .ui-button-icon-only:focus, .ui-autocomplete .ui-button-icon-only:hover {
     border-left: 0 none
 }
 
@@ -4556,8 +4567,7 @@ checkbox {
     border-radius: 0
 }
 
-.ui-autocomplete-dd .ui-autocomplete-multiple-container.ui-corner-all,
-.ui-autocomplete-dd input.ui-corner-all {
+.ui-autocomplete-dd .ui-autocomplete-multiple-container.ui-corner-all, .ui-autocomplete-dd input.ui-corner-all {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0
 }
@@ -4567,13 +4577,11 @@ checkbox {
     border-bottom-left-radius: 0
 }
 
-.ui-fluid .ui-autocomplete,
-.ui-fluid .ui-autocomplete-input {
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
     width: 100%
 }
 
-.ui-fluid .ui-autocomplete.ui-autocomplete-dd .ui-autocomplete-input,
-.ui-fluid .ui-autocomplete.ui-autocomplete-dd .ui-autocomplete-multiple-container {
+.ui-fluid .ui-autocomplete.ui-autocomplete-dd .ui-autocomplete-input, .ui-fluid .ui-autocomplete.ui-autocomplete-dd .ui-autocomplete-multiple-container {
     width: calc(100% - 2em)
 }
 
@@ -4964,8 +4972,7 @@ input[type="file"] {
     color: #fff
 }
 
-.ui-button.ui-button-danger:enabled:hover,
-.ui-button.ui-button-danger:focus {
+.ui-button.ui-button-danger:enabled:hover, .ui-button.ui-button-danger:focus {
     background-color: #d43f3a
 }
 
@@ -5034,28 +5041,22 @@ input[type="file"] {
     left: .25em
 }
 
-.ui-fluid .ui-listbox .ui-listbox-filter-container,
-.ui-fluid .ui-listbox .ui-listbox-filter-container input {
+.ui-fluid .ui-listbox .ui-listbox-filter-container, .ui-fluid .ui-listbox .ui-listbox-filter-container input {
     width: calc(100% - 32px)
 }
 
-.ui-button.ui-button-warning.ui-state-default,
-.ui-splitbutton.ui-button-warning .ui-button.ui-state-default {
+.ui-button.ui-button-warning.ui-state-default, .ui-splitbutton.ui-button-warning .ui-button.ui-state-default {
     background-color: #f0ad4e;
     border-color: #f0ad4e;
     color: #fff
 }
 
-.ui-button.ui-button-warning:enabled:hover,
-.ui-button.ui-button-warning:focus,
-.ui-splitbutton.ui-button-warning .ui-button:enabled:hover,
-.ui-splitbutton.ui-button-warning .ui-button:focus {
+.ui-button.ui-button-warning:enabled:hover, .ui-button.ui-button-warning:focus, .ui-splitbutton.ui-button-warning .ui-button:enabled:hover, .ui-splitbutton.ui-button-warning .ui-button:focus {
     background-color: #eea236;
     border-color: #f0ad4e
 }
 
-.ui-button.ui-button-warning:enabled:active,
-.ui-splitbutton.ui-button-warning .ui-button:enabled:active {
+.ui-button.ui-button-warning:enabled:active, .ui-splitbutton.ui-button-warning .ui-button:enabled:active {
     background-color: #ec971f;
     border-color: #f0ad4e
 }
@@ -5068,6 +5069,6 @@ input[type="file"] {
     padding: 0 !important;
 }
 
-.utildropref .ui-dropdown-filter-container{
-    width:  100%;
+.utildropref .ui-dropdown-filter-container {
+    width: 100%;
 }

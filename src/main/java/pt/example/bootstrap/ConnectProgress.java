@@ -283,7 +283,7 @@ public class ConnectProgress {
 			proref = "";
 		String query = "select SUM(a.STOQTE) as STOQTE,b.UNIUTI,a.LIECOD  from STOLIE  a LEFT JOIN SDTPRA  b ON a.proref = b.proref "
 				+ "where a.LIECOD in (" + liecod + ") GROUP BY b.UNIUTI, a.proref,a.liecod HAVING (((a.proref)='"
-				+ proref + "'))";
+				+ proref + "')) order by STOQTE desc";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
