@@ -3678,7 +3678,7 @@ Copyright (c) 2015 Daniel Eden
  }
  
  .card .table-responsive {
-   padding: 0px !important;
+   padding: 1px !important;
  }
  
  .card .card-content .category {

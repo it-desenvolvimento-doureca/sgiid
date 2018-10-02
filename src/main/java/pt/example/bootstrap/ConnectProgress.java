@@ -340,6 +340,36 @@ public class ConnectProgress {
 		return list;
 	}
 
+	public List<HashMap<String, String>> getComponentesTodos(String url) throws SQLException {
+
+		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA ";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("PRODES2", rs.getString("PRODES2"));
+				x.put("UNISTO", rs.getString("UNISTO"));
+				list.add(x);
+			}
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
 	public List<HashMap<String, String>> getEtiquetas(String url, String PROREF) throws SQLException {
 
 		String query = "SELECT a.etqnum, a.liecod,a.etqembqte,a.unicod,a.etqsitsto,a.etqetat,a.etqorilot1,a.datcre ,a.PROREF,b.PRODES1 "
@@ -534,6 +564,451 @@ public class ConnectProgress {
 				HashMap<String, String> x = new HashMap<>();
 				x.put("RESCOD", rs.getString("RESCOD"));
 				x.put("RESDES", rs.getString("RESDES"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getClientes(String url) throws SQLException {
+
+		String query = "select b.CLICOD,b.ADRNOM from SDTCLI a inner join SDTCLE b on a.CLICOD = b.CLICOD where b.ETSNUM = ''";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("CLICOD", rs.getString("CLICOD"));
+				x.put("ADRNOM", rs.getString("ADRNOM"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getMoradas(String url, String ID) throws SQLException {
+
+		String query = "Select CLICOD,ETSNUM,ADRLIB2,ADRLIB3,ADRLIB1,ADRBDI,ADRNOM from SDTCLE where CLICOD = '" + ID
+				+ "' and ETSNUM like 'E%'";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("CLICOD", rs.getString("CLICOD"));
+				x.put("ETSNUM", rs.getString("ETSNUM"));
+				x.put("ADRLIB2", rs.getString("ADRLIB2"));
+				x.put("ADRLIB3", rs.getString("ADRLIB3"));
+				x.put("ADRLIB1", rs.getString("ADRLIB1"));
+				x.put("ADRBDI", rs.getString("ADRBDI"));
+				x.put("ADRNOM", rs.getString("ADRNOM"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getEncomendasCliente(String url, String PROREF) throws SQLException {
+
+		String query = "select b.PROREF,c.ADRNOM,c.ETSNUM,c.ADRLIB1,c.ADRLIB2,c.CLICOD, (d.CDDQTC-d.CDDQTL) as QUANTIDADE,d.CDDDATBES from SVCEBA a "
+				+ "inner join SVCPBA b on a.CDENUMENR = b.CDENUMENR "
+				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM "
+				+ "inner join SVCPDL d on b.CDLNUMENR = d.CDLNUMENR " + "where b.PROREF = '" + PROREF
+				+ "'  and  (d.CDDQTC-d.CDDQTL) > 0 and d.CDDLIVCOD in (3,4,5) and d.CDDETAT = 0 order by d.CDDDATBES";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("ETSNUM", rs.getString("ETSNUM"));
+				x.put("ADRLIB2", rs.getString("ADRLIB2"));
+				x.put("CLICOD", rs.getString("CLICOD"));
+				x.put("ADRLIB1", rs.getString("ADRLIB1"));
+				x.put("QUANTIDADE", rs.getString("QUANTIDADE"));
+				x.put("CDDDATBES", rs.getString("CDDDATBES"));
+				x.put("ADRNOM", rs.getString("ADRNOM"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getEnviado(String url, String PROREF) throws SQLException {
+
+		String query = "Select b.PROREF,a.BLNUM,b.LIPQTL,a.LIVDATDEP,a.LIVDATREC,c.ADRNOM,c.ADRLIB1,c.ADRLIB2,c.ETSNUM,c.CLICOD from SVLEBA a "
+				+ "inner join SVLPBA b on a.LIVNUMENR = b.LIVNUMENR "
+				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM " + "where b.PROREF = '"
+				+ PROREF + "'  and a.BLNUM like 'GR%' and LIVDATDEP > getdate()-180 order by LIVDATDEP";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("ETSNUM", rs.getString("ETSNUM"));
+				x.put("ADRLIB2", rs.getString("ADRLIB2"));
+				x.put("CLICOD", rs.getString("CLICOD"));
+				x.put("ADRLIB1", rs.getString("ADRLIB1"));
+				x.put("BLNUM", rs.getString("BLNUM"));
+				x.put("LIPQTL", rs.getString("LIPQTL"));
+				x.put("ADRNOM", rs.getString("ADRNOM"));
+				x.put("LIVDATDEP", rs.getString("LIVDATDEP"));
+				x.put("LIVDATREC", rs.getString("LIVDATREC"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getPlaneado(String url, String PROREF) throws SQLException {
+
+		String query = "Select a.OFNUM,b.PROREF,a.OFDATFP,(b.OFBQTEINI - b.OFBQTEREA) as QUANTIDADE from SOFA a "
+				+ "inner join SOFB b on a.OFANUMENR = b.OFANUMENR " + "where b.PROREF = '" + PROREF + "' and (b.OFBQTEINI - b.OFBQTEREA) >= 0 ";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("OFNUM", rs.getString("OFNUM"));
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("OFDATFP", rs.getString("OFDATFP"));
+				x.put("QUANTIDADE", rs.getString("QUANTIDADE"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getStock2(String url, String PROREF) throws SQLException {
+
+		String query = "Select a.PROREF,a.LIECOD,a.STOQTE from STOLIE a " + "where a.PROREF = '" + PROREF
+				+ "' and a.STOQTE <> 0 order by a.LIECOD";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("LIECOD", rs.getString("LIECOD"));
+				x.put("STOQTE", rs.getString("STOQTE"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> validalote(String url, String LOTE) throws SQLException {
+
+		String query = "select LOTREF from STOLOT where LOTREF = '" + LOTE + "'";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("LOTREF", rs.getString("LOTREF"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> validaEtiqueta(String url, String ETIQUETA) throws SQLException {
+
+		String query = "select ETQNUM from SETQDE where ETQNUM = '" + ETIQUETA + "' ";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("ETQNUM", rs.getString("ETQNUM"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> validaGuia(String url, String GUIA) throws SQLException {
+
+		String query = "select BLNUM from SVLEBA where BLNUM = '" + GUIA + "' ";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("BLNUM", rs.getString("BLNUM"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getDadosporEtiqueta(String url, String etiqueta) throws SQLException {
+
+		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,b.ETQORILOT1,b.LIECOD,b.ETQORIQTE1 ,b.ETQNUM  "
+				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
+				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
+				+ "where b.ETQNUM = '" + etiqueta + "' ";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("ETQEMBQTE", rs.getString("ETQEMBQTE"));
+				x.put("ETQORILOT1", rs.getString("ETQORILOT1"));
+				x.put("LIECOD", rs.getString("LIECOD"));
+				x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
+				x.put("ETQNUM", rs.getString("ETQNUM"));
+				list.add(x);
+			}
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getDadosporGuia(String url, String guia) throws SQLException {
+
+		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,b.ETQORILOT1,b.LIECOD,b.ETQORIQTE1 ,b.ETQNUM  "
+				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
+				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
+				+ "inner join SVLEBA d on d.BLNUM = b.ETQCONDOC "
+				+ "where d.BLNUM = '" + guia + "' ";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("ETQEMBQTE", rs.getString("ETQEMBQTE"));
+				x.put("ETQORILOT1", rs.getString("ETQORILOT1"));
+				x.put("LIECOD", rs.getString("LIECOD"));
+				x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
+				x.put("ETQNUM", rs.getString("ETQNUM"));
+				list.add(x);
+			}
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getDadosporLote(String url, String lote) throws SQLException {
+
+		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,b.ETQORILOT1,b.LIECOD,b.ETQORIQTE1 ,b.ETQNUM  "
+				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
+				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
+				+ "where b.ETQORILOT1 = '" + lote + "'";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("ETQEMBQTE", rs.getString("ETQEMBQTE"));
+				x.put("ETQORILOT1", rs.getString("ETQORILOT1"));
+				x.put("LIECOD", rs.getString("LIECOD"));
+				x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
+				x.put("ETQNUM", rs.getString("ETQNUM"));
+				list.add(x);
+			}
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getComponentesdoCliente(String url, String CLICOD, String ETSNUM)
+			throws SQLException {
+
+		String query = "select a.PROREF,a.PRODES1,a.PRODES2,d.PRDFAMCOD from SDTPRA a "
+				+ "inner join SDTCLP b on a.PROREF = b.PROREF "
+				+ "inner join SDTCLE c on b.CLICOD = c.CLICOD and b.ETSNUM = c.ETSNUM "
+				+ "left join SDTPRA d on a.PROREF = d.PROREF " + "where c.CLICOD = '" + CLICOD + "' and c.ETSNUM = '"
+				+ ETSNUM + "'";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("PRODES2", rs.getString("PRODES2"));
+				x.put("FAMCOD", rs.getString("PRDFAMCOD"));
 				list.add(x);
 			}
 

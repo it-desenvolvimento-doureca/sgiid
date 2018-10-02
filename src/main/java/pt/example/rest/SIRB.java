@@ -9,8 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -42,6 +45,11 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import com.auxilii.msgparser.Message;
+import com.auxilii.msgparser.MsgParser;
+import com.auxilii.msgparser.attachment.Attachment;
+import com.auxilii.msgparser.attachment.FileAttachment;
+
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
@@ -56,12 +64,18 @@ import pt.example.dao.AB_DIC_BANHODao;
 import pt.example.dao.AB_DIC_BANHO_ADITIVODao;
 import pt.example.dao.AB_DIC_BANHO_COMPONENTEDao;
 import pt.example.dao.AB_DIC_COMPONENTEDao;
+import pt.example.dao.RC_DIC_FICHEIROS_ANALISEDao;
+import pt.example.dao.RC_DIC_GRAU_IMPORTANCIADao;
 import pt.example.dao.AB_DIC_LINHADao;
 import pt.example.dao.AB_DIC_LINHA_OFDao;
+import pt.example.dao.RC_DIC_REJEICAODao;
+import pt.example.dao.RC_DIC_TEMPO_RESPOSTADao;
 import pt.example.dao.AB_DIC_TINADao;
 import pt.example.dao.AB_DIC_TIPO_ADICAODao;
+import pt.example.dao.RC_DIC_TIPO_DEFEITODao;
 import pt.example.dao.AB_DIC_TIPO_MANUTENCAODao;
 import pt.example.dao.AB_DIC_TIPO_OPERACAODao;
+import pt.example.dao.RC_DIC_TIPO_RECLAMACAODao;
 import pt.example.dao.AB_DIC_TURNODao;
 import pt.example.dao.AB_DIC_UNIDADE_MEDIDADao;
 import pt.example.dao.AB_DIC_ZONADao;
@@ -71,32 +85,54 @@ import pt.example.dao.AB_MOV_MANUTENCAODao;
 import pt.example.dao.AB_MOV_MANUTENCAO_CABDao;
 import pt.example.dao.AB_MOV_MANUTENCAO_ETIQDao;
 import pt.example.dao.AB_MOV_MANUTENCAO_LINHADao;
+import pt.example.dao.RC_MOV_RECLAMACAODao;
+import pt.example.dao.RC_MOV_RECLAMACAO_ARTIGO_SIMILARESDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOSDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_EQUIPADao;
+import pt.example.dao.RC_MOV_RECLAMACAO_FICHEIROSDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_STOCKDao;
 import pt.example.dao.AB_MOV_REG_PARAM_OPERACAODao;
 import pt.example.dao.GER_ANALISESDao;
 import pt.example.dao.GER_ARMAZEMDao;
 import pt.example.dao.GER_CAMPOS_DISPDao;
+import pt.example.dao.GER_DEPARTAMENTODao;
 import pt.example.dao.GER_EVENTOS_CONFDao;
 import pt.example.dao.GER_EVENTOS_PROGRAMADOSDao;
 import pt.example.dao.GER_FORNECEDORDao;
+import pt.example.dao.GER_GRUPODao;
+import pt.example.dao.GER_GRUPO_UTZDao;
 import pt.example.dao.GER_LOG_EVENTOSDao;
 import pt.example.dao.GER_MODULODao;
 import pt.example.dao.GER_PARAMETROSDao;
 import pt.example.dao.GER_PERFIL_CABDao;
 import pt.example.dao.GER_PERFIL_LINDao;
 import pt.example.dao.GER_POSTOSDao;
+import pt.example.dao.GER_SECCAODao;
+import pt.example.dao.GER_SECCAO_CHEFESDao;
+import pt.example.dao.GER_SECCAO_UTZDao;
 import pt.example.dao.GER_UTILIZADORESDao;
 import pt.example.dao.GER_UTZ_PERFILDao;
 import pt.example.dao.GER_VISTASDao;
+import pt.example.dao.RC_DIC_ACCOES_RECLAMACAODao;
 import pt.example.entity.AB_DIC_BANHO;
 import pt.example.entity.AB_DIC_BANHO_ADITIVO;
 import pt.example.entity.AB_DIC_BANHO_COMPONENTE;
 import pt.example.entity.AB_DIC_COMPONENTE;
+import pt.example.entity.RC_DIC_FICHEIROS_ANALISE;
+import pt.example.entity.RC_DIC_GRAU_IMPORTANCIA;
 import pt.example.entity.AB_DIC_LINHA;
 import pt.example.entity.AB_DIC_LINHA_OF;
+import pt.example.entity.RC_DIC_REJEICAO;
+import pt.example.entity.RC_DIC_TEMPO_RESPOSTA;
 import pt.example.entity.AB_DIC_TINA;
 import pt.example.entity.AB_DIC_TIPO_ADICAO;
+import pt.example.entity.RC_DIC_TIPO_DEFEITO;
 import pt.example.entity.AB_DIC_TIPO_MANUTENCAO;
 import pt.example.entity.AB_DIC_TIPO_OPERACAO;
+import pt.example.entity.RC_DIC_TIPO_RECLAMACAO;
 import pt.example.entity.AB_DIC_TURNO;
 import pt.example.entity.AB_DIC_UNIDADE_MEDIDA;
 import pt.example.entity.AB_DIC_ZONA;
@@ -106,23 +142,39 @@ import pt.example.entity.AB_MOV_MANUTENCAO;
 import pt.example.entity.AB_MOV_MANUTENCAO_CAB;
 import pt.example.entity.AB_MOV_MANUTENCAO_ETIQ;
 import pt.example.entity.AB_MOV_MANUTENCAO_LINHA;
+import pt.example.entity.RC_MOV_RECLAMACAO;
+import pt.example.entity.RC_MOV_RECLAMACAO_ARTIGO_SIMILARES;
+import pt.example.entity.RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS;
+import pt.example.entity.RC_MOV_RECLAMACAO_EQUIPA;
+import pt.example.entity.RC_MOV_RECLAMACAO_FICHEIROS;
+import pt.example.entity.RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS;
+import pt.example.entity.RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS;
+import pt.example.entity.RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS;
+import pt.example.entity.RC_MOV_RECLAMACAO_STOCK;
 import pt.example.entity.AB_MOV_REG_PARAM_OPERACAO;
 import pt.example.entity.EMAIL;
 import pt.example.entity.GER_ANALISES;
 import pt.example.entity.GER_ARMAZEM;
 import pt.example.entity.GER_CAMPOS_DISP;
+import pt.example.entity.GER_DEPARTAMENTO;
 import pt.example.entity.GER_EVENTOS_CONF;
 import pt.example.entity.GER_EVENTOS_PROGRAMADOS;
 import pt.example.entity.GER_FORNECEDOR;
+import pt.example.entity.GER_GRUPO;
+import pt.example.entity.GER_GRUPO_UTZ;
 import pt.example.entity.GER_LOG_EVENTOS;
 import pt.example.entity.GER_MODULO;
 import pt.example.entity.GER_PARAMETROS;
 import pt.example.entity.GER_PERFIL_CAB;
 import pt.example.entity.GER_PERFIL_LIN;
 import pt.example.entity.GER_POSTOS;
+import pt.example.entity.GER_SECCAO;
+import pt.example.entity.GER_SECCAO_CHEFES;
+import pt.example.entity.GER_SECCAO_UTZ;
 import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.GER_UTZ_PERFIL;
 import pt.example.entity.GER_VISTAS;
+import pt.example.entity.RC_DIC_ACCOES_RECLAMACAO;
 
 @Stateless
 @Path("/sirb")
@@ -198,6 +250,50 @@ public class SIRB {
 	private AB_MOV_MANUTENCAO_ETIQDao dao35;
 	@Inject
 	private GER_EVENTOS_PROGRAMADOSDao dao36;
+	@Inject
+	private RC_DIC_FICHEIROS_ANALISEDao dao37;
+	@Inject
+	private RC_DIC_GRAU_IMPORTANCIADao dao38;
+	@Inject
+	private RC_DIC_REJEICAODao dao39;
+	@Inject
+	private RC_DIC_TIPO_DEFEITODao dao40;
+	@Inject
+	private RC_DIC_TIPO_RECLAMACAODao dao41;
+	@Inject
+	private RC_MOV_RECLAMACAODao dao42;
+	@Inject
+	private RC_MOV_RECLAMACAO_ARTIGO_SIMILARESDao dao43;
+	@Inject
+	private RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOSDao dao44;
+	@Inject
+	private RC_MOV_RECLAMACAO_EQUIPADao dao45;
+	@Inject
+	private RC_MOV_RECLAMACAO_FICHEIROSDao dao46;
+	@Inject
+	private RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASDao dao47;
+	@Inject
+	private RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASDao dao48;
+	@Inject
+	private RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASDao dao49;
+	@Inject
+	private RC_DIC_TEMPO_RESPOSTADao dao50;
+	@Inject
+	private GER_GRUPO_UTZDao dao51;
+	@Inject
+	private GER_GRUPODao dao52;
+	@Inject
+	private GER_SECCAO_CHEFESDao dao53;
+	@Inject
+	private GER_SECCAO_UTZDao dao54;
+	@Inject
+	private GER_SECCAODao dao55;
+	@Inject
+	private GER_DEPARTAMENTODao dao56;
+	@Inject
+	private RC_DIC_ACCOES_RECLAMACAODao dao57;
+	@Inject
+	private RC_MOV_RECLAMACAO_STOCKDao dao58;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -237,6 +333,13 @@ public class SIRB {
 	@Produces("application/json")
 	public List<AB_DIC_BANHO> getAllLINHAbylinha(@PathParam("id") Integer id, @PathParam("linha") Integer linha) {
 		return dao1.getAllLINHAbylinha(id, linha);
+	}
+
+	@GET
+	@Path("/getAllLINHAbylinhatodos/{id}/{linha}")
+	@Produces("application/json")
+	public List<AB_DIC_BANHO> getAllLINHAbylinhatodos(@PathParam("id") Integer id, @PathParam("linha") Integer linha) {
+		return dao1.getAllLINHAbylinha2(id, linha);
 	}
 
 	@GET
@@ -283,8 +386,9 @@ public class SIRB {
 	@POST
 	@Path("/getAB_DIC_BANHO_COMPONENTEbyid_banho/{id}")
 	@Produces("application/json")
-	public List<AB_DIC_BANHO_COMPONENTE> getAB_DIC_BANHO_COMPONENTEbyid_banho(@PathParam("id") Integer id,final String data) {
-		return dao2.getbyid_banho(id,data);
+	public List<AB_DIC_BANHO_COMPONENTE> getAB_DIC_BANHO_COMPONENTEbyid_banho(@PathParam("id") Integer id,
+			final String data) {
+		return dao2.getbyid_banho(id, data);
 	}
 
 	@GET
@@ -512,6 +616,15 @@ public class SIRB {
 	public List<AB_MOV_ANALISE_LINHA> getbyid_analise_comp(@PathParam("id") Integer id,
 			@PathParam("id_banho") Integer id_banho, final ArrayList<Integer> data) {
 		return dao7.getbyid_analise_comp(id, id_banho, data);
+	}
+
+	@POST
+	@Path("/getAB_MOV_ANALISE_LINHAbyid_analise_comp2/{id}/{id_banho}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<AB_MOV_ANALISE_LINHA> getbyid_analise_comp2(@PathParam("id") Integer id,
+			@PathParam("id_banho") Integer id_banho, final ArrayList<Integer> data) {
+		return dao7.getbyid_analise_comp2(id, id_banho, data);
 	}
 
 	@GET
@@ -1316,6 +1429,173 @@ public class SIRB {
 		return dados;
 	}
 
+	@GET
+	@Path("/getComponentesTodos")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getComponentesTodos() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesTodos(getURLSILVER());
+		return dados;
+	}
+
+	@GET
+	@Path("/getClientes")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getClientes() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getClientes(getURLSILVER());
+		return dados;
+	}
+
+	@GET
+	@Path("/getMoradas/{clicod}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getMoradas(@PathParam("clicod") String clicod)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getMoradas(getURLSILVER(), clicod);
+		return dados;
+	}
+
+	@GET
+	@Path("/getEncomendasCliente/{proref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getEncomendasCliente(@PathParam("proref") String proref)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getEncomendasCliente(getURLSILVER(), proref);
+		return dados;
+	}
+
+	@GET
+	@Path("/getPlaneado/{proref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getPlaneado(@PathParam("proref") String proref)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getPlaneado(getURLSILVER(), proref);
+		return dados;
+	}
+
+	@GET
+	@Path("/getStockPROREF/{proref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getStockPROREF(@PathParam("proref") String proref)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getStock2(getURLSILVER(), proref);
+		return dados;
+	}
+
+	@GET
+	@Path("/getEnviado/{proref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getEnviado(@PathParam("proref") String proref)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getEnviado(getURLSILVER(), proref);
+		return dados;
+	}
+
+	@GET
+	@Path("/getComponentesdoCliente/{clicod}/{etsnum}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getComponentesdoCliente(@PathParam("clicod") String clicod,
+			@PathParam("etsnum") String etsnum) throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesdoCliente(getURLSILVER(), clicod,
+				etsnum);
+		return dados;
+	}
+
+	@GET
+	@Path("/validaEtiqueta/{ETIQUETA}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> validaEtiqueta(@PathParam("ETIQUETA") String ETIQUETA)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.validaEtiqueta(getURLSILVER(), ETIQUETA);
+		return dados;
+	}
+
+	@GET
+	@Path("/validaGuia/{GUIA}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> validaGuia(@PathParam("GUIA") String GUIA)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.validaGuia(getURLSILVER(), GUIA);
+		return dados;
+	}
+
+	@GET
+	@Path("/validalote/{LOTE}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> validalote(@PathParam("LOTE") String LOTE)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.validalote(getURLSILVER(), LOTE);
+		return dados;
+	}
+
+	@GET
+	@Path("/getDadosporLote/{LOTE}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosporLote(@PathParam("LOTE") String LOTE)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getDadosporLote(getURLSILVER(), LOTE);
+		return dados;
+	}
+
+	@GET
+	@Path("/getDadosporEtiqueta/{ETIQUETA}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosporEtiqueta(@PathParam("ETIQUETA") String ETIQUETA)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getDadosporEtiqueta(getURLSILVER(), ETIQUETA);
+		return dados;
+	}
+
+	@GET
+	@Path("/getDadosporGuia/{GUIA}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosporGuia(@PathParam("GUIA") String GUIA)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getDadosporGuia(getURLSILVER(), GUIA);
+		return dados;
+	}
+
 	@POST
 	@Path("/getEtiquetas")
 	@Produces("application/json")
@@ -2059,6 +2339,921 @@ public class SIRB {
 		return dao36.update(GER_EVENTOS_PROGRAMADOS);
 	}
 
+	/************************************* RC_DIC_FICHEIROS_ANALISE */
+	@POST
+	@Path("/createRC_DIC_FICHEIROS_ANALISE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_FICHEIROS_ANALISE insertRC_DIC_FICHEIROS_ANALISEA(final RC_DIC_FICHEIROS_ANALISE data) {
+		return dao37.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_FICHEIROS_ANALISE")
+	@Produces("application/json")
+	public List<RC_DIC_FICHEIROS_ANALISE> getRC_DIC_FICHEIROS_ANALISE() {
+		return dao37.getall();
+	}
+
+	@GET
+	@Path("/getRC_DIC_FICHEIROS_ANALISEbyid/{id}")
+	@Produces("application/json")
+	public List<RC_DIC_FICHEIROS_ANALISE> getRC_DIC_FICHEIROS_ANALISEbyid(@PathParam("id") Integer id) {
+		return dao37.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_FICHEIROS_ANALISE/{id}")
+	public void deleteRC_DIC_FICHEIROS_ANALISE(@PathParam("id") Integer id) {
+		RC_DIC_FICHEIROS_ANALISE RC_DIC_FICHEIROS_ANALISE = new RC_DIC_FICHEIROS_ANALISE();
+		RC_DIC_FICHEIROS_ANALISE.setID(id);
+		dao37.delete(RC_DIC_FICHEIROS_ANALISE);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_FICHEIROS_ANALISE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_FICHEIROS_ANALISE updateRC_DIC_FICHEIROS_ANALISE(
+			final RC_DIC_FICHEIROS_ANALISE RC_DIC_FICHEIROS_ANALISE) {
+		RC_DIC_FICHEIROS_ANALISE.setID(RC_DIC_FICHEIROS_ANALISE.getID());
+		return dao37.update(RC_DIC_FICHEIROS_ANALISE);
+	}
+
+	/************************************* RC_DIC_GRAU_IMPORTANCIA */
+	@POST
+	@Path("/createRC_DIC_GRAU_IMPORTANCIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_GRAU_IMPORTANCIA insertRC_DIC_GRAU_IMPORTANCIAA(final RC_DIC_GRAU_IMPORTANCIA data) {
+		return dao38.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_GRAU_IMPORTANCIA")
+	@Produces("application/json")
+	public List<RC_DIC_GRAU_IMPORTANCIA> getRC_DIC_GRAU_IMPORTANCIA() {
+		return dao38.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_GRAU_IMPORTANCIA/{id}")
+	public void deleteRC_DIC_GRAU_IMPORTANCIA(@PathParam("id") Integer id) {
+		RC_DIC_GRAU_IMPORTANCIA RC_DIC_GRAU_IMPORTANCIA = new RC_DIC_GRAU_IMPORTANCIA();
+		RC_DIC_GRAU_IMPORTANCIA.setID(id);
+		dao38.delete(RC_DIC_GRAU_IMPORTANCIA);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_GRAU_IMPORTANCIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_GRAU_IMPORTANCIA updateRC_DIC_GRAU_IMPORTANCIA(
+			final RC_DIC_GRAU_IMPORTANCIA RC_DIC_GRAU_IMPORTANCIA) {
+		RC_DIC_GRAU_IMPORTANCIA.setID(RC_DIC_GRAU_IMPORTANCIA.getID());
+		return dao38.update(RC_DIC_GRAU_IMPORTANCIA);
+	}
+
+	/************************************* RC_DIC_REJEICAO */
+	@POST
+	@Path("/createRC_DIC_REJEICAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_REJEICAO insertRC_DIC_REJEICAO(final RC_DIC_REJEICAO data) {
+		return dao39.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_REJEICAO")
+	@Produces("application/json")
+	public List<RC_DIC_REJEICAO> getRC_DIC_REJEICAO() {
+		return dao39.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_REJEICAO/{id}")
+	public void deleteRC_DIC_REJEICAO(@PathParam("id") Integer id) {
+		RC_DIC_REJEICAO RC_DIC_REJEICAO = new RC_DIC_REJEICAO();
+		RC_DIC_REJEICAO.setID(id);
+		dao39.delete(RC_DIC_REJEICAO);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_REJEICAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_REJEICAO updateRC_DIC_REJEICAO(final RC_DIC_REJEICAO RC_DIC_REJEICAO) {
+		RC_DIC_REJEICAO.setID(RC_DIC_REJEICAO.getID());
+		return dao39.update(RC_DIC_REJEICAO);
+	}
+
+	/************************************* RC_DIC_TIPO_DEFEITO */
+	@POST
+	@Path("/createRC_DIC_TIPO_DEFEITO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TIPO_DEFEITO insertRC_DIC_TIPO_DEFEITOA(final RC_DIC_TIPO_DEFEITO data) {
+		return dao40.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_TIPO_DEFEITO")
+	@Produces("application/json")
+	public List<RC_DIC_TIPO_DEFEITO> getRC_DIC_TIPO_DEFEITO() {
+		return dao40.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_TIPO_DEFEITO/{id}")
+	public void deleteRC_DIC_TIPO_DEFEITO(@PathParam("id") Integer id) {
+		RC_DIC_TIPO_DEFEITO RC_DIC_TIPO_DEFEITO = new RC_DIC_TIPO_DEFEITO();
+		RC_DIC_TIPO_DEFEITO.setID(id);
+		dao40.delete(RC_DIC_TIPO_DEFEITO);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_TIPO_DEFEITO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TIPO_DEFEITO updateRC_DIC_TIPO_DEFEITO(final RC_DIC_TIPO_DEFEITO RC_DIC_TIPO_DEFEITO) {
+		RC_DIC_TIPO_DEFEITO.setID(RC_DIC_TIPO_DEFEITO.getID());
+		return dao40.update(RC_DIC_TIPO_DEFEITO);
+	}
+
+	/************************************* RC_DIC_ACCOES_RECLAMACAO */
+	@POST
+	@Path("/createRC_DIC_ACCOES_RECLAMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_ACCOES_RECLAMACAO insertRC_DIC_ACCOES_RECLAMACAOA(final RC_DIC_ACCOES_RECLAMACAO data) {
+		return dao57.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_ACCOES_RECLAMACAO")
+	@Produces("application/json")
+	public List<RC_DIC_ACCOES_RECLAMACAO> getRC_DIC_ACCOES_RECLAMACAO() {
+		return dao57.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_ACCOES_RECLAMACAO/{id}")
+	public void deleteRC_DIC_ACCOES_RECLAMACAO(@PathParam("id") Integer id) {
+		RC_DIC_ACCOES_RECLAMACAO RC_DIC_ACCOES_RECLAMACAO = new RC_DIC_ACCOES_RECLAMACAO();
+		RC_DIC_ACCOES_RECLAMACAO.setID(id);
+		dao57.delete(RC_DIC_ACCOES_RECLAMACAO);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_ACCOES_RECLAMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_ACCOES_RECLAMACAO updateRC_DIC_ACCOES_RECLAMACAO(
+			final RC_DIC_ACCOES_RECLAMACAO RC_DIC_ACCOES_RECLAMACAO) {
+		RC_DIC_ACCOES_RECLAMACAO.setID(RC_DIC_ACCOES_RECLAMACAO.getID());
+		return dao57.update(RC_DIC_ACCOES_RECLAMACAO);
+	}
+
+	/************************************* RC_DIC_TIPO_RECLAMACAO */
+	@POST
+	@Path("/createRC_DIC_TIPO_RECLAMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TIPO_RECLAMACAO insertRC_DIC_TIPO_RECLAMACAOA(final RC_DIC_TIPO_RECLAMACAO data) {
+		return dao41.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_TIPO_RECLAMACAO")
+	@Produces("application/json")
+	public List<RC_DIC_TIPO_RECLAMACAO> getRC_DIC_TIPO_RECLAMACAO() {
+		return dao41.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_TIPO_RECLAMACAO/{id}")
+	public void deleteRC_DIC_TIPO_RECLAMACAO(@PathParam("id") Integer id) {
+		RC_DIC_TIPO_RECLAMACAO RC_DIC_TIPO_RECLAMACAO = new RC_DIC_TIPO_RECLAMACAO();
+		RC_DIC_TIPO_RECLAMACAO.setID(id);
+		dao41.delete(RC_DIC_TIPO_RECLAMACAO);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_TIPO_RECLAMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TIPO_RECLAMACAO updateRC_DIC_TIPO_RECLAMACAO(final RC_DIC_TIPO_RECLAMACAO RC_DIC_TIPO_RECLAMACAO) {
+		RC_DIC_TIPO_RECLAMACAO.setID(RC_DIC_TIPO_RECLAMACAO.getID());
+		return dao41.update(RC_DIC_TIPO_RECLAMACAO);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO insertRC_MOV_RECLAMACAOA(final RC_MOV_RECLAMACAO data) {
+		return dao42.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO> getRC_MOV_RECLAMACAO() {
+		return dao42.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAObyid/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO> getRC_MOV_RECLAMACAObyid(@PathParam("id") Integer id) {
+		return dao42.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO/{id}")
+	public void deleteRC_MOV_RECLAMACAO(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO RC_MOV_RECLAMACAO = new RC_MOV_RECLAMACAO();
+		RC_MOV_RECLAMACAO.setID_RECLAMACAO(id);
+		dao42.delete(RC_MOV_RECLAMACAO);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO updateRC_MOV_RECLAMACAO(final RC_MOV_RECLAMACAO RC_MOV_RECLAMACAO) {
+		RC_MOV_RECLAMACAO.setID_RECLAMACAO(RC_MOV_RECLAMACAO.getID_RECLAMACAO());
+		return dao42.update(RC_MOV_RECLAMACAO);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_ARTIGO_SIMILARES */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_ARTIGO_SIMILARES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_ARTIGO_SIMILARES insertRC_MOV_RECLAMACAO_ARTIGO_SIMILARES(
+			final RC_MOV_RECLAMACAO_ARTIGO_SIMILARES data) {
+		return dao43.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_ARTIGO_SIMILARES")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_ARTIGO_SIMILARES> getRC_MOV_RECLAMACAO_ARTIGO_SIMILARES() {
+		return dao43.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_ARTIGO_SIMILARESbyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_ARTIGO_SIMILARES> getRC_MOV_RECLAMACAO_ARTIGO_SIMILARESbyid_reclamacao(
+			@PathParam("id") Integer id) {
+		return dao43.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_ARTIGO_SIMILARES/{id}")
+	public void deleteRC_MOV_RECLAMACAO_ARTIGO_SIMILARES(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_ARTIGO_SIMILARES RC_MOV_RECLAMACAO_ARTIGO_SIMILARES = new RC_MOV_RECLAMACAO_ARTIGO_SIMILARES();
+		RC_MOV_RECLAMACAO_ARTIGO_SIMILARES.setID(id);
+		dao43.delete(RC_MOV_RECLAMACAO_ARTIGO_SIMILARES);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_ARTIGO_SIMILARES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_ARTIGO_SIMILARES updateRC_MOV_RECLAMACAO_ARTIGO_SIMILARES(
+			final RC_MOV_RECLAMACAO_ARTIGO_SIMILARES RC_MOV_RECLAMACAO_ARTIGO_SIMILARES) {
+		RC_MOV_RECLAMACAO_ARTIGO_SIMILARES.setID(RC_MOV_RECLAMACAO_ARTIGO_SIMILARES.getID());
+		return dao43.update(RC_MOV_RECLAMACAO_ARTIGO_SIMILARES);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS insertRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOSA(
+			final RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS data) {
+		return dao44.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS> getRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS() {
+		return dao44.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOSbyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS> getRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOSbyid_reclamacao(
+			@PathParam("id") Integer id) {
+		return dao44.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS/{id}")
+	public void deleteRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS = new RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS();
+		RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS.setID(id);
+		dao44.delete(RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS updateRC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS(
+			final RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS) {
+		RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS.setID(RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS.getID());
+		return dao44.update(RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_EQUIPA */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_EQUIPA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_EQUIPA insertRC_MOV_RECLAMACAO_EQUIPAA(final RC_MOV_RECLAMACAO_EQUIPA data) {
+		return dao45.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_EQUIPA")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_EQUIPA> getRC_MOV_RECLAMACAO_EQUIPA() {
+		return dao45.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_EQUIPAbyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_EQUIPA> getRC_MOV_RECLAMACAO_EQUIPAbyid_reclamacao(@PathParam("id") Integer id) {
+		return dao45.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_EQUIPA/{id}")
+	public void deleteRC_MOV_RECLAMACAO_EQUIPA(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_EQUIPA RC_MOV_RECLAMACAO_EQUIPA = new RC_MOV_RECLAMACAO_EQUIPA();
+		RC_MOV_RECLAMACAO_EQUIPA.setID(id);
+		dao45.delete(RC_MOV_RECLAMACAO_EQUIPA);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_EQUIPA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_EQUIPA updateRC_MOV_RECLAMACAO_EQUIPA(
+			final RC_MOV_RECLAMACAO_EQUIPA RC_MOV_RECLAMACAO_EQUIPA) {
+		RC_MOV_RECLAMACAO_EQUIPA.setID(RC_MOV_RECLAMACAO_EQUIPA.getID());
+		return dao45.update(RC_MOV_RECLAMACAO_EQUIPA);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_FICHEIROS */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_FICHEIROS insertRC_MOV_RECLAMACAO_FICHEIROSA(final RC_MOV_RECLAMACAO_FICHEIROS data) {
+		return dao46.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FICHEIROS")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROS() {
+		return dao46.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO(@PathParam("id") Integer id) {
+		return dao46.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_FICHEIROS/{id}")
+	public void deleteRC_MOV_RECLAMACAO_FICHEIROS(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_FICHEIROS RC_MOV_RECLAMACAO_FICHEIROS = new RC_MOV_RECLAMACAO_FICHEIROS();
+		RC_MOV_RECLAMACAO_FICHEIROS.setID(id);
+		dao46.delete(RC_MOV_RECLAMACAO_FICHEIROS);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_FICHEIROS updateRC_MOV_RECLAMACAO_FICHEIROS(
+			final RC_MOV_RECLAMACAO_FICHEIROS RC_MOV_RECLAMACAO_FICHEIROS) {
+		RC_MOV_RECLAMACAO_FICHEIROS.setID(RC_MOV_RECLAMACAO_FICHEIROS.getID());
+		return dao46.update(RC_MOV_RECLAMACAO_FICHEIROS);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS insertRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASA(
+			final RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS data) {
+		return dao47.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS() {
+		return dao47.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASbyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASbyid_reclamacao(
+			@PathParam("id") Integer id) {
+		return dao47.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS/{id}")
+	public void deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS = new RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS();
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS.setID(id);
+		dao47.delete(RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS updateRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS(
+			final RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS) {
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS.setID(RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS.getID());
+		return dao47.update(RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_STOCK */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_STOCK")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_STOCK insertRC_MOV_RECLAMACAO_STOCKA(final RC_MOV_RECLAMACAO_STOCK data) {
+		return dao58.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_STOCK")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_STOCK> getRC_MOV_RECLAMACAO_STOCK() {
+		return dao58.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_STOCKbyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_STOCK> getRC_MOV_RECLAMACAO_STOCKbyid_reclamacao(@PathParam("id") Integer id) {
+		return dao58.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_STOCK/{id}")
+	public void deleteRC_MOV_RECLAMACAO_STOCK(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_STOCK RC_MOV_RECLAMACAO_STOCK = new RC_MOV_RECLAMACAO_STOCK();
+		RC_MOV_RECLAMACAO_STOCK.setID(id);
+		dao58.delete(RC_MOV_RECLAMACAO_STOCK);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_STOCK")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_STOCK updateRC_MOV_RECLAMACAO_STOCK(
+			final RC_MOV_RECLAMACAO_STOCK RC_MOV_RECLAMACAO_STOCK) {
+		RC_MOV_RECLAMACAO_STOCK.setID(RC_MOV_RECLAMACAO_STOCK.getID());
+		return dao58.update(RC_MOV_RECLAMACAO_STOCK);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS insertRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASA(
+			final RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS data) {
+		return dao48.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS() {
+		return dao48.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASbyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASbyid_reclamacao(
+			@PathParam("id") Integer id) {
+		return dao48.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS/{id}")
+	public void deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS = new RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS();
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS.setID(id);
+		dao48.delete(RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS updateRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS(
+			final RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS) {
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS.setID(RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS.getID());
+		return dao48.update(RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS);
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS insertRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASA(
+			final RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS data) {
+		return dao49.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS() {
+		return dao49.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASbyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASbyid_reclamacao(
+			@PathParam("id") Integer id) {
+		return dao49.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS/{id}")
+	public void deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS = new RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS();
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS.setID(id);
+		dao49.delete(RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS updateRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS(
+			final RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS) {
+		RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS.setID(RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS.getID());
+		return dao49.update(RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS);
+	}
+
+	/************************************* RC_DIC_TEMPO_RESPOSTA */
+	@POST
+	@Path("/createRC_DIC_TEMPO_RESPOSTA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TEMPO_RESPOSTA insertRC_DIC_TEMPO_RESPOSTAA(final RC_DIC_TEMPO_RESPOSTA data) {
+		return dao50.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_TEMPO_RESPOSTA")
+	@Produces("application/json")
+	public List<RC_DIC_TEMPO_RESPOSTA> getRC_DIC_TEMPO_RESPOSTA() {
+		return dao50.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_TEMPO_RESPOSTA/{id}")
+	public void deleteRC_DIC_TEMPO_RESPOSTA(@PathParam("id") Integer id) {
+		RC_DIC_TEMPO_RESPOSTA RC_DIC_TEMPO_RESPOSTA = new RC_DIC_TEMPO_RESPOSTA();
+		RC_DIC_TEMPO_RESPOSTA.setID(id);
+		dao50.delete(RC_DIC_TEMPO_RESPOSTA);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_TEMPO_RESPOSTA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TEMPO_RESPOSTA updateRC_DIC_TEMPO_RESPOSTA(final RC_DIC_TEMPO_RESPOSTA RC_DIC_TEMPO_RESPOSTA) {
+		RC_DIC_TEMPO_RESPOSTA.setID(RC_DIC_TEMPO_RESPOSTA.getID());
+		return dao50.update(RC_DIC_TEMPO_RESPOSTA);
+	}
+
+	/************************************* GER_GRUPO_UTZ */
+	@POST
+	@Path("/createGER_GRUPO_UTZ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_GRUPO_UTZ insertGER_GRUPO_UTZA(final GER_GRUPO_UTZ data) {
+		return dao51.create(data);
+	}
+
+	@GET
+	@Path("/getGER_GRUPO_UTZ")
+	@Produces("application/json")
+	public List<GER_GRUPO_UTZ> getGER_GRUPO_UTZ() {
+		return dao51.getall();
+	}
+
+	@GET
+	@Path("/getGER_GRUPO_UTZbyid/{id}")
+	@Produces("application/json")
+	public List<GER_GRUPO_UTZ> getGER_GRUPO_UTZbyid(@PathParam("id") Integer id) {
+		return dao51.getbyid(id);
+	}
+
+	@GET
+	@Path("/getGER_GRUPO_UTZbyUtilizadores/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getGER_GRUPO_UTZbyUtilizadores(@PathParam("id") Integer id) {
+		return dao51.getUtilizadores(id);
+	}
+
+	@GET
+	@Path("/getGER_GRUPO_UTZbyidgrupo/{id}")
+	@Produces("application/json")
+	public List<GER_GRUPO_UTZ> getGER_GRUPO_UTZbyidgrupo(@PathParam("id") Integer id) {
+		return dao51.getbyidgrupo(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_GRUPO_UTZ/{id}")
+	public void deleteGER_GRUPO_UTZ(@PathParam("id") Integer id) {
+		GER_GRUPO_UTZ GER_GRUPO_UTZ = new GER_GRUPO_UTZ();
+		GER_GRUPO_UTZ.setID(id);
+		dao51.delete(GER_GRUPO_UTZ);
+	}
+
+	@PUT
+	@Path("/updateGER_GRUPO_UTZ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_GRUPO_UTZ updateGER_GRUPO_UTZ(final GER_GRUPO_UTZ GER_GRUPO_UTZ) {
+		GER_GRUPO_UTZ.setID(GER_GRUPO_UTZ.getID());
+		return dao51.update(GER_GRUPO_UTZ);
+	}
+
+	/************************************* GER_GRUPO */
+	@POST
+	@Path("/createGER_GRUPO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_GRUPO insertGER_GRUPOA(final GER_GRUPO data) {
+		return dao52.create(data);
+	}
+
+	@GET
+	@Path("/getGER_GRUPO")
+	@Produces("application/json")
+	public List<GER_GRUPO> getGER_GRUPO() {
+		return dao52.getall();
+	}
+
+	@GET
+	@Path("/getGER_GRUPObyid/{id}")
+	@Produces("application/json")
+	public List<GER_GRUPO> getGER_GRUPObyid(@PathParam("id") Integer id) {
+		return dao52.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_GRUPO/{id}")
+	public void deleteGER_GRUPO(@PathParam("id") Integer id) {
+		GER_GRUPO GER_GRUPO = new GER_GRUPO();
+		GER_GRUPO.setID(id);
+		dao52.delete(GER_GRUPO);
+	}
+
+	@PUT
+	@Path("/updateGER_GRUPO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_GRUPO updateGER_GRUPO(final GER_GRUPO GER_GRUPO) {
+		GER_GRUPO.setID(GER_GRUPO.getID());
+		return dao52.update(GER_GRUPO);
+	}
+
+	/************************************* GER_SECCAO_CHEFES */
+	@POST
+	@Path("/createGER_SECCAO_CHEFES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_SECCAO_CHEFES insertGER_SECCAO_CHEFESA(final GER_SECCAO_CHEFES data) {
+		return dao53.create(data);
+	}
+
+	@GET
+	@Path("/getGER_SECCAO_CHEFES")
+	@Produces("application/json")
+	public List<GER_SECCAO_CHEFES> getGER_SECCAO_CHEFES() {
+		return dao53.getall();
+	}
+
+	@GET
+	@Path("/getGER_SECCAO_CHEFESbyid/{id}")
+	@Produces("application/json")
+	public List<GER_SECCAO_CHEFES> getGER_SECCAO_CHEFESbyid(@PathParam("id") Integer id) {
+		return dao53.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_SECCAO_CHEFES/{id}")
+	public void deleteGER_SECCAO_CHEFES(@PathParam("id") Integer id) {
+		GER_SECCAO_CHEFES GER_SECCAO_CHEFES = new GER_SECCAO_CHEFES();
+		GER_SECCAO_CHEFES.setID(id);
+		dao53.delete(GER_SECCAO_CHEFES);
+	}
+
+	@GET
+	@Path("/getGER_SECCAO_CHEFESbyUtilizadores/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getGER_SECCAO_CHEFESbyUtilizadores(@PathParam("id") Integer id) {
+		return dao53.getUtilizadores(id);
+	}
+
+	@GET
+	@Path("/getGER_SECCAO_CHEFESbyidgrupo/{id}")
+	@Produces("application/json")
+	public List<GER_SECCAO_CHEFES> getGER_SECCAO_CHEFESbyidgrupo(@PathParam("id") Integer id) {
+		return dao53.getbyidgrupo(id);
+	}
+
+	@PUT
+	@Path("/updateGER_SECCAO_CHEFES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_SECCAO_CHEFES updateGER_SECCAO_CHEFES(final GER_SECCAO_CHEFES GER_SECCAO_CHEFES) {
+		GER_SECCAO_CHEFES.setID(GER_SECCAO_CHEFES.getID());
+		return dao53.update(GER_SECCAO_CHEFES);
+	}
+
+	/************************************* GER_SECCAO_UTZ */
+	@POST
+	@Path("/createGER_SECCAO_UTZ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_SECCAO_UTZ insertGER_SECCAO_UTZA(final GER_SECCAO_UTZ data) {
+		return dao54.create(data);
+	}
+
+	@GET
+	@Path("/getGER_SECCAO_UTZ")
+	@Produces("application/json")
+	public List<GER_SECCAO_UTZ> getGER_SECCAO_UTZ() {
+		return dao54.getall();
+	}
+
+	@GET
+	@Path("/getGER_SECCAO_UTZbyUtilizadores/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getGER_SECCAO_UTZbyUtilizadores(@PathParam("id") Integer id) {
+		return dao54.getUtilizadores(id);
+	}
+
+	@GET
+	@Path("/getGER_SECCAO_UTZbyidgrupo/{id}")
+	@Produces("application/json")
+	public List<GER_SECCAO_UTZ> getGER_SECCAO_UTZbyidgrupo(@PathParam("id") Integer id) {
+		return dao54.getbyidgrupo(id);
+	}
+
+	@GET
+	@Path("/getGER_SECCAO_UTZbyid/{id}")
+	@Produces("application/json")
+	public List<GER_SECCAO_UTZ> getGER_SECCAO_UTZbyid(@PathParam("id") Integer id) {
+		return dao54.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_SECCAO_UTZ/{id}")
+	public void deleteGER_SECCAO_UTZ(@PathParam("id") Integer id) {
+		GER_SECCAO_UTZ GER_SECCAO_UTZ = new GER_SECCAO_UTZ();
+		GER_SECCAO_UTZ.setID(id);
+		dao54.delete(GER_SECCAO_UTZ);
+	}
+
+	@PUT
+	@Path("/updateGER_SECCAO_UTZ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_SECCAO_UTZ updateGER_SECCAO_UTZ(final GER_SECCAO_UTZ GER_SECCAO_UTZ) {
+		GER_SECCAO_UTZ.setID(GER_SECCAO_UTZ.getID());
+		return dao54.update(GER_SECCAO_UTZ);
+	}
+
+	/************************************* GER_SECCAO */
+	@POST
+	@Path("/createGER_SECCAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_SECCAO insertGER_SECCAO(final GER_SECCAO data) {
+		return dao55.create(data);
+	}
+
+	@GET
+	@Path("/getGER_SECCAO")
+	@Produces("application/json")
+	public List<GER_SECCAO> getGER_SECCAO() {
+		return dao55.getall();
+	}
+
+	@GET
+	@Path("/getGER_SECCAO2")
+	@Produces("application/json")
+	public List<GER_SECCAO> getGER_SECCAO2() {
+		return dao55.getall2();
+	}
+
+	@GET
+	@Path("/getGER_SECCAObyid/{id}")
+	@Produces("application/json")
+	public List<GER_SECCAO> getGER_SECCAObyid(@PathParam("id") Integer id) {
+		return dao55.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_SECCAO/{id}")
+	public void deleteGER_SECCAO(@PathParam("id") Integer id) {
+		GER_SECCAO GER_SECCAO = new GER_SECCAO();
+		GER_SECCAO.setID(id);
+		dao55.delete(GER_SECCAO);
+	}
+
+	@PUT
+	@Path("/updateGER_SECCAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_SECCAO updateGER_SECCAO(final GER_SECCAO GER_SECCAO) {
+		GER_SECCAO.setID(GER_SECCAO.getID());
+		return dao55.update(GER_SECCAO);
+	}
+
+	/************************************* GER_DEPARTAMENTO */
+	@POST
+	@Path("/createGER_DEPARTAMENTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_DEPARTAMENTO insertGER_DEPARTAMENTO(final GER_DEPARTAMENTO data) {
+		return dao56.create(data);
+	}
+
+	@GET
+	@Path("/getGER_DEPARTAMENTO")
+	@Produces("application/json")
+	public List<GER_DEPARTAMENTO> getGER_DEPARTAMENTO() {
+		return dao56.getall();
+	}
+
+	@GET
+	@Path("/getGER_DEPARTAMENTO2")
+	@Produces("application/json")
+	public List<GER_DEPARTAMENTO> getGER_DEPARTAMENTO2() {
+		return dao56.getall2();
+	}
+
+	@GET
+	@Path("/getGER_DEPARTAMENTObyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<GER_DEPARTAMENTO> getGER_DEPARTAMENTObyid(@PathParam("id") Integer id) {
+		return dao56.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_DEPARTAMENTO/{id}")
+	public void deleteGER_DEPARTAMENTO(@PathParam("id") Integer id) {
+		GER_DEPARTAMENTO GER_DEPARTAMENTO = new GER_DEPARTAMENTO();
+		GER_DEPARTAMENTO.setID(id);
+		dao56.delete(GER_DEPARTAMENTO);
+	}
+
+	@PUT
+	@Path("/updateGER_DEPARTAMENTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_DEPARTAMENTO updateGER_DEPARTAMENTO(final GER_DEPARTAMENTO GER_DEPARTAMENTO) {
+		GER_DEPARTAMENTO.setID(GER_DEPARTAMENTO.getID());
+		return dao56.update(GER_DEPARTAMENTO);
+	}
+
 	/************************************* GER_PARAMETROS */
 
 	@GET
@@ -2084,13 +3279,13 @@ public class SIRB {
 	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @PathParam("nome") String nome,
 			@PathParam("formato") String formato) {
 
-		String uploadedFileLocation = "c://teste/" + nome + '.' + formato;
+		String uploadedFileLocation = "C:/xampp/htdocs/dev/sgiid/" + nome + '.' + formato;
 		// save it
 		writeToFile(uploadedInputStream, uploadedFileLocation);
 
 		String output = "File uploaded to : " + uploadedFileLocation;
 
-		return Response.status(200).entity(output).build();
+		return Response.ok().entity(output).build();
 
 	}
 
@@ -2120,6 +3315,8 @@ public class SIRB {
 			}
 			out.flush();
 			out.close();
+			out = null;
+			System.gc();
 			uploadedInputStream.close();
 		} catch (IOException e) {
 
@@ -2155,6 +3352,126 @@ public class SIRB {
 			return null;
 		}
 
+	}
+
+	@GET
+	@Consumes("*/*")
+	@Path("/downloadFile/{format}/{filename}")
+	// @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	public Response downloadFile(@PathParam("format") String format, @PathParam("filename") String Name) {
+
+		String fileName = Name;
+
+		String filepath = "C:/xampp/htdocs/dev/sgiid/";
+
+		if (fileName != null) {
+			File file = new File(filepath + fileName);
+			ResponseBuilder response = Response.ok((Object) file);
+			response.header("Content-Disposition", "attachment; filename=" + format + "");
+			return response.build();
+		} else {
+			return null;
+		}
+
+	}
+
+	@GET
+	@Consumes("*/*")
+	@Path("/downloadFileMSG/{filename}")
+	public Response downloadFileMSG(@PathParam("filename") String Name) throws IOException {
+		File temp = File.createTempFile("tempfile", ".txt");
+		String texto = "<div class=\"MsoNormal\"> ";
+		try {
+
+			String fileName = Name;
+
+			String filepath = "C:/xampp/htdocs/dev/sgiid/";
+
+			MsgParser msgp = new MsgParser();
+			Message msg = msgp.parseMsg(filepath + fileName);
+			String from_email = msg.getFromEmail();
+			String from_name = msg.getFromName();
+			String subject = msg.getSubject();
+			String body = msg.getConvertedBodyHTML();
+			String to_list = msg.getDisplayTo();
+			String cc_list = msg.getDisplayCc();
+			String bcc_list = msg.getDisplayBcc();
+			List list = msg.getAttachments();
+			texto += "<b>Anexos</b> - " + list.size() + "<br>";
+			Iterator it_list = list.iterator();
+			Attachment attachemetn = null;
+			while (it_list.hasNext()) {
+				attachemetn = (Attachment) it_list.next();
+				texto += "<i>"+attachemetn + "</i><br>";
+			}
+			
+			List<Attachment> atts = msg.getAttachments();
+			for (Attachment att : atts) {
+				if (att instanceof FileAttachment) {
+					FileAttachment file = (FileAttachment) att;
+					
+					// you get the actual attachment with
+					
+					String encodedString = new String(Base64.getEncoder().encodeToString((file.getData())));
+
+					body = body.replaceAll("\\\"cid:"+file.getFilename()+".*?\\\"", "\"data:image/"+getFileExtension(file)+";base64,"+encodedString+"\"");
+				}
+			}
+
+			texto += "------------------------------ <br>";
+			texto += "<b>De</b>:  " + from_name + " <" + from_email + "><br>";
+			texto += "<b>Para</b>: " + to_list + "<br>";
+			texto += "<b>Cc</b>: " + cc_list + "<br>";
+			texto += "<b>Bcc</b>: " + bcc_list + "<br>";
+			texto += "<b>Assunto</b>: " + subject + "<br><br><b>Mensagem</b>:<br></div>";
+			texto += body + "<br>";
+			
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		BufferedWriter bw = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
+		bw.write(texto);
+		bw.close();
+
+		ResponseBuilder response = Response.ok((Object) temp);
+		response.header("Content-Disposition", "attachment; filename=msg.html");
+		return response.build();
+	}
+
+	private static String getFileExtension(FileAttachment file) {
+		String fileName = file.getFilename();
+		if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+			return fileName.substring(fileName.lastIndexOf(".") + 1);
+		else
+			return "";
+	}
+
+	@GET
+	@Consumes("*/*")
+	@Path("/alterarlocalizacaoFicheiro/{format}/{filename}")
+	// @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	public void alterarlocalizacaoFicheiro(@PathParam("format") String format, @PathParam("filename") String Name) {
+
+		String fileName = Name;
+
+		String filepath = "C:/xampp/htdocs/dev/sgiid/";
+		String filepath_new = "C:/xampp/htdocs/dev/sgiid/old/";
+
+		try {
+
+			File afile = new File(filepath + fileName);
+
+			if (afile.renameTo(new File(filepath_new + afile.getName()))) {
+				System.out.println("File is moved successful!");
+			} else {
+				System.out.println("File is failed to move!");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String getURL() {
@@ -2505,9 +3822,10 @@ public class SIRB {
 		Query query = entityManager.createNativeQuery(
 				"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES,a.DATCRE"
 						+ ",(select ID_MANUTENCAO from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB) as id2 "
-						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN 0 ELSE ( a.QUANT  - a.QUANT_FINAL) END as qtt , t.CISTERNA "
+						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN (( a.QUANT  - a.QUANT_FINAL) * -1) ELSE ( a.QUANT  - a.QUANT_FINAL) END as qtt , t.CISTERNA "
 						+ ",( a.QUANT_FINAL / (CASE WHEN t.FACTOR_CONVERSAO IS NULL  THEN 1 WHEN t.FACTOR_CONVERSAO = 0 THEN 1 ELSE t.FACTOR_CONVERSAO END) ) as qtt2 "
 						+ ",(select MEDIDA from AB_DIC_UNIDADE_MEDIDA where ID_MEDIDA = t.ID_UNIDADE_ADITIVO) as unidaditivo "
+						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN '-' ELSE '+' END as sinal"
 						+ "from AB_MOV_MANUTENCAO_ETIQ a "
 						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
 						+ "inner join AB_DIC_COMPONENTE t on  t.ID_COMPONENTE = b.ID_ADITIVO "
@@ -2753,8 +4071,8 @@ public class SIRB {
 						part1 = (size).substring(size.length() - 11, size.length());
 					}
 					if (parts.length > 1) {
-						String size = part2 + parts[1];
-						part2 = (size).substring(size.length() - 4, size.length());
+						String size = parts[1] + part2;
+						part2 = (size).substring(0, 4);
 					}
 				}
 				data += (part1 + part2 + "  ").substring(0, 17);
@@ -2763,7 +4081,7 @@ public class SIRB {
 			}
 
 			if (id != null) {
-				data += "+"; // Signe
+				data += content[23].toString(); // Signe
 			} else {
 				data += content[23]; // Signe
 			}
@@ -3109,6 +4427,356 @@ public class SIRB {
 			}
 			e.printStackTrace();
 		}
+	}
+
+	@GET
+	@Path("/ficheiromanual")
+	@Produces("application/json")
+	public void getFicheiroManual() throws IOException, ParseException {
+
+		try {
+			// Thread.sleep(3000);
+
+			String nome_ficheiro = "";
+
+			Query query = entityManager.createNativeQuery(
+					"select c.ID_MANUTENCAO_CAB, (select top 1 t.OF_NUM from AB_DIC_LINHA_OF t where t.ID_LINHA = d.id_linha and t.DATA <= GETDATE() order by t.DATA desc) as ofnum, "
+							+ "e.SECCAO,e.SUBSECCAO,e.REF_COMPOSTO,c.ID_MANUTENCAO " + "from AB_MOV_MANUTENCAO_ETIQ a "
+							+ "left join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
+							+ "left join AB_MOV_MANUTENCAO_CAB c on b.ID_MANUTENCAO_CAB = c.ID_MANUTENCAO_CAB "
+							+ "left join AB_MOV_MANUTENCAO d on c.ID_MANUTENCAO = d.ID_MANUTENCAO "
+							+ "left join AB_DIC_LINHA e on e.ID_LINHA = d.ID_LINHA " + "where a.ID_MANUTENCAO_LIN != 0 "
+							+ "and a.DATA_CRIA > '2018-08-04' and a.DATA_CRIA < '2018-08-28 17:20' "
+							+ "group by c.ID_MANUTENCAO_CAB,e.SECCAO,e.SUBSECCAO,e.REF_COMPOSTO,c.ID_MANUTENCAO,d.ID_LINHA order by c.ID_MANUTENCAO_CAB");
+
+			List<Object[]> dados = query.getResultList();
+
+			for (Object[] content : dados) {
+				// nome_ficheiro = data + "_ETIQUETA_" + content[0].toString() +
+				// ".txt";
+				nome_ficheiro = "ETIQUETA_ID" + content[0].toString() + ".txt";
+
+				criarFicheiroManual(content[0].toString(), nome_ficheiro, content[1].toString(), content[2].toString(),
+						content[3].toString(), content[4].toString(), content[5].toString(), null);
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void criarFicheiroManual(String id, String nome_ficheiro, String of, String SECCAO, String SUBSECCAO,
+			String REF_COMPOSTO, String num_manutencao, String ids) {
+
+		SimpleDateFormat formate = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat horaformate = new SimpleDateFormat("HHmmss");
+		String datatual = formate.format(new java.util.Date());
+		String horatual = horaformate.format(new java.util.Date());
+		String sequencia = "000000000";
+		String path = "";
+		/*
+		 * Query query = entityManager.createNativeQuery(
+		 * "select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO from AB_MOV_MANUTENCAO_ETIQ a where ID_MANUTENCAO_LIN = "
+		 * + id + "");
+		 */
+
+		Query query = entityManager.createNativeQuery(
+				"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES,a.DATCRE"
+						+ ",(select ID_MANUTENCAO from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB) as id2 "
+						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN (( a.QUANT  - a.QUANT_FINAL) * -1) ELSE ( a.QUANT  - a.QUANT_FINAL) END as qtt , t.CISTERNA "
+						+ ",( a.QUANT_FINAL / (CASE WHEN t.FACTOR_CONVERSAO IS NULL  THEN 1 WHEN t.FACTOR_CONVERSAO = 0 THEN 1 ELSE t.FACTOR_CONVERSAO END) ) as qtt2 "
+						+ ",(select MEDIDA from AB_DIC_UNIDADE_MEDIDA where ID_MEDIDA = t.ID_UNIDADE_ADITIVO) as unidaditivo, a.DATA_CRIA "
+						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN '-' ELSE '+' END as sinal"
+						+ "from AB_MOV_MANUTENCAO_ETIQ a "
+						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
+						+ "inner join AB_DIC_COMPONENTE t on  t.ID_COMPONENTE = b.ID_ADITIVO "
+						+ "where b.ID_MANUTENCAO_CAB  = " + id + "");
+
+		path = "c:\\etiquetas\\" + nome_ficheiro;
+
+		sequencia = sequencia();
+
+		List<Object[]> dados = null;
+
+		dados = query.getResultList();
+
+		final ConnectProgress connectionProgress = new ConnectProgress();
+		List<HashMap<String, String>> lista = null;
+		List<HashMap<String, String>> lista2 = null;
+		Boolean Orig_Composant = false;
+		Integer count = 0;
+		String data = "";
+		String INDNUMCSE = "";
+		String NCLRANG = "";
+
+		try {
+			lista2 = connectionProgress.getOrigineComposant2(getURLSILVER(), REF_COMPOSTO, of);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (lista2.size() > 0) {
+			INDNUMCSE = lista2.get(0).get("INDNUMENR");
+		}
+
+		for (Object[] content : dados) {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+			java.util.Date parsed = null;
+			try {
+				parsed = format.parse(content[23].toString());
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			datatual = formate.format(parsed);
+			horatual = horaformate.format(parsed);
+
+			// String cisterna = (content[20] != null) ? content[20].toString()
+			// : "false";
+
+			/*
+			 * try { connectionProgress.EXEC_SINCRO(content[0].toString(),
+			 * Float.parseFloat(content[3].toString()), getURLSILVER()); } catch
+			 * (SQLException e1) { // TODO Auto-generated catch block
+			 * e1.printStackTrace(); }
+			 */
+
+			try {
+				lista = connectionProgress.getOrigineComposant(getURLSILVER(), content[7].toString(), of);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (lista.size() > 0) {
+				count = Integer.parseInt(lista.get(0).get("total"));
+				NCLRANG = lista.get(0).get("NCLRANG");
+			}
+
+			// System.out.println(content[0]);
+			data += "01        ";// Société
+			data += datatual; // Date suivi
+			data += sequencia; // N° séquence
+
+			data += "    ";// + Ligne de production
+
+			data += "1";// Type N° OF
+			data += (of + "          ").substring(0, 10); // N° OF
+
+			data += "1";// Type opération
+
+			// OP_NUM
+			data += ("0010").substring(0, 4);// N° Opération
+
+			data += "1";// Position ( S12 )
+
+			// Code section
+			data += (SECCAO + "          ").substring(0, 10);
+
+			// Code sous-section
+			data += (SUBSECCAO + "          ").substring(0, 10);
+
+			data += "  "; // N° d'équipe
+
+			// Type de ressource
+			data += ("    ").substring(0, 4);
+
+			// Code ressource
+			data += ("          ").substring(0, 10);
+
+			data += "   C"; // N° établissement + Type d'élément C
+
+			// Date début
+			data += datatual;
+			// Heure début
+			data += horatual.substring(0, 6);
+			// Date fin
+			data += datatual;
+			// Heure fin
+			data += horatual.substring(0, 6);
+
+			// Origine composant
+			if (count > 0 && NCLRANG != null) {
+				Orig_Composant = true;
+				data += "0";
+			} else {
+				Orig_Composant = false;
+				data += "1";
+			}
+
+			// Référence composé
+			data += (REF_COMPOSTO + "                 ").substring(0, 17);
+
+			// Variante composé (1)
+			data += ("          ").substring(0, 10);
+
+			// Variante composé (2)
+			data += ("          ").substring(0, 10);
+
+			// Indice du composé
+			data += ("          ").substring(0, 10);
+
+			// N° enregistrement Csé
+			String enregistrementcse = "000000000";
+			String sizecse = enregistrementcse + INDNUMCSE;
+			enregistrementcse = (sizecse).substring(sizecse.length() - 9, sizecse.length());
+			data += enregistrementcse;
+
+			// N° de rang
+			/*
+			 * String rang = "00000"; if (Orig_Composant) { String size = rang +
+			 * NCLRANG; rang = (size).substring(size.length() - 5,
+			 * size.length()); data += rang; } else { data += rang; }
+			 */
+
+			if (Orig_Composant) {
+				data += (NCLRANG + "     ").substring(0, 5);
+			} else {
+				data += ("     ").substring(0, 5);
+			}
+
+			// Référence composant
+			data += (content[7] + "                 ").substring(0, 17);
+
+			// Variante composant (1)
+			if (content[5] != null) {
+				data += (content[5] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Variante composant (2)
+			if (content[6] != null) {
+				data += (content[6] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Indice du composant
+			if (content[4] != null) {
+				data += (content[4] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// N° enregistrement Cst
+
+			String enregistrement = "000000000";
+			if (content[14] != null) {
+				String size = enregistrement + content[14];
+				enregistrement = (size).substring(size.length() - 9, size.length());
+				data += enregistrement;
+			} else {
+				data += enregistrement;
+			}
+
+			/*
+			 * if (content[14] != null) { data += (content[14] +
+			 * "         ").substring(0, 9); } else { data +=
+			 * ("         ").substring(0, 9); }
+			 */
+
+			// Type quantité
+			data += "1"; // Signe
+
+			// Quantité
+			if (content[19] != null) {
+				String result = String.format("%.3f", content[19]).replace("$", ",");
+				String[] parts = result.split(",");
+				String part1 = "00000000000";
+				String part2 = "0000";
+				if (parts.length > 0) {
+					if (parts[0] != null) {
+						String size = part1 + parts[0];
+						part1 = (size).substring(size.length() - 11, size.length());
+					}
+					if (parts.length > 1) {
+						String size = parts[1] + part2;
+						part2 = (size).substring(0, 4);
+					}
+				}
+				data += (part1 + part2 + "  ").substring(0, 17);
+			} else {
+				data += "000000000000000  ";
+			}
+
+			if (id != null) {
+				data += content[24].toString(); // Signe
+			} else {
+				data += content[23]; // Signe
+			}
+			// Unité
+			if (content[8] != null) {
+				data += (content[8] + "    ").substring(0, 4);
+			} else {
+				data += "    ";
+			}
+
+			// Quantité (US2)
+			data += "               ";
+
+			// Lieu origine
+			if (content[9] != null) {
+				data += (content[9] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Emplacement origine
+			if (content[15] != null) {
+				data += (content[15] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Référence du lot
+			if (content[10] != null) {
+				data += (content[10] + "                                   ").substring(0, 35);
+			} else {
+				data += "                                   ";
+			}
+
+			// N° de lot interne
+			String lotinterne = "000000000";
+			if (content[12] != null) {
+				String size = lotinterne + content[12];
+				lotinterne = (size).substring(size.length() - 9, size.length());
+				data += lotinterne;
+			} else {
+				data += lotinterne;
+			}
+
+			// N° d'étiquette
+			if (content[0] != null) {
+				data += (content[0] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// N° enreg. étiquette
+			String etiquette = "000000000";
+			if (content[1] != null) {
+				String size = etiquette + content[11];
+				etiquette = (size).substring(size.length() - 9, size.length());
+				data += etiquette;
+			} else {
+				data += etiquette;
+			}
+
+			// Texte libre
+			if (id != null) {
+				data += (num_manutencao + "                                        ").substring(0, 40);
+			} else {
+				data += (content[18] + "                                        ").substring(0, 40);
+			}
+			data += "\r\n";
+
+		}
+
+		if (data.length() > 0) {
+			criar_ficheiro(data, path);
+		}
+
 	}
 
 }
