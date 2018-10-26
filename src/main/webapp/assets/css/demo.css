@@ -561,3 +561,15 @@ body .ui-selectbutton .ui-button:last-child {
     zoom: 1;
     overflow: visible;
 }
+
+.tabelahometarefa th {
+    border: 2px solid #c7c7c7;
+    vertical-align: middle !important;
+    padding-top: 4px !important;
+    padding-bottom: 5px !important;
+    border-top: 2px solid #c7c7c7 !important;
+}
+
+.tabelalistatarefas th, .tabelalistatarefas td {
+    font-size: 10px;
+}

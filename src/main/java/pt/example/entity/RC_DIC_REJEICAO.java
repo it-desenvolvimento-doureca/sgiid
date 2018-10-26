@@ -19,6 +19,7 @@ public class RC_DIC_REJEICAO {
 	private Integer UTZ_CRIA;
 	private Timestamp DATA_ULT_MODIF;
 	private Integer UTZ_ULT_MODIF;
+	private Boolean REVISAO_RECLAMACAO;
 
 	@Id
 	@Column(name = "ID")
@@ -50,6 +51,15 @@ public class RC_DIC_REJEICAO {
 	@Column(name = "UTZ_ULT_MODIF")
 	public Integer getUTZ_ULT_MODIF() {
 		return UTZ_ULT_MODIF;
+	}
+
+	@Column(name = "REVISAO_RECLAMACAO")
+	public Boolean getREVISAO_RECLAMACAO() {
+		return REVISAO_RECLAMACAO;
+	}
+
+	public void setREVISAO_RECLAMACAO(Boolean rEVISAO_RECLAMACAO) {
+		REVISAO_RECLAMACAO = rEVISAO_RECLAMACAO;
 	}
 
 	public void setID(Integer iD) {

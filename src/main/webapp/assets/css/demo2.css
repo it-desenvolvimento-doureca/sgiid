@@ -1803,7 +1803,7 @@ body .ui-picklist .ui-picklist-list .ui-picklist-item.ui-state-highlight {
     display: none;
 }
 
-.ui-widget-content:not(.ui-dialog-footer):not(.ui-dialog-content) {
+.ui-widget-content:not(.ui-dialog-footer):not(.ui-dialog-content):not(.ui-multiselect-items) {
     border: 1px solid #D5D5D5;
     background-color: #ffffff;
     color: #222222;
@@ -3457,6 +3457,23 @@ input[type="date"]::-webkit-input-placeholder {
 
 #formReclama .ui-calendar .ui-inputtext {
     height: 25px;
+}
+
+#formReclama table .ui-multiselect-label {
+    font-size: 14px;
+}
+
+#formReclama .ui-panel .ui-panel-content {
+    background-color: #F5F5F5;
+}
+
+#formReclama table .ui-inputtext {
+    height: 25px;
+    color: black;
+}
+
+#formReclama .ui-multiselect .ui-multiselect-trigger .fa {
+    margin-top: 6px;
 }
 
 .has-concluir .ui-calendar .ui-inputtext {

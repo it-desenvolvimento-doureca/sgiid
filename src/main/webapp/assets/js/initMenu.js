@@ -13,7 +13,7 @@ $(document).ready(function () {
     }
 
     $('html').removeClass('nav-open');
-    
+
     $('.close-layer').remove();
     setTimeout(function () {
         if ($toggle)
@@ -117,7 +117,7 @@ $(window).resize(function () {
 mda = {
     initSidebarCheck: function () {
         if ($(window).width() <= 2991) {
-            if ($sidebar.length != 0) {
+            if ($sidebar && $sidebar.length != 0) {
                 mda.initRightMenu();
             } else {
                 mda.initBootstrapNavbarMenu();

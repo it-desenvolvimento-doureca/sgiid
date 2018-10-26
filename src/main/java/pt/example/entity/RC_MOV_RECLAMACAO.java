@@ -97,7 +97,7 @@ public class RC_MOV_RECLAMACAO {
 	private Timestamp DATA_ANULACAO;
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
-	
+
 	private Integer STEP1CONCLUIDO_UTZ;
 	private Timestamp STEP1CONCLUIDO_DATA;
 	private Integer STEP2CONCLUIDO_UTZ;
@@ -123,6 +123,10 @@ public class RC_MOV_RECLAMACAO {
 	private Timestamp STEP6CONCLUIDO_DATA_MOD;
 	private Timestamp STEP7CONCLUIDO_DATA_MOD;
 	private Timestamp STEP8CONCLUIDO_DATA_MOD;
+
+	private Timestamp DATA_RECLAMACAO_REVISTA;
+	private Timestamp DATA_PRAZO_REVISAO;
+	private Boolean RECLAMACAO_COM_REVISAO;
 
 	@Id
 	@Column(name = "ID_RECLAMACAO")
@@ -659,6 +663,33 @@ public class RC_MOV_RECLAMACAO {
 	@Column(name = "INATIVO")
 	public Boolean getINATIVO() {
 		return INATIVO;
+	}
+
+	@Column(name = "DATA_RECLAMACAO_REVISTA")
+	public Timestamp getDATA_RECLAMACAO_REVISTA() {
+		return DATA_RECLAMACAO_REVISTA;
+	}
+
+	@Column(name = "DATA_PRAZO_REVISAO")
+	public Timestamp getDATA_PRAZO_REVISAO() {
+		return DATA_PRAZO_REVISAO;
+	}
+
+	@Column(name = "RECLAMACAO_COM_REVISAO")
+	public Boolean getRECLAMACAO_COM_REVISAO() {
+		return RECLAMACAO_COM_REVISAO;
+	}
+
+	public void setDATA_RECLAMACAO_REVISTA(Timestamp dATA_RECLAMACAO_REVISTA) {
+		DATA_RECLAMACAO_REVISTA = dATA_RECLAMACAO_REVISTA;
+	}
+
+	public void setDATA_PRAZO_REVISAO(Timestamp dATA_PRAZO_REVISAO) {
+		DATA_PRAZO_REVISAO = dATA_PRAZO_REVISAO;
+	}
+
+	public void setRECLAMACAO_COM_REVISAO(Boolean rECLAMACAO_COM_REVISAO) {
+		RECLAMACAO_COM_REVISAO = rECLAMACAO_COM_REVISAO;
 	}
 
 	public void setINATIVO(Boolean iNATIVO) {

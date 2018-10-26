@@ -34,6 +34,8 @@ public class AB_DIC_COMPONENTE {
 	private Float FACTOR_CONVERSAO;
 	private String UNISTO;
 	private Boolean CISTERNA;
+	private String COD_REF_SUBSTITUTA;
+	private String NOME_REF_SUBSTITUTA;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -137,6 +139,24 @@ public class AB_DIC_COMPONENTE {
 	@Column(name = "FACTOR_MULTIPLICACAO_AGUA")
 	public Float getFACTOR_MULTIPLICACAO_AGUA() {
 		return FACTOR_MULTIPLICACAO_AGUA;
+	}
+
+	@Column(name = "COD_REF_SUBSTITUTA")
+	public String getCOD_REF_SUBSTITUTA() {
+		return COD_REF_SUBSTITUTA;
+	}
+
+	@Column(name = "NOME_REF_SUBSTITUTA")
+	public String getNOME_REF_SUBSTITUTA() {
+		return NOME_REF_SUBSTITUTA;
+	}
+
+	public void setNOME_REF_SUBSTITUTA(String nOME_REF_SUBSTITUTA) {
+		NOME_REF_SUBSTITUTA = nOME_REF_SUBSTITUTA;
+	}
+
+	public void setCOD_REF_SUBSTITUTA(String cOD_REF_SUBSTITUTA) {
+		COD_REF_SUBSTITUTA = cOD_REF_SUBSTITUTA;
 	}
 
 	public void setFACTOR_MULTIPLICACAO_AGUA(Float fACTOR_MULTIPLICACAO_AGUA) {

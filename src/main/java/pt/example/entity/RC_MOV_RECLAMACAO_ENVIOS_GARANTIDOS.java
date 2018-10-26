@@ -22,6 +22,11 @@ public class RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS {
 	private Integer UTZ_CRIA;
 	private Timestamp DATA_ULT_MODIF;
 	private Integer UTZ_ULT_MODIF;
+	private Boolean ENVIO;
+	private String CLIENTE;
+	private String MORADA;
+	private Date DATA_ENTREGA;
+	private Date DATA_ENVIO;
 
 	@Id
 	@Column(name = "ID")
@@ -68,6 +73,51 @@ public class RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS {
 	@Column(name = "UTZ_ULT_MODIF")
 	public Integer getUTZ_ULT_MODIF() {
 		return UTZ_ULT_MODIF;
+	}
+
+	@Column(name = "ENVIO")
+	public Boolean getENVIO() {
+		return ENVIO;
+	}
+
+	@Column(name = "CLIENTE")
+	public String getCLIENTE() {
+		return CLIENTE;
+	}
+
+	@Column(name = "MORADA")
+	public String getMORADA() {
+		return MORADA;
+	}
+
+	@Column(name = "DATA_ENTREGA")
+	public Date getDATA_ENTREGA() {
+		return DATA_ENTREGA;
+	}
+
+	@Column(name = "DATA_ENVIO")
+	public Date getDATA_ENVIO() {
+		return DATA_ENVIO;
+	}
+
+	public void setENVIO(Boolean eNVIO) {
+		ENVIO = eNVIO;
+	}
+
+	public void setCLIENTE(String cLIENTE) {
+		CLIENTE = cLIENTE;
+	}
+
+	public void setMORADA(String mORADA) {
+		MORADA = mORADA;
+	}
+
+	public void setDATA_ENTREGA(Date dATA_ENTREGA) {
+		DATA_ENTREGA = dATA_ENTREGA;
+	}
+
+	public void setDATA_ENVIO(Date dATA_ENVIO) {
+		DATA_ENVIO = dATA_ENVIO;
 	}
 
 	public void setID(Integer iD) {

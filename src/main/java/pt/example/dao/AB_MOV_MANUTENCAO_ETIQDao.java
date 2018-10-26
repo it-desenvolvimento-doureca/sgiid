@@ -14,14 +14,14 @@ public class AB_MOV_MANUTENCAO_ETIQDao extends GenericDaoJpaImpl<AB_MOV_MANUTENC
 
 	public List<AB_MOV_MANUTENCAO_ETIQ> getbyid_manu(Integer id) {
 
-		Query query = entityManager
-				.createQuery("Select a from AB_MOV_MANUTENCAO_ETIQ a where a.ID_MANUTENCAO_LIN = :id order by a.DATA_CRIA");
+		Query query = entityManager.createQuery(
+				"Select a from AB_MOV_MANUTENCAO_ETIQ a where a.ID_MANUTENCAO_LIN = :id order by a.DATA_CRIA");
 		query.setParameter("id", id);
 		List<AB_MOV_MANUTENCAO_ETIQ> data = query.getResultList();
 		return data;
 
 	}
-	
+
 	public List<AB_MOV_MANUTENCAO_ETIQ> getbyid(Integer id) {
 
 		Query query = entityManager
@@ -31,7 +31,7 @@ public class AB_MOV_MANUTENCAO_ETIQDao extends GenericDaoJpaImpl<AB_MOV_MANUTENC
 		return data;
 
 	}
-	
+
 	public List<AB_MOV_MANUTENCAO_ETIQ> getbyRef(Integer id, String ref) {
 
 		Query query = entityManager.createQuery("Select a, ("
@@ -41,6 +41,17 @@ public class AB_MOV_MANUTENCAO_ETIQDao extends GenericDaoJpaImpl<AB_MOV_MANUTENC
 				+ "(select b.ID_MANUTENCAO_LIN from AB_MOV_MANUTENCAO_LINHA b where b.ID_MANUTENCAO_CAB = :id) and a.PROREF = :ref order by a.DATA_CRIA");
 		query.setParameter("id", id);
 		query.setParameter("ref", ref);
+		List<AB_MOV_MANUTENCAO_ETIQ> data = query.getResultList();
+		return data;
+
+	}
+
+	public List<AB_MOV_MANUTENCAO_ETIQ> getbyRef2(Integer id) {
+
+		Query query = entityManager.createQuery("Select a, ("
+				+ "select SUM(c.CONSUMIR) from AB_MOV_MANUTENCAO_ETIQ c where c.ID_MANUTENCAO_LIN = :id "
+				+ ") as c from AB_MOV_MANUTENCAO_ETIQ a where a.ID_MANUTENCAO_LIN = :id order by a.DATA_CRIA");
+		query.setParameter("id", id);
 		List<AB_MOV_MANUTENCAO_ETIQ> data = query.getResultList();
 		return data;
 

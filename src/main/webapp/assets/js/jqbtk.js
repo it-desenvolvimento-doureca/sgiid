@@ -254,7 +254,7 @@ $('[id^="number"]').keyboard();
 
 $('[id^="default"]').keyboard();
 
-$('[id^="default"]').click(function() {
+$('[id^="default"]').click(function () {
     var w = window.innerWidth;
     $(".popover").css('width', 632.4);
 });
@@ -270,7 +270,7 @@ $('.main-panel').scroll(function () {
 
             $(".popover").css('top', eTop - $(window).scrollTop() + 35);
 
-        }else if (container[0].className.indexOf('top') > -1) {
+        } else if (container[0].className.indexOf('top') > -1) {
             var eTop = $('[aria-describedby=' + container[0].id + ']').offset().top;
             var h = $(".popover").height();
             bottom = $('[aria-describedby=' + container[0].id + ']');
@@ -288,6 +288,10 @@ $('#editarclick3').click(function () {
     $("#editarclick5").trigger("click");
 });
 
+$('#editarclick4').click(function () {
+    $("#editarclickhidde").trigger("click");
+});
+
 $('#btvalidar').click(function () {
     $("#btvalidartrue").trigger("click");
 });
@@ -301,17 +305,17 @@ function elementInViewport2(el) {
     var left = el.offsetLeft;
     var width = el.offsetWidth;
     var height = el.offsetHeight;
-  
-    while(el.offsetParent) {
-      el = el.offsetParent;
-      top += el.offsetTop;
-      left += el.offsetLeft;
+
+    while (el.offsetParent) {
+        el = el.offsetParent;
+        top += el.offsetTop;
+        left += el.offsetLeft;
     }
-  
+
     return (
-      top < (window.pageYOffset + window.innerHeight) &&
-      left < (window.pageXOffset + window.innerWidth) &&
-      (top + height) > window.pageYOffset &&
-      (left + width) > window.pageXOffset
+        top < (window.pageYOffset + window.innerHeight) &&
+        left < (window.pageXOffset + window.innerWidth) &&
+        (top + height) > window.pageYOffset &&
+        (left + width) > window.pageXOffset
     );
-  }
+}

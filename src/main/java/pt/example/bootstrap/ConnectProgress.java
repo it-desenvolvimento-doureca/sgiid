@@ -501,13 +501,15 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getDadosEtiquetabyREFcisterna(String url, String PROREF) throws SQLException {
+	public List<HashMap<String, String>> getDadosEtiquetabyREFcisterna(String url, String PROREF, String PROREF2)
+			throws SQLException {
 
 		String query = "select  b.ETQNUM,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
-				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
+				+ ", CASE WHEN b.PROREF = '" + PROREF + "' THEN 1 ELSE 2 END as valorordem " + "from  SDTPRA a "
+				+ "inner join  SETQDE b on a.PROREF= b.PROREF "
 				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
-				+ "where b.PROREF = '" + PROREF
-				+ "' and b.ETQEMBQTE > 0 and b.ETQETAT = 1 and b.ETQSITSTO=2 order by b.DATCRE";
+				+ "where b.PROREF in ('" + PROREF + "','" + PROREF2
+				+ "') and b.ETQEMBQTE > 0 and b.ETQETAT = 1 and b.ETQSITSTO=2 order by valorordem, b.DATCRE";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -645,13 +647,15 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getEncomendasCliente(String url, String PROREF) throws SQLException {
+	public List<HashMap<String, String>> getEncomendasCliente(String url, String PROREF, String data, String datafim)
+			throws SQLException {
 
-		String query = "select b.PROREF,c.ADRNOM,c.ETSNUM,c.ADRLIB1,c.ADRLIB2,c.CLICOD, (d.CDDQTC-d.CDDQTL) as QUANTIDADE,d.CDDDATBES from SVCEBA a "
+		String query = "select d.CDDCHRONO,b.PROREF,c.ADRNOM,c.ETSNUM,c.ADRLIB1,c.ADRLIB2,c.CLICOD, (d.CDDQTC-d.CDDQTL) as QUANTIDADE,d.CDDDATBES from SVCEBA a "
 				+ "inner join SVCPBA b on a.CDENUMENR = b.CDENUMENR "
 				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM "
 				+ "inner join SVCPDL d on b.CDLNUMENR = d.CDLNUMENR " + "where b.PROREF = '" + PROREF
-				+ "'  and  (d.CDDQTC-d.CDDQTL) > 0 and d.CDDLIVCOD in (3,4,5) and d.CDDETAT = 0 order by d.CDDDATBES";
+				+ "'  and  (d.CDDQTC-d.CDDQTL) > 0 and d.CDDLIVCOD in (3,4,5) and d.CDDETAT = 0 and d.CDDDATBES > '"
+				+ data + "' and d.CDDDATBES <= '" + datafim + "' order by d.CDDDATBES";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -670,6 +674,7 @@ public class ConnectProgress {
 				x.put("QUANTIDADE", rs.getString("QUANTIDADE"));
 				x.put("CDDDATBES", rs.getString("CDDDATBES"));
 				x.put("ADRNOM", rs.getString("ADRNOM"));
+				x.put("CDDCHRONO", rs.getString("CDDCHRONO"));
 				list.add(x);
 			}
 
@@ -685,12 +690,56 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getEnviado(String url, String PROREF) throws SQLException {
+	public List<HashMap<String, String>> getEnviado(String url, String PROREF, String data, String datafim)
+			throws SQLException {
 
 		String query = "Select b.PROREF,a.BLNUM,b.LIPQTL,a.LIVDATDEP,a.LIVDATREC,c.ADRNOM,c.ADRLIB1,c.ADRLIB2,c.ETSNUM,c.CLICOD from SVLEBA a "
 				+ "inner join SVLPBA b on a.LIVNUMENR = b.LIVNUMENR "
 				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM " + "where b.PROREF = '"
-				+ PROREF + "'  and a.BLNUM like 'GR%' and LIVDATDEP > getdate()-180 order by LIVDATDEP";
+				+ PROREF + "'  and a.BLNUM like 'GR%' and LIVDATDEP > '" + data + "' and LIVDATDEP <= '" + datafim
+				+ "' order by LIVDATDEP DESC";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("ETSNUM", rs.getString("ETSNUM"));
+				x.put("ADRLIB2", rs.getString("ADRLIB2"));
+				x.put("CLICOD", rs.getString("CLICOD"));
+				x.put("ADRLIB1", rs.getString("ADRLIB1"));
+				x.put("BLNUM", rs.getString("BLNUM"));
+				x.put("LIPQTL", rs.getString("LIPQTL"));
+				x.put("ADRNOM", rs.getString("ADRNOM"));
+				x.put("LIVDATDEP", rs.getString("LIVDATDEP"));
+				x.put("LIVDATREC", rs.getString("LIVDATREC"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getEnviosGarantidos(String url, String PROREF, String data, String datafim)
+			throws SQLException {
+
+		String query = "Select b.PROREF,a.BLNUM,b.LIPQTL,a.LIVDATDEP,a.LIVDATREC,c.ADRNOM,c.ADRLIB1,c.ADRLIB2,c.ETSNUM,c.CLICOD from SVLEBA a "
+				+ "inner join SVLPBA b on a.LIVNUMENR = b.LIVNUMENR "
+				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM " + "where b.PROREF = '"
+				+ PROREF + "'  and a.BLNUM like 'GR%' and LIVDATDEP >= '" + data + "' and LIVDATDEP <= '" + datafim + "' order by LIVDATDEP DESC";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -729,7 +778,8 @@ public class ConnectProgress {
 	public List<HashMap<String, String>> getPlaneado(String url, String PROREF) throws SQLException {
 
 		String query = "Select a.OFNUM,b.PROREF,a.OFDATFP,(b.OFBQTEINI - b.OFBQTEREA) as QUANTIDADE from SOFA a "
-				+ "inner join SOFB b on a.OFANUMENR = b.OFANUMENR " + "where b.PROREF = '" + PROREF + "' and (b.OFBQTEINI - b.OFBQTEREA) >= 0 ";
+				+ "inner join SOFB b on a.OFANUMENR = b.OFANUMENR " + "where b.PROREF = '" + PROREF
+				+ "' and (b.OFBQTEINI - b.OFBQTEREA) > 0 and b.OFETAT != 4 ORDER BY a.OFDATFP ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -919,8 +969,7 @@ public class ConnectProgress {
 		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,b.ETQORILOT1,b.LIECOD,b.ETQORIQTE1 ,b.ETQNUM  "
 				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
 				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
-				+ "inner join SVLEBA d on d.BLNUM = b.ETQCONDOC "
-				+ "where d.BLNUM = '" + guia + "' ";
+				+ "inner join SVLEBA d on d.BLNUM = b.ETQCONDOC " + "where d.BLNUM = '" + guia + "' ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 

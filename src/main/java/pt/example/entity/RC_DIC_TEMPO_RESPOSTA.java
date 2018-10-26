@@ -25,6 +25,7 @@ public class RC_DIC_TEMPO_RESPOSTA {
 	private Integer TEMPO_RESPOSTA_STEP8;
 	private Timestamp DATA_ULT_MODIF;
 	private Integer UTZ_ULT_MODIF;
+	private Integer TEMPO_REVISAO;
 
 	@Id
 	@Column(name = "ID")
@@ -81,6 +82,15 @@ public class RC_DIC_TEMPO_RESPOSTA {
 	@Column(name = "UTZ_ULT_MODIF")
 	public Integer getUTZ_ULT_MODIF() {
 		return UTZ_ULT_MODIF;
+	}
+
+	@Column(name = "TEMPO_REVISAO")
+	public Integer getTEMPO_REVISAO() {
+		return TEMPO_REVISAO;
+	}
+
+	public void setTEMPO_REVISAO(Integer tEMPO_REVISAO) {
+		TEMPO_REVISAO = tEMPO_REVISAO;
 	}
 
 	public void setDATA_ULT_MODIF(Timestamp dATA_ULT_MODIF) {

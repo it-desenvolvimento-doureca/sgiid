@@ -22,12 +22,28 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+import javax.naming.ldap.InitialLdapContext;
+import javax.naming.ldap.LdapContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -64,18 +80,12 @@ import pt.example.dao.AB_DIC_BANHODao;
 import pt.example.dao.AB_DIC_BANHO_ADITIVODao;
 import pt.example.dao.AB_DIC_BANHO_COMPONENTEDao;
 import pt.example.dao.AB_DIC_COMPONENTEDao;
-import pt.example.dao.RC_DIC_FICHEIROS_ANALISEDao;
-import pt.example.dao.RC_DIC_GRAU_IMPORTANCIADao;
 import pt.example.dao.AB_DIC_LINHADao;
 import pt.example.dao.AB_DIC_LINHA_OFDao;
-import pt.example.dao.RC_DIC_REJEICAODao;
-import pt.example.dao.RC_DIC_TEMPO_RESPOSTADao;
 import pt.example.dao.AB_DIC_TINADao;
 import pt.example.dao.AB_DIC_TIPO_ADICAODao;
-import pt.example.dao.RC_DIC_TIPO_DEFEITODao;
 import pt.example.dao.AB_DIC_TIPO_MANUTENCAODao;
 import pt.example.dao.AB_DIC_TIPO_OPERACAODao;
-import pt.example.dao.RC_DIC_TIPO_RECLAMACAODao;
 import pt.example.dao.AB_DIC_TURNODao;
 import pt.example.dao.AB_DIC_UNIDADE_MEDIDADao;
 import pt.example.dao.AB_DIC_ZONADao;
@@ -85,15 +95,6 @@ import pt.example.dao.AB_MOV_MANUTENCAODao;
 import pt.example.dao.AB_MOV_MANUTENCAO_CABDao;
 import pt.example.dao.AB_MOV_MANUTENCAO_ETIQDao;
 import pt.example.dao.AB_MOV_MANUTENCAO_LINHADao;
-import pt.example.dao.RC_MOV_RECLAMACAODao;
-import pt.example.dao.RC_MOV_RECLAMACAO_ARTIGO_SIMILARESDao;
-import pt.example.dao.RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOSDao;
-import pt.example.dao.RC_MOV_RECLAMACAO_EQUIPADao;
-import pt.example.dao.RC_MOV_RECLAMACAO_FICHEIROSDao;
-import pt.example.dao.RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASDao;
-import pt.example.dao.RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASDao;
-import pt.example.dao.RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASDao;
-import pt.example.dao.RC_MOV_RECLAMACAO_STOCKDao;
 import pt.example.dao.AB_MOV_REG_PARAM_OPERACAODao;
 import pt.example.dao.GER_ANALISESDao;
 import pt.example.dao.GER_ARMAZEMDao;
@@ -116,23 +117,33 @@ import pt.example.dao.GER_SECCAO_UTZDao;
 import pt.example.dao.GER_UTILIZADORESDao;
 import pt.example.dao.GER_UTZ_PERFILDao;
 import pt.example.dao.GER_VISTASDao;
-import pt.example.dao.RC_DIC_ACCOES_RECLAMACAODao;
+import pt.example.dao.GT_LOGSDao;
+import pt.example.dao.GT_MOV_TAREFASDao;
+import pt.example.dao.GT_DIC_TAREFASDao;
+import pt.example.dao.RC_DIC_FICHEIROS_ANALISEDao;
+import pt.example.dao.RC_DIC_GRAU_IMPORTANCIADao;
+import pt.example.dao.RC_DIC_REJEICAODao;
+import pt.example.dao.RC_DIC_TEMPO_RESPOSTADao;
+import pt.example.dao.RC_DIC_TIPO_DEFEITODao;
+import pt.example.dao.RC_DIC_TIPO_RECLAMACAODao;
+import pt.example.dao.RC_MOV_RECLAMACAODao;
+import pt.example.dao.RC_MOV_RECLAMACAO_ARTIGO_SIMILARESDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_ENCOMENDASDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOSDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_EQUIPADao;
+import pt.example.dao.RC_MOV_RECLAMACAO_FICHEIROSDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_PLANOS_ACCOESDao;
+import pt.example.dao.RC_MOV_RECLAMACAO_STOCKDao;
 import pt.example.entity.AB_DIC_BANHO;
 import pt.example.entity.AB_DIC_BANHO_ADITIVO;
 import pt.example.entity.AB_DIC_BANHO_COMPONENTE;
 import pt.example.entity.AB_DIC_COMPONENTE;
-import pt.example.entity.RC_DIC_FICHEIROS_ANALISE;
-import pt.example.entity.RC_DIC_GRAU_IMPORTANCIA;
 import pt.example.entity.AB_DIC_LINHA;
 import pt.example.entity.AB_DIC_LINHA_OF;
-import pt.example.entity.RC_DIC_REJEICAO;
-import pt.example.entity.RC_DIC_TEMPO_RESPOSTA;
 import pt.example.entity.AB_DIC_TINA;
 import pt.example.entity.AB_DIC_TIPO_ADICAO;
-import pt.example.entity.RC_DIC_TIPO_DEFEITO;
 import pt.example.entity.AB_DIC_TIPO_MANUTENCAO;
 import pt.example.entity.AB_DIC_TIPO_OPERACAO;
-import pt.example.entity.RC_DIC_TIPO_RECLAMACAO;
 import pt.example.entity.AB_DIC_TURNO;
 import pt.example.entity.AB_DIC_UNIDADE_MEDIDA;
 import pt.example.entity.AB_DIC_ZONA;
@@ -142,15 +153,6 @@ import pt.example.entity.AB_MOV_MANUTENCAO;
 import pt.example.entity.AB_MOV_MANUTENCAO_CAB;
 import pt.example.entity.AB_MOV_MANUTENCAO_ETIQ;
 import pt.example.entity.AB_MOV_MANUTENCAO_LINHA;
-import pt.example.entity.RC_MOV_RECLAMACAO;
-import pt.example.entity.RC_MOV_RECLAMACAO_ARTIGO_SIMILARES;
-import pt.example.entity.RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS;
-import pt.example.entity.RC_MOV_RECLAMACAO_EQUIPA;
-import pt.example.entity.RC_MOV_RECLAMACAO_FICHEIROS;
-import pt.example.entity.RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS;
-import pt.example.entity.RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS;
-import pt.example.entity.RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS;
-import pt.example.entity.RC_MOV_RECLAMACAO_STOCK;
 import pt.example.entity.AB_MOV_REG_PARAM_OPERACAO;
 import pt.example.entity.EMAIL;
 import pt.example.entity.GER_ANALISES;
@@ -174,7 +176,23 @@ import pt.example.entity.GER_SECCAO_UTZ;
 import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.GER_UTZ_PERFIL;
 import pt.example.entity.GER_VISTAS;
-import pt.example.entity.RC_DIC_ACCOES_RECLAMACAO;
+import pt.example.entity.GT_LOGS;
+import pt.example.entity.GT_MOV_TAREFAS;
+import pt.example.entity.GT_DIC_TAREFAS;
+import pt.example.entity.RC_DIC_FICHEIROS_ANALISE;
+import pt.example.entity.RC_DIC_GRAU_IMPORTANCIA;
+import pt.example.entity.RC_DIC_REJEICAO;
+import pt.example.entity.RC_DIC_TEMPO_RESPOSTA;
+import pt.example.entity.RC_DIC_TIPO_DEFEITO;
+import pt.example.entity.RC_DIC_TIPO_RECLAMACAO;
+import pt.example.entity.RC_MOV_RECLAMACAO;
+import pt.example.entity.RC_MOV_RECLAMACAO_ARTIGO_SIMILARES;
+import pt.example.entity.RC_MOV_RECLAMACAO_ENCOMENDAS;
+import pt.example.entity.RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS;
+import pt.example.entity.RC_MOV_RECLAMACAO_EQUIPA;
+import pt.example.entity.RC_MOV_RECLAMACAO_FICHEIROS;
+import pt.example.entity.RC_MOV_RECLAMACAO_PLANOS_ACCOES;
+import pt.example.entity.RC_MOV_RECLAMACAO_STOCK;
 
 @Stateless
 @Path("/sirb")
@@ -271,11 +289,7 @@ public class SIRB {
 	@Inject
 	private RC_MOV_RECLAMACAO_FICHEIROSDao dao46;
 	@Inject
-	private RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASDao dao47;
-	@Inject
-	private RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASDao dao48;
-	@Inject
-	private RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASDao dao49;
+	private RC_MOV_RECLAMACAO_PLANOS_ACCOESDao dao47;
 	@Inject
 	private RC_DIC_TEMPO_RESPOSTADao dao50;
 	@Inject
@@ -291,9 +305,15 @@ public class SIRB {
 	@Inject
 	private GER_DEPARTAMENTODao dao56;
 	@Inject
-	private RC_DIC_ACCOES_RECLAMACAODao dao57;
+	private GT_DIC_TAREFASDao dao57;
 	@Inject
 	private RC_MOV_RECLAMACAO_STOCKDao dao58;
+	@Inject
+	private GT_MOV_TAREFASDao dao59;
+	@Inject
+	private GT_LOGSDao dao48;
+	@Inject
+	private RC_MOV_RECLAMACAO_ENCOMENDASDao dao49;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -526,11 +546,18 @@ public class SIRB {
 		return dao6.allEntries();
 	}
 
-	@GET
+	@POST
 	@Path("/getallAB_MOV_ANALISE/{linha}")
+	@Consumes("*/*")
 	@Produces("application/json")
-	public List<AB_MOV_ANALISE> getallAB_MOV_ANALISE(@PathParam("linha") Integer linha) {
-		return dao6.getall(linha);
+	public List<AB_MOV_ANALISE> getallAB_MOV_ANALISE(@PathParam("linha") Integer linha,
+			final List<HashMap<String, String>> datas) {
+
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String data = firstMap.get("DATA");
+		String datafim = firstMap.get("DATA_FIM");
+		return dao6.getall(linha, data, datafim);
 	}
 
 	@POST
@@ -971,6 +998,13 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getGER_UTILIZADORESbyLDAP/{code}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getGER_UTILIZADORESbyLDAP(@PathParam("code") String code) {
+		return dao11.getbyLoginLDAP(code);
+	}
+
+	@GET
 	@Path("/getGER_UTILIZADORESverifica_login/{id}/{login}")
 	@Produces("application/json")
 	public List<GER_UTILIZADORES> getGER_UTILIZADORESverifica_login(@PathParam("login") String login,
@@ -984,6 +1018,14 @@ public class SIRB {
 	public List<GER_UTILIZADORES> getGER_UTILIZADORESverifica_code(@PathParam("code") String code,
 			@PathParam("id") Integer id) {
 		return dao11.verifica_code(id, code);
+	}
+
+	@GET
+	@Path("/getGER_UTILIZADORESverifica_LDAP/{id}/{code}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getGER_UTILIZADORESverifica_LDAP(@PathParam("code") String code,
+			@PathParam("id") Integer id) {
+		return dao11.verifica_LDAP(id, code);
 	}
 
 	@DELETE
@@ -1001,6 +1043,189 @@ public class SIRB {
 	public GER_UTILIZADORES updateGER_UTILIZADORES(final GER_UTILIZADORES GER_UTILIZADORES) {
 		GER_UTILIZADORES.setID_UTILIZADOR(GER_UTILIZADORES.getID_UTILIZADOR());
 		return dao11.update(GER_UTILIZADORES);
+	}
+
+	@POST
+	@Path("/createGER_UTILIZADOREStesteLDAP")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public boolean createGER_UTILIZADOREStesteLDAP(final List<HashMap<String, String>> data) {
+		HashMap<String, String> firstMap = data.get(0);
+
+		String user = firstMap.get("USER");
+		String password = firstMap.get("PASSWORD");
+
+		String ldapSearchBase = "";
+		String DOMAIN = "";
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select top 1 NOME_USER,ID_USER,PASSWORD_USER,ldapSearchBase,DOMAIN from GER_LDAP_CONF a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			ldapSearchBase = content[3].toString();
+			DOMAIN = content[4].toString();
+		}
+
+		try {
+			String senha2 = new String(Base64.getDecoder().decode(password));
+			return testLDAP(user.replaceAll("\\s+", ""), senha2, DOMAIN, ldapSearchBase);
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@GET
+	@Path("/getGER_UTILIZADORESLDAP")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getGER_UTILIZADORESLDAP() {
+
+		String NOME_USER = "";
+		String ID_USER = "";
+		String PASSWORD_USER = "";
+		String ldapSearchBase = "";
+		String DOMAIN = "";
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select top 1 NOME_USER,ID_USER,PASSWORD_USER,ldapSearchBase,DOMAIN from GER_LDAP_CONF a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			NOME_USER = content[0].toString();
+			ID_USER = content[1].toString();
+			PASSWORD_USER = content[2].toString();
+			ldapSearchBase = content[3].toString();
+			DOMAIN = content[4].toString();
+		}
+
+		try {
+			return dadosLDAP(DOMAIN, ID_USER, NOME_USER, PASSWORD_USER, ldapSearchBase);
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static List<HashMap<String, String>> dadosLDAP(String dominio, String user, String nome, String pass,
+			String ldapSearchBase) throws NamingException {
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		Properties properties = new Properties();
+		properties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		properties.put(Context.PROVIDER_URL, "ldap://" + dominio);
+		properties.put(Context.SECURITY_AUTHENTICATION, "simple");
+		properties.put(Context.SECURITY_PRINCIPAL, user + "@" + dominio);
+		properties.put(Context.SECURITY_CREDENTIALS, pass);
+
+		try {
+			DirContext context = new InitialDirContext(properties);
+			SearchControls searchCtrls = new SearchControls();
+			searchCtrls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+			String filter = "(&(objectCategory=person)(samaccountname=*))";
+			NamingEnumeration values = context.search(ldapSearchBase, filter, searchCtrls);
+			HashMap<String, String> x2 = new HashMap<>();
+			x2.put("NOME", nome);
+			x2.put("ID", user);
+			list.add(x2);
+			while (values.hasMoreElements()) {
+				SearchResult result = (SearchResult) values.next();
+				Attributes attribs = result.getAttributes();
+
+				Attributes attrs = ((SearchResult) values.next()).getAttributes();
+
+				HashMap<String, String> x = new HashMap<>();
+
+				/*
+				 * System.out.println(attrs.get("distinguishedName") + " " +
+				 * attrs.get("givenname") + " " + attrs.get("sn") + " " +
+				 * attrs.get("mail") + " " + attrs.get("telephonenumber") + " "
+				 * + attrs.get("samaccountname") + " " +
+				 * attrs.get("userPrincipalName") + " " + attrs.get("memberOf")
+				 * + " " + attrs.get("cn") + " " + attrs.get("name") + " " +
+				 * attrs.get("uid") + " " + attrs.get("department") + " " +
+				 * attrs.get("title") + " " + attrs.get("manager"));
+				 */
+
+				if (attrs.get("memberOf") != null
+						&& attrs.get("memberOf").get().toString().toLowerCase().contains("utilizador") && !attrs
+								.get("memberOf").get().toString().toLowerCase().contains("utilizadores equipamentos")) {
+
+					String nomes = ((attrs.get("givenname") != null) ? attrs.get("givenname").get().toString() : " ")
+							+ " " + ((attrs.get("sn") != null) ? attrs.get("sn").get().toString() : " ");
+
+					x.put("NOME", nomes);
+					x.put("ID", attrs.get("samaccountname").get().toString());
+					list.add(x);
+				}
+
+			}
+
+			context.close();
+
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
+	public static boolean testLDAP(String user, String password, String ldapAdServer2, String ldapSearchBase)
+			throws NamingException {
+
+		final String ldapAdServer = "ldap://" + ldapAdServer2;
+		// final String ldapSearchBase = "dc=doureca,dc=local";
+
+		final String ldapUsername = user + "@" + ldapAdServer2;
+		final String ldapPassword = password;
+
+		Hashtable<String, Object> env = new Hashtable<String, Object>();
+		env.put(Context.SECURITY_AUTHENTICATION, "simple");
+		if (ldapUsername != null) {
+			env.put(Context.SECURITY_PRINCIPAL, ldapUsername);
+		}
+		if (ldapPassword != null) {
+			env.put(Context.SECURITY_CREDENTIALS, ldapPassword);
+		}
+		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		env.put(Context.PROVIDER_URL, ldapAdServer);
+
+		try {
+			// Connect with ldap
+			new InitialLdapContext(env, null);
+
+			// Connection succeeded
+			// System.out.println("Connection succeeded!");
+			return true;
+		} catch (AuthenticationException e) {
+
+			// Connection failed
+			// System.out.println("Connection failed!");
+			// e.printStackTrace();
+			return false;
+		}
+	}
+
+	@GET
+	@Path("/getEMAILS/{id_reclamacao}")
+	@Produces("application/json")
+	public List<Object[]> getEMAILS(@PathParam("id_reclamacao") Integer id_reclamacao) {
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select distinct e.EMAIL, 'campo' from ( " + "select b.EMAIL from RC_MOV_RECLAMACAO_PLANOS_ACCOES a "
+						+ "inner join GER_UTILIZADORES b on a.RESPONSAVEL = b.ID_UTILIZADOR where a.TIPO_RESPONSAVEL = 'u' and a.ID_RECLAMACAO = "
+						+ id_reclamacao + " " + "union all "
+						+ "select c.EMAIL from RC_MOV_RECLAMACAO_PLANOS_ACCOES a inner join GER_GRUPO_UTZ b on a.RESPONSAVEL = b.ID_GRUPO "
+						+ "inner join GER_UTILIZADORES c on a.RESPONSAVEL = c.ID_UTILIZADOR where a.TIPO_RESPONSAVEL = 'g' and a.ID_RECLAMACAO = "
+						+ id_reclamacao + ") e");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
 	}
 
 	/************************************* AB_DIC_LINHA */
@@ -1407,14 +1632,15 @@ public class SIRB {
 	}
 
 	@GET
-	@Path("/getDadosEtiquetabyREFcisterna/{ref}")
+	@Path("/getDadosEtiquetabyREFcisterna/{ref}/{prorefsubstituta}")
 	@Produces("application/json")
-	public List<HashMap<String, String>> getDadosEtiquetabyREFcisterna(@PathParam("ref") String ref)
-			throws SQLException, ClassNotFoundException {
+	public List<HashMap<String, String>> getDadosEtiquetabyREFcisterna(@PathParam("ref") String ref,
+			@PathParam("prorefsubstituta") String prorefsubstituta) throws SQLException, ClassNotFoundException {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiquetabyREFcisterna(getURLSILVER(), ref);
+		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiquetabyREFcisterna(getURLSILVER(), ref,
+				prorefsubstituta);
 		return dados;
 	}
 
@@ -1463,15 +1689,20 @@ public class SIRB {
 		return dados;
 	}
 
-	@GET
+	@POST
 	@Path("/getEncomendasCliente/{proref}")
 	@Produces("application/json")
-	public List<HashMap<String, String>> getEncomendasCliente(@PathParam("proref") String proref)
-			throws SQLException, ClassNotFoundException {
+	public List<HashMap<String, String>> getEncomendasCliente(@PathParam("proref") String proref,
+			final List<HashMap<String, String>> datas) throws SQLException, ClassNotFoundException {
 
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String data = firstMap.get("DATA");
+		String datafim = firstMap.get("DATA_FIM");
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getEncomendasCliente(getURLSILVER(), proref);
+		List<HashMap<String, String>> dados = connectionProgress.getEncomendasCliente(getURLSILVER(), proref, data,
+				datafim);
 		return dados;
 	}
 
@@ -1499,15 +1730,36 @@ public class SIRB {
 		return dados;
 	}
 
-	@GET
+	@POST
 	@Path("/getEnviado/{proref}")
 	@Produces("application/json")
-	public List<HashMap<String, String>> getEnviado(@PathParam("proref") String proref)
-			throws SQLException, ClassNotFoundException {
+	public List<HashMap<String, String>> getEnviado(@PathParam("proref") String proref,
+			final List<HashMap<String, String>> datas) throws SQLException, ClassNotFoundException {
 
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String data = firstMap.get("DATA");
+		String datafim = firstMap.get("DATA_FIM");
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getEnviado(getURLSILVER(), proref);
+		List<HashMap<String, String>> dados = connectionProgress.getEnviado(getURLSILVER(), proref, data, datafim);
+		return dados;
+	}
+
+	@POST
+	@Path("/getEnviosGarantidos/{proref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getEnviosGarantidos(@PathParam("proref") String proref,
+			final List<HashMap<String, String>> datas) throws SQLException, ClassNotFoundException {
+
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String data = firstMap.get("DATA");
+		String datafim = firstMap.get("DATA_FIM");
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getEnviosGarantidos(getURLSILVER(), proref, data,
+				datafim);
 		return dados;
 	}
 
@@ -2153,6 +2405,13 @@ public class SIRB {
 		return dao35.getbyRef(id, ref);
 	}
 
+	@GET
+	@Path("/getAB_MOV_MANUTENCAO_ETIQbyref2/{id}")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO_ETIQ> getAB_MOV_MANUTENCAO_ETIQbyref2(@PathParam("id") Integer id) {
+		return dao35.getbyRef2(id);
+	}
+
 	@DELETE
 	@Path("/deleteAB_MOV_MANUTENCAO_ETIQ/{id}")
 	public void deleteAB_MOV_MANUTENCAO_ETIQ(@PathParam("id") Integer id) {
@@ -2480,38 +2739,37 @@ public class SIRB {
 		return dao40.update(RC_DIC_TIPO_DEFEITO);
 	}
 
-	/************************************* RC_DIC_ACCOES_RECLAMACAO */
+	/************************************* GT_DIC_TAREFAS */
 	@POST
-	@Path("/createRC_DIC_ACCOES_RECLAMACAO")
+	@Path("/createGT_DIC_TAREFAS")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public RC_DIC_ACCOES_RECLAMACAO insertRC_DIC_ACCOES_RECLAMACAOA(final RC_DIC_ACCOES_RECLAMACAO data) {
+	public GT_DIC_TAREFAS insertGT_DIC_TAREFASA(final GT_DIC_TAREFAS data) {
 		return dao57.create(data);
 	}
 
 	@GET
-	@Path("/getRC_DIC_ACCOES_RECLAMACAO")
+	@Path("/getGT_DIC_TAREFAS")
 	@Produces("application/json")
-	public List<RC_DIC_ACCOES_RECLAMACAO> getRC_DIC_ACCOES_RECLAMACAO() {
+	public List<GT_DIC_TAREFAS> getGT_DIC_TAREFAS() {
 		return dao57.getall();
 	}
 
 	@DELETE
-	@Path("/deleteRC_DIC_ACCOES_RECLAMACAO/{id}")
-	public void deleteRC_DIC_ACCOES_RECLAMACAO(@PathParam("id") Integer id) {
-		RC_DIC_ACCOES_RECLAMACAO RC_DIC_ACCOES_RECLAMACAO = new RC_DIC_ACCOES_RECLAMACAO();
-		RC_DIC_ACCOES_RECLAMACAO.setID(id);
-		dao57.delete(RC_DIC_ACCOES_RECLAMACAO);
+	@Path("/deleteGT_DIC_TAREFAS/{id}")
+	public void deleteGT_DIC_TAREFAS(@PathParam("id") Integer id) {
+		GT_DIC_TAREFAS GT_DIC_TAREFAS = new GT_DIC_TAREFAS();
+		GT_DIC_TAREFAS.setID(id);
+		dao57.delete(GT_DIC_TAREFAS);
 	}
 
 	@PUT
-	@Path("/updateRC_DIC_ACCOES_RECLAMACAO")
+	@Path("/updateGT_DIC_TAREFAS")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public RC_DIC_ACCOES_RECLAMACAO updateRC_DIC_ACCOES_RECLAMACAO(
-			final RC_DIC_ACCOES_RECLAMACAO RC_DIC_ACCOES_RECLAMACAO) {
-		RC_DIC_ACCOES_RECLAMACAO.setID(RC_DIC_ACCOES_RECLAMACAO.getID());
-		return dao57.update(RC_DIC_ACCOES_RECLAMACAO);
+	public GT_DIC_TAREFAS updateGT_DIC_TAREFAS(final GT_DIC_TAREFAS GT_DIC_TAREFAS) {
+		GT_DIC_TAREFAS.setID(GT_DIC_TAREFAS.getID());
+		return dao57.update(GT_DIC_TAREFAS);
 	}
 
 	/************************************* RC_DIC_TIPO_RECLAMACAO */
@@ -2578,6 +2836,21 @@ public class SIRB {
 		dao42.delete(RC_MOV_RECLAMACAO);
 	}
 
+	@GET
+	@Path("/deleteRC_MOV_RECLAMACAUPDATEESTADOS/{id}/{modulo}")
+	@Produces("application/json")
+	public void deleteRC_MOV_RECLAMACAUPDATEESTADOS(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo) {
+		String url = "";
+		Query query = entityManager
+				.createNativeQuery("UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET ESTADO = 'A' where ID_RECLAMACAO = " + id
+						+ " and ESTADO != 'C' "
+						+ "UPDATE GT_MOV_TAREFAS SET ESTADO = 'A' where ID_CAMPO in (select ID from RC_MOV_RECLAMACAO_PLANOS_ACCOES where ID_RECLAMACAO = '"
+						+ id + "') and ID_MODULO='" + modulo + "' and ESTADO != 'C'");
+
+		query.executeUpdate();
+
+	}
+
 	@PUT
 	@Path("/updateRC_MOV_RECLAMACAO")
 	@Consumes("*/*")
@@ -2618,6 +2891,19 @@ public class SIRB {
 		RC_MOV_RECLAMACAO_ARTIGO_SIMILARES RC_MOV_RECLAMACAO_ARTIGO_SIMILARES = new RC_MOV_RECLAMACAO_ARTIGO_SIMILARES();
 		RC_MOV_RECLAMACAO_ARTIGO_SIMILARES.setID(id);
 		dao43.delete(RC_MOV_RECLAMACAO_ARTIGO_SIMILARES);
+	}
+
+	@DELETE
+	@Path("/deleteLINHASRC_MOV_RECLAMACAO_ARTIGO_SIMILARES/{id}/{id_cab}")
+	public void deleteLINHASRC_MOV_RECLAMACAO_ARTIGO_SIMILARES(@PathParam("id") Integer id,
+			@PathParam("id_cab") Integer id_cab) {
+		Query query = entityManager.createNativeQuery(
+				"DELETE  RC_MOV_RECLAMACAO_STOCK where ID_RECLAMACAO = " + id_cab + " and ID_LINHA_ARTIGO_SIMILAR = "
+						+ id + " " + "DELETE from  RC_MOV_RECLAMACAO_ENCOMENDAS where ID_RECLAMACAO = " + id_cab
+						+ " and ID_LINHA_ARTIGO_SIMILAR = " + id + "");
+
+		query.executeUpdate();
+
 	}
 
 	@PUT
@@ -2731,6 +3017,13 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyidTAREFA/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidTAREFA(@PathParam("id") Integer id) {
+		return dao46.getbyidtarefa(id);
+	}
+
+	@GET
 	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO/{id}")
 	@Produces("application/json")
 	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO(@PathParam("id") Integer id) {
@@ -2755,47 +3048,54 @@ public class SIRB {
 		return dao46.update(RC_MOV_RECLAMACAO_FICHEIROS);
 	}
 
-	/************************************* RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS */
+	/************************************* RC_MOV_RECLAMACAO_PLANOS_ACCOES */
 	@POST
-	@Path("/createRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS")
+	@Path("/createRC_MOV_RECLAMACAO_PLANOS_ACCOES")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS insertRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASA(
-			final RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS data) {
+	public RC_MOV_RECLAMACAO_PLANOS_ACCOES insertRC_MOV_RECLAMACAO_PLANOS_ACCOESA(
+			final RC_MOV_RECLAMACAO_PLANOS_ACCOES data) {
 		return dao47.create(data);
 	}
 
 	@GET
-	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS")
+	@Path("/getRC_MOV_RECLAMACAO_PLANOS_ACCOES")
 	@Produces("application/json")
-	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS() {
+	public List<RC_MOV_RECLAMACAO_PLANOS_ACCOES> getRC_MOV_RECLAMACAO_PLANOS_ACCOES() {
 		return dao47.getall();
 	}
 
 	@GET
-	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASbyid_reclamacao/{id}")
+	@Path("/getRC_MOV_RECLAMACAO_PLANOS_ACCOESbyid_reclamacao/{id}")
 	@Produces("application/json")
-	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVASbyid_reclamacao(
+	public List<RC_MOV_RECLAMACAO_PLANOS_ACCOES> getRC_MOV_RECLAMACAO_PLANOS_ACCOESbyid_reclamacao(
 			@PathParam("id") Integer id) {
 		return dao47.getbyid(id);
 	}
 
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_PLANOS_ACCOESbyid/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_PLANOS_ACCOES> getRC_MOV_RECLAMACAO_PLANOS_ACCOESbyid(@PathParam("id") Integer id) {
+		return dao47.getbyidplano(id);
+	}
+
 	@DELETE
-	@Path("/deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS/{id}")
-	public void deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS(@PathParam("id") Integer id) {
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS = new RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS();
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS.setID(id);
-		dao47.delete(RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS);
+	@Path("/deleteRC_MOV_RECLAMACAO_PLANOS_ACCOES/{id}")
+	public void deleteRC_MOV_RECLAMACAO_PLANOS_ACCOES(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_PLANOS_ACCOES RC_MOV_RECLAMACAO_PLANOS_ACCOES = new RC_MOV_RECLAMACAO_PLANOS_ACCOES();
+		RC_MOV_RECLAMACAO_PLANOS_ACCOES.setID(id);
+		dao47.delete(RC_MOV_RECLAMACAO_PLANOS_ACCOES);
 	}
 
 	@PUT
-	@Path("/updateRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS")
+	@Path("/updateRC_MOV_RECLAMACAO_PLANOS_ACCOES")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS updateRC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS(
-			final RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS) {
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS.setID(RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS.getID());
-		return dao47.update(RC_MOV_RECLAMACAO_PLANO_ACCOES_CORRETIVAS);
+	public RC_MOV_RECLAMACAO_PLANOS_ACCOES updateRC_MOV_RECLAMACAO_PLANOS_ACCOES(
+			final RC_MOV_RECLAMACAO_PLANOS_ACCOES RC_MOV_RECLAMACAO_PLANOS_ACCOES) {
+		RC_MOV_RECLAMACAO_PLANOS_ACCOES.setID(RC_MOV_RECLAMACAO_PLANOS_ACCOES.getID());
+		return dao47.update(RC_MOV_RECLAMACAO_PLANOS_ACCOES);
 	}
 
 	/************************************* RC_MOV_RECLAMACAO_STOCK */
@@ -2821,6 +3121,14 @@ public class SIRB {
 		return dao58.getbyid(id);
 	}
 
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_STOCKbyid_linha/{id}/{id_linha}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_STOCK> getRC_MOV_RECLAMACAO_STOCKbyid_linha(@PathParam("id") Integer id,
+			@PathParam("id_linha") Integer id_linha) {
+		return dao58.getbyidLINHA(id, id_linha);
+	}
+
 	@DELETE
 	@Path("/deleteRC_MOV_RECLAMACAO_STOCK/{id}")
 	public void deleteRC_MOV_RECLAMACAO_STOCK(@PathParam("id") Integer id) {
@@ -2839,90 +3147,211 @@ public class SIRB {
 		return dao58.update(RC_MOV_RECLAMACAO_STOCK);
 	}
 
-	/************************************* RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS */
+	/************************************* RC_MOV_RECLAMACAO_ENCOMENDAS */
 	@POST
-	@Path("/createRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS")
+	@Path("/createRC_MOV_RECLAMACAO_ENCOMENDAS")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS insertRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASA(
-			final RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS data) {
-		return dao48.create(data);
-	}
-
-	@GET
-	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS")
-	@Produces("application/json")
-	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS() {
-		return dao48.getall();
-	}
-
-	@GET
-	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASbyid_reclamacao/{id}")
-	@Produces("application/json")
-	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATASbyid_reclamacao(
-			@PathParam("id") Integer id) {
-		return dao48.getbyid(id);
-	}
-
-	@DELETE
-	@Path("/deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS/{id}")
-	public void deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS(@PathParam("id") Integer id) {
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS = new RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS();
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS.setID(id);
-		dao48.delete(RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS);
-	}
-
-	@PUT
-	@Path("/updateRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS")
-	@Consumes("*/*")
-	@Produces("application/json")
-	public RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS updateRC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS(
-			final RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS) {
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS.setID(RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS.getID());
-		return dao48.update(RC_MOV_RECLAMACAO_PLANO_ACCOES_IMEDIATAS);
-	}
-
-	/************************************* RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS */
-	@POST
-	@Path("/createRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS")
-	@Consumes("*/*")
-	@Produces("application/json")
-	public RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS insertRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASA(
-			final RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS data) {
+	public RC_MOV_RECLAMACAO_ENCOMENDAS insertRC_MOV_RECLAMACAO_ENCOMENDASA(final RC_MOV_RECLAMACAO_ENCOMENDAS data) {
 		return dao49.create(data);
 	}
 
 	@GET
-	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS")
+	@Path("/getRC_MOV_RECLAMACAO_ENCOMENDAS")
 	@Produces("application/json")
-	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS() {
+	public List<RC_MOV_RECLAMACAO_ENCOMENDAS> getRC_MOV_RECLAMACAO_ENCOMENDAS() {
 		return dao49.getall();
 	}
 
 	@GET
-	@Path("/getRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASbyid_reclamacao/{id}")
+	@Path("/getRC_MOV_RECLAMACAO_ENCOMENDASbyid_reclamacao/{id}")
 	@Produces("application/json")
-	public List<RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS> getRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVASbyid_reclamacao(
+	public List<RC_MOV_RECLAMACAO_ENCOMENDAS> getRC_MOV_RECLAMACAO_ENCOMENDASbyid_reclamacao(
 			@PathParam("id") Integer id) {
 		return dao49.getbyid(id);
 	}
 
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_ENCOMENDASbyid_linha/{id}/{id_linha}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_STOCK> getRC_MOV_RECLAMACAO_ENCOMENDASbyid_linha(@PathParam("id") Integer id,
+			@PathParam("id_linha") Integer id_linha) {
+		return dao49.getbyidLINHA(id, id_linha);
+	}
+
 	@DELETE
-	@Path("/deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS/{id}")
-	public void deleteRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS(@PathParam("id") Integer id) {
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS = new RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS();
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS.setID(id);
-		dao49.delete(RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS);
+	@Path("/deleteRC_MOV_RECLAMACAO_ENCOMENDAS/{id}")
+	public void deleteRC_MOV_RECLAMACAO_ENCOMENDAS(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_ENCOMENDAS RC_MOV_RECLAMACAO_ENCOMENDAS = new RC_MOV_RECLAMACAO_ENCOMENDAS();
+		RC_MOV_RECLAMACAO_ENCOMENDAS.setID(id);
+		dao49.delete(RC_MOV_RECLAMACAO_ENCOMENDAS);
 	}
 
 	@PUT
-	@Path("/updateRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS")
+	@Path("/updateRC_MOV_RECLAMACAO_ENCOMENDAS")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS updateRC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS(
-			final RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS) {
-		RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS.setID(RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS.getID());
-		return dao49.update(RC_MOV_RECLAMACAO_PLANO_ACCOES_PREVENTIVAS);
+	public RC_MOV_RECLAMACAO_ENCOMENDAS updateRC_MOV_RECLAMACAO_ENCOMENDAS(
+			final RC_MOV_RECLAMACAO_ENCOMENDAS RC_MOV_RECLAMACAO_ENCOMENDAS) {
+		RC_MOV_RECLAMACAO_ENCOMENDAS.setID(RC_MOV_RECLAMACAO_ENCOMENDAS.getID());
+		return dao49.update(RC_MOV_RECLAMACAO_ENCOMENDAS);
+	}
+
+	/************************************* GT_MOV_TAREFAS */
+	@POST
+	@Path("/createGT_MOV_TAREFAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GT_MOV_TAREFAS insertGT_MOV_TAREFASA(final GT_MOV_TAREFAS data) {
+		return dao59.create(data);
+	}
+
+	@GET
+	@Path("/getGT_MOV_TAREFAS")
+	@Produces("application/json")
+	public List<GT_MOV_TAREFAS> getGT_MOV_TAREFAS() {
+		return dao59.getall();
+	}
+
+	@GET
+	@Path("/getGT_MOV_TAREFASbyid/{id}")
+	@Produces("application/json")
+	public List<GT_MOV_TAREFAS> getGT_MOV_TAREFASbyid_reclamacao(@PathParam("id") Integer id) {
+		return dao59.getbyid(id);
+	}
+
+	@POST
+	@Path("/getGT_MOV_TAREFASbyid")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<GT_MOV_TAREFAS> getbyidFiltros(final List<HashMap<String, String>> data) throws ParseException {
+		return dao59.getbyidFiltros(data);
+	}
+
+	@POST
+	@Path("/getGT_MOV_TAREFASAllbyUser/{id}")
+	@Produces("application/json")
+	public List<GT_MOV_TAREFAS> getGT_MOV_TAREFASAllbyUser(@PathParam("id") Integer id,
+			final List<HashMap<String, String>> data) {
+		return dao59.getbyidUser(id, data);
+	}
+
+	@GET
+	@Path("/getGT_MOV_TAREFASAtualizaAccao/{id}/{modulo}")
+	@Produces("application/json")
+	public void getGT_MOV_TAREFASAtualizaAccao(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo) {
+		String url = "";
+		Query query = entityManager.createNativeQuery("declare @id int = 0; declare @id_insert int = 0;"
+				+ "IF EXISTS (SELECT * FROM GT_MOV_TAREFAS a WHERE ID_MODULO = " + modulo + " and  ID_CAMPO= " + id
+				+ ")    UPDATE a  "
+				+ "SET @id = a.ID_TAREFA, a.DATA_FIM = b.DATA_PREVISTA,a.DATA_INICIO = b.DATA_CRIA, a.DATA_ULT_MODIF = a.DATA_ULT_MODIF,a.UTZ_ULT_MODIF = a.UTZ_ULT_MODIF,a.OBSERVACOES=b.OBSERVACOES, "
+				+ "a.UTZ_ID = b.RESPONSAVEL, a.UTZ_TIPO = b.TIPO_RESPONSAVEL,a.ID_ACCAO = b.ID_ACCAO, a.SUB_MODULO =  (select c.TIPO_RECLAMACAO from RC_MOV_RECLAMACAO c where c.ID_RECLAMACAO = b.ID_RECLAMACAO) "
+				+ ", a.PRIORIDADE =  (select c.GRAU_IMPORTANCIA from RC_MOV_RECLAMACAO c where c.ID_RECLAMACAO = b.ID_RECLAMACAO) "
+				+ "FROM GT_MOV_TAREFAS a inner join RC_MOV_RECLAMACAO_PLANOS_ACCOES b on a.ID_CAMPO = b.ID "
+				+ "where a.ID_CAMPO = " + id + " and a.ID_MODULO = " + modulo + " "
+				+ "ELSE INSERT INTO GT_MOV_TAREFAS(ID_MODULO,ID_CAMPO,DATA_FIM,DATA_INICIO,DATA_CRIA,UTZ_CRIA,DATA_ULT_MODIF,UTZ_ULT_MODIF,ESTADO,INATIVO,UTZ_ID,UTZ_TIPO,ID_ACCAO,SUB_MODULO,PRIORIDADE,OBSERVACOES) "
+				+ "select '" + modulo
+				+ "',ID,DATA_PREVISTA,DATA_CRIA,DATA_CRIA,UTZ_CRIA,DATA_CRIA,UTZ_CRIA,'P',0,RESPONSAVEL,TIPO_RESPONSAVEL,ID_ACCAO, (select TIPO_RECLAMACAO from RC_MOV_RECLAMACAO b where b.ID_RECLAMACAO = a.ID_RECLAMACAO), "
+				+ "(select GRAU_IMPORTANCIA from RC_MOV_RECLAMACAO b where b.ID_RECLAMACAO = a.ID_RECLAMACAO),OBSERVACOES from RC_MOV_RECLAMACAO_PLANOS_ACCOES a  where ID = "
+				+ id + "IF @id != 0 " + "UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET ID_TAREFA = @id WHERE ID = " + id
+				+ " " + "ELSE "
+				+ "UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET @id_insert = ID_TAREFA = (SELECT ID_TAREFA FROM GT_MOV_TAREFAS WHERE ID_TAREFA = SCOPE_IDENTITY()) WHERE ID = "
+				+ id + " " + "IF @id_insert != 0  "
+				+ "INSERT INTO GT_LOGS ([DATA_CRIA] ,[UTZ_CRIA] ,[DESCRICAO] ,[ID_TAREFA]) VALUES (GETDATE(),(SELECT UTZ_CRIA FROM GT_MOV_TAREFAS WHERE ID_TAREFA = @id_insert),'Adicionada nova Tarefa',@id_insert)");
+
+		query.executeUpdate();
+		enviaEventoTarefa(id);
+
+	}
+
+	public void enviaEventoTarefa(Integer id) {
+		String observacao = "";
+		String numero_reclamacao = "";
+		String cliente = "";
+		String data_reclamacao = "";
+		String referencia = "";
+		String numero_tarefa = "";
+		String accao = "";
+		String tipo_responsavel = "";
+		String responsavel = "";
+		String email_para = "";
+		String data_prevista = "";
+
+		Query query = entityManager.createNativeQuery(
+				"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,OBSERVACOES ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
+						+ "b.NOME_CLIENTE,b.ID_RECLAMACAO,a.DATA_PREVISTA,b.DATA_RECLAMACAO "
+						+ "from RC_MOV_RECLAMACAO_PLANOS_ACCOES a inner join RC_MOV_RECLAMACAO b on b.ID_RECLAMACAO = a.ID_RECLAMACAO "
+						+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+			observacao = content[3].toString();
+			numero_reclamacao = content[8].toString();
+			cliente = content[7].toString();
+			data_reclamacao = content[10].toString();
+			referencia = content[5].toString() + " - " + content[6].toString();
+			numero_tarefa = content[0].toString();
+			accao = content[4].toString();
+			tipo_responsavel = content[1].toString();
+			responsavel = content[2].toString();
+			data_prevista = content[9].toString();
+		}
+
+		Query query2 = null;
+		if (tipo_responsavel.equals("u")) {
+			query2 = entityManager.createNativeQuery(
+					"select EMAIL,EMAIL as emm from GER_UTILIZADORES where ID_UTILIZADOR = " + responsavel);
+		} else if (tipo_responsavel.equals("g")) {
+			query2 = entityManager.createNativeQuery(
+					"select distinct c.EMAIL,c.EMAIL as emm from GER_GRUPO a inner join GER_GRUPO_UTZ b on a.ID = b.ID_GRUPO "
+							+ "inner join GER_UTILIZADORES c on b.ID_UTZ = c.ID_UTILIZADOR where a.id = "
+							+ responsavel);
+		}
+
+		List<Object[]> dados2 = query2.getResultList();
+
+		Boolean primeiro = true;
+		for (Object[] content2 : dados2) {
+			if (!primeiro)
+				email_para += ",";
+			email_para += content2[0].toString();
+			primeiro = false;
+		}
+
+		List<HashMap<String, String>> data = new ArrayList<>();
+		HashMap<String, String> n = new HashMap<String, String>();
+		n.put("MODULO", "5");
+		n.put("MOMENTO", "Ao Criar Tarefa");
+		n.put("PAGINA", "Reclamações Clientes");
+		n.put("ESTADO", "1");
+		n.put("EMAIL_PARA", email_para);
+
+		n.put("DADOS",
+				"{observacao::" + observacao + "\n/numero_reclamacao::" + numero_reclamacao + "\n/cliente::" + cliente
+						+ "\n/data_reclamacao::" + data_reclamacao + "" + "\n/referencia::" + referencia + ""
+						+ "\n/numero_tarefa::" + numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::"
+						+ data_prevista + "}");
+		data.add(n);
+
+		verficaEventos(data);
+	}
+
+	@DELETE
+	@Path("/deleteGT_MOV_TAREFAS/{id}")
+	public void deleteGT_MOV_TAREFAS(@PathParam("id") Integer id) {
+		GT_MOV_TAREFAS GT_MOV_TAREFAS = new GT_MOV_TAREFAS();
+		GT_MOV_TAREFAS.setID_TAREFA(id);
+		dao59.delete(GT_MOV_TAREFAS);
+	}
+
+	@PUT
+	@Path("/updateGT_MOV_TAREFAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GT_MOV_TAREFAS updateGT_MOV_TAREFAS(final GT_MOV_TAREFAS GT_MOV_TAREFAS) {
+		GT_MOV_TAREFAS.setID_TAREFA(GT_MOV_TAREFAS.getID_TAREFA());
+		return dao59.update(GT_MOV_TAREFAS);
 	}
 
 	/************************************* RC_DIC_TEMPO_RESPOSTA */
@@ -3033,6 +3462,13 @@ public class SIRB {
 	@Produces("application/json")
 	public List<GER_GRUPO> getGER_GRUPObyid(@PathParam("id") Integer id) {
 		return dao52.getbyid(id);
+	}
+
+	@GET
+	@Path("/getGER_GRUPObyidUser/{id}")
+	@Produces("application/json")
+	public List<GER_GRUPO> getGER_GRUPObyidusres(@PathParam("id") Integer id) {
+		return dao52.getbyidbyuser(id);
 	}
 
 	@DELETE
@@ -3158,6 +3594,46 @@ public class SIRB {
 	public GER_SECCAO_UTZ updateGER_SECCAO_UTZ(final GER_SECCAO_UTZ GER_SECCAO_UTZ) {
 		GER_SECCAO_UTZ.setID(GER_SECCAO_UTZ.getID());
 		return dao54.update(GER_SECCAO_UTZ);
+	}
+
+	/************************************* GT_LOGS */
+	@POST
+	@Path("/createGT_LOGS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GT_LOGS insertGT_LOGSA(final GT_LOGS data) {
+		return dao48.create(data);
+	}
+
+	@GET
+	@Path("/getGT_LOGS")
+	@Produces("application/json")
+	public List<GT_LOGS> getGT_LOGS() {
+		return dao48.getall();
+	}
+
+	@GET
+	@Path("/getGT_LOGSbyid/{id}")
+	@Produces("application/json")
+	public List<GT_LOGS> getGT_LOGSbyid(@PathParam("id") Integer id) {
+		return dao48.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteGT_LOGS/{id}")
+	public void deleteGT_LOGS(@PathParam("id") Integer id) {
+		GT_LOGS GT_LOGS = new GT_LOGS();
+		GT_LOGS.setID(id);
+		dao48.delete(GT_LOGS);
+	}
+
+	@PUT
+	@Path("/updateGT_LOGS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GT_LOGS updateGT_LOGS(final GT_LOGS GT_LOGS) {
+		GT_LOGS.setID(GT_LOGS.getID());
+		return dao48.update(GT_LOGS);
 	}
 
 	/************************************* GER_SECCAO */
@@ -3402,19 +3878,20 @@ public class SIRB {
 			Attachment attachemetn = null;
 			while (it_list.hasNext()) {
 				attachemetn = (Attachment) it_list.next();
-				texto += "<i>"+attachemetn + "</i><br>";
+				texto += "<i>" + attachemetn + "</i><br>";
 			}
-			
+
 			List<Attachment> atts = msg.getAttachments();
 			for (Attachment att : atts) {
 				if (att instanceof FileAttachment) {
 					FileAttachment file = (FileAttachment) att;
-					
+
 					// you get the actual attachment with
-					
+
 					String encodedString = new String(Base64.getEncoder().encodeToString((file.getData())));
 
-					body = body.replaceAll("\\\"cid:"+file.getFilename()+".*?\\\"", "\"data:image/"+getFileExtension(file)+";base64,"+encodedString+"\"");
+					body = body.replaceAll("\\\"cid:" + file.getFilename() + ".*?\\\"",
+							"\"data:image/" + getFileExtension(file) + ";base64," + encodedString + "\"");
 				}
 			}
 
@@ -3425,7 +3902,7 @@ public class SIRB {
 			texto += "<b>Bcc</b>: " + bcc_list + "<br>";
 			texto += "<b>Assunto</b>: " + subject + "<br><br><b>Mensagem</b>:<br></div>";
 			texto += body + "<br>";
-			
+
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -3820,12 +4297,12 @@ public class SIRB {
 		 */
 
 		Query query = entityManager.createNativeQuery(
-				"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES,a.DATCRE"
+				"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES,a.DATCRE "
 						+ ",(select ID_MANUTENCAO from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB) as id2 "
 						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN (( a.QUANT  - a.QUANT_FINAL) * -1) ELSE ( a.QUANT  - a.QUANT_FINAL) END as qtt , t.CISTERNA "
 						+ ",( a.QUANT_FINAL / (CASE WHEN t.FACTOR_CONVERSAO IS NULL  THEN 1 WHEN t.FACTOR_CONVERSAO = 0 THEN 1 ELSE t.FACTOR_CONVERSAO END) ) as qtt2 "
 						+ ",(select MEDIDA from AB_DIC_UNIDADE_MEDIDA where ID_MEDIDA = t.ID_UNIDADE_ADITIVO) as unidaditivo "
-						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN '-' ELSE '+' END as sinal"
+						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN '-' ELSE '+' END as sinal "
 						+ "from AB_MOV_MANUTENCAO_ETIQ a "
 						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
 						+ "inner join AB_DIC_COMPONENTE t on  t.ID_COMPONENTE = b.ID_ADITIVO "
@@ -4777,6 +5254,33 @@ public class SIRB {
 			criar_ficheiro(data, path);
 		}
 
+	}
+
+	// Atualizar Estados manutenções
+	@GET
+	@Path("/atualizarestados/{id}")
+	@Produces("application/json")
+	public int atualizarestados(@PathParam("id") Integer id) {
+
+		Query query = entityManager
+				.createNativeQuery("UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Preparado' where ID_MANUTENCAO = " + id
+						+ " and " + "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
+						+ "  and INATIVO != 1 ) = "
+						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
+						+ " and DATA_PREPARACAO is not null and INATIVO != 1) "
+						+ "and  (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
+						+ " and DATA_EXECUCAO is not null and INATIVO != 1) = 0 "
+						+ "and (select ESTADO from AB_MOV_MANUTENCAO where ID_MANUTENCAO = " + id
+						+ "  and INATIVO != 1 ) ='Em Preparação' "
+						+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO = " + id + " and "
+						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
+						+ "  and INATIVO != 1 ) = "
+						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
+						+ " and DATA_EXECUCAO is not null and INATIVO != 1)");
+
+		int dados = query.executeUpdate();
+
+		return dados;
 	}
 
 }

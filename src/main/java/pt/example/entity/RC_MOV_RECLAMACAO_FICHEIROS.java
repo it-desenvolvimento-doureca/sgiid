@@ -1,7 +1,6 @@
 package pt.example.entity;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +26,7 @@ public class RC_MOV_RECLAMACAO_FICHEIROS {
 	private Integer UTZ_ULT_MODIF;
 	private Boolean CHECKED;
 	private String DATATYPE;
+	private Integer ID_TAREFA;
 
 	@Id
 	@Column(name = "ID")
@@ -98,6 +98,15 @@ public class RC_MOV_RECLAMACAO_FICHEIROS {
 	@Column(name = "DATATYPE")
 	public String getDATATYPE() {
 		return DATATYPE;
+	}
+
+	@Column(name = "ID_TAREFA")
+	public Integer getID_TAREFA() {
+		return ID_TAREFA;
+	}
+
+	public void setID_TAREFA(Integer iD_TAREFA) {
+		ID_TAREFA = iD_TAREFA;
 	}
 
 	public void setDATATYPE(String dATATYPE) {

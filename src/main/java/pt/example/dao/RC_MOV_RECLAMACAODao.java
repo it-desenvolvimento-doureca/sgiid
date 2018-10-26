@@ -23,7 +23,7 @@ public class RC_MOV_RECLAMACAODao extends GenericDaoJpaImpl<RC_MOV_RECLAMACAO, I
 
 	public List<RC_MOV_RECLAMACAO> getall() {
 
-		Query query = entityManager.createQuery("Select a from RC_MOV_RECLAMACAO a where a.INATIVO != 1 ");
+		Query query = entityManager.createQuery("Select a from RC_MOV_RECLAMACAO a where a.INATIVO != 1 order by a.DATA_RECLAMACAO desc, a.ID_RECLAMACAO desc  ");
 		List<RC_MOV_RECLAMACAO> data = query.getResultList();
 		return data;
 

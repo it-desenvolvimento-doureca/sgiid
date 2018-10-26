@@ -19,6 +19,7 @@ public class RC_MOV_RECLAMACAO_STOCK {
 	private Integer ID_RECLAMACAO;
 	private Timestamp DATA_CRIA;
 	private Integer UTZ_CRIA;
+	private Integer ID_LINHA_ARTIGO_SIMILAR;
 
 	@Id
 	@Column(name = "ID")
@@ -50,6 +51,15 @@ public class RC_MOV_RECLAMACAO_STOCK {
 	@Column(name = "ID_RECLAMACAO")
 	public Integer getID_RECLAMACAO() {
 		return ID_RECLAMACAO;
+	}
+
+	@Column(name = "ID_LINHA_ARTIGO_SIMILAR")
+	public Integer getID_LINHA_ARTIGO_SIMILAR() {
+		return ID_LINHA_ARTIGO_SIMILAR;
+	}
+
+	public void setID_LINHA_ARTIGO_SIMILAR(Integer iD_LINHA_ARTIGO_SIMILAR) {
+		ID_LINHA_ARTIGO_SIMILAR = iD_LINHA_ARTIGO_SIMILAR;
 	}
 
 	public void setLIECOD(String lIECOD) {

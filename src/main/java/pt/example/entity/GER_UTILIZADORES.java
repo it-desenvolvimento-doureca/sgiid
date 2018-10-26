@@ -26,6 +26,7 @@ public class GER_UTILIZADORES {
 	private Boolean ADMIN;
 	private String USER_JASPER;
 	private String PASS_JASPER;
+	private String USER_WINDOWS;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -94,6 +95,15 @@ public class GER_UTILIZADORES {
 	@Column(name = "COD_UTZ")
 	public String getCOD_UTZ() {
 		return COD_UTZ;
+	}
+
+	@Column(name = "USER_WINDOWS")
+	public String getUSER_WINDOWS() {
+		return USER_WINDOWS;
+	}
+
+	public void setUSER_WINDOWS(String uSER_WINDOWS) {
+		USER_WINDOWS = uSER_WINDOWS;
 	}
 
 	public void setCOD_UTZ(String cOD_UTZ) {

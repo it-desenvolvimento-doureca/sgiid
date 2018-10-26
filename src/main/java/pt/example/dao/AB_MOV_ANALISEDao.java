@@ -30,11 +30,12 @@ public class AB_MOV_ANALISEDao extends GenericDaoJpaImpl<AB_MOV_ANALISE, Integer
 
 	}
 
-	public List<AB_MOV_ANALISE> getall(Integer linha) {
+	public List<AB_MOV_ANALISE> getall(Integer linha, String dataini, String dafim) {
 		Query query = entityManager
 				.createQuery("Select a,b,c,d " + "from AB_MOV_ANALISE a,AB_DIC_LINHA b,AB_DIC_BANHO c,AB_DIC_TINA d "
 						+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_BANHO = c.ID_BANHO and c.ID_TINA = d.ID_TINA and a.INATIVO not in (1) "
-						+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) order by a.ID_ANALISE desc");
+						+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and a.DATA_ANALISE >= '" + dataini
+						+ "' and a.DATA_ANALISE <= '" + dafim + "' order by a.ID_ANALISE desc");
 		query.setParameter("linha", linha);
 		List<AB_MOV_ANALISE> data = query.getResultList();
 		return data;
