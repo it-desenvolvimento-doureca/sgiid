@@ -1,5 +1,7 @@
 package pt.example.bootstrap;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,7 +31,7 @@ public class SendEmail {
 	}
 
 	public void enviarEmail(String de, String para, String assunto, String mensagem, String nome_ficheiro,
-			String[] files,String nomepasta) {
+			String[] files,String nomepasta,String ficheiro) {
 		
 		final String username = "alertas.it.doureca@gmail.com";
 		final String password = "DourecA2@";
@@ -74,6 +76,19 @@ public class SendEmail {
 
 				multipart.addBodyPart(attachPart);
 			}
+			
+			if (ficheiro != null) {
+				MimeBodyPart attachPart2 = new MimeBodyPart();
+				Path p = Paths.get(ficheiro);
+				String file = p.getFileName().toString();
+				DataSource source2 = new FileDataSource(ficheiro);
+				attachPart2.setDataHandler(new DataHandler(source2));
+				attachPart2.setFileName(file);
+
+				multipart.addBodyPart(attachPart2);
+			}
+			
+			
 			if (files.length > 0) {
 
 				for (String pair : files) {

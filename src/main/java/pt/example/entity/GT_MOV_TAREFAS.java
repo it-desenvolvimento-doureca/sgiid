@@ -43,6 +43,7 @@ public class GT_MOV_TAREFAS {
 	private Float TEMPO_GASTO;
 	private Timestamp DATA_REJEITA;
 	private Integer UTZ_REJEITA;
+	private String MOTIVO_REJEICAO;
 
 	@Id
 	@Column(name = "ID_TAREFA")
@@ -189,6 +190,15 @@ public class GT_MOV_TAREFAS {
 	@Column(name = "UTZ_REJEITA")
 	public Integer getUTZ_REJEITA() {
 		return UTZ_REJEITA;
+	}
+
+	@Column(name = "MOTIVO_REJEICAO")
+	public String getMOTIVO_REJEICAO() {
+		return MOTIVO_REJEICAO;
+	}
+
+	public void setMOTIVO_REJEICAO(String mOTIVO_REJEICAO) {
+		MOTIVO_REJEICAO = mOTIVO_REJEICAO;
 	}
 
 	public void setDATA_REJEITA(Timestamp dATA_REJEITA) {

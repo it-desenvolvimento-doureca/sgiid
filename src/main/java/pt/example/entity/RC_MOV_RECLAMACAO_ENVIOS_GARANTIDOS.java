@@ -27,6 +27,7 @@ public class RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS {
 	private String MORADA;
 	private Date DATA_ENTREGA;
 	private Date DATA_ENVIO;
+	private String PROREF;
 
 	@Id
 	@Column(name = "ID")
@@ -154,6 +155,15 @@ public class RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "PROREF")
+	public String getPROREF() {
+		return PROREF;
+	}
+
+	public void setPROREF(String pROREF) {
+		PROREF = pROREF;
 	}
 
 }

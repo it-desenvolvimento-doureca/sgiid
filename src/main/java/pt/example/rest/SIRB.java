@@ -1133,10 +1133,10 @@ public class SIRB {
 			x2.put("ID", user);
 			list.add(x2);
 			while (values.hasMoreElements()) {
-				SearchResult result = (SearchResult) values.next();
-				Attributes attribs = result.getAttributes();
+				SearchResult result = (SearchResult) values.nextElement();
+				Attributes attrs = result.getAttributes();
 
-				Attributes attrs = ((SearchResult) values.next()).getAttributes();
+				// Attributes attrs = values.getAttributes();
 
 				HashMap<String, String> x = new HashMap<>();
 
@@ -1151,17 +1151,22 @@ public class SIRB {
 				 * attrs.get("title") + " " + attrs.get("manager"));
 				 */
 
-				if (attrs.get("memberOf") != null
-						&& attrs.get("memberOf").get().toString().toLowerCase().contains("utilizador") && !attrs
-								.get("memberOf").get().toString().toLowerCase().contains("utilizadores equipamentos")) {
+				/*
+				 * if (attrs.get("memberOf") != null &&
+				 * attrs.get("memberOf").get().toString().toLowerCase().contains
+				 * ("utilizador") && !attrs
+				 * .get("memberOf").get().toString().toLowerCase().
+				 * contains("utilizadores equipamentos")) {
+				 */
 
-					String nomes = ((attrs.get("givenname") != null) ? attrs.get("givenname").get().toString() : " ")
-							+ " " + ((attrs.get("sn") != null) ? attrs.get("sn").get().toString() : " ");
+				String nomes = ((attrs.get("givenname") != null) ? attrs.get("givenname").get().toString() : " ") + " "
+						+ ((attrs.get("sn") != null) ? attrs.get("sn").get().toString()
+								: attrs.get("samaccountname").get().toString());
 
-					x.put("NOME", nomes);
-					x.put("ID", attrs.get("samaccountname").get().toString());
-					list.add(x);
-				}
+				x.put("NOME", nomes);
+				x.put("ID", attrs.get("samaccountname").get().toString());
+				list.add(x);
+				/* } */
 
 			}
 
@@ -1756,10 +1761,12 @@ public class SIRB {
 
 		String data = firstMap.get("DATA");
 		String datafim = firstMap.get("DATA_FIM");
+		String ETSNUM = firstMap.get("ETSNUM");
+		String CLICODLIV = firstMap.get("CLICODLIV");
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getEnviosGarantidos(getURLSILVER(), proref, data,
-				datafim);
+				datafim, CLICODLIV, ETSNUM);
 		return dados;
 	}
 
@@ -2526,7 +2533,7 @@ public class SIRB {
 		return data;
 	}
 
-	public static void copyfiles(String pastadestino, String ficheiro, String senha, String dominio, String user) {
+	public void copyfiles(String pastadestino, String ficheiro, String senha, String dominio, String user) {
 		File tempFile = null;
 
 		tempFile = new File(ficheiro);
@@ -2567,14 +2574,16 @@ public class SIRB {
 				sfos.write(buf, 0, len);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			String[] keyValuePairs = { "texto_erro ::" + e.getMessage() + " " + path + "", };
+			verficaEventos(keyValuePairs, "Erros ao Criar Etiquetas", "");
 			e.printStackTrace();
 		}
 		try {
 			fis.close();
 			sfos.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			String[] keyValuePairs = { "texto_erro ::" + e.getMessage() + " " + path + "", };
+			verficaEventos(keyValuePairs, "Erros ao Criar Etiquetas", "");
 			e.printStackTrace();
 		}
 
@@ -2828,6 +2837,13 @@ public class SIRB {
 		return dao42.getbyid(id);
 	}
 
+	@GET
+	@Path("/getRC_MOV_RECLAMACAObyidtotaltarefas/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO> getRC_MOV_RECLAMACAObyidtotaltarefas(@PathParam("id") Integer id) {
+		return dao42.getbyidtotaltarefas(id);
+	}
+	
 	@DELETE
 	@Path("/deleteRC_MOV_RECLAMACAO/{id}")
 	public void deleteRC_MOV_RECLAMACAO(@PathParam("id") Integer id) {
@@ -3795,10 +3811,44 @@ public class SIRB {
 			System.gc();
 			uploadedInputStream.close();
 		} catch (IOException e) {
-
+			String[] keyValuePairs = { "texto_erro ::" + e.getMessage() + " " + uploadedFileLocation + "", };
+			verficaEventos(keyValuePairs, "Erros ao Criar Etiquetas", "");
 			e.printStackTrace();
 		}
 
+	}
+
+	public void verficaEventos(String[] keyValuePairs, String momento, String fgilepath) {
+
+		List<String> x = new ArrayList<>();
+
+		Query query3 = entityManager.createQuery("Select a from GER_EVENTOS_CONF a where MODULO = 1 and MOMENTO = '"
+				+ momento + "' " + "and PAGINA = 'INTERNO' and ESTADO  != 0");
+		List<GER_EVENTOS_CONF> dados = query3.getResultList();
+
+		for (GER_EVENTOS_CONF borderTypes : dados) {
+
+			// System.out.println(borderTypes.getEMAIL_ASSUNTO());
+			EMAIL email = new EMAIL();
+			// email.setASSUNTO(borderTypes.getEMAIL_ASSUNTO());
+			email.setDE("alertas.it.doureca@gmail.com");
+
+			email.setPARA(borderTypes.getEMAIL_PARA());
+			String mensagem = borderTypes.getEMAIL_MENSAGEM();
+			String assunto = borderTypes.getEMAIL_ASSUNTO();
+
+			for (String pair : keyValuePairs) {
+				String[] entry = pair.split("::");
+				mensagem = mensagem.replace("{" + entry[0].trim() + "}", entry[1].trim());
+				assunto = assunto.replace("{" + entry[0].trim() + "}", (entry.length > 1) ? entry[1].trim() : "");
+			}
+			email.setASSUNTO(assunto);
+			email.setMENSAGEM(mensagem);
+			String[] keyValuePairs3 = {};
+
+			sendemail(email, keyValuePairs3, fgilepath);
+
+		}
 	}
 
 	/* FICHEIRO ************************************/
@@ -3983,11 +4033,11 @@ public class SIRB {
 	@Path("/sendemail")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public EMAIL sendemail(final EMAIL data, String[] fic) {
+	public EMAIL sendemail(final EMAIL data, String[] fic, String ficheiro) {
 		// System.out.println(data.getPARA());
 		SendEmail send = new SendEmail();
 		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO(),
-				fic, getFILEPATH());
+				fic, getFILEPATH(), ficheiro);
 		return data;
 
 	}
@@ -4041,7 +4091,7 @@ public class SIRB {
 				keyValuePairs3 = firstMap.get("FICHEIROS").split("<:>");
 			}
 
-			sendemail(email, keyValuePairs3);
+			sendemail(email, keyValuePairs3, null);
 		}
 
 		return data;
@@ -4117,6 +4167,7 @@ public class SIRB {
 		String ipimpressora = "";
 		String data_etiq = "";
 		String path2 = "";
+		String path_error = "";
 
 		/*** CAMPOS PARA O FICHEIRO ***/
 
@@ -4131,7 +4182,7 @@ public class SIRB {
 		/******************************/
 
 		Query query_folder = entityManager.createNativeQuery(
-				"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,NOME_IMPRESSORA,IP_IMPRESSORA,MODELO_REPORT from GER_PARAMETROS a,GER_POSTOS b where IP_POSTO ='"
+				"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,NOME_IMPRESSORA,IP_IMPRESSORA,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a,GER_POSTOS b where IP_POSTO ='"
 						+ ip_posto + "'");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
@@ -4140,6 +4191,7 @@ public class SIRB {
 
 		for (Object[] content : dados_folder) {
 			path2 = content[1].toString() + nome_ficheiro;
+			path_error = content[5].toString() + nome_ficheiro;
 			nomeimpressora = content[2].toString();
 			if (content[3] != null) {
 				ipimpressora = content[3].toString();
@@ -4214,7 +4266,7 @@ public class SIRB {
 				+ ";" // AF44
 				+ ";\r\n";
 
-		criar_ficheiro(data_etiq, path2);
+		criar_ficheiro(data_etiq, path2, path_error, false, "");
 	}
 
 	@POST
@@ -4286,6 +4338,8 @@ public class SIRB {
 		String sequencia = "000000000";
 		String path = "";
 		String path2 = "";
+		String path_error = "";
+		String path_error2 = "";
 		String modelo_REPORT = "";
 		String nomeimpressora = "";
 		String ipimpressora = "";
@@ -4314,7 +4368,7 @@ public class SIRB {
 						+ "from AB_MOV_MANUTENCAO_ETIQ a where a.ID_MOV_MANU_ETIQUETA in (" + ids + ")");
 
 		Query query_folder = entityManager
-				.createNativeQuery("select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,MODELO_REPORT from GER_PARAMETROS a");
+				.createNativeQuery("select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a");
 
 		Query query_impressora = entityManager.createNativeQuery(
 				"select top 1  NOME_IMPRESSORA,IP_IMPRESSORA from GER_POSTOS b where IP_POSTO ='" + ip_posto + "'");
@@ -4326,6 +4380,8 @@ public class SIRB {
 		for (Object[] content : dados_folder) {
 			path = content[0] + nome_ficheiro;
 			path2 = content[1].toString();
+			path_error = content[3] + nome_ficheiro;
+			path_error2 = content[3].toString();
 			modelo_REPORT = content[2].toString();
 		}
 
@@ -4364,8 +4420,10 @@ public class SIRB {
 		String data_path = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
 		if (id != null) {
 			path2 = path2 + "ETIQUETA" + id + ".txt";
+			path_error2 = path_error2 + "ETIQUETA" + id + ".txt";
 		} else {
 			path2 = path2 + "ETIQUETA_CORRECAO_IMPRE_" + data_path + ".txt";
+			path_error2 = path_error2 + "ETIQUETA_CORRECAO_IMPRE_" + data_path + ".txt";
 		}
 		data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
 		data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
@@ -4631,11 +4689,11 @@ public class SIRB {
 		}
 
 		if (data.length() > 0) {
-			criar_ficheiro(data, path);
+			criar_ficheiro(data, path, path_error, false, "");
 		}
 
 		if (size_etiq > 0 && imprime) {
-			criar_ficheiro(data_etiq, path2);
+			criar_ficheiro(data_etiq, path2, path_error2, false, "");
 		}
 
 		/*
@@ -4856,7 +4914,7 @@ public class SIRB {
 		return sequencia;
 	}
 
-	public void criar_ficheiro(String data, String path) {
+	public void criar_ficheiro(String data, String path, String path_error, Boolean error, String err) {
 		File file2 = new File(path);
 		if (file2.delete())
 			// if file doesnt exists, then create it
@@ -4864,7 +4922,8 @@ public class SIRB {
 			try {
 				file2.createNewFile();
 			} catch (IOException e2) {
-				// TODO Auto-generated catch block
+				String[] keyValuePairs = { "texto_erro ::" + e2.getMessage() + " " + file2.getAbsolutePath() + "", };
+				verficaEventos(keyValuePairs, "Erros ao Criar Etiquetas", "");
 				e2.printStackTrace();
 			}
 		BufferedWriter bw2 = null;
@@ -4873,36 +4932,50 @@ public class SIRB {
 		try {
 			fw2 = new FileWriter(file2.getAbsoluteFile(), true);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
+			if (!error)
+				criar_ficheiro(data, path_error, path_error, true, e.getMessage() + " " + file2.getAbsolutePath());
 			e.printStackTrace();
 		}
-		bw2 = new BufferedWriter(fw2);
-		try {
-			bw2.write(data);
-			if (bw2 != null) {
-				bw2.close();
-			}
-			if (fw2 != null) {
-				fw2.close();
-			}
-		} catch (IOException e) {
-			if (bw2 != null) {
-				try {
+		if (fw2 != null) {
+			bw2 = new BufferedWriter(fw2);
+			try {
+				bw2.write(data);
+				if (bw2 != null) {
 					bw2.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
 				}
-			}
-			if (fw2 != null) {
-				try {
+				if (fw2 != null) {
 					fw2.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
 				}
+			} catch (IOException e) {
+				if (bw2 != null) {
+					try {
+						bw2.close();
+					} catch (IOException e1) {
+						String[] keyValuePairs = {
+								"texto_erro ::" + e1.getMessage() + " " + file2.getAbsolutePath() + "", };
+						verficaEventos(keyValuePairs, "Erros ao Criar Etiquetas", "");
+						e1.printStackTrace();
+					}
+				}
+				if (fw2 != null) {
+					try {
+						fw2.close();
+					} catch (IOException e1) {
+						String[] keyValuePairs = {
+								"texto_erro ::" + e1.getMessage() + " " + file2.getAbsolutePath() + "", };
+						verficaEventos(keyValuePairs, "Erros ao Criar Etiquetas", "");
+						e1.printStackTrace();
+					}
+				}
+				e.printStackTrace();
 			}
-			e.printStackTrace();
+		}
+		if (error)
+
+		{
+			String[] keyValuePairs = { "texto_erro ::" + err + "", };
+			verficaEventos(keyValuePairs, "Erros ao Criar Etiquetas", path_error);
 		}
 	}
 
@@ -4923,7 +4996,7 @@ public class SIRB {
 							+ "left join AB_MOV_MANUTENCAO_CAB c on b.ID_MANUTENCAO_CAB = c.ID_MANUTENCAO_CAB "
 							+ "left join AB_MOV_MANUTENCAO d on c.ID_MANUTENCAO = d.ID_MANUTENCAO "
 							+ "left join AB_DIC_LINHA e on e.ID_LINHA = d.ID_LINHA " + "where a.ID_MANUTENCAO_LIN != 0 "
-							+ "and a.DATA_CRIA > '2018-08-04' and a.DATA_CRIA < '2018-08-28 17:20' "
+							+ "and a.DATA_CRIA > '2018-06-04' and a.DATA_CRIA < '2018-08-28 17:20' "
 							+ "group by c.ID_MANUTENCAO_CAB,e.SECCAO,e.SUBSECCAO,e.REF_COMPOSTO,c.ID_MANUTENCAO,d.ID_LINHA order by c.ID_MANUTENCAO_CAB");
 
 			List<Object[]> dados = query.getResultList();
@@ -4952,6 +5025,7 @@ public class SIRB {
 		String horatual = horaformate.format(new java.util.Date());
 		String sequencia = "000000000";
 		String path = "";
+		String path_error = "";
 		/*
 		 * Query query = entityManager.createNativeQuery(
 		 * "select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO from AB_MOV_MANUTENCAO_ETIQ a where ID_MANUTENCAO_LIN = "
@@ -4964,13 +5038,14 @@ public class SIRB {
 						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN (( a.QUANT  - a.QUANT_FINAL) * -1) ELSE ( a.QUANT  - a.QUANT_FINAL) END as qtt , t.CISTERNA "
 						+ ",( a.QUANT_FINAL / (CASE WHEN t.FACTOR_CONVERSAO IS NULL  THEN 1 WHEN t.FACTOR_CONVERSAO = 0 THEN 1 ELSE t.FACTOR_CONVERSAO END) ) as qtt2 "
 						+ ",(select MEDIDA from AB_DIC_UNIDADE_MEDIDA where ID_MEDIDA = t.ID_UNIDADE_ADITIVO) as unidaditivo, a.DATA_CRIA "
-						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN '-' ELSE '+' END as sinal"
+						+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN '-' ELSE '+' END as sinal "
 						+ "from AB_MOV_MANUTENCAO_ETIQ a "
 						+ "inner join AB_MOV_MANUTENCAO_LINHA b on a.ID_MANUTENCAO_LIN = b.ID_MANUTENCAO_LIN "
 						+ "inner join AB_DIC_COMPONENTE t on  t.ID_COMPONENTE = b.ID_ADITIVO "
 						+ "where b.ID_MANUTENCAO_CAB  = " + id + "");
 
-		path = "c:\\etiquetas\\" + nome_ficheiro;
+		path = "c:\\etiquegtas\\" + nome_ficheiro;
+		path_error = "c:\\etiquetas\\" + nome_ficheiro;
 
 		sequencia = sequencia();
 
@@ -5251,7 +5326,7 @@ public class SIRB {
 		}
 
 		if (data.length() > 0) {
-			criar_ficheiro(data, path);
+			criar_ficheiro(data, path, path_error, false, "");
 		}
 
 	}

@@ -23,6 +23,14 @@ public class GER_PARAMETROS {
 	private Boolean CARTELAS_ATIVO;
 	private Integer TEMPO_SINCRO_CARTELAS;
 
+	private String CAMINHO_LOGS_SILVER;
+	private Integer TEMPO_SINCRO_LOGS_SILVER;
+	private Boolean LOGS_SILVER_ATIVO;
+	private String UTILIZADOR_LOGS_SILVER;
+	private String DOMINIO_LOGS_SILVER;
+	private String SENHA_LOGS_SILVER;
+	private String PASTA_DESTINO_ERRO;
+
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -122,6 +130,70 @@ public class GER_PARAMETROS {
 
 	public void setTEMPO_MAX_PLANEADAS(Integer tEMPO_MAX_PLANEADAS) {
 		TEMPO_MAX_PLANEADAS = tEMPO_MAX_PLANEADAS;
+	}
+
+	@Column(name = "CAMINHO_LOGS_SILVER")
+	public String getCAMINHO_LOGS_SILVER() {
+		return CAMINHO_LOGS_SILVER;
+	}
+
+	@Column(name = "TEMPO_SINCRO_LOGS_SILVER")
+	public Integer getTEMPO_SINCRO_LOGS_SILVER() {
+		return TEMPO_SINCRO_LOGS_SILVER;
+	}
+
+	@Column(name = "LOGS_SILVER_ATIVO")
+
+	public Boolean getLOGS_SILVER_ATIVO() {
+		return LOGS_SILVER_ATIVO;
+	}
+
+	@Column(name = "UTILIZADOR_LOGS_SILVER")
+	public String getUTILIZADOR_LOGS_SILVER() {
+		return UTILIZADOR_LOGS_SILVER;
+	}
+
+	@Column(name = "DOMINIO_LOGS_SILVER")
+	public String getDOMINIO_LOGS_SILVER() {
+		return DOMINIO_LOGS_SILVER;
+	}
+
+	@Column(name = "SENHA_LOGS_SILVER")
+	public String getSENHA_LOGS_SILVER() {
+		return SENHA_LOGS_SILVER;
+	}
+
+	public void setCAMINHO_LOGS_SILVER(String cAMINHO_LOGS_SILVER) {
+		CAMINHO_LOGS_SILVER = cAMINHO_LOGS_SILVER;
+	}
+
+	public void setTEMPO_SINCRO_LOGS_SILVER(Integer tEMPO_SINCRO_LOGS_SILVER) {
+		TEMPO_SINCRO_LOGS_SILVER = tEMPO_SINCRO_LOGS_SILVER;
+	}
+
+	public void setLOGS_SILVER_ATIVO(Boolean lOGS_SILVER_ATIVO) {
+		LOGS_SILVER_ATIVO = lOGS_SILVER_ATIVO;
+	}
+
+	public void setUTILIZADOR_LOGS_SILVER(String uTILIZADOR_LOGS_SILVER) {
+		UTILIZADOR_LOGS_SILVER = uTILIZADOR_LOGS_SILVER;
+	}
+
+	public void setDOMINIO_LOGS_SILVER(String dOMINIO_LOGS_SILVER) {
+		DOMINIO_LOGS_SILVER = dOMINIO_LOGS_SILVER;
+	}
+
+	public void setSENHA_LOGS_SILVER(String sENHA_LOGS_SILVER) {
+		SENHA_LOGS_SILVER = sENHA_LOGS_SILVER;
+	}
+
+	@Column(name = "PASTA_DESTINO_ERRO")
+	public String getPASTA_DESTINO_ERRO() {
+		return PASTA_DESTINO_ERRO;
+	}
+
+	public void setPASTA_DESTINO_ERRO(String pASTA_DESTINO_ERRO) {
+		PASTA_DESTINO_ERRO = pASTA_DESTINO_ERRO;
 	}
 
 }

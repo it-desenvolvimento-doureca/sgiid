@@ -733,14 +733,19 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getEnviosGarantidos(String url, String PROREF, String data, String datafim)
+	public List<HashMap<String, String>> getEnviosGarantidos(String url, String PROREF, String data, String datafim,String CLICODLIV,String ETSNUM)
 			throws SQLException {
 
 		String query = "Select b.PROREF,a.BLNUM,b.LIPQTL,a.LIVDATDEP,a.LIVDATREC,c.ADRNOM,c.ADRLIB1,c.ADRLIB2,c.ETSNUM,c.CLICOD from SVLEBA a "
 				+ "inner join SVLPBA b on a.LIVNUMENR = b.LIVNUMENR "
-				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM " + "where b.PROREF = '"
-				+ PROREF + "'  and a.BLNUM like 'GR%' and LIVDATDEP >= '" + data + "' and LIVDATDEP <= '" + datafim + "' order by LIVDATDEP DESC";
-
+				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM " 
+				+ "where ((not ('"+PROREF+"' != '0' )) or (b.PROREF = '" + PROREF + "')) "
+				+ "and a.BLNUM like 'GR%' and LIVDATDEP >= '" + data + "' and LIVDATDEP <= '" + datafim + "' "
+				+ "and ((not ('"+CLICODLIV+"' != 'null' )) or (CLICODLIV = " + CLICODLIV + ")) and ((not ('"+ETSNUM+"' != 'null' )) or (ETSNUM = '" + ETSNUM + "')) "
+				+ "order by LIVDATDEP DESC";
+		
+		System.out.println(query);
+		
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
 		// Usa sempre assim que fecha os resources automaticamente

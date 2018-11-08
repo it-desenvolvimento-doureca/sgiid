@@ -28,5 +28,14 @@ public class RC_MOV_RECLAMACAODao extends GenericDaoJpaImpl<RC_MOV_RECLAMACAO, I
 		return data;
 
 	}
+	
+	public List<RC_MOV_RECLAMACAO> getbyidtotaltarefas(Integer id) {
+
+		Query query = entityManager.createNativeQuery("select count(*) from RC_MOV_RECLAMACAO_PLANOS_ACCOES where ID_RECLAMACAO = :id and ESTADO not in ('A','C','R') ");
+		query.setParameter("id", id);
+		List<RC_MOV_RECLAMACAO> data = query.getResultList();
+		return data;
+
+	}
 
 }

@@ -14,7 +14,7 @@ public class RC_MOV_RECLAMACAO_PLANOS_ACCOESDao extends GenericDaoJpaImpl<RC_MOV
 
 	public List<RC_MOV_RECLAMACAO_PLANOS_ACCOES> getbyid(Integer id) {
 
-		Query query = entityManager.createQuery("Select a from RC_MOV_RECLAMACAO_PLANOS_ACCOES a where a.ID_RECLAMACAO = :id ");
+		Query query = entityManager.createQuery("Select a from RC_MOV_RECLAMACAO_PLANOS_ACCOES a where a.ID_RECLAMACAO = :id order by ordem,id ");
 		query.setParameter("id", id);
 		List<RC_MOV_RECLAMACAO_PLANOS_ACCOES> data = query.getResultList();
 		return data;

@@ -5250,6 +5250,7 @@ body .ui-panel .ui-panel-footer {
     padding: 0px !important;
     border: 1px solid #D0D7E5;
     border-width: 0px 1px 1px 0px;
+    vertical-align: middle !important;
 }
 
 .ExcelTable2007 table TD B {
@@ -5329,4 +5330,8 @@ body .ui-panel .ui-panel-footer {
     .top_text .utz {
         top: 23px;
     }
+}
+
+.ui-panel-content-wrapper-overflown {
+    opacity: 0 !important;
 }
