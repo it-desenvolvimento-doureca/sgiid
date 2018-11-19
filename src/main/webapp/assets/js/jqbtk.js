@@ -284,6 +284,10 @@ $('#editarclick2').click(function () {
     $("#editarclick1").trigger("click");
 });
 
+$('#cancelaclick1').click(function () {
+    $("#cancelaclick").trigger("click");
+});
+
 $('#editarclick3').click(function () {
     $("#editarclick5").trigger("click");
 });

@@ -1,7 +1,6 @@
 package pt.example.entity;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -56,13 +55,7 @@ public class RC_MOV_RECLAMACAO {
 	private String CAUSAS_PROBLEMA;
 
 	private Boolean REF_IGUAIS;
-	private Boolean SEGUIMENTO_FORNECEDORES;
-	private Boolean AMDEC;
-	private Boolean PLANO_VIGILANCIA;;
-	private Boolean FORMACAO_OPERARIO;
-	private Boolean PLANO_MANUTENCAO;
-	private Boolean ACCOES_NECESSARIAS;
-	private String ACCOES_NECESSARIAS_TEXTO;
+
 	private Boolean RECLAMACAO_ENCERRADA;
 	private Timestamp DATA_FECHO;
 
@@ -153,11 +146,37 @@ public class RC_MOV_RECLAMACAO {
 	private String RESPONSABILIDADE_ATRASO8;
 	private String RESPONSABILIDADE_ATRASO8_DESCRICAO;
 
+	private String ESTADO;
+	private Timestamp DATA_CANCELADA;
+	private Integer UTZ_CANCELADA;
+	private Integer UTZ_FECHO;
+
+	private Integer TIPO_OCORRENCIA;
+	private Integer TIPO_NAO_DETECAO;
+
 	@Id
 	@Column(name = "ID_RECLAMACAO")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getID_RECLAMACAO() {
 		return ID_RECLAMACAO;
+	}
+
+	@Column(name = "DATA_CANCELADA")
+	public Timestamp getDATA_CANCELADA() {
+		return DATA_CANCELADA;
+	}
+
+	@Column(name = "UTZ_CANCELADA")
+	public Integer getUTZ_CANCELADA() {
+		return UTZ_CANCELADA;
+	}
+
+	public void setDATA_CANCELADA(Timestamp dATA_CANCELADA) {
+		DATA_CANCELADA = dATA_CANCELADA;
+	}
+
+	public void setUTZ_CANCELADA(Integer uTZ_CANCELADA) {
+		UTZ_CANCELADA = uTZ_CANCELADA;
 	}
 
 	@Column(name = "TITULO")
@@ -370,16 +389,6 @@ public class RC_MOV_RECLAMACAO {
 		return RESPONSABILIDADE_ATRASO4_DESCRICAO;
 	}
 
-	@Column(name = "ACCOES_NECESSARIAS")
-	public Boolean getACCOES_NECESSARIAS() {
-		return ACCOES_NECESSARIAS;
-	}
-
-	@Column(name = "ACCOES_NECESSARIAS_TEXTO")
-	public String getACCOES_NECESSARIAS_TEXTO() {
-		return ACCOES_NECESSARIAS_TEXTO;
-	}
-
 	@Column(name = "RECLAMACAO_ENCERRADA")
 	public Boolean getRECLAMACAO_ENCERRADA() {
 		return RECLAMACAO_ENCERRADA;
@@ -493,31 +502,6 @@ public class RC_MOV_RECLAMACAO {
 	@Column(name = "REF_IGUAIS")
 	public Boolean getREF_IGUAIS() {
 		return REF_IGUAIS;
-	}
-
-	@Column(name = "SEGUIMENTO_FORNECEDORES")
-	public Boolean getSEGUIMENTO_FORNECEDORES() {
-		return SEGUIMENTO_FORNECEDORES;
-	}
-
-	@Column(name = "AMDEC")
-	public Boolean getAMDEC() {
-		return AMDEC;
-	}
-
-	@Column(name = "PLANO_VIGILANCIA")
-	public Boolean getPLANO_VIGILANCIA() {
-		return PLANO_VIGILANCIA;
-	}
-
-	@Column(name = "FORMACAO_OPERARIO")
-	public Boolean getFORMACAO_OPERARIO() {
-		return FORMACAO_OPERARIO;
-	}
-
-	@Column(name = "PLANO_MANUTENCAO")
-	public Boolean getPLANO_MANUTENCAO() {
-		return PLANO_MANUTENCAO;
 	}
 
 	@Column(name = "STEP1CONCLUIDO_UTZ")
@@ -983,26 +967,6 @@ public class RC_MOV_RECLAMACAO {
 		this.REF_IGUAIS = rEF_IGUAIS;
 	}
 
-	public void setSEGUIMENTO_FORNECEDORES(Boolean sEGUIMENTO_FORNECEDORES) {
-		this.SEGUIMENTO_FORNECEDORES = sEGUIMENTO_FORNECEDORES;
-	}
-
-	public void setAMDEC(Boolean aMDEC) {
-		this.AMDEC = aMDEC;
-	}
-
-	public void setPLANO_VIGILANCIA(Boolean PLANO_VIGILANCIA) {
-		this.PLANO_VIGILANCIA = PLANO_VIGILANCIA;
-	}
-
-	public void setFORMACAO_OPERARIO(Boolean fORMACAO_OPERARIO) {
-		this.FORMACAO_OPERARIO = fORMACAO_OPERARIO;
-	}
-
-	public void setPLANO_MANUTENCAO(Boolean pLANO_MANUTENCAO) {
-		this.PLANO_MANUTENCAO = pLANO_MANUTENCAO;
-	}
-
 	public void setID_RECLAMACAO(Integer iD_RECLAMACAO) {
 		ID_RECLAMACAO = iD_RECLAMACAO;
 	}
@@ -1175,14 +1139,6 @@ public class RC_MOV_RECLAMACAO {
 		RESPONSABILIDADE_ATRASO4_DESCRICAO = rESPONSABILIDADE_ATRASO4_DESCRICAO;
 	}
 
-	public void setACCOES_NECESSARIAS(Boolean aCCOES_NECESSARIAS) {
-		ACCOES_NECESSARIAS = aCCOES_NECESSARIAS;
-	}
-
-	public void setACCOES_NECESSARIAS_TEXTO(String aCCOES_NECESSARIAS_TEXTO) {
-		ACCOES_NECESSARIAS_TEXTO = aCCOES_NECESSARIAS_TEXTO;
-	}
-
 	public void setRECLAMACAO_ENCERRADA(Boolean rECLAMACAO_ENCERRADA) {
 		RECLAMACAO_ENCERRADA = rECLAMACAO_ENCERRADA;
 	}
@@ -1278,6 +1234,42 @@ public class RC_MOV_RECLAMACAO {
 
 	public void setENVIO_GARANTIDO_POR(String eNVIO_GARANTIDO_POR) {
 		ENVIO_GARANTIDO_POR = eNVIO_GARANTIDO_POR;
+	}
+
+	@Column(name = "ESTADO")
+	public String getESTADO() {
+		return ESTADO;
+	}
+
+	public void setESTADO(String eSTADO) {
+		ESTADO = eSTADO;
+	}
+
+	@Column(name = "UTZ_FECHO")
+	public Integer getUTZ_FECHO() {
+		return UTZ_FECHO;
+	}
+
+	public void setUTZ_FECHO(Integer uTZ_FECHO) {
+		UTZ_FECHO = uTZ_FECHO;
+	}
+
+	@Column(name = "TIPO_OCORRENCIA")
+	public Integer getTIPO_OCORRENCIA() {
+		return TIPO_OCORRENCIA;
+	}
+
+	@Column(name = "TIPO_NAO_DETECAO")
+	public Integer getTIPO_NAO_DETECAO() {
+		return TIPO_NAO_DETECAO;
+	}
+
+	public void setTIPO_OCORRENCIA(Integer tIPO_OCORRENCIA) {
+		TIPO_OCORRENCIA = tIPO_OCORRENCIA;
+	}
+
+	public void setTIPO_NAO_DETECAO(Integer tIPO_NAO_DETECAO) {
+		TIPO_NAO_DETECAO = tIPO_NAO_DETECAO;
 	}
 
 }

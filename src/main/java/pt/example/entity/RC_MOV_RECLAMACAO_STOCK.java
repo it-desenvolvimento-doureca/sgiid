@@ -1,7 +1,6 @@
 package pt.example.entity;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +32,7 @@ public class RC_MOV_RECLAMACAO_STOCK {
 		return DATA_CRIA;
 	}
 
-	@Column(name = "UTZ_CRIA")
+	@Column(name = "UTZ_CRIA")	
 	public Integer getUTZ_CRIA() {
 		return UTZ_CRIA;
 	}

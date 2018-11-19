@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -22,7 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Enumeration;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -33,17 +35,14 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
-import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
-import javax.naming.ldap.LdapContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -98,6 +97,7 @@ import pt.example.dao.AB_MOV_MANUTENCAO_LINHADao;
 import pt.example.dao.AB_MOV_REG_PARAM_OPERACAODao;
 import pt.example.dao.GER_ANALISESDao;
 import pt.example.dao.GER_ARMAZEMDao;
+import pt.example.dao.GER_ATUALIZACAO_SILVER_BI_TABELASDao;
 import pt.example.dao.GER_CAMPOS_DISPDao;
 import pt.example.dao.GER_DEPARTAMENTODao;
 import pt.example.dao.GER_EVENTOS_CONFDao;
@@ -117,9 +117,9 @@ import pt.example.dao.GER_SECCAO_UTZDao;
 import pt.example.dao.GER_UTILIZADORESDao;
 import pt.example.dao.GER_UTZ_PERFILDao;
 import pt.example.dao.GER_VISTASDao;
+import pt.example.dao.GT_DIC_TAREFASDao;
 import pt.example.dao.GT_LOGSDao;
 import pt.example.dao.GT_MOV_TAREFASDao;
-import pt.example.dao.GT_DIC_TAREFASDao;
 import pt.example.dao.RC_DIC_FICHEIROS_ANALISEDao;
 import pt.example.dao.RC_DIC_GRAU_IMPORTANCIADao;
 import pt.example.dao.RC_DIC_REJEICAODao;
@@ -134,6 +134,8 @@ import pt.example.dao.RC_MOV_RECLAMACAO_EQUIPADao;
 import pt.example.dao.RC_MOV_RECLAMACAO_FICHEIROSDao;
 import pt.example.dao.RC_MOV_RECLAMACAO_PLANOS_ACCOESDao;
 import pt.example.dao.RC_MOV_RECLAMACAO_STOCKDao;
+import pt.example.dao.RC_DIC_TIPO_NAO_DETECAODao;
+import pt.example.dao.RC_DIC_TIPO_OCORRENCIADao;
 import pt.example.entity.AB_DIC_BANHO;
 import pt.example.entity.AB_DIC_BANHO_ADITIVO;
 import pt.example.entity.AB_DIC_BANHO_COMPONENTE;
@@ -157,6 +159,7 @@ import pt.example.entity.AB_MOV_REG_PARAM_OPERACAO;
 import pt.example.entity.EMAIL;
 import pt.example.entity.GER_ANALISES;
 import pt.example.entity.GER_ARMAZEM;
+import pt.example.entity.GER_ATUALIZACAO_SILVER_BI_TABELAS;
 import pt.example.entity.GER_CAMPOS_DISP;
 import pt.example.entity.GER_DEPARTAMENTO;
 import pt.example.entity.GER_EVENTOS_CONF;
@@ -176,9 +179,9 @@ import pt.example.entity.GER_SECCAO_UTZ;
 import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.GER_UTZ_PERFIL;
 import pt.example.entity.GER_VISTAS;
+import pt.example.entity.GT_DIC_TAREFAS;
 import pt.example.entity.GT_LOGS;
 import pt.example.entity.GT_MOV_TAREFAS;
-import pt.example.entity.GT_DIC_TAREFAS;
 import pt.example.entity.RC_DIC_FICHEIROS_ANALISE;
 import pt.example.entity.RC_DIC_GRAU_IMPORTANCIA;
 import pt.example.entity.RC_DIC_REJEICAO;
@@ -193,6 +196,8 @@ import pt.example.entity.RC_MOV_RECLAMACAO_EQUIPA;
 import pt.example.entity.RC_MOV_RECLAMACAO_FICHEIROS;
 import pt.example.entity.RC_MOV_RECLAMACAO_PLANOS_ACCOES;
 import pt.example.entity.RC_MOV_RECLAMACAO_STOCK;
+import pt.example.entity.RC_DIC_TIPO_NAO_DETECAO;
+import pt.example.entity.RC_DIC_TIPO_OCORRENCIA;
 
 @Stateless
 @Path("/sirb")
@@ -314,6 +319,12 @@ public class SIRB {
 	private GT_LOGSDao dao48;
 	@Inject
 	private RC_MOV_RECLAMACAO_ENCOMENDASDao dao49;
+	@Inject
+	private RC_DIC_TIPO_OCORRENCIADao dao60;
+	@Inject
+	private RC_DIC_TIPO_NAO_DETECAODao dao61;
+	@Inject
+	private GER_ATUALIZACAO_SILVER_BI_TABELASDao dao62;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -2313,6 +2324,42 @@ public class SIRB {
 		return dao33.update(GER_POSTOS);
 	}
 
+	/************************************* GER_ATUALIZACAO_SILVER_BI_TABELAS */
+
+	@POST
+	@Path("/createGER_ATUALIZACAO_SILVER_BI_TABELAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_ATUALIZACAO_SILVER_BI_TABELAS insertGER_ATUALIZACAO_SILVER_BI_TABELASA(
+			final GER_ATUALIZACAO_SILVER_BI_TABELAS data) {
+		return dao62.create(data);
+	}
+
+	@GET
+	@Path("/getGER_ATUALIZACAO_SILVER_BI_TABELAS")
+	@Produces("application/json")
+	public List<GER_ATUALIZACAO_SILVER_BI_TABELAS> getGER_ATUALIZACAO_SILVER_BI_TABELAS() {
+		return dao62.getall();
+	}
+
+	@DELETE
+	@Path("/deleteGER_ATUALIZACAO_SILVER_BI_TABELAS/{id}")
+	public void deleteGER_ATUALIZACAO_SILVER_BI_TABELAS(@PathParam("id") Integer id) {
+		GER_ATUALIZACAO_SILVER_BI_TABELAS GER_ATUALIZACAO_SILVER_BI_TABELAS = new GER_ATUALIZACAO_SILVER_BI_TABELAS();
+		GER_ATUALIZACAO_SILVER_BI_TABELAS.setID(id);
+		dao62.delete(GER_ATUALIZACAO_SILVER_BI_TABELAS);
+	}
+
+	@PUT
+	@Path("/updateGER_ATUALIZACAO_SILVER_BI_TABELAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_ATUALIZACAO_SILVER_BI_TABELAS updateGER_ATUALIZACAO_SILVER_BI_TABELAS(
+			final GER_ATUALIZACAO_SILVER_BI_TABELAS GER_ATUALIZACAO_SILVER_BI_TABELAS) {
+		GER_ATUALIZACAO_SILVER_BI_TABELAS.setID(GER_ATUALIZACAO_SILVER_BI_TABELAS.getID());
+		return dao62.update(GER_ATUALIZACAO_SILVER_BI_TABELAS);
+	}
+
 	/************************************* GER_CAMPOS_DISP */
 
 	@GET
@@ -2843,7 +2890,7 @@ public class SIRB {
 	public List<RC_MOV_RECLAMACAO> getRC_MOV_RECLAMACAObyidtotaltarefas(@PathParam("id") Integer id) {
 		return dao42.getbyidtotaltarefas(id);
 	}
-	
+
 	@DELETE
 	@Path("/deleteRC_MOV_RECLAMACAO/{id}")
 	public void deleteRC_MOV_RECLAMACAO(@PathParam("id") Integer id) {
@@ -3213,6 +3260,87 @@ public class SIRB {
 		return dao49.update(RC_MOV_RECLAMACAO_ENCOMENDAS);
 	}
 
+	/************************************* RC_DIC_TIPO_OCORRENCIA */
+	@POST
+	@Path("/createRC_DIC_TIPO_OCORRENCIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TIPO_OCORRENCIA insertRC_DIC_TIPO_OCORRENCIAA(final RC_DIC_TIPO_OCORRENCIA data) {
+		return dao60.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_TIPO_OCORRENCIA")
+	@Produces("application/json")
+	public List<RC_DIC_TIPO_OCORRENCIA> getRC_DIC_TIPO_OCORRENCIA() {
+		return dao60.getall();
+	}
+
+	@GET
+	@Path("/getRC_DIC_TIPO_OCORRENCIAbyid/{id}")
+	@Produces("application/json")
+	public List<RC_DIC_TIPO_OCORRENCIA> getRC_DIC_TIPO_OCORRENCIAbyid(@PathParam("id") Integer id) {
+		return dao60.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_TIPO_OCORRENCIA/{id}")
+	public void deleteRC_DIC_TIPO_OCORRENCIA(@PathParam("id") Integer id) {
+		RC_DIC_TIPO_OCORRENCIA RC_DIC_TIPO_OCORRENCIA = new RC_DIC_TIPO_OCORRENCIA();
+		RC_DIC_TIPO_OCORRENCIA.setID(id);
+		dao60.delete(RC_DIC_TIPO_OCORRENCIA);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_TIPO_OCORRENCIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TIPO_OCORRENCIA updateRC_DIC_TIPO_OCORRENCIA(final RC_DIC_TIPO_OCORRENCIA RC_DIC_TIPO_OCORRENCIA) {
+		RC_DIC_TIPO_OCORRENCIA.setID(RC_DIC_TIPO_OCORRENCIA.getID());
+		return dao60.update(RC_DIC_TIPO_OCORRENCIA);
+	}
+
+	/************************************* RC_DIC_TIPO_NAO_DETECAO */
+	@POST
+	@Path("/RC_DIC_TIPO_NAO_DETECAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TIPO_NAO_DETECAO insertRC_DIC_TIPO_NAO_DETECAOA(final RC_DIC_TIPO_NAO_DETECAO data) {
+		return dao61.create(data);
+	}
+
+	@GET
+	@Path("/getRC_DIC_TIPO_NAO_DETECAO")
+	@Produces("application/json")
+	public List<RC_DIC_TIPO_NAO_DETECAO> getRC_DIC_TIPO_NAO_DETECAO() {
+		return dao61.getall();
+	}
+
+	@GET
+	@Path("/getRC_DIC_TIPO_NAO_DETECAObyid/{id}")
+	@Produces("application/json")
+	public List<RC_DIC_TIPO_NAO_DETECAO> getRC_DIC_TIPO_NAO_DETECAObyid(@PathParam("id") Integer id) {
+		return dao61.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_DIC_TIPO_NAO_DETECAO/{id}")
+	public void deleteRC_DIC_TIPO_NAO_DETECAO(@PathParam("id") Integer id) {
+		RC_DIC_TIPO_NAO_DETECAO RC_DIC_TIPO_NAO_DETECAO = new RC_DIC_TIPO_NAO_DETECAO();
+		RC_DIC_TIPO_NAO_DETECAO.setID(id);
+		dao61.delete(RC_DIC_TIPO_NAO_DETECAO);
+	}
+
+	@PUT
+	@Path("/updateRC_DIC_TIPO_NAO_DETECAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_DIC_TIPO_NAO_DETECAO updateRC_DIC_TIPO_NAO_DETECAO(
+			final RC_DIC_TIPO_NAO_DETECAO RC_DIC_TIPO_NAO_DETECAO) {
+		RC_DIC_TIPO_NAO_DETECAO.setID(RC_DIC_TIPO_NAO_DETECAO.getID());
+		return dao61.update(RC_DIC_TIPO_NAO_DETECAO);
+	}
+
 	/************************************* GT_MOV_TAREFAS */
 	@POST
 	@Path("/createGT_MOV_TAREFAS")
@@ -3252,10 +3380,10 @@ public class SIRB {
 		return dao59.getbyidUser(id, data);
 	}
 
-	@GET
+	@POST
 	@Path("/getGT_MOV_TAREFASAtualizaAccao/{id}/{modulo}")
 	@Produces("application/json")
-	public void getGT_MOV_TAREFASAtualizaAccao(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo) {
+	public void getGT_MOV_TAREFASAtualizaAccao(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,final String link) {
 		String url = "";
 		Query query = entityManager.createNativeQuery("declare @id int = 0; declare @id_insert int = 0;"
 				+ "IF EXISTS (SELECT * FROM GT_MOV_TAREFAS a WHERE ID_MODULO = " + modulo + " and  ID_CAMPO= " + id
@@ -3276,11 +3404,11 @@ public class SIRB {
 				+ "INSERT INTO GT_LOGS ([DATA_CRIA] ,[UTZ_CRIA] ,[DESCRICAO] ,[ID_TAREFA]) VALUES (GETDATE(),(SELECT UTZ_CRIA FROM GT_MOV_TAREFAS WHERE ID_TAREFA = @id_insert),'Adicionada nova Tarefa',@id_insert)");
 
 		query.executeUpdate();
-		enviaEventoTarefa(id);
+		enviaEventoTarefa(id,link);
 
 	}
 
-	public void enviaEventoTarefa(Integer id) {
+	public void enviaEventoTarefa(Integer id, String link) {
 		String observacao = "";
 		String numero_reclamacao = "";
 		String cliente = "";
@@ -3344,10 +3472,10 @@ public class SIRB {
 		n.put("EMAIL_PARA", email_para);
 
 		n.put("DADOS",
-				"{observacao::" + observacao + "\n/numero_reclamacao::" + numero_reclamacao + "\n/cliente::" + cliente
-						+ "\n/data_reclamacao::" + data_reclamacao + "" + "\n/referencia::" + referencia + ""
-						+ "\n/numero_tarefa::" + numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::"
-						+ data_prevista + "}");
+				"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reclamacao::"
+						+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_reclamacao::" + data_reclamacao + ""
+						+ "\n/referencia::" + referencia + "" + "\n/numero_tarefa::" + numero_tarefa + "\n/accao::"
+						+ accao + "\n/data_prevista::" + data_prevista + "}");
 		data.add(n);
 
 		verficaEventos(data);
@@ -3849,6 +3977,36 @@ public class SIRB {
 			sendemail(email, keyValuePairs3, fgilepath);
 
 		}
+	}
+
+	@GET
+	@Path("/getGER_PARAMETROSATUALIZADATA/{hora}/{minutos}/{diasemana}")
+	@Produces("application/json")
+	public int getGER_PARAMETROSATUALIZADATA(@PathParam("hora") Integer hora, @PathParam("minutos") Integer minutos,
+			@PathParam("diasemana") Integer diasemana) {
+
+		Timestamp data = new Timestamp(getTomorrowDAy(hora, minutos, diasemana).getTime());
+		int exupdate = entityManager.createNativeQuery("IF EXISTS( select * from GER_ATUALIZACAO_SILVER_BI) "
+				+ "BEGIN update GER_ATUALIZACAO_SILVER_BI set DATA_ATUALIZACAO = '" + data + "' END "
+				+ "ELSE INSERT INTO GER_ATUALIZACAO_SILVER_BI  (DATA_ATUALIZACAO) VALUES ('" + data + "') ")
+				.executeUpdate();
+		return exupdate;
+	}
+
+	private static java.util.Date getTomorrowDAy(Integer fFOUR_AM, Integer fZERO_MINUTES, Integer DIA_SEMANA) {
+		Calendar tomorrow = new GregorianCalendar();
+		tomorrow.set(Calendar.HOUR_OF_DAY, fFOUR_AM);
+		tomorrow.set(Calendar.MINUTE, fZERO_MINUTES);
+		tomorrow.set(Calendar.SECOND, 0);
+
+		while (tomorrow.get(Calendar.DAY_OF_WEEK) != DIA_SEMANA
+				|| tomorrow.getTime().getTime() < new java.util.Date().getTime()) {
+			tomorrow.add(Calendar.DATE, 1);
+		}
+
+		Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
+				tomorrow.get(Calendar.DATE), fFOUR_AM, fZERO_MINUTES);
+		return result.getTime();
 	}
 
 	/* FICHEIRO ************************************/
@@ -4367,8 +4525,8 @@ public class SIRB {
 						+ ",'correcao'+CONVERT(varchar(10), ID_MOV_MANU_ETIQUETA), a.CONSUMIR as cons, '0' as id2,a.QUANT_FINAL as qtdf,a.UNISTO as unnd,a.sinal "
 						+ "from AB_MOV_MANUTENCAO_ETIQ a where a.ID_MOV_MANU_ETIQUETA in (" + ids + ")");
 
-		Query query_folder = entityManager
-				.createNativeQuery("select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a");
+		Query query_folder = entityManager.createNativeQuery(
+				"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a");
 
 		Query query_impressora = entityManager.createNativeQuery(
 				"select top 1  NOME_IMPRESSORA,IP_IMPRESSORA from GER_POSTOS b where IP_POSTO ='" + ip_posto + "'");
