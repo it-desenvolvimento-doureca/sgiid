@@ -571,5 +571,9 @@ body .ui-selectbutton .ui-button:last-child {
 }
 
 .tabelalistatarefas th, .tabelalistatarefas td {
-    font-size: 10px;
+    font-size: 11px;
+}
+
+.tabelalistatarefas .ui-datatable-even {
+    background-color: #f9f9f9 !important;
 }

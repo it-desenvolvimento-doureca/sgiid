@@ -1,5 +1,6 @@
 package pt.example.rest;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,11 +9,19 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -29,7 +38,10 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -1244,6 +1256,19 @@ public class SIRB {
 		return dados_folder;
 	}
 
+	@GET
+	@Path("/getBDS/{bd}")
+	@Produces("application/json")
+	public List<Object[]> getBDS(@PathParam("bd") String bd) {
+
+		Query query_folder = entityManager
+				.createNativeQuery(" SELECT name,'' as campo FROM " + bd + ".sys.Tables where lob_data_space_id != 1");
+
+		List<Object[]> bases_de_dados = query_folder.getResultList();
+
+		return bases_de_dados;
+	}
+
 	/************************************* AB_DIC_LINHA */
 	@POST
 	@Path("/createAB_DIC_LINHA")
@@ -2437,6 +2462,75 @@ public class SIRB {
 		return dao35.create(data);
 	}
 
+	@POST
+	@Path("/ATUALIZAQUANT")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public void ATUALIZAQUANT(final List<HashMap<String, String>> datas) {
+
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String etiqueta = firstMap.get("etiqueta");
+		Float qtd = Float.parseFloat(firstMap.get("qtd"));
+
+		final ConnectProgress connectionProgress = new ConnectProgress();
+		try {
+			connectionProgress.EXEC_SINCRO(etiqueta, qtd, getURLSILVER());
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+	}
+
+	@GET
+	@Path("/ATUALIZAQUANTAOAPAGAR/{id}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public void ATUALIZAQUANTAOAPAGAR(@PathParam("id") Integer id) {
+
+		final ConnectProgress connectionProgress = new ConnectProgress();
+		String url = getURLSILVER();
+		Query query = entityManager.createNativeQuery(
+				"select ETQNUM,(QUANT - QUANT_FINAL) from AB_MOV_MANUTENCAO_ETIQ where ID_MANUTENCAO_LIN in "
+						+ "(select ID_MANUTENCAO_LIN from AB_MOV_MANUTENCAO_LINHA where ID_MANUTENCAO_CAB = " + id
+						+ ")");
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+			try {
+				connectionProgress.EXEC_SINCRO_AO_APAGAR(content[0].toString(), Float.parseFloat(content[1].toString()),
+						url);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	@POST
+	@Path("/ATUALIZAQUANTAPAGAR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public void ATUALIZAQUANTAPAGAR(final List<HashMap<String, String>> datas) {
+
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String etiqueta = firstMap.get("etiqueta");
+		Float qtd = Float.parseFloat(firstMap.get("qtd"));
+
+		final ConnectProgress connectionProgress = new ConnectProgress();
+		try {
+			connectionProgress.EXEC_SINCRO2(etiqueta, qtd, getURLSILVER());
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+	}
+
 	@GET
 	@Path("/getAB_MOV_MANUTENCAO_ETIQbyidmanu/{id}")
 	@Produces("application/json")
@@ -3302,7 +3396,7 @@ public class SIRB {
 
 	/************************************* RC_DIC_TIPO_NAO_DETECAO */
 	@POST
-	@Path("/RC_DIC_TIPO_NAO_DETECAO")
+	@Path("/createRC_DIC_TIPO_NAO_DETECAO")
 	@Consumes("*/*")
 	@Produces("application/json")
 	public RC_DIC_TIPO_NAO_DETECAO insertRC_DIC_TIPO_NAO_DETECAOA(final RC_DIC_TIPO_NAO_DETECAO data) {
@@ -3383,7 +3477,8 @@ public class SIRB {
 	@POST
 	@Path("/getGT_MOV_TAREFASAtualizaAccao/{id}/{modulo}")
 	@Produces("application/json")
-	public void getGT_MOV_TAREFASAtualizaAccao(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,final String link) {
+	public void getGT_MOV_TAREFASAtualizaAccao(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
+			final String link) {
 		String url = "";
 		Query query = entityManager.createNativeQuery("declare @id int = 0; declare @id_insert int = 0;"
 				+ "IF EXISTS (SELECT * FROM GT_MOV_TAREFAS a WHERE ID_MODULO = " + modulo + " and  ID_CAMPO= " + id
@@ -3404,7 +3499,7 @@ public class SIRB {
 				+ "INSERT INTO GT_LOGS ([DATA_CRIA] ,[UTZ_CRIA] ,[DESCRICAO] ,[ID_TAREFA]) VALUES (GETDATE(),(SELECT UTZ_CRIA FROM GT_MOV_TAREFAS WHERE ID_TAREFA = @id_insert),'Adicionada nova Tarefa',@id_insert)");
 
 		query.executeUpdate();
-		enviaEventoTarefa(id,link);
+		enviaEventoTarefa(id, link);
 
 	}
 
@@ -3979,16 +4074,39 @@ public class SIRB {
 		}
 	}
 
-	@GET
-	@Path("/getGER_PARAMETROSATUALIZADATA/{hora}/{minutos}/{diasemana}")
+	@POST
+	@Path("/getGER_PARAMETROSATUALIZADATA/{hora}/{minutos}/{diasemana}/{tipo}/{id}")
 	@Produces("application/json")
 	public int getGER_PARAMETROSATUALIZADATA(@PathParam("hora") Integer hora, @PathParam("minutos") Integer minutos,
-			@PathParam("diasemana") Integer diasemana) {
+			@PathParam("diasemana") Integer diasemana, @PathParam("tipo") Integer tipo, final String data_inicio,
+			@PathParam("id") Integer id) {
+		Timestamp data = null;
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		java.util.Date date = null;
+		try {
+			date = df.parse(data_inicio);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// se for diário
+		if (tipo == 1) {
+			data = new Timestamp(getTomorrowDAy(hora, minutos, diasemana).getTime());
+		} else if (tipo == 2) {
+			// se for semanal
+			data = new Timestamp(getTomorrowSemanal(hora, minutos, diasemana, date).getTime());
+		} else if (tipo == 3) {
+			// se for mensal
+			data = new Timestamp(getTomorrowMonth(hora, minutos, date).getTime());
+		} else if (tipo == 4) {
+			// se for anual
+			data = new Timestamp(getTomorrowYear(hora, minutos, date).getTime());
+		}
 
-		Timestamp data = new Timestamp(getTomorrowDAy(hora, minutos, diasemana).getTime());
-		int exupdate = entityManager.createNativeQuery("IF EXISTS( select * from GER_ATUALIZACAO_SILVER_BI) "
-				+ "BEGIN update GER_ATUALIZACAO_SILVER_BI set DATA_ATUALIZACAO = '" + data + "' END "
-				+ "ELSE INSERT INTO GER_ATUALIZACAO_SILVER_BI  (DATA_ATUALIZACAO) VALUES ('" + data + "') ")
+		System.out.println(tipo + "" + data);
+
+		int exupdate = entityManager.createNativeQuery(
+				"UPDATE GER_ATUALIZACAO_SILVER_BI_TABELAS SET DATA_ATUALIZACAO = '" + data + "' WHERE ID =" + id + "")
 				.executeUpdate();
 		return exupdate;
 	}
@@ -3999,9 +4117,56 @@ public class SIRB {
 		tomorrow.set(Calendar.MINUTE, fZERO_MINUTES);
 		tomorrow.set(Calendar.SECOND, 0);
 
+		tomorrow.add(Calendar.DATE, 1);
+
+		Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
+				tomorrow.get(Calendar.DATE), fFOUR_AM, fZERO_MINUTES);
+		return result.getTime();
+	}
+
+	private static java.util.Date getTomorrowSemanal(Integer fFOUR_AM, Integer fZERO_MINUTES, Integer DIA_SEMANA,
+			java.util.Date data) {
+		Calendar tomorrow = new GregorianCalendar();
+		tomorrow.setTime(data);
+		tomorrow.set(Calendar.HOUR_OF_DAY, fFOUR_AM);
+		tomorrow.set(Calendar.MINUTE, fZERO_MINUTES);
+		tomorrow.set(Calendar.SECOND, 0);
+
 		while (tomorrow.get(Calendar.DAY_OF_WEEK) != DIA_SEMANA
 				|| tomorrow.getTime().getTime() < new java.util.Date().getTime()) {
 			tomorrow.add(Calendar.DATE, 1);
+		}
+
+		Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
+				tomorrow.get(Calendar.DATE), fFOUR_AM, fZERO_MINUTES);
+		return result.getTime();
+	}
+
+	private static java.util.Date getTomorrowMonth(Integer fFOUR_AM, Integer fZERO_MINUTES, java.util.Date data) {
+		Calendar tomorrow = new GregorianCalendar();
+		tomorrow.setTime(data);
+		tomorrow.set(Calendar.HOUR_OF_DAY, fFOUR_AM);
+		tomorrow.set(Calendar.MINUTE, fZERO_MINUTES);
+		tomorrow.set(Calendar.SECOND, 0);
+
+		while (tomorrow.getTime().getTime() < new java.util.Date().getTime()) {
+			tomorrow.add(Calendar.MONTH, 1);
+		}
+
+		Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
+				tomorrow.get(Calendar.DATE), fFOUR_AM, fZERO_MINUTES);
+		return result.getTime();
+	}
+
+	private static java.util.Date getTomorrowYear(Integer fFOUR_AM, Integer fZERO_MINUTES, java.util.Date data) {
+		Calendar tomorrow = new GregorianCalendar();
+		tomorrow.setTime(data);
+		tomorrow.set(Calendar.HOUR_OF_DAY, fFOUR_AM);
+		tomorrow.set(Calendar.MINUTE, fZERO_MINUTES);
+		tomorrow.set(Calendar.SECOND, 0);
+
+		while (tomorrow.getTime().getTime() < new java.util.Date().getTime()) {
+			tomorrow.add(Calendar.YEAR, 1);
 		}
 
 		Calendar result = new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
@@ -4597,6 +4762,10 @@ public class SIRB {
 		}
 
 		for (Object[] content : dados) {
+			count = 0;
+			NCLRANG = "";
+			lista = null;
+
 			String cisterna = (content[20] != null) ? content[20].toString() : "false";
 			if (Float.parseFloat(content[3].toString()) != 0 && !content[3].toString().equals(content[1].toString())
 					&& !cisterna.equals("true")) {
@@ -5137,11 +5306,60 @@ public class SIRB {
 		}
 	}
 
-	@GET
-	@Path("/ficheiromanual")
+	@POST
+	@Path("/traduzir")
+	@Consumes("*/*")
 	@Produces("application/json")
-	public void getFicheiroManual() throws IOException, ParseException {
+	public String traduzirtexto(final List<HashMap<String, String>> datas) throws IOException {
 
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String text = firstMap.get("texto");
+		String langTo = firstMap.get("langTo");
+
+		String link = null;
+		try {
+			Properties p = new Properties();
+			p.load(new FileInputStream("c:\\sgiid\\conf_email.ini"));
+			link = p.getProperty("link_script");
+			// p.list(System.out);
+
+		} catch (Exception e) {
+		}
+
+		String urlStr = link + "?q=" + java.net.URLEncoder.encode(text, "UTF-8") + "&target=" + langTo;
+
+		java.net.URL url = new java.net.URL(urlStr);
+		StringBuilder response = new StringBuilder();
+		java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
+		con.setRequestProperty("User-Agent", "Mozilla/5.0");
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+
+		}
+		in.close();
+
+		String texto = new String(response.toString().getBytes(), "UTF-8").replace("&#39;", "'").replaceAll("&quot;",
+				" ");
+
+		return texto;
+	}
+
+	@POST
+	@Path("/ficheiromanual")
+	@Consumes("*/*")
+	@Produces("application/zip")
+	public Response getFicheiroManual(final List<HashMap<String, String>> datas) throws IOException, ParseException {
+
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String datainicio = firstMap.get("datainicio");
+		String datafim = firstMap.get("datafim");
+		String ip = firstMap.get("ip");
+
+		String data = new SimpleDateFormat("yyyyMMddHHmmss_").format(new java.util.Date());
 		try {
 			// Thread.sleep(3000);
 
@@ -5154,7 +5372,8 @@ public class SIRB {
 							+ "left join AB_MOV_MANUTENCAO_CAB c on b.ID_MANUTENCAO_CAB = c.ID_MANUTENCAO_CAB "
 							+ "left join AB_MOV_MANUTENCAO d on c.ID_MANUTENCAO = d.ID_MANUTENCAO "
 							+ "left join AB_DIC_LINHA e on e.ID_LINHA = d.ID_LINHA " + "where a.ID_MANUTENCAO_LIN != 0 "
-							+ "and a.DATA_CRIA > '2018-06-04' and a.DATA_CRIA < '2018-08-28 17:20' "
+							+ "and a.DATA_CRIA >= '" + datainicio + "' and a.DATA_CRIA <= '" + datafim
+							+ "' and c.ID_MANUTENCAO_CAB is not null "
 							+ "group by c.ID_MANUTENCAO_CAB,e.SECCAO,e.SUBSECCAO,e.REF_COMPOSTO,c.ID_MANUTENCAO,d.ID_LINHA order by c.ID_MANUTENCAO_CAB");
 
 			List<Object[]> dados = query.getResultList();
@@ -5165,25 +5384,47 @@ public class SIRB {
 				nome_ficheiro = "ETIQUETA_ID" + content[0].toString() + ".txt";
 
 				criarFicheiroManual(content[0].toString(), nome_ficheiro, content[1].toString(), content[2].toString(),
-						content[3].toString(), content[4].toString(), content[5].toString(), null);
+						content[3].toString(), content[4].toString(), content[5].toString(), null, data, ip);
 
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		final File file = new File("c:/sgiid/temp_files/" + data + ".zip");
+		if (file.exists() && !file.isDirectory()) {
+			ResponseBuilder response = Response.ok((Object) file);
+			response.header("Content-Disposition", "attachment; filename=ficheiros.zip");
+			Timer timer = new Timer();
+			timer.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					file.delete();
+				}
+			}, 5000);
+			return response.build();
+		} else {
+			return null;
+		}
 	}
 
 	public void criarFicheiroManual(String id, String nome_ficheiro, String of, String SECCAO, String SUBSECCAO,
-			String REF_COMPOSTO, String num_manutencao, String ids) {
+			String REF_COMPOSTO, String num_manutencao, String ids, String nomezip, String ip_posto)
+			throws IOException {
 
 		SimpleDateFormat formate = new SimpleDateFormat("yyyyMMdd");
 		SimpleDateFormat horaformate = new SimpleDateFormat("HHmmss");
 		String datatual = formate.format(new java.util.Date());
 		String horatual = horaformate.format(new java.util.Date());
 		String sequencia = "000000000";
-		String path = "";
-		String path_error = "";
+		String nomeimpressora = "";
+		String ipimpressora = "";
+		String data_etiq = "";
+		String modelo_REPORT = "";
+
+		// String path = "";
+		// String path_error = "";
 		/*
 		 * Query query = entityManager.createNativeQuery(
 		 * "select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO from AB_MOV_MANUTENCAO_ETIQ a where ID_MANUTENCAO_LIN = "
@@ -5202,8 +5443,30 @@ public class SIRB {
 						+ "inner join AB_DIC_COMPONENTE t on  t.ID_COMPONENTE = b.ID_ADITIVO "
 						+ "where b.ID_MANUTENCAO_CAB  = " + id + "");
 
-		path = "c:\\etiquegtas\\" + nome_ficheiro;
-		path_error = "c:\\etiquetas\\" + nome_ficheiro;
+		// path = "c:\\etiquegtas\\" + nome_ficheiro;
+		// path_error = "c:\\etiquetas\\" + nome_ficheiro;
+
+		Query query_impressora = entityManager.createNativeQuery(
+				"select top 1  NOME_IMPRESSORA,IP_IMPRESSORA from GER_POSTOS b where IP_POSTO ='" + ip_posto + "'");
+
+		Query query_folder = entityManager
+				.createNativeQuery("select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,MODELO_REPORT from GER_PARAMETROS a");
+
+		List<Object[]> dados_impressora = query_impressora.getResultList();
+		List<Object[]> dados_folder = query_folder.getResultList();
+		Boolean imprime = false;
+
+		for (Object[] content2 : dados_impressora) {
+			nomeimpressora = content2[0].toString();
+			if (content2[1] != null) {
+				ipimpressora = content2[1].toString();
+			}
+			imprime = true;
+		}
+
+		for (Object[] content : dados_folder) {
+			modelo_REPORT = content[2].toString();
+		}
 
 		sequencia = sequencia();
 
@@ -5219,6 +5482,18 @@ public class SIRB {
 		String data = "";
 		String INDNUMCSE = "";
 		String NCLRANG = "";
+
+		Integer size_etiq = 0;
+		data_etiq += "LAB_NAME=" + modelo_REPORT + "\r\n";
+
+		if (!ipimpressora.isEmpty() && ipimpressora != null) {
+			ipimpressora = ",->" + ipimpressora;
+		}
+
+		String data_path = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+
+		data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
+		data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
 
 		try {
 			lista2 = connectionProgress.getOrigineComposant2(getURLSILVER(), REF_COMPOSTO, of);
@@ -5242,9 +5517,15 @@ public class SIRB {
 			datatual = formate.format(parsed);
 			horatual = horaformate.format(parsed);
 
-			// String cisterna = (content[20] != null) ? content[20].toString()
-			// : "false";
+			String cisterna = (content[20] != null) ? content[20].toString() : "false";
+			if (Float.parseFloat(content[3].toString()) != 0 && !content[3].toString().equals(content[1].toString())
+					&& !cisterna.equals("true")) {
+				// path2 = path2 + data_path + "_" + content[0].toString();
 
+				// criar ficheiro que gera etiquetas
+				data_etiq += criaFicheiroEtiqueta(content);
+				size_etiq++;
+			}
 			/*
 			 * try { connectionProgress.EXEC_SINCRO(content[0].toString(),
 			 * Float.parseFloat(content[3].toString()), getURLSILVER()); } catch
@@ -5484,7 +5765,31 @@ public class SIRB {
 		}
 
 		if (data.length() > 0) {
-			criar_ficheiro(data, path, path_error, false, "");
+			// criar_ficheiro(data, path, path_error, false, "");
+
+			Map<String, String> env = new HashMap<>();
+			env.put("create", "true");
+			java.nio.file.Path pathh = Paths.get("c:/sgiid/temp_files/" + nomezip + ".zip");
+			URI uri = URI.create("jar:" + pathh.toUri());
+			try (FileSystem fs = FileSystems.newFileSystem(uri, env)) {
+				java.nio.file.Path nf = fs.getPath(nome_ficheiro);
+				try (Writer writer = Files.newBufferedWriter(nf, StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
+					writer.write(data);
+				}
+			}
+		}
+
+		if (size_etiq > 0 && imprime) {
+			Map<String, String> env = new HashMap<>();
+			env.put("create", "true");
+			java.nio.file.Path pathh = Paths.get("c:/sgiid/temp_files/" + nomezip + ".zip");
+			URI uri = URI.create("jar:" + pathh.toUri());
+			try (FileSystem fs = FileSystems.newFileSystem(uri, env)) {
+				java.nio.file.Path nf = fs.getPath("IMPRIMIR_" + nome_ficheiro);
+				try (Writer writer = Files.newBufferedWriter(nf, StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
+					writer.write(data_etiq);
+				}
+			}
 		}
 
 	}
@@ -5504,12 +5809,14 @@ public class SIRB {
 						+ "and  (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
 						+ " and DATA_EXECUCAO is not null and INATIVO != 1) = 0 "
 						+ "and (select ESTADO from AB_MOV_MANUTENCAO where ID_MANUTENCAO = " + id
-						+ "  and INATIVO != 1 ) ='Em Preparação' "
+						+ "  and INATIVO != 1 ) ='Em Preparação' and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
+						+ "  and INATIVO != 1 ) > 0 "
 						+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO = " + id + " and "
 						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
 						+ "  and INATIVO != 1 ) = "
 						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
-						+ " and DATA_EXECUCAO is not null and INATIVO != 1)");
+						+ " and DATA_EXECUCAO is not null and INATIVO != 1) and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
+						+ "  and INATIVO != 1 ) > 0");
 
 		int dados = query.executeUpdate();
 

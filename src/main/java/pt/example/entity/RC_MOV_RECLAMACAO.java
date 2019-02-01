@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -20,7 +21,7 @@ public class RC_MOV_RECLAMACAO {
 	private Integer ID_TIPO_RECLAMACAO;
 	private Integer UTZ_RESPONSAVEL;
 	private Integer GRAU_IMPORTANCIA;
-	private String RESPOSTA_INICIAL;
+
 	private Integer ID_CLIENTE;
 	private String NOME_CLIENTE;
 	private String MORADA_CLIENTE;
@@ -47,12 +48,14 @@ public class RC_MOV_RECLAMACAO {
 	private Boolean STEP7CONCLUIDO;
 	private Boolean STEP8CONCLUIDO;
 	private String DESCRICAO_PROBLEMA;
+	private String DESCRICAO_PROBLEMA_IDIOMA_CLIENTE;
 	private Boolean PROBLEMA_REPETIDO;
 	private Integer NUMERO_RECLAMACAO_REPETIDA;
 	private Boolean RECLAMACAO_REPETIDA_ACEITE;
 	private Boolean ACCOES_EVITAR;
 	private String OBSERVACOES_ACCOES_EVITAR;
 	private String CAUSAS_PROBLEMA;
+	private String CAUSAS_PROBLEMA_IDIOMA_CLIENTE;
 
 	private Boolean REF_IGUAIS;
 
@@ -154,6 +157,15 @@ public class RC_MOV_RECLAMACAO {
 	private Integer TIPO_OCORRENCIA;
 	private Integer TIPO_NAO_DETECAO;
 
+	private Date STEP1_DATA;
+	private Date STEP2_DATA;
+	private Date STEP3_DATA;
+	private Date STEP4_DATA;
+	private Date STEP5_DATA;
+	private Date STEP6_DATA;
+	private Date STEP7_DATA;
+	private Date STEP8_DATA;
+
 	@Id
 	@Column(name = "ID_RECLAMACAO")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -214,9 +226,9 @@ public class RC_MOV_RECLAMACAO {
 		return GRAU_IMPORTANCIA;
 	}
 
-	@Column(name = "RESPOSTA_INICIAL")
-	public String getRESPOSTA_INICIAL() {
-		return RESPOSTA_INICIAL;
+	@Column(name = "DESCRICAO_PROBLEMA_IDIOMA_CLIENTE")
+	public String getDESCRICAO_PROBLEMA_IDIOMA_CLIENTE() {
+		return DESCRICAO_PROBLEMA_IDIOMA_CLIENTE;
 	}
 
 	@Column(name = "ID_CLIENTE")
@@ -999,8 +1011,8 @@ public class RC_MOV_RECLAMACAO {
 		GRAU_IMPORTANCIA = gRAU_IMPORTANCIA;
 	}
 
-	public void setRESPOSTA_INICIAL(String rESPOSTA_INICIAL) {
-		RESPOSTA_INICIAL = rESPOSTA_INICIAL;
+	public void setDESCRICAO_PROBLEMA_IDIOMA_CLIENTEL(String dESCRICAO_PROBLEMA_IDIOMA_CLIENTE) {
+		DESCRICAO_PROBLEMA_IDIOMA_CLIENTE = dESCRICAO_PROBLEMA_IDIOMA_CLIENTE;
 	}
 
 	public void setID_CLIENTE(Integer iD_CLIENTE) {
@@ -1270,6 +1282,91 @@ public class RC_MOV_RECLAMACAO {
 
 	public void setTIPO_NAO_DETECAO(Integer tIPO_NAO_DETECAO) {
 		TIPO_NAO_DETECAO = tIPO_NAO_DETECAO;
+	}
+
+	@Column(name = "STEP1_DATA")
+	public Date getSTEP1_DATA() {
+		return STEP1_DATA;
+	}
+
+	@Column(name = "STEP2_DATA")
+	public Date getSTEP2_DATA() {
+		return STEP2_DATA;
+	}
+
+	@Column(name = "STEP3_DATA")
+	public Date getSTEP3_DATA() {
+		return STEP3_DATA;
+	}
+
+	@Column(name = "STEP4_DATA")
+	public Date getSTEP4_DATA() {
+		return STEP4_DATA;
+	}
+
+	@Column(name = "STEP5_DATA")
+	public Date getSTEP5_DATA() {
+		return STEP5_DATA;
+	}
+
+	@Column(name = "STEP6_DATA")
+	public Date getSTEP6_DATA() {
+		return STEP6_DATA;
+	}
+
+	@Column(name = "STEP7_DATA")
+	public Date getSTEP7_DATA() {
+		return STEP7_DATA;
+	}
+
+	@Column(name = "STEP8_DATA")
+	public Date getSTEP8_DATA() {
+		return STEP8_DATA;
+	}
+
+	public void setDESCRICAO_PROBLEMA_IDIOMA_CLIENTE(String dESCRICAO_PROBLEMA_IDIOMA_CLIENTE) {
+		DESCRICAO_PROBLEMA_IDIOMA_CLIENTE = dESCRICAO_PROBLEMA_IDIOMA_CLIENTE;
+	}
+
+	public void setSTEP1_DATA(Date sTEP1_DATA) {
+		STEP1_DATA = sTEP1_DATA;
+	}
+
+	public void setSTEP2_DATA(Date sTEP2_DATA) {
+		STEP2_DATA = sTEP2_DATA;
+	}
+
+	public void setSTEP3_DATA(Date sTEP3_DATA) {
+		STEP3_DATA = sTEP3_DATA;
+	}
+
+	public void setSTEP4_DATA(Date sTEP4_DATA) {
+		STEP4_DATA = sTEP4_DATA;
+	}
+
+	public void setSTEP5_DATA(Date sTEP5_DATA) {
+		STEP5_DATA = sTEP5_DATA;
+	}
+
+	public void setSTEP6_DATA(Date sTEP6_DATA) {
+		STEP6_DATA = sTEP6_DATA;
+	}
+
+	public void setSTEP7_DATA(Date sTEP7_DATA) {
+		STEP7_DATA = sTEP7_DATA;
+	}
+
+	public void setSTEP8_DATA(Date sTEP8_DATA) {
+		STEP8_DATA = sTEP8_DATA;
+	}
+
+	@Column(name = "CAUSAS_PROBLEMA_IDIOMA_CLIENTE")
+	public String getCAUSAS_PROBLEMA_IDIOMA_CLIENTE() {
+		return CAUSAS_PROBLEMA_IDIOMA_CLIENTE;
+	}
+
+	public void setCAUSAS_PROBLEMA_IDIOMA_CLIENTE(String cAUSAS_PROBLEMA_IDIOMA_CLIENTE) {
+		CAUSAS_PROBLEMA_IDIOMA_CLIENTE = cAUSAS_PROBLEMA_IDIOMA_CLIENTE;
 	}
 
 }

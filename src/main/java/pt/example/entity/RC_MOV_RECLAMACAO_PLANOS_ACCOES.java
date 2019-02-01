@@ -32,6 +32,7 @@ public class RC_MOV_RECLAMACAO_PLANOS_ACCOES {
 	private Timestamp CONCLUIDO_DATA;
 	private String OBSERVACOES;
 	private String ESTADO;
+	private String AREA;
 	private Integer ID_TAREFA;
 	private Boolean OBRIGA_EVIDENCIAS;
 
@@ -206,6 +207,15 @@ public class RC_MOV_RECLAMACAO_PLANOS_ACCOES {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "AREA")
+	public String getAREA() {
+		return AREA;
+	}
+
+	public void setAREA(String aREA) {
+		AREA = aREA;
 	}
 
 }

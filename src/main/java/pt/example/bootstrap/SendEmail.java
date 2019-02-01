@@ -1,5 +1,6 @@
 package pt.example.bootstrap;
 
+import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -21,7 +22,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.bind.DatatypeConverter;
 
-
 // import com.mycompany.helper.* ;
 // import com.mycompany.dbi.*;
 
@@ -30,18 +30,32 @@ public class SendEmail {
 
 	}
 
+	private String username;
+	private String password;
+
 	public void enviarEmail(String de, String para, String assunto, String mensagem, String nome_ficheiro,
-			String[] files,String nomepasta,String ficheiro) {
-		
-		final String username = "alertas.it.doureca@gmail.com";
-		final String password = "DourecA2@";
+			String[] files, String nomepasta, String ficheiro) {
+
+		String host = null, port = null;
+
+		try {
+			Properties p = new Properties();
+			p.load(new FileInputStream("c:\\sgiid\\conf_email.ini"));
+			host = p.getProperty("host");
+			port = p.getProperty("port");
+			username = p.getProperty("username");
+			password = p.getProperty("password");
+			// p.list(System.out);
+
+		} catch (Exception e) {
+		}
 
 		Properties props = new Properties();
 
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.port", "587");
+		props.put("mail.smtp.host", host);
+		props.put("mail.smtp.port", port);
 
 		// 587
 		// ssl off
@@ -68,7 +82,7 @@ public class SendEmail {
 
 			if (nome_ficheiro != null) {
 				MimeBodyPart attachPart = new MimeBodyPart();
-				
+
 				String filename = "/" + nomepasta + "/relatorios/" + nome_ficheiro + ".pdf";
 				DataSource source = new FileDataSource(filename);
 				attachPart.setDataHandler(new DataHandler(source));
@@ -76,7 +90,7 @@ public class SendEmail {
 
 				multipart.addBodyPart(attachPart);
 			}
-			
+
 			if (ficheiro != null) {
 				MimeBodyPart attachPart2 = new MimeBodyPart();
 				Path p = Paths.get(ficheiro);
@@ -87,12 +101,11 @@ public class SendEmail {
 
 				multipart.addBodyPart(attachPart2);
 			}
-			
-			
+
 			if (files.length > 0) {
 
 				for (String pair : files) {
-					//System.out.println(pair);
+					// System.out.println(pair);
 
 					String[] pairs = pair.split("<//>");
 					String temp = pairs[1].split(",")[1];
@@ -115,19 +128,30 @@ public class SendEmail {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void enviarEmail2(String de, String para, String assunto, String mensagem, List<String> ficheiros,
 			String filepath) {
 
-		final String username = "alertas.it.doureca@gmail.com";
-		final String password = "DourecA2@";
+		String host = null, port = null;
+
+		try {
+			Properties p = new Properties();
+			p.load(new FileInputStream("c:\\sgiid\\conf_email.ini"));
+			host = p.getProperty("host");
+			port = p.getProperty("port");
+			username = p.getProperty("username");
+			password = p.getProperty("password");
+			// p.list(System.out);
+
+		} catch (Exception e) {
+		}
 
 		Properties props = new Properties();
 
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.port", "587");
+		props.put("mail.smtp.host", host);
+		props.put("mail.smtp.port", port);
 
 		// 587
 		// ssl off
@@ -178,6 +202,5 @@ public class SendEmail {
 			throw new RuntimeException(e);
 		}
 	}
-
 
 }

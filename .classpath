@@ -56,8 +56,6 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/groovy-all-2.4.5.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/itext-2.1.7.js6.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-collections-3.2.2.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-fonts-6.5.1.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-6.5.1.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-javaflow-6.5.1.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-digester-1.7.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jdbc.jar"/>

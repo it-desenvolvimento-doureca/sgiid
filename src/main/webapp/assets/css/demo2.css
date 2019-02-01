@@ -63,6 +63,27 @@ body .ui-widget, body .ui-widget .ui-widget, body .ui-widget input, body .ui-wid
     display: none !important;
 }
 
+.tabelasSincronismo .ui-button .ui-button-text {
+    display: none !important;
+}
+
+.tabelasSincronismo .ui-dropdown .ui-dropdown-label {
+    padding-top: 5px;
+}
+
+.tabelasSincronismo input {
+    margin: 0;
+    height: 31px;
+}
+
+.tabelasSincronismo .ui-cell-data {
+    height: 20px;
+}
+
+.tabelasSincronismo .colunaDATA {
+    padding-top: 0 !important;
+}
+
 body .ui-widget-content {
     background-color: #ffffff;
     /*border: 1px solid #c7c7c7;*/

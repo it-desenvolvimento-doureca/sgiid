@@ -27,6 +27,8 @@ public class GER_UTILIZADORES {
 	private String USER_JASPER;
 	private String PASS_JASPER;
 	private String USER_WINDOWS;
+	private String TELEFONE;
+	private String AREA;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -154,6 +156,24 @@ public class GER_UTILIZADORES {
 
 	public void setPASS_JASPER(String pASS_JASPER) {
 		PASS_JASPER = pASS_JASPER;
+	}
+
+	@Column(name = "TELEFONE")
+	public String getTELEFONE() {
+		return TELEFONE;
+	}
+
+	@Column(name = "AREA")
+	public String getAREA() {
+		return AREA;
+	}
+
+	public void setTELEFONE(String tELEFONE) {
+		TELEFONE = tELEFONE;
+	}
+
+	public void setAREA(String aREA) {
+		AREA = aREA;
 	}
 
 }

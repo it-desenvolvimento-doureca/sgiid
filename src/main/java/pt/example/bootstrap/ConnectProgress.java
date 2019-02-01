@@ -243,6 +243,90 @@ public class ConnectProgress {
 		}
 
 	}
+	
+	public void EXEC_SINCRO_AO_APAGAR(String etqnum, Float qtd, String url) throws SQLException {
+
+		try {
+
+			Connection connection = getConnection(url);
+
+			/* String sql = "EXEC SP_Merge_" + tabela + " ?,?"; */
+
+			String sql = "UPDATE SETQDE set ETQEMBQTE = ETQEMBQTE + " + qtd + "where etqnum = '" + etqnum + "'";
+			PreparedStatement ps = connection.prepareStatement(sql);
+			/*
+			 * ps.setBoolean(1, true); ps.setBoolean(2, false);
+			 */
+
+			boolean results = ps.execute();
+			int rsCount = 0;
+			// Loop through the available result sets.
+			while (results) {
+
+				ResultSet rs = ps.getResultSet();
+
+				while (rs.next()) {
+					// System.out.println(rs.getString("message"));
+				}
+				rs.close();
+
+				// Check for next result set
+				results = ps.getMoreResults();
+			}
+			ps.close();
+
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			globalconnection.close();
+			// System.exit(2);
+		} finally {
+
+		}
+
+	}
+
+	public void EXEC_SINCRO2(String etqnum, Float qtd, String url) throws SQLException {
+
+		try {
+
+			Connection connection = getConnection(url);
+
+			/* String sql = "EXEC SP_Merge_" + tabela + " ?,?"; */
+
+			String sql = "UPDATE SETQDE set ETQEMBQTE = ETQEMBQTE + " + qtd + "where etqnum = '" + etqnum + "'";
+			PreparedStatement ps = connection.prepareStatement(sql);
+			/*
+			 * ps.setBoolean(1, true); ps.setBoolean(2, false);
+			 */
+
+			boolean results = ps.execute();
+			int rsCount = 0;
+			// Loop through the available result sets.
+			while (results) {
+
+				ResultSet rs = ps.getResultSet();
+
+				while (rs.next()) {
+					// System.out.println(rs.getString("message"));
+				}
+				rs.close();
+
+				// Check for next result set
+				results = ps.getMoreResults();
+			}
+			ps.close();
+
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			globalconnection.close();
+			// System.exit(2);
+		} finally {
+
+		}
+
+	}
 
 	public List<HashMap<String, String>> getOrigineComposant2(String url, String PROREF, String OF)
 			throws SQLException {
@@ -342,7 +426,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getComponentesTodos(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA ";
+		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where protypcod in ('PF','COM','PSO','PCF')";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -372,7 +456,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getEtiquetas(String url, String PROREF) throws SQLException {
 
-		String query = "SELECT a.etqnum, a.liecod,a.etqembqte,a.unicod,a.etqsitsto,a.etqetat,a.etqorilot1,a.datcre ,a.PROREF,b.PRODES1 "
+		String query = "SELECT a.etqnum, a.liecod,a.etqembqte,a.unicod,a.etqsitsto,a.etqetat,a.etqorilot1,a.datcre ,a.PROREF,b.PRODES1,a.EMPCOD "
 				+ "FROM setqde a inner join SDTPRA b on a.PROREF = b.PROREF WHERE a.etqetat=1 AND  a.ETQSITSTO = 2 AND a.PROREF = '"
 				+ PROREF + "'";
 
@@ -394,6 +478,7 @@ public class ConnectProgress {
 				x.put("datcre", rs.getString("datcre"));
 				x.put("PROREF", rs.getString("PROREF"));
 				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("EMPCOD", rs.getString("EMPCOD"));
 				list.add(x);
 			}
 			stmt.close();
@@ -654,8 +739,9 @@ public class ConnectProgress {
 				+ "inner join SVCPBA b on a.CDENUMENR = b.CDENUMENR "
 				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM "
 				+ "inner join SVCPDL d on b.CDLNUMENR = d.CDLNUMENR " + "where b.PROREF = '" + PROREF
-				+ "'  and  (d.CDDQTC-d.CDDQTL) > 0 and d.CDDLIVCOD in (3,4,5) and d.CDDETAT = 0 and d.CDDDATBES > '"
-				+ data + "' and d.CDDDATBES <= '" + datafim + "' order by d.CDDDATBES";
+				+ "'  and  (d.CDDQTC-d.CDDQTL) > 0 and d.CDDLIVCOD in (3,4,5) and d.CDDETAT = 0 "
+				// + "and d.CDDDATBES > '"+ data + "' "
+				+ "and d.CDDDATBES <= '" + datafim + "' order by d.CDDDATBES";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -733,19 +819,19 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getEnviosGarantidos(String url, String PROREF, String data, String datafim,String CLICODLIV,String ETSNUM)
-			throws SQLException {
+	public List<HashMap<String, String>> getEnviosGarantidos(String url, String PROREF, String data, String datafim,
+			String CLICODLIV, String ETSNUM) throws SQLException {
 
 		String query = "Select b.PROREF,a.BLNUM,b.LIPQTL,a.LIVDATDEP,a.LIVDATREC,c.ADRNOM,c.ADRLIB1,c.ADRLIB2,c.ETSNUM,c.CLICOD from SVLEBA a "
 				+ "inner join SVLPBA b on a.LIVNUMENR = b.LIVNUMENR "
-				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM " 
-				+ "where ((not ('"+PROREF+"' != '0' )) or (b.PROREF = '" + PROREF + "')) "
+				+ "inner join SDTCLE c on a.CLICODLIV = c.CLICOD and a.ETSNUMLIV = c.ETSNUM " + "where ((not ('"
+				+ PROREF + "' != '0' )) or (b.PROREF = '" + PROREF + "')) "
 				+ "and a.BLNUM like 'GR%' and LIVDATDEP >= '" + data + "' and LIVDATDEP <= '" + datafim + "' "
-				+ "and ((not ('"+CLICODLIV+"' != 'null' )) or (CLICODLIV = " + CLICODLIV + ")) and ((not ('"+ETSNUM+"' != 'null' )) or (ETSNUM = '" + ETSNUM + "')) "
-				+ "order by LIVDATDEP DESC";
-		
+				+ "and ((not ('" + CLICODLIV + "' != 'null' )) or (CLICODLIV = " + CLICODLIV + ")) and ((not ('"
+				+ ETSNUM + "' != 'null' )) or (ETSNUM = '" + ETSNUM + "')) " + "order by LIVDATDEP DESC";
+
 		System.out.println(query);
-		
+
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
 		// Usa sempre assim que fecha os resources automaticamente
@@ -1048,7 +1134,7 @@ public class ConnectProgress {
 				+ "inner join SDTCLP b on a.PROREF = b.PROREF "
 				+ "inner join SDTCLE c on b.CLICOD = c.CLICOD and b.ETSNUM = c.ETSNUM "
 				+ "left join SDTPRA d on a.PROREF = d.PROREF " + "where c.CLICOD = '" + CLICOD + "' and c.ETSNUM = '"
-				+ ETSNUM + "'";
+				+ ETSNUM + "' and d.protypcod in ('PF','COM','PSO','PCF')";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 

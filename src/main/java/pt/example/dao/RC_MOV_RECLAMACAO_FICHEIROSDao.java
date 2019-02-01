@@ -14,7 +14,7 @@ public class RC_MOV_RECLAMACAO_FICHEIROSDao extends GenericDaoJpaImpl<RC_MOV_REC
 
 	public List<RC_MOV_RECLAMACAO_FICHEIROS> getbyid(Integer id) {
 
-		Query query = entityManager.createQuery("select a,b from RC_MOV_RECLAMACAO_FICHEIROS a, GER_UTILIZADORES b "
+		Query query = entityManager.createQuery("select a,b,(select c.UTZ_ID from GT_MOV_TAREFAS c where c.ID_TAREFA = a.ID_TAREFA) from RC_MOV_RECLAMACAO_FICHEIROS a, GER_UTILIZADORES b "
 				+ "where a.UTZ_CRIA = b.ID_UTILIZADOR and a.ID_RECLAMACAO = :id order by a.DATA_CRIA");
 		query.setParameter("id", id);
 		List<RC_MOV_RECLAMACAO_FICHEIROS> data = query.getResultList();
