@@ -27,6 +27,7 @@ public class RC_MOV_RECLAMACAO_FICHEIROS {
 	private Boolean CHECKED;
 	private String DATATYPE;
 	private Integer ID_TAREFA;
+	private String FICHEIRO;
 
 	@Id
 	@Column(name = "ID")
@@ -163,6 +164,15 @@ public class RC_MOV_RECLAMACAO_FICHEIROS {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "FICHEIRO")
+	public String getFICHEIRO() {
+		return FICHEIRO;
+	}
+
+	public void setFICHEIRO(String fICHEIRO) {
+		FICHEIRO = fICHEIRO;
 	}
 
 }

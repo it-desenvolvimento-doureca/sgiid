@@ -137,6 +137,8 @@ import pt.example.dao.RC_DIC_GRAU_IMPORTANCIADao;
 import pt.example.dao.RC_DIC_REJEICAODao;
 import pt.example.dao.RC_DIC_TEMPO_RESPOSTADao;
 import pt.example.dao.RC_DIC_TIPO_DEFEITODao;
+import pt.example.dao.RC_DIC_TIPO_NAO_DETECAODao;
+import pt.example.dao.RC_DIC_TIPO_OCORRENCIADao;
 import pt.example.dao.RC_DIC_TIPO_RECLAMACAODao;
 import pt.example.dao.RC_MOV_RECLAMACAODao;
 import pt.example.dao.RC_MOV_RECLAMACAO_ARTIGO_SIMILARESDao;
@@ -146,8 +148,6 @@ import pt.example.dao.RC_MOV_RECLAMACAO_EQUIPADao;
 import pt.example.dao.RC_MOV_RECLAMACAO_FICHEIROSDao;
 import pt.example.dao.RC_MOV_RECLAMACAO_PLANOS_ACCOESDao;
 import pt.example.dao.RC_MOV_RECLAMACAO_STOCKDao;
-import pt.example.dao.RC_DIC_TIPO_NAO_DETECAODao;
-import pt.example.dao.RC_DIC_TIPO_OCORRENCIADao;
 import pt.example.entity.AB_DIC_BANHO;
 import pt.example.entity.AB_DIC_BANHO_ADITIVO;
 import pt.example.entity.AB_DIC_BANHO_COMPONENTE;
@@ -199,6 +199,8 @@ import pt.example.entity.RC_DIC_GRAU_IMPORTANCIA;
 import pt.example.entity.RC_DIC_REJEICAO;
 import pt.example.entity.RC_DIC_TEMPO_RESPOSTA;
 import pt.example.entity.RC_DIC_TIPO_DEFEITO;
+import pt.example.entity.RC_DIC_TIPO_NAO_DETECAO;
+import pt.example.entity.RC_DIC_TIPO_OCORRENCIA;
 import pt.example.entity.RC_DIC_TIPO_RECLAMACAO;
 import pt.example.entity.RC_MOV_RECLAMACAO;
 import pt.example.entity.RC_MOV_RECLAMACAO_ARTIGO_SIMILARES;
@@ -208,8 +210,6 @@ import pt.example.entity.RC_MOV_RECLAMACAO_EQUIPA;
 import pt.example.entity.RC_MOV_RECLAMACAO_FICHEIROS;
 import pt.example.entity.RC_MOV_RECLAMACAO_PLANOS_ACCOES;
 import pt.example.entity.RC_MOV_RECLAMACAO_STOCK;
-import pt.example.entity.RC_DIC_TIPO_NAO_DETECAO;
-import pt.example.entity.RC_DIC_TIPO_OCORRENCIA;
 
 @Stateless
 @Path("/sirb")
@@ -4290,6 +4290,86 @@ public class SIRB {
 		return response.build();
 	}
 
+	@POST
+	@Consumes("*/*")
+	@Path("/downloadFileMSGBASE64/{filename}")
+	public Response downloadFileMSGBASE64(@PathParam("filename") String Name, final String bas64file2)
+			throws IOException {
+		File temp = File.createTempFile("tempfile", ".txt");
+
+		String[] parts = bas64file2.split(",");
+		String bas64file = parts[1];
+
+		File file2 = new File("C:/sgiid/temp_files/" + Name);
+		FileOutputStream out = new FileOutputStream(file2);
+		Base64.Decoder decoder = Base64.getMimeDecoder();
+		byte[] decodedBytes = decoder.decode(bas64file);
+		out.write(decodedBytes);
+		out.close();
+
+		String filepath = "C:/sgiid/temp_files/" + Name;
+
+		String texto = "<div class=\"MsoNormal\"> ";
+		try {
+
+			String fileName = Name;
+
+			MsgParser msgp = new MsgParser();
+			Message msg = msgp.parseMsg(filepath);
+			String from_email = msg.getFromEmail();
+			String from_name = msg.getFromName();
+			String subject = msg.getSubject();
+			String body = msg.getConvertedBodyHTML();
+			String to_list = msg.getDisplayTo();
+			String cc_list = msg.getDisplayCc();
+			String bcc_list = msg.getDisplayBcc();
+			List list = msg.getAttachments();
+			texto += "<b>Anexos</b> - " + list.size() + "<br>";
+			Iterator it_list = list.iterator();
+			Attachment attachemetn = null;
+			while (it_list.hasNext()) {
+				attachemetn = (Attachment) it_list.next();
+				texto += "<i>" + attachemetn + "</i><br>";
+			}
+
+			List<Attachment> atts = msg.getAttachments();
+			for (Attachment att : atts) {
+				if (att instanceof FileAttachment) {
+					FileAttachment file = (FileAttachment) att;
+
+					// you get the actual attachment with
+
+					String encodedString = new String(Base64.getEncoder().encodeToString((file.getData())));
+
+					body = body.replaceAll("\\\"cid:" + file.getFilename() + ".*?\\\"",
+							"\"data:image/" + getFileExtension(file) + ";base64," + encodedString + "\"");
+				}
+			}
+
+			texto += "------------------------------ <br>";
+			texto += "<b>De</b>:  " + from_name + " <" + from_email + "><br>";
+			texto += "<b>Para</b>: " + to_list + "<br>";
+			texto += "<b>Cc</b>: " + cc_list + "<br>";
+			texto += "<b>Bcc</b>: " + bcc_list + "<br>";
+			texto += "<b>Assunto</b>: " + subject + "<br><br><b>Mensagem</b>:<br></div>";
+			texto += body + "<br>";
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		BufferedWriter bw = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
+		bw.write(texto);
+		bw.close();
+
+		file2.delete();
+
+		ResponseBuilder response = Response.ok((Object) temp);
+		response.header("Content-Disposition", "attachment; filename=msg.html");
+		return response.build();
+	}
+
 	private static String getFileExtension(FileAttachment file) {
 		String fileName = file.getFilename();
 		if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
@@ -5809,14 +5889,14 @@ public class SIRB {
 						+ "and  (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
 						+ " and DATA_EXECUCAO is not null and INATIVO != 1) = 0 "
 						+ "and (select ESTADO from AB_MOV_MANUTENCAO where ID_MANUTENCAO = " + id
-						+ "  and INATIVO != 1 ) ='Em Preparação' and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
-						+ "  and INATIVO != 1 ) > 0 "
+						+ "  and INATIVO != 1 ) ='Em Preparação' and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = "
+						+ id + "  and INATIVO != 1 ) > 0 "
 						+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO = " + id + " and "
 						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
 						+ "  and INATIVO != 1 ) = "
 						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
-						+ " and DATA_EXECUCAO is not null and INATIVO != 1) and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
-						+ "  and INATIVO != 1 ) > 0");
+						+ " and DATA_EXECUCAO is not null and INATIVO != 1) and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = "
+						+ id + "  and INATIVO != 1 ) > 0");
 
 		int dados = query.executeUpdate();
 
