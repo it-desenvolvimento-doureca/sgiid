@@ -122,7 +122,7 @@ public class Printer {
 			job.print();
 		} else {
 			//System.out.println("Não encontrou a impressora");
-			 return Response.status(404).entity("Impressora não foi existe ou não está disponível").build();
+			 return Response.status(404).entity("Impressora não existe ou não está disponível").build();
 		}
 		document.close();
 		 return Response.ok().entity("Impresso").build();

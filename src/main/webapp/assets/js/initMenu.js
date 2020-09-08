@@ -117,7 +117,8 @@ $(window).resize(function () {
 mda = {
     initSidebarCheck: function () {
         if ($(window).width() <= 2991) {
-            if ($sidebar && $sidebar.length != 0) {
+
+            if ((typeof $sidebar !== 'undefined') && $sidebar && $sidebar.length != 0) {
                 mda.initRightMenu();
             } else {
                 mda.initBootstrapNavbarMenu();

@@ -50,7 +50,8 @@ public class AB_MOV_ANALISE_LINHADao extends GenericDaoJpaImpl<AB_MOV_ANALISE_LI
 				+ ", (select c.LIMITE_AMARELO_INF from AB_DIC_BANHO_COMPONENTE c where c.ID_BANHO = b.ID_BANHO and c.ID_COMPONENTE=a.ID_COMPONENTE and (c.DATA_FIM >= b.DATA_ANALISE or c.DATA_FIM is null)  and c.DATA_INICIO <= b.DATA_ANALISE) as LIMITE_AMARELO_INF, "
 				+ "(select c.LIMITE_AMARELO_SUP from AB_DIC_BANHO_COMPONENTE c where c.ID_BANHO = b.ID_BANHO and c.ID_COMPONENTE=a.ID_COMPONENTE and (c.DATA_FIM >= b.DATA_ANALISE or c.DATA_FIM is null)  and c.DATA_INICIO <= b.DATA_ANALISE) as LIMITE_AMARELO_SUP, "
 				+ "(select c.LIMITE_VERDE_INF from AB_DIC_BANHO_COMPONENTE c where c.ID_BANHO = b.ID_BANHO and c.ID_COMPONENTE=a.ID_COMPONENTE and (c.DATA_FIM >= b.DATA_ANALISE or c.DATA_FIM is null)  and c.DATA_INICIO <= b.DATA_ANALISE) as LIMITE_VERDE_INF, "
-				+ " (select c.LIMITE_VERDE_SUP from AB_DIC_BANHO_COMPONENTE c where c.ID_BANHO = b.ID_BANHO and c.ID_COMPONENTE=a.ID_COMPONENTE and (c.DATA_FIM >= b.DATA_ANALISE or c.DATA_FIM is null)  and c.DATA_INICIO <= b.DATA_ANALISE) as LIMITE_VERDE_SUP "
+				+ " (select c.LIMITE_VERDE_SUP from AB_DIC_BANHO_COMPONENTE c where c.ID_BANHO = b.ID_BANHO and c.ID_COMPONENTE=a.ID_COMPONENTE and (c.DATA_FIM >= b.DATA_ANALISE or c.DATA_FIM is null)  and c.DATA_INICIO <= b.DATA_ANALISE) as LIMITE_VERDE_SUP, "
+				+ "(select c.ID_BANHO_COMP from AB_DIC_BANHO_COMPONENTE c where c.ID_BANHO = b.ID_BANHO and c.ID_COMPONENTE=a.ID_COMPONENTE and (c.DATA_FIM >= b.DATA_ANALISE or c.DATA_FIM is null)  and c.DATA_INICIO <= b.DATA_ANALISE) as ATIVO_ID "
 				+ " from AB_MOV_ANALISE_LINHA a, AB_MOV_ANALISE b where a.ID_ANALISE = :id and a.ID_COMPONENTE in (:data2) and a.ID_ANALISE = b.ID_ANALISE");
 		query.setParameter("id", id);
 		query.setParameter("data2", data2);

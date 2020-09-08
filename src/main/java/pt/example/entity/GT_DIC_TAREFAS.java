@@ -20,6 +20,7 @@ public class GT_DIC_TAREFAS {
 	private Integer UTZ_CRIA;
 	private Timestamp DATA_ULT_MODIF;
 	private Integer UTZ_ULT_MODIF;
+	private String TIPO_TAREFA;
 
 	@Id
 	@Column(name = "ID")
@@ -93,5 +94,14 @@ public class GT_DIC_TAREFAS {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "TIPO_TAREFA")
+	public String getTIPO_TAREFA() {
+		return TIPO_TAREFA;
+	}
+
+	public void setTIPO_TAREFA(String tIPO_TAREFA) {
+		TIPO_TAREFA = tIPO_TAREFA;
 	}
 }

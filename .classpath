@@ -33,7 +33,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/it2/Downloads/openedge.jar"/>
 	<classpathentry kind="lib" path="C:/Users/it2/wildfly-10.0.0.Final/modules/system/layers/base/javax/persistence/api/main/hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Jaspersoft/iReport-5.6.0/ireport/modules/ext/commons-digester-2.1.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Jaspersoft/iReport-5.6.0/ireport/modules/ext/iText-2.1.7.js2.jar"/>
@@ -47,9 +46,8 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-container-servlet-core.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-core-1.9.1.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-guava-2.13.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-media-multipart-2.13.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-server.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/pdfbox-app-2.0.8.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/pdfbox-app-2.0.8.jar" sourcepath="C:/Users/it2/.m2/repository/org/apache/pdfbox/pdfbox-app/2.0.8/pdfbox-app-2.0.8-sources.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/sqljdbc42.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar"/>
@@ -63,5 +61,10 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/msgparser-1.1.15.jar" sourcepath="C:/Users/it2/.m2/repository/com/auxilii/msgparser/msgparser/1.1.15/msgparser-1.1.15-sources.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-3.9.jar" sourcepath="C:/Users/it2/.m2/repository/org/apache/poi/poi/3.9/poi-3.9-sources.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-scratchpad-3.9.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/ucanaccess-4.0.4.jar" sourcepath="C:/Users/it2/.m2/repository/net/sf/ucanaccess/ucanaccess/4.0.4/ucanaccess-4.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jackcess-3.0.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/hsqldb-2.4.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-media-multipart-2.17.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

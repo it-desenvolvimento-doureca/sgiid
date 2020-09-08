@@ -577,3 +577,106 @@ body .ui-selectbutton .ui-button:last-child {
 .tabelalistatarefas .ui-datatable-even {
     background-color: #f9f9f9 !important;
 }
+
+.tabelaassiduidade .ui-state-default {
+    border: 1px solid gainsboro;
+}
+
+.referenciacol_hover:hover {
+    background-color: #c5c8cf !important;
+}
+
+p-chart>div {
+    height: 100%;
+}
+
+.drop_gestao_barras .ui-state-disabled .ui-dropdown-trigger {
+    display: none;
+}
+
+.drop_gestao_barras .ui-state-disabled .ui-dropdown-label {
+    padding: 3px 0px 0px 0px;
+}
+
+.drop_gestao_barras {
+    text-align: center;
+}
+
+.drop_gestao_barras .ui-dropdown-trigger {
+    background-color: transparent !important;
+}
+
+.drop_gestao_barras .ui-dropdown-trigger span {
+    color: black !important;
+}
+
+.tabela_gestao_barras .ui-inputtext:not(.ui-column-filter) {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: #555;
+    display: initial;
+    vertical-align: middle;
+}
+
+.tabela_gestao_barras .ui-datatable-even {
+    background-color: #FFE699 !important;
+}
+
+.tabela_gestao_barras .ui-datatable-odd {
+    background-color: #BDD7EE !important;
+}
+
+.tabela_gestao_barras th {
+    background-color: #305496 !important;
+    color: #ffffff !important;
+    text-align: center;
+    /* vertical-align: middle; */
+    display: table-cell;
+    font-weight: normal;
+    padding: 3px 3px !important;
+    border-style: solid;
+    border-width: 1px;
+    overflow: hidden;
+    word-break: normal;
+    /* border-color: black; */
+    vertical-align: middle !important;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.tabela_gestao_barras input:not(.ui-column-filter) {
+    background: transparent !important;
+    /* border: none !important; */
+}
+
+.tabela_gestao_barras td {
+    vertical-align: middle !important;
+    border-right: 1px solid white;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.tabela_gestao_barras td tr input {
+    margin-bottom: 2px;
+    border-bottom: 1px solid white;
+    border-bottom: 1px solid white;
+}
+
+.tabela_gestao_barras td tr input {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+.tabela_gestao_barras td tr {
+    display: block;
+    border-top: 1px solid white;
+    width: 100%;
+    height: 28px;
+}
+
+#id_tabela_gestao_barras input[disabled] {
+    border: none !important;
+    box-shadow: none;
+    padding: 3px;
+}

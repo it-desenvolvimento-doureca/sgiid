@@ -213,6 +213,224 @@ $(document).ready(function () {
     });
 
 
+    $('.main-panel').scroll(function () {
+        if ($(".cab_analiseencomendas_1").is(":visible")) {
+            w = $(".referenciacol").width();
+        } else {
+            w = '100%'
+        }
+        if ($(".cab_analiseencomendas_2").is(":visible")) {
+            w2 = $(".cab_analiseencomendas_2 > div").width();
+        } else {
+            w2 = '100%'
+        }
+
+        if ($(".cab_analiseencomendas_3").is(":visible")) {
+            w3 = $(".referenciacol").width();
+        } else {
+            w3 = '100%'
+        }
+
+        if ($(".cab_tabela_analise_dividas").is(":visible")) {
+            w4 = $(".cab_tabela_analise_dividas > div").width();
+        } else {
+            w4 = '100%'
+        }
+
+        if ($(".cab_tabela_gestao_barras").is(":visible")) {
+            w5 = $(".cab_tabela_gestao_barras > div").width();
+        } else {
+            w5 = '100%'
+        }
+
+
+
+        if ($(this).scrollTop() > 300) {
+
+            $('.scrollleft').css("top", $(this).scrollTop() + 50);
+            $('.scrollleft').css("position", 'fixed');
+
+            $('.scrollright').css("top", $(this).scrollTop() + 50);
+            $('.scrollright').css("position", 'fixed');
+            $('.scrollright').css("right", 86);
+            $('.scrollright').css("left", 'auto');
+
+
+            if ($("#cab_analiseencomendas_copy").length == 0) {
+                var div = $('.cab_analiseencomendas_2 thead > tr');
+                var klon = div.clone().prop('id', 'cab_analiseencomendas_copy')
+                    .css("position", "initial")
+                    .css("width", "100%")
+                    .css("display", "table-row");
+                div.before(klon);
+            }
+
+            if ($("#cab_tabela_analise_dividas_copy").length == 0) {
+                var div = $('.cab_tabela_analise_dividas thead > tr');
+                var klon = div.clone().prop('id', 'cab_tabela_analise_dividas_copy')
+                    .css("position", "initial")
+                    .css("width", "100%")
+                    .css("display", "table-row");
+                div.before(klon);
+            }
+
+            if ($("#cab_tabela_gestao_barras_copy").length == 0) {
+                var div = $('.cab_tabela_gestao_barras thead > tr');
+                var klon = div.clone().prop('id', 'cab_tabela_gestao_barras_copy')
+                    .css("position", "initial")
+                    .css("width", "100%")
+                    .css("display", "table-row");
+                div.before(klon);
+            }
+
+            /*$("#cabsize1").css("display", "block")
+                .css("min-height", ($(".filtros_analiseencomendas_1").height() + $(".cab_analiseencomendas_1").height()) + "px");
+            $("#cabsize2").css("display", "block")
+                .css("min-height", ($(".filtros_analiseencomendas_2").height() + $(".cab_analiseencomendas_2").height()) + "px");*/
+
+            $(".filtros_analiseencomendas_1").width(w);
+            $(".filtros_analiseencomendas_1").css("position", "fixed");
+            $(".filtros_analiseencomendas_1").css("z-index", "1");
+            $(".filtros_analiseencomendas_1").css("top", $(this).scrollTop() + 50);
+            $(".filtros_analiseencomendas_1").css("transition", "top 0.6s ease 0s");
+            $(".filtros_analiseencomendas_1").css("background", "#f5f5f5");
+
+            $(".filtros_analiseencomendas_2").width(w2);
+            $(".filtros_analiseencomendas_2").css("position", "fixed");
+            $(".filtros_analiseencomendas_2").css("z-index", "1");
+            $(".filtros_analiseencomendas_2").css("top", $(this).scrollTop() + 50);
+            $(".filtros_analiseencomendas_2").css("transition", "top 0.6s ease 0s");
+            $(".filtros_analiseencomendas_2").css("background", "#f5f5f5");
+
+
+            $(".cab_analiseencomendas_1").width(w);
+            $(".cab_analiseencomendas_1").css("position", "fixed");
+            $(".cab_analiseencomendas_1").css("z-index", "1");
+            $(".cab_analiseencomendas_1").css("top", $(this).scrollTop() + 182);
+            $(".cab_analiseencomendas_1").css("transition", "top 0.6s ease 0s");
+
+            var top3 = 0;
+            if ($("#analises_prev_scroll").length != 0) {
+                top3 = ($("#analises_prev_scroll").offset().top) * -1 + 50;
+            }
+
+            if (top3 < 0) top3 = 0;
+            $(".cab_analiseencomendas_3").width(w);
+            $(".cab_analiseencomendas_3").css("position", "relative");
+            $(".cab_analiseencomendas_3").css("z-index", "1");
+            $(".cab_analiseencomendas_3").css("top", top3);
+            $(".cab_analiseencomendas_3").css("transition", "top 0.6s ease 0s");
+
+
+            $(".cab_analiseencomendas_2 thead > tr").not("#cab_analiseencomendas_copy").width(w2)
+                .css("position", "fixed")
+                .css("z-index", "1")
+                .css("top", $(this).scrollTop() + 182)
+                .css("transition", "top 0.6s ease 0s")
+                .css("background", "white")
+                .css("display", "table");
+
+
+            $(".cab_tabela_analise_dividas thead > tr").not("#cab_tabela_analise_dividas_copy").width(w4)
+                .css("position", "fixed")
+                .css("z-index", "1")
+                .css("top", $(this).scrollTop() + 84)
+                .css("transition", "top 0.6s ease 0s")
+                .css("background", "white")
+                .css("display", "table");
+
+            $(".cab_tabela_analise_dividas .ui-datatable-header").width(w4)
+                .css("position", "fixed")
+                .css("z-index", "1")
+                .css("top", $(this).scrollTop() + 50)
+                .css("transition", "top 0.6s ease 0s")
+                .css("background", "white")
+                .css("display", "table");
+
+
+            $(".cab_tabela_gestao_barras thead > tr").not("#cab_tabela_gestao_barras_copy").width(w5)
+                .css("position", "fixed")
+                .css("z-index", "1")
+                .css("top", $(this).scrollTop() + 50)
+                .css("transition", "top 0.6s ease 0s")
+                .css("background", "white")
+                .css("display", "table");
+
+            $(".cab_tabela_gestao_barras .ui-datatable-header").width(w5)
+                .css("position", "fixed")
+                .css("z-index", "1")
+                .css("top", $(this).scrollTop() + 50)
+                .css("transition", "top 0.6s ease 0s")
+                .css("background", "white")
+                .css("display", "table");
+
+
+        } else {
+
+
+            $(".filtros_analiseencomendas_1").css("position", "initial");
+            $(".filtros_analiseencomendas_1").css("width", "100%");
+
+            $(".filtros_analiseencomendas_2").css("position", "initial");
+            $(".filtros_analiseencomendas_2").css("width", "100%");
+
+            $(".cab_analiseencomendas_1").css("position", "initial");
+            $(".cab_analiseencomendas_1").css("width", "100%");
+
+            $(".cab_analiseencomendas_3").css("position", "initial");
+            $(".cab_analiseencomendas_3").css("width", "100%");
+
+
+
+            if ($("#cab_analiseencomendas_copy").length != 0) {
+                $("#cab_analiseencomendas_copy").remove();
+            }
+
+            $(".cab_analiseencomendas_2 thead > tr").css("position", "initial");
+            $(".cab_analiseencomendas_2 thead > tr").css("width", "100%");
+            $(".cab_analiseencomendas_2 thead > tr").css("display", "table-row");
+
+
+            if ($("#cab_tabela_analise_dividas_copy").length != 0) {
+                $("#cab_tabela_analise_dividas_copy").remove();
+            }
+            $(".cab_tabela_analise_dividas thead > tr").css("position", "initial");
+            $(".cab_tabela_analise_dividas thead > tr").css("width", "100%");
+            $(".cab_tabela_analise_dividas thead > tr").css("display", "table-row");
+
+            $(".cab_tabela_analise_dividas .ui-datatable-header").css("position", "initial");
+            $(".cab_tabela_analise_dividas .ui-datatable-header").css("width", "100%");
+            $(".cab_tabela_analise_dividas .ui-datatable-header").css("display", "block");
+
+
+            if ($("#cab_tabela_gestao_barras_copy").length != 0) {
+                $("#cab_tabela_gestao_barras_copy").remove();
+            }
+            $(".cab_tabela_gestao_barras thead > tr").css("position", "initial");
+            $(".cab_tabela_gestao_barras thead > tr").css("width", "100%");
+            $(".cab_tabela_gestao_barras thead > tr").css("display", "table-row");
+
+            $(".cab_tabela_gestao_barras .ui-datatable-header").css("position", "initial");
+            $(".cab_tabela_gestao_barras .ui-datatable-header").css("width", "100%");
+            $(".cab_tabela_gestao_barras .ui-datatable-header").css("display", "block");
+
+
+            $("#cabsize1").css("display", "none");
+            $("#cabsize2").css("display", "none");
+
+
+            $('.scrollleft').css("position", 'absolute');
+            $('.scrollleft').css("top", 20);
+            $('.scrollright').css("position", 'absolute');
+            $('.scrollright').css("top", 20);
+            $('.scrollright').css("right", 'auto');
+            $('.scrollright').css("left", 59);
+
+
+        }
+    });
+
+
 
 });
 
@@ -388,13 +606,13 @@ demo = {
             message: messages
 
         }, {
-                type: type[cor],
-                timer: 100,
-                placement: {
-                    from: from,
-                    align: align
-                }
-            });
+            type: type[cor],
+            timer: 100,
+            placement: {
+                from: from,
+                align: align
+            }
+        });
     }
 
 
@@ -419,7 +637,19 @@ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
     }
 
     //create a bogus data channel
-    pc.createDataChannel("");
+    var uaString = window.navigator.userAgent;
+    var match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
+
+    if (match) // If Internet Explorer, return version number
+    {
+        $('#browseridmens').show()
+    }
+    else  // If another browser, return 0
+    {
+        $('#browseridmens').hide()
+        pc.createDataChannel("");
+    }
+
 
     // create offer and set local description
     pc.createOffer(function (sdp) {
@@ -442,4 +672,41 @@ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
 
 getUserIP(function (ip) {
     document.cookie = "IP_CLIENT=" + ip;
+});
+
+$(document).ready(function () {
+    var clicked = false, clickX;
+    $('[id^=analises_prev_scroll]').on({
+        'mousemove': function (e) {
+            clicked && updateScrollPos(e, $(this));
+        },
+        'mousedown': function (e) {
+            clicked = true;
+            clickX = e.pageX;
+        },
+        'mouseup': function () {
+            clicked = false;
+            //$('#analises_prev_scroll').css('cursor', 'auto');
+            $(this).css('cursor', 'auto');
+        }
+    });
+
+    var updateScrollPos = function (e, element) {
+        /* $('#analises_prev_scroll').css('cursor', 'pointer');
+         $('#analises_prev_scroll').scrollLeft($('#analises_prev_scroll').scrollLeft() + (clickX - e.pageX));*/
+        element.css('cursor', 'pointer');
+        element.scrollLeft($('#analises_prev_scroll').scrollLeft() + (clickX - e.pageX));
+    }
+
+    $('.scrollleft').click(function () {
+        //$("#analises_prev_scroll").animate({ scrollLeft: '-=20' }, 0);
+        document.getElementById('analises_prev_scroll').scrollLeft -= 20;
+        return false;
+    });
+
+    $('.scrollright').click(function () {
+        //$("#analises_prev_scroll").animate({ scrollLeft: '+=20' }, 0);
+        document.getElementById('analises_prev_scroll').scrollLeft += 20;
+        return false;
+    });
 });

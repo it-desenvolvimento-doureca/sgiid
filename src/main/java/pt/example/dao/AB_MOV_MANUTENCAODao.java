@@ -1,6 +1,7 @@
 package pt.example.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,18 +29,43 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 					+ ",(select top 1 x.COD_TINA from AB_DIC_TINA x where x.ID_TINA = (select top 1 y.ID_TINA from AB_MOV_MANUTENCAO_CAB y where y.ID_MANUTENCAO = a.ID_MANUTENCAO and y.INATIVO != 1)) as nome_tina";
 		}
 
+		/*
+		 * Query query = entityManager.createNativeQuery(
+		 * "Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+		 * + "WHEN a.ESTADO = 'Planeado' THEN '3' " +
+		 * "WHEN a.ESTADO = 'Preparado' THEN '5' " +
+		 * "WHEN a.ESTADO = 'Em Preparação' THEN '4' " +
+		 * "WHEN a.ESTADO = 'Em Planeamento' THEN '2' " +
+		 * "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery +
+		 * " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+		 * +
+		 * " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+		 * + "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
+		 * +
+		 * "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo "
+		 * +
+		 * "from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
+		 * +
+		 * "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
+		 * + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " +
+		 * varquery +
+		 * " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF = :classif  order by B,a.ID_MANUTENCAO desc"
+		 * );
+		 */
 		Query query = entityManager.createNativeQuery(
 				"Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
-						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+						+ " ,cast(cc.data as date)  as dt_prev," + " cast(cc.data as time) as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
 						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo "
-						+ "from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
-						+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
-						+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
+						+ "from AB_MOV_MANUTENCAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
+						+ " left join AB_DIC_TIPO_MANUTENCAO c on c.ID_TIPO_MANUTENCAO = a.ID_TIPO_MANUTENCAO "
+						+ " left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
+						+ "left join (select ID_MANUTENCAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from AB_MOV_MANUTENCAO_CAB x where   INATIVO != 1 GROUP BY ID_MANUTENCAO) cc on cc.ID_MANUTENCAO = a.ID_MANUTENCAO "
+						+ "where  a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
+						+ varquery
 						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF = :classif  order by B,a.ID_MANUTENCAO desc");
 
 		query.setParameter("linha", linha);
@@ -55,7 +81,7 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		// System.out.println(query2);
 		HashMap<String, String> firstMap = data2.get(0);
 
-		String query2 = firstMap.get("query");
+		ArrayList<String> query2 = new ArrayList<String>(Arrays.asList(firstMap.get("query").split(",")));
 		String classif = firstMap.get("classif");
 		String querybanho = "";
 		Integer varquery = 1;
@@ -65,25 +91,48 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 					+ firstMap.get("querybanho") + " and t.INATIVO != 1 )";
 		}
 
-		
 		if (query2 == null) {
 			varquery = 0;
 		}
+
+		/*
+		 * Query query = entityManager.createNativeQuery(
+		 * "Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+		 * + "WHEN a.ESTADO = 'Planeado' THEN '3' " +
+		 * "WHEN a.ESTADO = 'Preparado' THEN '5' " +
+		 * "WHEN a.ESTADO = 'Em Preparação' THEN '4' " +
+		 * "WHEN a.ESTADO = 'Em Planeamento' THEN '2' " +
+		 * "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF " +
+		 * " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO  and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
+		 * +
+		 * " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+		 * + "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla," +
+		 * "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo "
+		 * +
+		 * "from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
+		 * +
+		 * "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
+		 * + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " +
+		 * varquery +
+		 * " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in (" + classif
+		 * + ") " + querybanho + " order by B,a.ID_MANUTENCAO desc");
+		 */
 
 		Query query = entityManager.createNativeQuery(
 				"Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF "
-						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO  and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+						+ " ,cast(cc.data as date) as dt_prev," + " cast(cc.data as time) as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla,"
 						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo "
-						+ "from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
-						+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
-						+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
-						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in (" + classif + ") " + querybanho
-						+ " order by B,a.ID_MANUTENCAO desc");
+						+ "from AB_MOV_MANUTENCAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
+						+ "left join AB_DIC_TIPO_MANUTENCAO c on c.ID_TIPO_MANUTENCAO = a.ID_TIPO_MANUTENCAO "
+						+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
+						+ "left join (select ID_MANUTENCAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from AB_MOV_MANUTENCAO_CAB x where   INATIVO != 1 GROUP BY ID_MANUTENCAO) cc on cc.ID_MANUTENCAO = a.ID_MANUTENCAO "
+						+ "where a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
+						+ varquery + " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in (" + classif + ") "
+						+ querybanho + " order by B,a.ID_MANUTENCAO desc");
 
 		query.setParameter("linha", linha);
 		query.setParameter("query2", query2);
@@ -303,13 +352,15 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
-						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
-						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
+						+ " ,cast(cc.data as date) as dt_prev," + "cast(cc.data as time) as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
 						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo "
-						+ " from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d "
-						+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
-						+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
+						+ " from AB_MOV_MANUTENCAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
+						+ "left join AB_DIC_TIPO_MANUTENCAO c on c.ID_TIPO_MANUTENCAO = a.ID_TIPO_MANUTENCAO "
+						+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
+						+ "left join (select ID_MANUTENCAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from AB_MOV_MANUTENCAO_CAB x where   INATIVO != 1 GROUP BY ID_MANUTENCAO) cc on cc.ID_MANUTENCAO = a.ID_MANUTENCAO "
+						+ "where   a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
+						+ varquery
 						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF = :classif   order by a.ID_MANUTENCAO");
 
 		query.setParameter("linha", linha);

@@ -70,7 +70,11 @@ public class SendEmail {
 		try {
 
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(de));
+			if (de == null) {
+				message.setFrom(new InternetAddress("alertas.it.doureca@gmail.com"));
+			} else {
+				message.setFrom(new InternetAddress(de));
+			}
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(para));
 			message.setSubject(assunto);
 
@@ -82,16 +86,22 @@ public class SendEmail {
 
 			if (nome_ficheiro != null) {
 				MimeBodyPart attachPart = new MimeBodyPart();
-
 				String filename = "/" + nomepasta + "/relatorios/" + nome_ficheiro + ".pdf";
+				String nameREPORT = "Report.pdf";
+				if (nome_ficheiro.contains(".xlsx")) {
+					filename = "/" + nomepasta + "/relatorios/" + nome_ficheiro;
+					nameREPORT = "Report.xlsx";
+				}
+
 				DataSource source = new FileDataSource(filename);
 				attachPart.setDataHandler(new DataHandler(source));
-				attachPart.setFileName("Report.pdf");
+				attachPart.setFileName(nameREPORT);
 
 				multipart.addBodyPart(attachPart);
 			}
 
-			if (ficheiro != null) {
+			if (ficheiro != null && !ficheiro.isEmpty()) {
+				
 				MimeBodyPart attachPart2 = new MimeBodyPart();
 				Path p = Paths.get(ficheiro);
 				String file = p.getFileName().toString();
@@ -102,7 +112,8 @@ public class SendEmail {
 				multipart.addBodyPart(attachPart2);
 			}
 
-			if (files.length > 0) {
+			if (files != null && files.length > 0) {
+				
 
 				for (String pair : files) {
 					// System.out.println(pair);

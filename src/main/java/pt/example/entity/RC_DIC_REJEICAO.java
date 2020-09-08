@@ -19,6 +19,7 @@ public class RC_DIC_REJEICAO {
 	private Timestamp DATA_ULT_MODIF;
 	private Integer UTZ_ULT_MODIF;
 	private Boolean REVISAO_RECLAMACAO;
+	private Integer OBJETIVO;
 
 	@Id
 	@Column(name = "ID")
@@ -83,6 +84,15 @@ public class RC_DIC_REJEICAO {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "OBJETIVO")
+	public Integer getOBJETIVO() {
+		return OBJETIVO;
+	}
+
+	public void setOBJETIVO(Integer oBJETIVO) {
+		OBJETIVO = oBJETIVO;
 	}
 
 }

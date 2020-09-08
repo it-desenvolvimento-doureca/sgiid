@@ -39,6 +39,10 @@ public class AB_MOV_MANUTENCAO_ETIQ {
 	private Integer ETQORIQTE1;
 	private String SINAL;
 	private String OBSERVACAO;
+	private Integer LINHA;
+
+	private String UNIDADE_CONSUMO;
+	private Float FACTOR_CONVERSAO;
 
 	@Column(name = "DATA_CRIA")
 	public Timestamp getDATA_CRIA() {
@@ -265,6 +269,33 @@ public class AB_MOV_MANUTENCAO_ETIQ {
 
 	public void setOBSERVACAO(String oBSERVACAO) {
 		OBSERVACAO = oBSERVACAO;
+	}
+
+	@Column(name = "LINHA")
+	public Integer getLINHA() {
+		return LINHA;
+	}
+
+	public void setLINHA(Integer lINHA) {
+		LINHA = lINHA;
+	}
+
+	@Column(name = "UNIDADE_CONSUMO")
+	public String getUNIDADE_CONSUMO() {
+		return UNIDADE_CONSUMO;
+	}
+
+	@Column(name = "FACTOR_CONVERSAO")
+	public Float getFACTOR_CONVERSAO() {
+		return FACTOR_CONVERSAO;
+	}
+
+	public void setUNIDADE_CONSUMO(String uNIDADE_CONSUMO) {
+		UNIDADE_CONSUMO = uNIDADE_CONSUMO;
+	}
+
+	public void setFACTOR_CONVERSAO(Float fACTOR_CONVERSAO) {
+		FACTOR_CONVERSAO = fACTOR_CONVERSAO;
 	}
 
 }

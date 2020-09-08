@@ -21,17 +21,30 @@ public class RC_MOV_RECLAMACAODao extends GenericDaoJpaImpl<RC_MOV_RECLAMACAO, I
 
 	}
 
-	public List<RC_MOV_RECLAMACAO> getall() {
+	public List<RC_MOV_RECLAMACAO> getbyAccoesabertas(Integer id, String tipo) {
 
-		Query query = entityManager.createQuery("Select a from RC_MOV_RECLAMACAO a where a.INATIVO != 1 order by a.DATA_RECLAMACAO desc, a.ID_RECLAMACAO desc  ");
+		Query query = entityManager.createNativeQuery("select count(*) as total, '' as cps from  RC_MOV_RECLAMACAO_PLANOS_ACCOES  a "
+				+ "inner join GT_MOV_TAREFAS b on a.ID_TAREFA =   b.ID_TAREFA " + "where ID_RECLAMACAO  = " + id
+				+ " and a.TIPO = '" + tipo + "' and b.ESTADO in ('P','L','E')");
+
 		List<RC_MOV_RECLAMACAO> data = query.getResultList();
 		return data;
 
 	}
-	
+
+	public List<RC_MOV_RECLAMACAO> getall() {
+
+		Query query = entityManager.createQuery(
+				"Select a from RC_MOV_RECLAMACAO a where a.INATIVO != 1 order by a.DATA_RECLAMACAO desc, a.ID_RECLAMACAO desc  ");
+		List<RC_MOV_RECLAMACAO> data = query.getResultList();
+		return data;
+
+	}
+
 	public List<RC_MOV_RECLAMACAO> getbyidtotaltarefas(Integer id) {
 
-		Query query = entityManager.createNativeQuery("select count(*) from RC_MOV_RECLAMACAO_PLANOS_ACCOES where ID_RECLAMACAO = :id and ESTADO not in ('A','C','R') ");
+		Query query = entityManager.createNativeQuery(
+				"select count(*) from RC_MOV_RECLAMACAO_PLANOS_ACCOES where ID_RECLAMACAO = :id and ESTADO not in ('A','C','R','N') ");
 		query.setParameter("id", id);
 		List<RC_MOV_RECLAMACAO> data = query.getResultList();
 		return data;

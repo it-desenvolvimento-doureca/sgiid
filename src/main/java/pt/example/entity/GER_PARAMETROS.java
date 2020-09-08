@@ -1,5 +1,7 @@
 package pt.example.entity;
 
+import java.sql.Time;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +34,23 @@ public class GER_PARAMETROS {
 	private String PASTA_DESTINO_ERRO;
 
 	private Boolean ATUALIZACAO_SILVER_BI_ATIVO;
+	private Time TEMPO_PAUSA_TURNOS_CONTINUOS;
+
+	private String MODELO_REPORT_PRODUCAO;
+
+	private String SECTORES_ABSENTISMO;
+	private Float TAXA_ABSENTISMO;
+	
+	private Float TAXA_REJEICAO;
+
+	@Column(name = "TAXA_REJEICAO")
+	public Float getTAXA_REJEICAO() {
+		return TAXA_REJEICAO;
+	}
+
+	public void setTAXA_REJEICAO(Float tAXA_REJEICAO) {
+		TAXA_REJEICAO = tAXA_REJEICAO;
+	}
 
 	@Id
 	@Column(name = "ID")
@@ -205,6 +224,42 @@ public class GER_PARAMETROS {
 
 	public void setATUALIZACAO_SILVER_BI_ATIVO(Boolean aTUALIZACAO_SILVER_BI_ATIVO) {
 		ATUALIZACAO_SILVER_BI_ATIVO = aTUALIZACAO_SILVER_BI_ATIVO;
+	}
+
+	@Column(name = "TEMPO_PAUSA_TURNOS_CONTINUOS")
+	public Time getTEMPO_PAUSA_TURNOS_CONTINUOS() {
+		return TEMPO_PAUSA_TURNOS_CONTINUOS;
+	}
+
+	public void setTEMPO_PAUSA_TURNOS_CONTINUOS(Time tEMPO_PAUSA_TURNOS_CONTINUOS) {
+		TEMPO_PAUSA_TURNOS_CONTINUOS = tEMPO_PAUSA_TURNOS_CONTINUOS;
+	}
+
+	@Column(name = "MODELO_REPORT_PRODUCAO")
+	public String getMODELO_REPORT_PRODUCAO() {
+		return MODELO_REPORT_PRODUCAO;
+	}
+
+	public void setMODELO_REPORT_PRODUCAO(String mODELO_REPORT_PRODUCAO) {
+		MODELO_REPORT_PRODUCAO = mODELO_REPORT_PRODUCAO;
+	}
+
+	@Column(name = "SECTORES_ABSENTISMO")
+	public String getSECTORES_ABSENTISMO() {
+		return SECTORES_ABSENTISMO;
+	}
+
+	@Column(name = "TAXA_ABSENTISMO")
+	public Float getTAXA_ABSENTISMO() {
+		return TAXA_ABSENTISMO;
+	}
+
+	public void setSECTORES_ABSENTISMO(String sECTORES_ABSENTISMO) {
+		SECTORES_ABSENTISMO = sECTORES_ABSENTISMO;
+	}
+
+	public void setTAXA_ABSENTISMO(Float tAXA_ABSENTISMO) {
+		TAXA_ABSENTISMO = tAXA_ABSENTISMO;
 	}
 
 }

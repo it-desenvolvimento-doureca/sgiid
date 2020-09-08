@@ -23,6 +23,8 @@ public class GER_DEPARTAMENTO {
 	private Integer UTZ_ULT_MODIF;
 	private Timestamp DATA_APAGA;
 	private Integer UTZ_APAGA;
+	private String MODULO;
+	private Integer LOCAL;
 
 	@Id
 	@Column(name = "ID")
@@ -114,5 +116,23 @@ public class GER_DEPARTAMENTO {
 
 	public void setINATIVO(Boolean iNATIVO) {
 		INATIVO = iNATIVO;
+	}
+
+	@Column(name = "MODULO")
+	public String getMODULO() {
+		return MODULO;
+	}
+
+	@Column(name = "LOCAL")
+	public Integer getLOCAL() {
+		return LOCAL;
+	}
+
+	public void setMODULO(String mODULO) {
+		MODULO = mODULO;
+	}
+
+	public void setLOCAL(Integer lOCAL) {
+		LOCAL = lOCAL;
 	}
 }

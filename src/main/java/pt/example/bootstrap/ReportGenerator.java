@@ -1,6 +1,10 @@
 package pt.example.bootstrap;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,9 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.enterprise.inject.spi.Bean;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -21,13 +22,13 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JsonDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.export.Exporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import pt.example.entity.conf;
 
 // import com.mycompany.helper.* ;
 // import com.mycompany.dbi.*;
@@ -44,7 +45,7 @@ public class ReportGenerator {
 	}
 
 	@SuppressWarnings("deprecation")
-	public String relatorio(String format, String Name, Integer ID, String relatorio, String url2, String filepath)
+	public String relatorio(String format, String Name, Integer ID, String relatorio, String url2, String filepath,String subpasta,String CLIENTE,String DOCUMENTOS,String IDIOMA)
 			throws JRException, SQLException {
 		HashMap hm = null;
 		String fileName = null;
@@ -52,8 +53,8 @@ public class ReportGenerator {
 		// System.out.println("Start ....");
 		fileName = Name + "." + format;
 
-		String jrxmlFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jrxml";
-		String jasperFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jasper";
+		String jrxmlFileName = "c:/" + filepath + "/relatorios/jasperfiles/"+subpasta+  relatorio + ".jrxml";
+		String jasperFileName = "c:/" + filepath + "/relatorios/jasperfiles/"+subpasta + relatorio + ".jasper";
 		String exportFileName = "c:/" + filepath + "/relatorios/" + fileName;
 
 		List<Bean> beans = new ArrayList<Bean>();
@@ -76,7 +77,14 @@ public class ReportGenerator {
 
 		// Create parametros
 		hm = new HashMap();
-		hm.put("id", ID);
+		if(subpasta.equals("financeira/")){
+			hm.put("DOCUMENTOS", DOCUMENTOS);
+			hm.put("ID_CLIENTE", CLIENTE);
+			hm.put("IDIOMA", IDIOMA);
+		}else{
+			hm.put("id", ID);
+		}
+		
 
 		// Generate jasper print
 		JasperPrint jprint = (JasperPrint) JasperFillManager.fillReport(jasperFileName, hm, conn);
@@ -103,7 +111,85 @@ public class ReportGenerator {
 		return fileName;
 
 	}
-	
+
+	@SuppressWarnings("deprecation")
+	public String relatorio2(String format, String Name, String relatorio, String url2, String filepath, String date1,
+			String date2, String operario, String ativo, String sector, String dados,String subPASTA)
+			throws JRException, SQLException {
+		HashMap hm = null;
+		String fileName = null;
+
+		// System.out.println("Start ....");
+		fileName = Name + "." + format;
+
+		String jrxmlFileName = "c:/" + filepath + "/relatorios/jasperfiles"+subPASTA+"/" + relatorio + ".jrxml";
+		String jasperFileName = "c:/" + filepath + "/relatorios/jasperfiles"+subPASTA+"/" + relatorio + ".jasper";
+		String exportFileName = "c:/" + filepath + "/relatorios/" + fileName;
+
+		// List<Bean> beans = new ArrayList<Bean>();
+		// JRDataSource jrDataSource = new JRBeanCollectionDataSource(beans);
+
+		JasperCompileManager.compileReportToFile(jrxmlFileName, jasperFileName);
+
+		/*try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		// String url =
+		// "jdbc:jtds:sqlserver://192.168.40.101/"+pasta.database+";instance=DOURECA;User=sa;Password=DourecA2@;";
+		// String url =
+		// "jdbc:jtds:sqlserver://192.168.40.126/SGIID;instance=DEVDOURECA;User=sa;Password=DourecA2@;";
+		String url = url2;
+		
+		//File file = new File("C:\\Users\\it2\\Downloads\\teste.json");
+		InputStream iStream = null;
+		try {
+			iStream = new ByteArrayInputStream(dados.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		JsonDataSource jsonDataSource = null;
+		jsonDataSource = new JsonDataSource(iStream);
+
+		// Create parametros
+		hm = new HashMap();
+		hm.put("date", date1);
+		hm.put("date2", date2);
+		hm.put("operario", operario);
+		hm.put("ativo", ativo);
+		hm.put("sector", sector);
+		/* hm.put("sector_acesso", SECTOR_ACESSO); */
+		//hm.put("dados", dados);
+
+		// Generate jasper print
+		JasperPrint jprint = (JasperPrint) JasperFillManager.fillReport(jasperFileName, hm, jsonDataSource);
+
+		// Export pdf file
+		if (format.equals("pdf")) {
+			JasperExportManager.exportReportToPdfFile(jprint, exportFileName);
+		} else if (format.equals("xlsx")) {
+
+			JRXlsxExporter exporter = new JRXlsxExporter();
+			exporter.setParameter(JRXlsExporterParameter.JASPER_PRINT, jprint);
+			exporter.setParameter(JRXlsExporterParameter.OUTPUT_FILE_NAME, exportFileName);
+			exporter.exportReport();
+		} else if (format.equals("docx")) {
+
+			Exporter exporter = new JRDocxExporter();
+			exporter.setExporterInput(new SimpleExporterInput(jprint));
+			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(exportFileName));
+			exporter.exportReport();
+		}
+		// conn.close();
+		// System.out.println("Done exporting reports to pdf");
+		deleteoldfiles(filepath);
+		return fileName;
+
+	}
+
 	@SuppressWarnings("deprecation")
 	public String relatorio2(String format, String Name, Integer ID, String relatorio, String pasta, String filepath,
 			String url) throws JRException, SQLException {
@@ -115,7 +201,7 @@ public class ReportGenerator {
 
 		String jrxmlFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jrxml";
 		String jasperFileName = "c:/" + filepath + "/relatorios/jasperfiles/" + relatorio + ".jasper";
-		String exportFileName =  pasta + fileName;
+		String exportFileName = pasta + fileName;
 
 		List<Bean> beans = new ArrayList<Bean>();
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(beans);

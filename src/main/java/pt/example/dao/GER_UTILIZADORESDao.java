@@ -41,6 +41,13 @@ public class GER_UTILIZADORESDao extends GenericDaoJpaImpl<GER_UTILIZADORES, Int
 		List<GER_UTILIZADORES> data = query.getResultList();
 		return data;
 	}
+	
+	public List<GER_UTILIZADORES> getAllSECTOR() {
+		Query query = entityManager.createNativeQuery("Select a.NOME_UTILIZADOR,a.ID_UTILIZADOR,a.EMAIL,c.DES_SECTOR from GER_UTILIZADORES a "
+				+ "left join RH_FUNCIONARIOS b ON b.COD_FUNC_ORIGEM = a.COD_UTZ left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR where a.INATIVO != 1 ");
+		List<GER_UTILIZADORES> data = query.getResultList();
+		return data;
+	}
 
 	public List<GER_UTILIZADORES> getbyid(Integer id) {
 		Query query = entityManager
@@ -50,6 +57,20 @@ public class GER_UTILIZADORESDao extends GenericDaoJpaImpl<GER_UTILIZADORES, Int
 		return data;
 
 	}
+	
+	public List<GER_UTILIZADORES> getDadosUtilizador(Integer id) {
+		Query query = entityManager
+				.createNativeQuery("Select top 1 c.DES_SECTOR,d.ID_DEPARTAMENTO from GER_UTILIZADORES a "
+						+ "left join RH_FUNCIONARIOS b on a.COD_UTZ = b.COD_FUNC_ORIGEM "
+						+ "left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR "
+						+ "left join GER_DEPARTAMENTOS_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
+						+ "where a.ID_UTILIZADOR = :id and  a.INATIVO != 1");
+		query.setParameter("id", id);
+		List<GER_UTILIZADORES> data = query.getResultList();
+		return data;
+
+	}
+	
 
 	public List<GER_UTILIZADORES> verifica_login(Integer id, String login) {
 		Query query = entityManager.createQuery(

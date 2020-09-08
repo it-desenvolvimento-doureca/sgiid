@@ -36,6 +36,10 @@ public class AB_MOV_REG_PARAM_OPERACAO {
 	private Timestamp DATA_ANULACAO;
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
+	private String PARAM_INCORRETO_2;
+	private String VALOR_OTIMO_2;
+	private String PARAM_INCORRETO_3;
+	private String VALOR_OTIMO_3;
 
 	@Id
 	@Column(name = "ID_REG_PARAM_OPERA")
@@ -244,6 +248,42 @@ public class AB_MOV_REG_PARAM_OPERACAO {
 
 	public void setINATIVO(Boolean iNATIVO) {
 		INATIVO = iNATIVO;
+	}
+
+	@Column(name = "PARAM_INCORRETO_2")
+	public String getPARAM_INCORRETO_2() {
+		return PARAM_INCORRETO_2;
+	}
+
+	@Column(name = "VALOR_OTIMO_2")
+	public String getVALOR_OTIMO_2() {
+		return VALOR_OTIMO_2;
+	}
+
+	@Column(name = "PARAM_INCORRETO_3")
+	public String getPARAM_INCORRETO_3() {
+		return PARAM_INCORRETO_3;
+	}
+
+	@Column(name = "VALOR_OTIMO_3")
+	public String getVALOR_OTIMO_3() {
+		return VALOR_OTIMO_3;
+	}
+
+	public void setPARAM_INCORRETO_2(String pARAM_INCORRETO_2) {
+		PARAM_INCORRETO_2 = pARAM_INCORRETO_2;
+	}
+
+	public void setVALOR_OTIMO_2(String vALOR_OTIMO_2) {
+		VALOR_OTIMO_2 = vALOR_OTIMO_2;
+	}
+
+	public void setPARAM_INCORRETO_3(String pARAM_INCORRETO_3) {
+		PARAM_INCORRETO_3 = pARAM_INCORRETO_3;
+	}
+
+	public void setVALOR_OTIMO_3(String vALOR_OTIMO_3) {
+		VALOR_OTIMO_3 = vALOR_OTIMO_3;
 	}
 
 }

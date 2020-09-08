@@ -44,6 +44,12 @@ public class GT_MOV_TAREFAS {
 	private Integer UTZ_REJEITA;
 	private String MOTIVO_REJEICAO;
 
+	private Timestamp DATA_VALIDA;
+	private Integer UTZ_VALIDA;
+	private Timestamp DATA_CONTROLA;
+	private Integer UTZ_CONTROLA;
+	private String JUSTIFICACAO_ALTERACAO_ESTADO;
+	
 	@Id
 	@Column(name = "ID_TAREFA")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -314,6 +320,50 @@ public class GT_MOV_TAREFAS {
 
 	public void setINATIVO(Boolean iNATIVO) {
 		INATIVO = iNATIVO;
+	}
+
+	@Column(name = "DATA_VALIDA")
+	public Timestamp getDATA_VALIDA() {
+		return DATA_VALIDA;
+	}
+
+	@Column(name = "UTZ_VALIDA")
+	public Integer getUTZ_VALIDA() {
+		return UTZ_VALIDA;
+	}
+
+	@Column(name = "DATA_CONTROLA")
+	public Timestamp getDATA_CONTROLA() {
+		return DATA_CONTROLA;
+	}
+
+	@Column(name = "UTZ_CONTROLA")
+	public Integer getUTZ_CONTROLA() {
+		return UTZ_CONTROLA;
+	}
+
+	public void setDATA_VALIDA(Timestamp dATA_VALIDA) {
+		DATA_VALIDA = dATA_VALIDA;
+	}
+
+	public void setUTZ_VALIDA(Integer uTZ_VALIDA) {
+		UTZ_VALIDA = uTZ_VALIDA;
+	}
+
+	public void setDATA_CONTROLA(Timestamp dATA_CONTROLA) {
+		DATA_CONTROLA = dATA_CONTROLA;
+	}
+
+	public void setUTZ_CONTROLA(Integer uTZ_CONTROLA) {
+		UTZ_CONTROLA = uTZ_CONTROLA;
+	}
+
+	public String getJUSTIFICACAO_ALTERACAO_ESTADO() {
+		return JUSTIFICACAO_ALTERACAO_ESTADO;
+	}
+
+	public void setJUSTIFICACAO_ALTERACAO_ESTADO(String jUSTIFICACAO_ALTERACAO_ESTADO) {
+		JUSTIFICACAO_ALTERACAO_ESTADO = jUSTIFICACAO_ALTERACAO_ESTADO;
 	}
 
 }

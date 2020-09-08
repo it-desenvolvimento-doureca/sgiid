@@ -27,6 +27,11 @@ public class GER_EVENTOS_CONF {
 	private Integer UTZ_ULT_MODIF;
 	private Timestamp DATA_ULT_MODIF;
 
+	private String EMAIL_ASSUNTO_ENG;
+	private String EMAIL_MENSAGEM_ENG;
+	private String EMAIL_ASSUNTO_FR;
+	private String EMAIL_MENSAGEM_FR;
+
 	@Id
 	@Column(name = "ID_EVENTO")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -144,6 +149,42 @@ public class GER_EVENTOS_CONF {
 
 	public void setEMAIL_MENSAGEM(String eMAIL_MENSAGEM) {
 		EMAIL_MENSAGEM = eMAIL_MENSAGEM;
+	}
+
+	@Column(name = "EMAIL_ASSUNTO_ENG")
+	public String getEMAIL_ASSUNTO_ENG() {
+		return EMAIL_ASSUNTO_ENG;
+	}
+
+	@Column(name = "EMAIL_MENSAGEM_ENG")
+	public String getEMAIL_MENSAGEM_ENG() {
+		return EMAIL_MENSAGEM_ENG;
+	}
+
+	@Column(name = "EMAIL_ASSUNTO_FR")
+	public String getEMAIL_ASSUNTO_FR() {
+		return EMAIL_ASSUNTO_FR;
+	}
+
+	@Column(name = "EMAIL_MENSAGEM_FR")
+	public String getEMAIL_MENSAGEM_FR() {
+		return EMAIL_MENSAGEM_FR;
+	}
+
+	public void setEMAIL_ASSUNTO_ENG(String eMAIL_ASSUNTO_ENG) {
+		EMAIL_ASSUNTO_ENG = eMAIL_ASSUNTO_ENG;
+	}
+
+	public void setEMAIL_MENSAGEM_ENG(String eMAIL_MENSAGEM_ENG) {
+		EMAIL_MENSAGEM_ENG = eMAIL_MENSAGEM_ENG;
+	}
+
+	public void setEMAIL_ASSUNTO_FR(String eMAIL_ASSUNTO_FR) {
+		EMAIL_ASSUNTO_FR = eMAIL_ASSUNTO_FR;
+	}
+
+	public void setEMAIL_MENSAGEM_FR(String eMAIL_MENSAGEM_FR) {
+		EMAIL_MENSAGEM_FR = eMAIL_MENSAGEM_FR;
 	}
 
 }
