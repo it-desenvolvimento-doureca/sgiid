@@ -8515,6 +8515,7 @@ public class SIRB {
 		List<HashMap<String, String>> lista = null;
 		List<HashMap<String, String>> lista2 = null;
 		Boolean Orig_Composant = false;
+		ArrayList<String> values_etiqueta = new ArrayList<String>();
 		Integer count = 0;
 		String data = "";
 		String INDNUMCSE = "";
@@ -8627,9 +8628,16 @@ public class SIRB {
 			if (count > 0 && NCLRANG != null) {
 				Orig_Composant = true;
 				data += "0";
-			} else {
-				Orig_Composant = false;
-				data += "1";
+			} else {				
+				boolean ans = values_etiqueta.contains(content[7].toString()); 
+				if(ans){
+					Orig_Composant = true;
+					data += "0";
+				}else{
+					Orig_Composant = false;
+					data += "1";
+					values_etiqueta.add(content[7].toString());
+				}				
 			}
 
 			// Référence composé
