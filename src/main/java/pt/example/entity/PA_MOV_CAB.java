@@ -53,6 +53,10 @@ public class PA_MOV_CAB {
 	@Column(name = "UNIDADE")
 	private Integer UNIDADE;
 	
+	@Column(name = "OBJETIVO")
+	private String OBJETIVO;
+	@Column(name = "ID_PLANO_ESTRATEGICO")
+	private Integer ID_PLANO_ESTRATEGICO;
 
 	public Integer getID_PLANO_CAB() {
 		return ID_PLANO_CAB;
@@ -196,6 +200,22 @@ public class PA_MOV_CAB {
 
 	public void setUNIDADE(Integer uNIDADE) {
 		UNIDADE = uNIDADE;
+	}
+
+	public String getOBJETIVO() {
+		return OBJETIVO;
+	}
+
+	public Integer getID_PLANO_ESTRATEGICO() {
+		return ID_PLANO_ESTRATEGICO;
+	}
+
+	public void setOBJETIVO(String oBJETIVO) {
+		OBJETIVO = oBJETIVO;
+	}
+
+	public void setID_PLANO_ESTRATEGICO(Integer iD_PLANO_ESTRATEGICO) {
+		ID_PLANO_ESTRATEGICO = iD_PLANO_ESTRATEGICO;
 	}
 
 }

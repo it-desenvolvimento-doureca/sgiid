@@ -29,6 +29,22 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 		return data;
 
 	}
+	
+	public List<RH_FUNCIONARIOS> getall2( String Ativo ) {
+		
+		String querywhere = "";
+		if (Ativo != null && Ativo.equals("true")) {
+			querywhere = "where a.ATIVO = 1";
+		} else if (Ativo != null && Ativo.equals("false")) {
+			querywhere = "where a.ATIVO = 0";
+		}
+		
+		Query query = entityManager.createQuery(
+				"Select a,(select CODIGO from RH_DIC_CACIFOS where ID = a.NUM_CACIFO) from RH_FUNCIONARIOS a " + querywhere + " order by CASE WHEN a.COD_FUNCIONARIO >= 0 THEN a.COD_FUNCIONARIO ELSE (a.COD_FUNCIONARIO * -1) END asc");
+		List<RH_FUNCIONARIOS> data = query.getResultList();
+		return data;
+
+	}
 
 	public List<RH_FUNCIONARIOS> getallativos() {
 
@@ -178,9 +194,9 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 		if (ADMIN)
 			queryallsector = "or (c.COD_SECTOR is null)";
 
-		Query query = entityManager.createNativeQuery("DECLARE @DATA date = '" + data1 + "'; "
-				+ "DECLARE @DATA2 date = '" + data2
-				+ "'; select c.COD_FUNCIONARIO,c.NOME,c.ATIVO,c.LOCAL,c.RESPONSAVEL,c.COD_SECTOR,d.DES_SECTOR ,cast(a.DataHora as date), "
+		Query query = entityManager.createNativeQuery("DECLARE @DATA date = '" + data1 + "'; DECLARE @DATA3 date = '" + data2 + "'"
+				+ "DECLARE @DATA2 date = DATEADD(DAY,1,@DATA3); "
+				+ " select c.COD_FUNCIONARIO,c.NOME,c.ATIVO,c.LOCAL,c.RESPONSAVEL,c.COD_SECTOR,d.DES_SECTOR ,cast(a.DataHora as date), "
 				+ "(select top 1 DataHora from  Cronos.dbo.Ponto where NumeroEmpregado = a.NumeroEmpregado and cast(a.DataHora as date) = cast(DataHora as date) and  OrdemEntradaDia = 1 and Anulado = 0  order by DataHora asc) hora_entra, "
 				+ "(select top 1 DataHora from  Cronos.dbo.Ponto t where t.NumeroEmpregado = a.NumeroEmpregado and cast(a.DataHora as date) = cast(t.Data as date)  and t.Anulado = 0 order by t.DataHora desc)  hora_saida,"
 				+ " t1.total_horas,t2.total_faltas, t3.total_extras "
@@ -190,30 +206,30 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ "(select b.DataHora,a.NumeroEmpregado from (select NumeroEmpregado from Cronos.dbo.Ponto GROUP BY NumeroEmpregado) a "
 				+ "left join (select cast(DataHora as date) as DataHora,NumeroEmpregado from Cronos.dbo.Ponto "
 				+ "where cast(DataHora as date) >= @DATA and cast(DataHora as date) <= @DATA2 GROUP BY NumeroEmpregado,cast(DataHora as date)) b on a.NumeroEmpregado = b.NumeroEmpregado) "
-				+ ") a " + "left join (select  SUM((total*totalproref)) as total,cast(rescod as int) as rescod,"
-				+ " datdeb  from ( " + "select (stpse - atpse)+(stpsp-atpsp) as total,cast(rescod as int) as rescod, "
+				+ ") a " + "left join (select  SUM((total*totalproref)) as total,rescod,"
+				+ " datdeb  from ( " + "select (stpse - atpse)+(stpsp-atpsp) as total, rescod, "
 				+ "CASE WHEN CAST(s.datdeb AS DATETIME) + CAST(s.heudeb AS DATETIME) < (select MAX(Time_Out) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) and "
 				+ " CAST(s.datdeb AS DATE) <>  CAST((select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod)AS DATE) "
-				+ "  or  (select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) is null "
+				+ "  /*or  (select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) is null */ "
 				+ " THEN  cast(DATEADD(DAY, -1, s.datdeb) as date)  ELSE  cast(s.datdeb as date) END datdeb "
 				+ ",(CASE WHEN ISDATE(s.heudeb) = 0 THEN '00:00:00.000' ELSE s.heudeb END) heudeb, case when gescod in ('OFCF','OFCF2')	or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f "
 				+ "left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (q.qterr+q.qterb) / (CASE WHEN total > 0 THEN total ELSE 1 END) else 1 END as totalproref "
 				+ "from	(select  count(distinct rescod) numero_pessoas,xa.ofdnumenr,xc.svanumenr,xa.svanumori from SILVER_BI.dbo.SCPSVA xa left join (select xa.ofdnumenr,xa.svanumori,xq.svanumenr,xa.heudeb	"
 				+ "from SILVER_BI.dbo.SCPSVA xa right join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
-				+ "where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori	"
-				+ "where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2 and xc.svanumenr is not null	and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
+				+ "where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= /*@DATA2*/ DATEADD(DAY,3,@DATA2)  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori	"
+				+ "where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= /*@DATA2*/ DATEADD(DAY,3,@DATA2) and xc.svanumenr is not null	and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
 				+ "left join SILVER_BI.dbo.SOFD td ON td.ofdnumenr= txa.ofdnumenr "
 				+ " LEFT JOIN SILVER_BI.dbo.SCPSVQ q on td.ofdnumenr=q.ofdnumenr "
 				+ "left join (select ofanumenr,ofref,typof from SILVER_BI.dbo.SOFA bb)  ta on ta.ofanumenr = td.ofanumenr "
 				+ "left join  SILVER_BI.dbo.SCPSVA s ON "
 				+ "CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') THEN s.ofdnumenr  ELSE (CASE WHEN s.SVANUMORI = 0 THEN s.SVANUMENR ELSE s.SVANUMORI END) END = "
-				+ "CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') THEN td.ofdnumenr  ELSE q.SVANUMENR END   and  txa.svanumenr  = s.svanumenr "
+				+ "CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') THEN td.ofdnumenr  ELSE q.SVANUMENR END   and  txa.svanumenr  = q.svanumenr "
 				+ "	left join (select proref,prodes1,gescod from SILVER_BI.dbo.SDTPRA) p on p.proref=q.proref "
 				+ "left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
 				+ "from SILVER_BI.dbo.SCPSVQ ty inner join (select svanumenr,ofanumenr,heudeb,datdeb from SILVER_BI.dbo.SCPSVA) th on ty.svanumenr = th.svanumenr "
 				+ "inner join SILVER_BI.dbo.SOFA tj on tj.ofanumenr = th.ofanumenr GROUP BY ofref,heudeb,datdeb,th.svanumenr	) j on j.datdeb = s.datdeb /*and j.heudeb = t.heudeb*/ and j.ofref = ta.ofref and j.svanumenr = q.svanumenr "
 				+ "where s.datdeb >= cast(@DATA as date) and  s.datdeb <= cast(@DATA2 as date) /*and (CASE WHEN ISDATE(s.heudeb) = 0 THEN '00:00:00.000' ELSE s.heudeb END) >= (select top 1 cast(DataHora as time) from  Cronos.dbo.Ponto where NumeroEmpregado = cast(rescod as int) and s.datdeb = cast(DataHora as date))*/ "
-				+ "	and restypcod = 'MO' and q.ofbnumenr is not null and 1 = CASE WHEN (ta.typof IN ('OFC1', 'OFC2','OFCF') and (ta.ofref is null or ta.ofref = ''))THEN 0 ELSE 1 END ) tg GROUP BY cast(datdeb as date),cast(rescod as int) "
+				+ "	and restypcod = 'MO' and q.ofbnumenr is not null and 1 = CASE WHEN (ta.typof IN ('OFC1', 'OFC2','OFCF') and (ta.ofref is null or ta.ofref = ''))THEN 0 ELSE 1 END ) tg GROUP BY cast(datdeb as date),rescod "
 				+ ") as b on a.NumeroEmpregado = b.rescod  and  b.datdeb = cast(a.DataHora as date) "
 				+ "left join RH_FUNCIONARIOS c on c.COD_FUNC_ORIGEM = a.NumeroEmpregado left join RH_SECTORES d on d.COD_SECTOR = c.COD_SECTOR "
 				+ "left join "
@@ -226,7 +242,7 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ "inner join SILVER.dbo.SCPSVB  SCPSVB on SCPSVB.SVANUMENR = SCPSVA.SVANUMENR   	where  SCPSVB.datdeb >= @DATA "
 				+ "and SCPSVB.datdeb <= @DATA2 and SCPSVB.ARRCOD in (select ID_PAUSA_SILVER from RH_PAUSAS where ID_TIPO_PAUSA  = 2) and SCPSVA.restypcod = 'MO' "
 				+ "GROUP BY rescod ,SCPSVB.datdeb ) t4 on   a.NumeroEmpregado = cast(t4.rescod as int) and t4.DATDEB = cast(a.DataHora as date) "
-				+ "where (c.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + Operario
+				+ "where b.datdeb >= @DATA and b.datdeb <= @DATA3 and (c.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + Operario
 				+ " is not null) or (a.NumeroEmpregado  = " + Operario + " )) " + querywhere
 				+ " order by CASE WHEN c.COD_FUNCIONARIO > 0 THEN c.COD_FUNCIONARIO ELSE c.COD_FUNCIONARIO * -1 END, cast(a.DataHora as date) desc");
 		List<RH_FUNCIONARIOS> data = query.getResultList();
@@ -245,7 +261,7 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 		}
 		String query_tipo_cadencia = " left join (SELECT d.opecod, d.opeqteref PecasHora, b.proref,a.ofnum,d.ofdnumenr FROM SILVER_BI.dbo.SOFB b LEFT JOIN SILVER_BI.dbo.SOFA a ON a.ofanumenr=b.ofanumenr LEFT JOIN SILVER_BI.dbo.SOFD d ON b.ofanumenr=d.ofanumenr) k on k.ofnum = a.ofnum and k.opecod = a.opecod and k.ofdnumenr = a.ofdnumenr ";
 		if (tipo_cadencia.equals("standard")) {
-			query_tipo_cadencia = " left join (SELECT prc.proref, gop.opeqteref PecasHora, gop.opecod FROM SILVER_BI.dbo.SDTPRC prc LEFT JOIN SILVER_BI.dbo.SDTPRD prd ON prd.indnumenr=prc.indnumenr LEFT JOIN SILVER_BI.dbo.SDTGOP gop ON gop.gamcod=prd.gamcod ) k on k.proref = a.proref and k.opecod = a.opecod ";
+			query_tipo_cadencia = " left join (SELECT prc.proref, gop.opeqteref PecasHora, gop.opecod FROM SILVER_BI.dbo.SDTPRC prc LEFT JOIN SILVER_BI.dbo.SDTPRD prd ON prd.indnumenr=prc.indnumenr LEFT JOIN SILVER_BI.dbo.SDTGOP gop ON gop.gamcod=prd.gamcod group by prc.proref, gop.opeqteref , gop.opecod ) k on k.proref = a.proref and k.opecod = a.opecod ";
 		}
 
 		String queryallsector = "";
@@ -267,26 +283,41 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 						+ ",CONVERT(DECIMAL(19,2), CASE WHEN  k.PecasHora ='' or a.TempoExec = 0 or a.totalproref=0 THEN 0 ELSE ((((total * 60) / (((CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoExec*a.totalproref)/total_ofref ELSE a.TempoExec*a.totalproref END)*a.totalproref)* 60)) / k.PecasHora))*100  END) cadencia "
 						+ "from ( "
 						+ "(SELECT d.ofdnumenr,typof,(select COUNT(tfa.ofref) AS total_ofref   from SILVER_BI.dbo.SOFA tfa where tfa.ofref = a.ofref Group by tfa.ofref) total_ofref "
-						+ ",t.rescod, t.datdeb, q.proref,p.prodes1,d.opecod,d.opedes,(q.qterr+q.qterb) quant,t.heudeb,t.heufin,( /*t.atpse+*/ t.stpse) TempoExec,(total/(numero_pessoas))  total, (/*t.atpsp+*/ t.stpsp) TempoPrep, ( /*t.atpse+*/ t.stpse+ /*t.atpsp+*/ t.stpsp) TempoTotal,case when gescod in ('OFCF','OFCF2')	or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f "
-						+ "left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (q.qterr+q.qterb) / (CASE WHEN total > 0 THEN total ELSE 1 END)	else 1 END as totalproref ,a.ofnum    "
-						+ "FROM	(select  count(distinct rescod) numero_pessoas,xa.ofdnumenr,xc.svanumenr,xa.svanumori from SILVER_BI.dbo.SCPSVA xa left join  "
-						+ "(select xa.ofdnumenr,xa.svanumori,xq.svanumenr,xa.heudeb	"
-						+ " from SILVER_BI.dbo.SCPSVA xa right join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
-						+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori "
-						+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2 and xc.svanumenr is not null and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
-						+ "left join (select ofdnumenr,tsd.opecod,tsb.opedes,ofanumenr from SILVER_BI.dbo.SOFD  tsd inner join SILVER_BI.dbo.SDTOPP  tsb on tsd.stecod = tsb.stecod and tsd.opecod = tsb.opecod) d ON d.ofdnumenr= txa.ofdnumenr	"
-						+ "LEFT JOIN (select proref,ofbnumenr,ofdnumenr,svanumenr,qterb,qterr from SILVER_BI.dbo.SCPSVQ) q on d.ofdnumenr=q.ofdnumenr "
-						+ "/*left join (select ofbnumenr from SILVER_BI.dbo.SOFB) b ON b.OFBNUMENR = q.ofbnumenr*/	"
-						+ "left join (select ofanumenr,ofref,typof,ofnum from SILVER_BI.dbo.SOFA bb)  a on a.ofanumenr = d.ofanumenr "
-						+ "LEFT JOIN ( select * from SILVER_BI.dbo.SCPSVA where ISNUMERIC(rescod)=1 and restypcod='MO' and datdeb>=@DATA and datdeb<= @DATA2) t ON	"
-						+ "CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN t.ofdnumenr  ELSE (CASE WHEN t.SVANUMORI = 0 THEN t.SVANUMENR ELSE t.SVANUMORI END) END = "
-						+ "CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN d.ofdnumenr  ELSE q.SVANUMENR END and txa.svanumenr = t.svanumenr "
+						+ ",CASE WHEN ISNUMERIC(rescod)=1 THEN t.rescod ELSE null END rescod, t.datdeb, q.proref,p.prodes1,d.opecod,d.opedes,(total_pecas /*q.qterr+q.qterb*/) quant,t.heudeb,t.heufin,( /*t.atpse+*/ t.stpse) TempoExec,"
+						+ " CONVERT(DECIMAL(19,0),CASE WHEN (total_horas) <= 0 THEN 0 ELSE ((total_pecas*(t.stpse + t.stpsp))/(total_horas)) END) total, (/*t.atpsp+*/ t.stpsp) TempoPrep, ( /*t.atpse+*/ t.stpse+ /*t.atpsp+*/ t.stpsp) TempoTotal,case when gescod in ('OFCF','OFCF2')	or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f "
+						+ "left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (total_pecas) / (CASE WHEN total_pecas > 0 THEN total_pecas ELSE 1 END)	else 1 END as totalproref ,a.ofnum    "
+						+ "FROM	"
+						+ "	( select datdeb,xva.ofdnumenr,SVANUMORI,stpsp,rescod,heudeb,heufin,stpse,restypcod,atpse,atpsp"
+						+ "	,CASE WHEN xq.svanumenr is null THEN (select top 1 svanumenr from SILVER_BI.dbo.SCPSVQ where ofdnumenr = xva.ofdnumenr) ELSE xq.svanumenr END as svanumenr"
+						+ "	from SILVER_BI.dbo.SCPSVA xva"
+						+ "	left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xva.SVANUMORI = 0 THEN xva.SVANUMENR ELSE xva.SVANUMORI END)"
+						+ "	where restypcod='MO' and  ISNUMERIC(RESCOD) = 1 and datdeb>=@DATA and datdeb<= @DATA2) t "
+						+ ""
+						+ "	LEFT JOIN (select proref,ofbnumenr,ofdnumenr,svanumenr,qterb,qterr from SILVER_BI.dbo.SCPSVQ) q on  q.SVANUMENR = (CASE WHEN t.SVANUMORI = 0 THEN t.SVANUMENR ELSE t.SVANUMORI END)"
+						+ "	left join (select ofdnumenr,opecod,opedes,ofanumenr from SILVER_BI.dbo.SOFD) d ON d.ofdnumenr= t.ofdnumenr"
+						+ "	left join (select ofanumenr,ofref,typof,ofnum from SILVER_BI.dbo.SOFA bb)  a on a.ofanumenr = d.ofanumenr"
+						+ "	"
+						+ "	left join 	(select  ofdnumenr,svanumenr,svanumori/*,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_operarios_linha ELSE total_operarios END)total_operarios */"
+						+ "	 ,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_pecas_linha ELSE total_pecas END)total_pecas "
+						+ "	,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_horas_linha ELSE total_horas END)total_horas"
+						+ "	from (	select ofdnumenr,svanumori,svanumenr,typof"
+						+ "/*,count(xa.rescod) over(partition by xa.ofdnumenr) total_operarios_linha,count(xa.rescod) over(partition by xa.svanumori,xq.svanumenr) total_operarios*/"
+						+ " ,sum(tag.qterr+tag.qterb) over(partition by tag.ofdnumenr) total_pecas_linha,tag.qterr+tag.qterb total_pecas "
+						+ ",sum(tag.stpse+ tag.stpsp) over(partition by tag.ofdnumenr) total_horas_linha,sum(tag.stpse+ tag.stpsp) over(partition by tag.svanumori,tag.svanumenr)total_horas "
+						+ "from (select xq.qterr,xq.qterb,xa.stpse, xa.stpsp,xa.ofdnumenr,xa.svanumori "
+						+ ",CASE WHEN xq.svanumenr is null THEN (select top 1 svanumenr from SILVER_BI.dbo.SCPSVQ where ofdnumenr = xa.ofdnumenr) ELSE xq.svanumenr END as svanumenr "
+						+ ",xfa.typof	from SILVER_BI.dbo.SCPSVA xa "
+						+ "left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
+						+ "left JOIN SILVER_BI.dbo.SOFA xfa on xa.ofanumenr = xfa.ofanumenr "
+						+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= DATEADD(DAY,3,@DATA2)"
+						+ "	) tag) tabx where (typof in ('OFC1', 'OFC2','OFCF') or (total_pecas > 0)) group by ofdnumenr,svanumenr,svanumori)  txa on txa.SVANUMENR = (CASE WHEN t.SVANUMORI = 0 THEN t.SVANUMENR ELSE t.SVANUMORI END)"
+						+ " "
 						+ "left join SILVER_BI.dbo.SDTPRA p on p.proref=q.proref "
-						+ "left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
+						+ "/*left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
 						+ "from SILVER_BI.dbo.SCPSVQ ty "
 						+ "inner join (select svanumenr,ofanumenr,heudeb,datdeb from SILVER_BI.dbo.SCPSVA) th on ty.svanumenr = th.svanumenr "
-						+ "inner join SILVER_BI.dbo.SOFA tj on tj.ofanumenr = th.ofanumenr GROUP BY ofref,heudeb,datdeb,th.svanumenr	) j on j.datdeb = t.datdeb /*and j.heudeb = t.heudeb*/ and j.ofref = a.ofref and j.svanumenr = q.svanumenr WHERE t.datdeb>=@DATA and t.datdeb<=@DATA2"
-						+ "	and t.restypcod='MO' and (t.stpse<>0 or t.atpse<>0)) ) as a  "
+						+ "inner join SILVER_BI.dbo.SOFA tj on tj.ofanumenr = th.ofanumenr GROUP BY ofref,heudeb,datdeb,th.svanumenr	) j on j.datdeb = t.datdeb /*and j.heudeb = t.heudeb*/ and j.ofref = a.ofref and j.svanumenr = q.svanumenr*/ WHERE t.datdeb>=@DATA and t.datdeb<=@DATA2"
+						+ "	and t.restypcod='MO' and ((((stpse - atpse)+(stpsp-atpsp)) > 0.1) or (((stpse - atpse)+(stpsp-atpsp)) < -0.1) )) ) as a  "
 						+ "left join RH_FUNCIONARIOS b on  cast(a.rescod as int) = b.COD_FUNCIONARIO left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR "
 						+ query_tipo_cadencia + " " + "where (b.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector
 						+ ") and ((not " + sectornull + " is not null) or (c.COD_SECTOR  in (" + Sector
@@ -341,7 +372,7 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 		String query_tipo_cadencia = " left join (SELECT d.opecod, d.opeqteref PecasHora, b.proref,a.ofnum,d.ofdnumenr FROM SILVER_BI.dbo.SOFB b LEFT JOIN SILVER_BI.dbo.SOFA a ON a.ofanumenr=b.ofanumenr LEFT JOIN SILVER_BI.dbo.SOFD d ON b.ofanumenr=d.ofanumenr) k on k.ofnum = ta.ofnum and k.opecod = td.opecod  and k.ofdnumenr = td.ofdnumenr ";
 		if (tipo_cadencia.equals("standard")) {
-			query_tipo_cadencia = " left join (SELECT prc.proref, gop.opeqteref PecasHora, gop.opecod FROM SILVER_BI.dbo.SDTPRC prc LEFT JOIN SILVER_BI.dbo.SDTPRD prd ON prd.indnumenr=prc.indnumenr LEFT JOIN SILVER_BI.dbo.SDTGOP gop ON gop.gamcod=prd.gamcod ) k on k.proref = q.proref and k.opecod = td.opecod ";
+			query_tipo_cadencia = " left join (SELECT prc.proref, gop.opeqteref PecasHora, gop.opecod FROM SILVER_BI.dbo.SDTPRC prc LEFT JOIN SILVER_BI.dbo.SDTPRD prd ON prd.indnumenr=prc.indnumenr LEFT JOIN SILVER_BI.dbo.SDTGOP gop ON gop.gamcod=prd.gamcod group by prc.proref, gop.opeqteref , gop.opecod ) k on k.proref = q.proref and k.opecod = td.opecod ";
 		}
 
 		Integer sectornull = null;
@@ -361,20 +392,20 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ " CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') THEN ((stpse - atpse)+(stpsp-atpsp))/(select COUNT(tfa.ofref) AS total_ofref   from SILVER_BI.dbo.SOFA tfa where tfa.ofref = ta.ofref Group by tfa.ofref) ELSE (stpse - atpse)+(stpsp-atpsp) END as total, "
 				+ " (totalquant/(numero_pessoas))  totalquant,(q.qterr+q.qterb) quant,cast(rescod as int) as rescod,CASE WHEN CAST(s.datdeb AS DATETIME) + CAST(s.heudeb AS DATETIME) < (select MAX(Time_Out) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) and"
 				+ " CAST(s.datdeb AS DATE) <>  CAST((select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod)AS DATE) "
-				+ " or  (select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) is null "
+				+ " /*or  (select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) is null*/ "
 				+ "THEN  cast(DATEADD(DAY, -1, s.datdeb) as date)  ELSE  cast(s.datdeb as date) END datdeb  ,(CASE WHEN ISDATE(s.heudeb) = 0 THEN '00:00:00.000' ELSE s.heudeb END) heudeb "
 				+ " ,case when gescod in ('OFCF','OFCF2') or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (q.qterr+q.qterb) / (CASE WHEN totalquant > 0 THEN totalquant ELSE 1 END) else 1 END as totalproref,PecasHora "
 				+ " FROM   (select  count(distinct rescod) numero_pessoas,xa.ofdnumenr,xc.svanumenr,xa.svanumori from SILVER_BI.dbo.SCPSVA xa left join (select xa.ofdnumenr,xa.svanumori,xq.svanumenr,xa.heudeb "
 				+ "	from SILVER_BI.dbo.SCPSVA xa right join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
-				+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori "
-				+ "where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2 and xc.svanumenr is not null and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
+				+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= /*@DATA2*/ DATEADD(DAY,3,@DATA2)  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori "
+				+ "where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= /*@DATA2*/ DATEADD(DAY,3,@DATA2) and xc.svanumenr is not null and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
 				+ " left join (select ofdnumenr,opecod,opedes,ofanumenr from SILVER_BI.dbo.SOFD) td ON td.ofdnumenr= txa.ofdnumenr "
 				+ " LEFT JOIN (select proref,ofbnumenr,ofdnumenr,svanumenr,qterb,qterr from SILVER_BI.dbo.SCPSVQ) q on td.ofdnumenr=q.ofdnumenr "
 				+ " left join (select proref,prodes1,gescod from SILVER_BI.dbo.SDTPRA) p on p.proref=q.proref /*LEFT JOIN SILVER_BI.dbo.SCPSVA s ON q.SVANUMENR= (CASE WHEN s.SVANUMORI = 0 THEN s.SVANUMENR ELSE s.SVANUMORI END) 	*/"
 				+ " left join (select ofanumenr,ofref,ofnum,typof from SILVER_BI.dbo.SOFA bb)  ta on ta.ofanumenr = td.ofanumenr"
 				+ " LEFT JOIN ( select * from SILVER_BI.dbo.SCPSVA where restypcod='MO' and datdeb>=@DATA and datdeb<= @DATA2) s ON"
 				+ " CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') THEN s.ofdnumenr  ELSE (CASE WHEN s.SVANUMORI = 0 THEN s.SVANUMENR ELSE s.SVANUMORI END) END = "
-				+ " CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') THEN td.ofdnumenr  ELSE q.SVANUMENR END and txa.svanumenr = s.svanumenr "
+				+ " CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') THEN td.ofdnumenr  ELSE q.SVANUMENR END and txa.svanumenr = q.svanumenr "
 				+ " left join (select SUM(ty.qterr + ty.qterb) totalquant,ofref,heudeb,datdeb,th.svanumenr"
 				+ "	from SILVER_BI.dbo.SCPSVQ ty	inner join (select svanumenr,ofanumenr,heudeb,datdeb from SILVER_BI.dbo.SCPSVA) th on ty.svanumenr = th.svanumenr  "
 				+ " inner join SILVER_BI.dbo.SOFA tj on tj.ofanumenr = th.ofanumenr GROUP BY ofref,heudeb,datdeb,th.svanumenr	) j on j.datdeb = s.datdeb and j.ofref = ta.ofref and j.svanumenr = q.svanumenr      "
@@ -416,7 +447,7 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 		String query_tipo_cadencia = " left join (SELECT d.opecod, d.opeqteref PecasHora, b.proref,a.ofnum,d.ofdnumenr FROM SILVER_BI.dbo.SOFB b LEFT JOIN SILVER_BI.dbo.SOFA a ON a.ofanumenr=b.ofanumenr LEFT JOIN SILVER_BI.dbo.SOFD d ON b.ofanumenr=d.ofanumenr) k on k.ofnum = a.ofnum and k.opecod = a.opecod  and k.ofdnumenr = a.ofdnumenr ";
 		if (tipo_cadencia.equals("standard")) {
-			query_tipo_cadencia = " left join (SELECT prc.proref, gop.opeqteref PecasHora, gop.opecod FROM SILVER_BI.dbo.SDTPRC prc LEFT JOIN SILVER_BI.dbo.SDTPRD prd ON prd.indnumenr=prc.indnumenr LEFT JOIN SILVER_BI.dbo.SDTGOP gop ON gop.gamcod=prd.gamcod ) k on k.proref = a.proref and k.opecod = a.opecod ";
+			query_tipo_cadencia = " left join (SELECT prc.proref, gop.opeqteref PecasHora, gop.opecod FROM SILVER_BI.dbo.SDTPRC prc LEFT JOIN SILVER_BI.dbo.SDTPRD prd ON prd.indnumenr=prc.indnumenr LEFT JOIN SILVER_BI.dbo.SDTGOP gop ON gop.gamcod=prd.gamcod group by prc.proref, gop.opeqteref , gop.opecod ) k on k.proref = a.proref and k.opecod = a.opecod ";
 		}
 
 		if (tipo_analise.equals("semanal")) {
@@ -452,15 +483,15 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ " from ( (SELECT d.ofdnumenr,typof,(select COUNT(tfa.ofref) AS total_ofref   from SILVER_BI.dbo.SOFA tfa where tfa.ofref = a.ofref Group by tfa.ofref) total_ofref,"
 				+ " REPLACE(REPLACE(t.rescod,'T',''),'L','') rescod, t.datdeb, q.proref,p.prodes1,d.opecod,d.opedes,(q.qterr+q.qterb) quant,t.heudeb,t.heufin,( /*t.atpse+*/ t.stpse) TempoExec, (/*t.atpsp+*/ t.stpsp) TempoPrep,(total/( numero_pessoas )) total, ( /*t.atpse+*/ t.stpse+ /*t.atpsp+*/ t.stpsp) TempoTotal,case when gescod in ('OFCF','OFCF2')	or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (q.qterr+q.qterb) / (CASE WHEN total > 0 THEN total ELSE 1 END) else 1 END as totalproref ,a.ofnum	"
 				+ " FROM (select  count(distinct rescod) numero_pessoas,xa.ofdnumenr,xc.svanumenr,xa.svanumori from SILVER_BI.dbo.SCPSVA xa left join (select xa.ofdnumenr,xa.svanumori,xq.svanumenr,xa.heudeb from SILVER_BI.dbo.SCPSVA xa right join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
-				+ " where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori "
-				+ " where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2 and xc.svanumenr is not null and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
+				+ " where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= /*@DATA2*/ DATEADD(DAY,3,@DATA2)  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori "
+				+ " where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= /*@DATA2*/ DATEADD(DAY,3,@DATA2) and xc.svanumenr is not null and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
 				+ " left join (select ofdnumenr,tsd.opecod,tsb.opedes,ofanumenr from SILVER_BI.dbo.SOFD  tsd inner join SILVER_BI.dbo.SDTOPP  tsb on tsd.stecod = tsb.stecod and tsd.opecod = tsb.opecod) d ON d.ofdnumenr= txa.ofdnumenr "
 				+ " LEFT JOIN (select proref,ofbnumenr,ofdnumenr,svanumenr,qterb,qterr from SILVER_BI.dbo.SCPSVQ) q on d.ofdnumenr=q.ofdnumenr "
 				+ " left join (select proref,prodes1,gescod from SILVER_BI.dbo.SDTPRA) p on p.proref=q.proref "
 				+ " left join (select ofanumenr,ofref,ofnum,typof from SILVER_BI.dbo.SOFA bb)  a on a.ofanumenr = d.ofanumenr "
 				+ "	LEFT JOIN ( select * from SILVER_BI.dbo.SCPSVA where restypcod='MO' and datdeb>=@DATA and datdeb<= @DATA2) t ON "
 				+ "	CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN t.ofdnumenr  ELSE (CASE WHEN t.SVANUMORI = 0 THEN t.SVANUMENR ELSE t.SVANUMORI END) END = "
-				+ "	CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN d.ofdnumenr  ELSE q.SVANUMENR END and txa.svanumenr = t.svanumenr left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
+				+ "	CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN d.ofdnumenr  ELSE q.SVANUMENR END and txa.svanumenr = q.svanumenr left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
 				+ "from SILVER_BI.dbo.SCPSVQ ty inner join (select svanumenr,ofanumenr,heudeb,datdeb from SILVER_BI.dbo.SCPSVA) th on ty.svanumenr = th.svanumenr "
 				+ " inner join SILVER_BI.dbo.SOFA tj on tj.ofanumenr = th.ofanumenr GROUP BY ofref,heudeb,datdeb,th.svanumenr	) j on j.datdeb = t.datdeb /*and j.heudeb = t.heudeb*/ and j.ofref = a.ofref and j.svanumenr = q.svanumenr WHERE t.datdeb>=@DATA and t.datdeb<=@DATA2 "
 				+ "and t.restypcod='MO' and (t.stpse<>0 or t.atpse<>0) ) ) as a left join RH_FUNCIONARIOS b on  cast(a.rescod as int) = b.COD_FUNCIONARIO left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR  "
@@ -485,7 +516,7 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 		String query_tipo_cadencia = " left join (SELECT d.opecod, d.opeqteref PecasHora, b.proref,a.ofnum,d.ofdnumenr FROM SILVER_BI.dbo.SOFB b LEFT JOIN SILVER_BI.dbo.SOFA a ON a.ofanumenr=b.ofanumenr LEFT JOIN SILVER_BI.dbo.SOFD d ON b.ofanumenr=d.ofanumenr) k on k.ofnum = ta.ofnum and k.opecod = td.opecod  and k.ofdnumenr = td.ofdnumenr ";
 		if (tipo_cadencia.equals("standard")) {
-			query_tipo_cadencia = " left join (SELECT prc.proref, gop.opeqteref PecasHora, gop.opecod  FROM SILVER_BI.dbo.SDTPRC prc LEFT JOIN SILVER_BI.dbo.SDTPRD prd ON prd.indnumenr=prc.indnumenr LEFT JOIN SILVER_BI.dbo.SDTGOP gop ON gop.gamcod=prd.gamcod ) k on k.proref = p.proref and k.opecod = td.opecod ";
+			query_tipo_cadencia = " left join (SELECT prc.proref, gop.opeqteref PecasHora, gop.opecod  FROM SILVER_BI.dbo.SDTPRC prc LEFT JOIN SILVER_BI.dbo.SDTPRD prd ON prd.indnumenr=prc.indnumenr LEFT JOIN SILVER_BI.dbo.SDTGOP gop ON gop.gamcod=prd.gamcod group by prc.proref, gop.opeqteref , gop.opecod ) k on k.proref = p.proref and k.opecod = td.opecod ";
 		}
 
 		Integer sectornull = null;
@@ -511,12 +542,12 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ "((q.qterr+q.qterb)/(numero_pessoas))  quant,cast(rescod as int) as rescod,"
 				+ "CASE WHEN CAST(s.datdeb AS DATETIME) + CAST(s.heudeb AS DATETIME) < (select MAX(Time_Out) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) and "
 				+ " CAST(s.datdeb AS DATE) <>  CAST((select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod)AS DATE) "
-				+ " or  (select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) is null "
+				+ " /*or  (select MAX(Time_In) from RH_DIC_PONTO where cast(Time_Out as date) =  cast(s.datdeb as date) and NFuncionario = rescod) is null*/ "
 				+ " THEN  cast(DATEADD(DAY, -1, s.datdeb) as date)  ELSE  cast(s.datdeb as date) END datdeb ,(CASE WHEN ISDATE(s.heudeb) = 0 THEN '00:00:00.000' ELSE s.heudeb END) heudeb,case when gescod in ('OFCF','OFCF2') or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f "
 				+ " left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (q.qterr+q.qterb) / (CASE WHEN total > 0 THEN total ELSE 1 END) else 1 END as totalproref,PecasHora FROM"
 				+ " (select  count(distinct rescod) numero_pessoas,xa.ofdnumenr,xc.svanumenr,xa.svanumori from SILVER_BI.dbo.SCPSVA xa left join (select xa.ofdnumenr,xa.svanumori,xq.svanumenr,xa.heudeb from SILVER_BI.dbo.SCPSVA xa right join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
-				+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori "
-				+ "where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= @DATA2 and xc.svanumenr is not null and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
+				+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= /*@DATA2*/ DATEADD(DAY,3,@DATA2)  ) xc on xa.ofdnumenr = xc.ofdnumenr and xc.svanumori = xa.svanumori "
+				+ "where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= /*@DATA2*/ DATEADD(DAY,3,@DATA2) and xc.svanumenr is not null and xc.heudeb = xa.heudeb group by xa.ofdnumenr,xc.svanumenr,xa.svanumori)  txa "
 				+ "left join (select ofdnumenr,opecod,opedes,ofanumenr from SILVER_BI.dbo.SOFD) td ON td.ofdnumenr= txa.ofdnumenr"
 				+ " LEFT JOIN (select proref,ofbnumenr,ofdnumenr,svanumenr,qterb,qterr from SILVER_BI.dbo.SCPSVQ) q on td.ofdnumenr=q.ofdnumenr"
 				+ " left join (select proref,prodes1,gescod from SILVER_BI.dbo.SDTPRA) p on p.proref=q.proref "
@@ -524,7 +555,7 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ "left join (select ofanumenr,ofref,ofnum,typof from SILVER_BI.dbo.SOFA bb)  ta on ta.ofanumenr = td.ofanumenr "
 				+ " LEFT JOIN ( select * from SILVER_BI.dbo.SCPSVA where restypcod='MO' and datdeb>=@DATA and datdeb<= @DATA2) s ON  "
 				+ "CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') THEN s.ofdnumenr  ELSE (CASE WHEN s.SVANUMORI = 0 THEN s.SVANUMENR ELSE s.SVANUMORI END) END = CASE  WHEN ta.typof IN ('OFC1', 'OFC2','OFCF') "
-				+ " THEN td.ofdnumenr  ELSE q.SVANUMENR END and txa.svanumenr = s.svanumenr "
+				+ " THEN td.ofdnumenr  ELSE q.SVANUMENR END and txa.svanumenr = q.svanumenr "
 				+ "left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
 				+ "from SILVER_BI.dbo.SCPSVQ ty "
 				+ "inner join (select svanumenr,ofanumenr,heudeb,datdeb from SILVER_BI.dbo.SCPSVA) th on ty.svanumenr = th.svanumenr "

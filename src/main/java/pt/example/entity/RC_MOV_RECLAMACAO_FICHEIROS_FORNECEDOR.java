@@ -42,7 +42,9 @@ public class RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR {
 	private String FICHEIRO_1;
 	@Column(name = "FICHEIRO_2")
 	private String FICHEIRO_2;
-
+	@Column(name = "ORDEM")
+	private Integer ORDEM;
+	
 	public Integer getID() {
 		return ID;
 	}
@@ -153,6 +155,14 @@ public class RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR {
 
 	public void setFICHEIRO_2(String fICHEIRO_2) {
 		FICHEIRO_2 = fICHEIRO_2;
+	}
+
+	public Integer getORDEM() {
+		return ORDEM;
+	}
+
+	public void setORDEM(Integer oRDEM) {
+		ORDEM = oRDEM;
 	}
 
 }

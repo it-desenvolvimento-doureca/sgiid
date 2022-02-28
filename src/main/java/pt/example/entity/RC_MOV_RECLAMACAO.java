@@ -165,6 +165,13 @@ public class RC_MOV_RECLAMACAO {
 	private Date STEP6_DATA;
 	private Date STEP7_DATA;
 	private Date STEP8_DATA;
+	private Boolean CHECK_SR;
+	private Boolean REVISTA_MURO;
+	private Boolean IMPACTO_SR;
+	private String ANALISE_CAUSAS_PROBLEMA;
+	private String ANALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE;
+	private Boolean EXISTEM_OUTROS_CLIENTES;
+	
 
 	@Id
 	@Column(name = "ID_RECLAMACAO")
@@ -1369,4 +1376,58 @@ public class RC_MOV_RECLAMACAO {
 		CAUSAS_PROBLEMA_IDIOMA_CLIENTE = cAUSAS_PROBLEMA_IDIOMA_CLIENTE;
 	}
 
+	@Column(name = "CHECK_SR")
+	public Boolean getCHECK_SR() {
+		return CHECK_SR;
+	}
+
+	public Boolean getREVISTA_MURO() {
+		return REVISTA_MURO;
+	}
+
+	@Column(name = "IMPACTO_SR")
+	public Boolean getIMPACTO_SR() {
+		return IMPACTO_SR;
+	}
+
+	@Column(name = "ANALISE_CAUSAS_PROBLEMA")
+	public String getANALISE_CAUSAS_PROBLEMA() {
+		return ANALISE_CAUSAS_PROBLEMA;
+	}
+
+	@Column(name = "ANALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE")
+	public String getANALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE() {
+		return ANALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE;
+	}
+
+	@Column(name = "EXISTEM_OUTROS_CLIENTES")
+	public Boolean getEXISTEM_OUTROS_CLIENTES() {
+		return EXISTEM_OUTROS_CLIENTES;
+	}
+
+	public void setCHECK_SR(Boolean cHECK_SR) {
+		CHECK_SR = cHECK_SR;
+	}
+
+	public void setREVISTA_MURO(Boolean rEVISTA_MURO) {
+		REVISTA_MURO = rEVISTA_MURO;
+	}
+
+	public void setIMPACTO_SR(Boolean iMPACTO_SR) {
+		IMPACTO_SR = iMPACTO_SR;
+	}
+
+	public void setANALISE_CAUSAS_PROBLEMA(String aNALISE_CAUSAS_PROBLEMA) {
+		ANALISE_CAUSAS_PROBLEMA = aNALISE_CAUSAS_PROBLEMA;
+	}
+
+	public void setANALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE(String aNALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE) {
+		ANALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE = aNALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE;
+	}
+
+	public void setEXISTEM_OUTROS_CLIENTES(Boolean eXISTEM_OUTROS_CLIENTES) {
+		EXISTEM_OUTROS_CLIENTES = eXISTEM_OUTROS_CLIENTES;
+	}
+
+	
 }

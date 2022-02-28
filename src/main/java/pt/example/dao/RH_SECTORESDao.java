@@ -28,7 +28,7 @@ public class RH_SECTORESDao extends GenericDaoJpaImpl<RH_SECTORES, Integer>
 
 		Query query = entityManager.createQuery("Select a,(select b.NOME from RH_FUNCIONARIOS b where b.COD_FUNCIONARIO = a.CHEFE1 ),"
 				+ "(select b.NOME from RH_FUNCIONARIOS b where b.COD_FUNCIONARIO = a.CHEFE2 ),"
-				+ "(select t.DES_TURNO from RH_TURNOS t where t.COD_TURNO = a.COD_TURNO ),(select t.DESCRICAO from GER_LOCAIS t where t.ID = a.LOCAL )  from RH_SECTORES a ");
+				+ "(select t.DES_TURNO from RH_TURNOS t where t.COD_TURNO = a.COD_TURNO ),(select t.DESCRICAO from GER_LOCAIS t where t.ID = a.LOCAL )  from RH_SECTORES a order by DES_SECTOR");
 		List<RH_SECTORES> data = query.getResultList();
 		return data;
 

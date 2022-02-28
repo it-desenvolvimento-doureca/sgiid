@@ -23,7 +23,7 @@ public class GER_SECCAODao extends GenericDaoJpaImpl<GER_SECCAO, Integer>
 
 	public List<GER_SECCAO> getall() {
 
-		Query query = entityManager.createQuery("Select a from GER_SECCAO a ");
+		Query query = entityManager.createQuery("Select a from GER_SECCAO a where a.INATIVO = 0");
 		List<GER_SECCAO> data = query.getResultList();
 		return data;
 
@@ -31,7 +31,7 @@ public class GER_SECCAODao extends GenericDaoJpaImpl<GER_SECCAO, Integer>
 	
 	public List<GER_SECCAO> getall2() {
 
-		Query query = entityManager.createQuery("Select a,b from GER_SECCAO a,GER_DEPARTAMENTO b where a.ID_DEPARTAMENTO = b.id ");
+		Query query = entityManager.createQuery("Select a,b from GER_SECCAO a,GER_DEPARTAMENTO b where a.ID_DEPARTAMENTO = b.id and a.INATIVO = 0");
 		List<GER_SECCAO> data = query.getResultList();
 		return data;
 

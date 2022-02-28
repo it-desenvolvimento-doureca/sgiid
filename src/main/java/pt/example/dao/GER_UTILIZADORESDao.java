@@ -68,10 +68,22 @@ public class GER_UTILIZADORESDao extends GenericDaoJpaImpl<GER_UTILIZADORES, Int
 		query.setParameter("id", id);
 		List<GER_UTILIZADORES> data = query.getResultList();
 		return data;
-
 	}
 	
 
+	public List<GER_UTILIZADORES> getDadosUtilizadorAll() {
+		Query query = entityManager
+				.createNativeQuery("Select a.NOME_UTILIZADOR,c.DES_SECTOR,d.ID_DEPARTAMENTO,a.ID_UTILIZADOR,a.EMAIL from GER_UTILIZADORES a "
+						+ "left join RH_FUNCIONARIOS b on a.COD_UTZ = b.COD_FUNC_ORIGEM "
+						+ "left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR "
+						+ "left join GER_DEPARTAMENTOS_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
+						+ "where a.INATIVO != 1 order by NOME_UTILIZADOR");
+		List<GER_UTILIZADORES> data = query.getResultList();
+		return data;
+
+	}
+	
+	
 	public List<GER_UTILIZADORES> verifica_login(Integer id, String login) {
 		Query query = entityManager.createQuery(
 				"Select a from GER_UTILIZADORES a where a.LOGIN = :login and a.ID_UTILIZADOR != :id and  a.INATIVO != 1 ");

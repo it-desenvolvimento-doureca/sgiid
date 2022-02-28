@@ -16,10 +16,10 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		super(AB_MOV_MANUTENCAO.class);
 	}
 
-	public List<AB_MOV_MANUTENCAO> getall(Integer linha, ArrayList<String> query2, String classif) {
+	public List<AB_MOV_MANUTENCAO> getall(Integer linha, ArrayList<String> query2, String classif, String classif2) {
 		// System.out.println(query2);
 		Integer varquery = 1;
-		String Squery = "";
+		String Squery = ""; 
 		if (query2 == null) {
 			varquery = 0;
 		}
@@ -53,24 +53,26 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		 * );
 		 */
 		Query query = entityManager.createNativeQuery(
-				"Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+				"Select a.ID_MANUTENCAO,CASE WHEN a.ID_TIPO_TIPOLOGIA_DOSIFICADORES IS NULL THEN c.NOME_TIPO_MANUTENCAO ELSE c.NOME_TIPO_MANUTENCAO +' - '+ f.NOME END as NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
-						+ " ,cast(cc.data as date)  as dt_prev," + " cast(cc.data as time) as h_prev, "
+						+ "  ,CASE WHEN a.CLASSIF = 'D' THEN  a.DATA_PLANEAMENTO ELSE cast(cc.data as date) END as dt_prev "
+						+ " ,CASE WHEN a.CLASSIF = 'D' THEN  a.HORA_PLANEAMENTO ELSE cast(cc.data as time) END as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
-						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo "
+						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo,a.CLASSIF "
 						+ "from AB_MOV_MANUTENCAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
 						+ " left join AB_DIC_TIPO_MANUTENCAO c on c.ID_TIPO_MANUTENCAO = a.ID_TIPO_MANUTENCAO "
 						+ " left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
 						+ "left join (select ID_MANUTENCAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from AB_MOV_MANUTENCAO_CAB x where   INATIVO != 1 GROUP BY ID_MANUTENCAO) cc on cc.ID_MANUTENCAO = a.ID_MANUTENCAO "
+						+ "left join AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES f on a.ID_TIPO_TIPOLOGIA_DOSIFICADORES = f.ID "
 						+ "where  a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
-						+ varquery
-						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF = :classif  order by B,a.ID_MANUTENCAO desc");
+						+ varquery + " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in ('" + classif + "','"
+						+ classif2 + "')  order by B,a.ID_MANUTENCAO desc");
 
 		query.setParameter("linha", linha);
 		query.setParameter("query2", query2);
-		query.setParameter("classif", classif);
+		// query.setParameter("classif", classif);
 
 		List<AB_MOV_MANUTENCAO> data = query.getResultList();
 		return data;
@@ -119,17 +121,20 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		 */
 
 		Query query = entityManager.createNativeQuery(
-				"Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+				"Select a.ID_MANUTENCAO,CASE WHEN a.ID_TIPO_TIPOLOGIA_DOSIFICADORES IS NULL THEN c.NOME_TIPO_MANUTENCAO ELSE c.NOME_TIPO_MANUTENCAO +' - '+ f.NOME END as NOME_TIPO_MANUTENCAO, "
+						+ "a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF "
-						+ " ,cast(cc.data as date) as dt_prev," + " cast(cc.data as time) as h_prev, "
-						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla,"
+						+ " ,CASE WHEN a.CLASSIF = 'D' THEN  a.DATA_PLANEAMENTO ELSE cast(cc.data as date) END as dt_prev "
+						+ ",CASE WHEN a.CLASSIF = 'D' THEN  a.HORA_PLANEAMENTO ELSE cast(cc.data as time) END as h_prev "
+						+ ",(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla,"
 						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo "
 						+ "from AB_MOV_MANUTENCAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
 						+ "left join AB_DIC_TIPO_MANUTENCAO c on c.ID_TIPO_MANUTENCAO = a.ID_TIPO_MANUTENCAO "
 						+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
 						+ "left join (select ID_MANUTENCAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from AB_MOV_MANUTENCAO_CAB x where   INATIVO != 1 GROUP BY ID_MANUTENCAO) cc on cc.ID_MANUTENCAO = a.ID_MANUTENCAO "
+						+ "left join AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES f on a.ID_TIPO_TIPOLOGIA_DOSIFICADORES = f.ID "
 						+ "where a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
 						+ varquery + " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in (" + classif + ") "
 						+ querybanho + " order by B,a.ID_MANUTENCAO desc");
@@ -333,7 +338,7 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 
 	}
 
-	public List<AB_MOV_MANUTENCAO> getallsortid(Integer linha, ArrayList<String> query2, String classif) {
+	public List<AB_MOV_MANUTENCAO> getallsortid(Integer linha, ArrayList<String> query2, String classif, String classif2) {
 		// System.out.println(query2);
 		Integer varquery = 1;
 		String Squery = "";
@@ -361,11 +366,12 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 						+ "left join (select ID_MANUTENCAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from AB_MOV_MANUTENCAO_CAB x where   INATIVO != 1 GROUP BY ID_MANUTENCAO) cc on cc.ID_MANUTENCAO = a.ID_MANUTENCAO "
 						+ "where   a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
 						+ varquery
-						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF = :classif   order by a.ID_MANUTENCAO");
+						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in ('" + classif + "','"
+						+ classif2 + "')   order by a.ID_MANUTENCAO");
 
 		query.setParameter("linha", linha);
 		query.setParameter("query2", query2);
-		query.setParameter("classif", classif);
+		//query.setParameter("classif", classif);
 
 		List<AB_MOV_MANUTENCAO> data = query.getResultList();
 		return data;

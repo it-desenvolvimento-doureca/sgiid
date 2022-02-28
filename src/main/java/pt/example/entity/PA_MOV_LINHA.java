@@ -58,9 +58,21 @@ public class PA_MOV_LINHA {
 	private Integer TIPO_ACAO;
 	@Column(name = "ITEM")
 	private String ITEM;
-	
+
 	@Column(name = "UNIDADE")
 	private Integer UNIDADE;
+	@Column(name = "REFERENCIA")
+	private String REFERENCIA;
+	@Column(name = "DESIGN_REFERENCIA")
+	private String DESIGN_REFERENCIA;
+	@Column(name = "CAUSA")
+	private String CAUSA;
+	@Column(name = "INVESTIMENTOS")
+	private String INVESTIMENTOS;
+	@Column(name = "EFICACIA_CUMPRIMENTO_OBJETIVO")
+	private String EFICACIA_CUMPRIMENTO_OBJETIVO;
+	@Column(name = "SEGUIR_LINHA")
+	private Boolean SEGUIR_LINHA;
 
 	public Integer getID_PLANO_LINHA() {
 		return ID_PLANO_LINHA;
@@ -220,6 +232,54 @@ public class PA_MOV_LINHA {
 
 	public void setUNIDADE(Integer uNIDADE) {
 		UNIDADE = uNIDADE;
+	}
+
+	public String getREFERENCIA() {
+		return REFERENCIA;
+	}
+
+	public String getDESIGN_REFERENCIA() {
+		return DESIGN_REFERENCIA;
+	}
+
+	public void setREFERENCIA(String rEFERENCIA) {
+		REFERENCIA = rEFERENCIA;
+	}
+
+	public void setDESIGN_REFERENCIA(String dESIGN_REFERENCIA) {
+		DESIGN_REFERENCIA = dESIGN_REFERENCIA;
+	}
+
+	public String getCAUSA() {
+		return CAUSA;
+	}
+
+	public void setCAUSA(String cAUSA) {
+		CAUSA = cAUSA;
+	}
+
+	public String getINVESTIMENTOS() {
+		return INVESTIMENTOS;
+	}
+
+	public String getEFICACIA_CUMPRIMENTO_OBJETIVO() {
+		return EFICACIA_CUMPRIMENTO_OBJETIVO;
+	}
+
+	public Boolean getSEGUIR_LINHA() {
+		return SEGUIR_LINHA;
+	}
+
+	public void setINVESTIMENTOS(String iNVESTIMENTOS) {
+		INVESTIMENTOS = iNVESTIMENTOS;
+	}
+
+	public void setEFICACIA_CUMPRIMENTO_OBJETIVO(String eFICACIA_CUMPRIMENTO_OBJETIVO) {
+		EFICACIA_CUMPRIMENTO_OBJETIVO = eFICACIA_CUMPRIMENTO_OBJETIVO;
+	}
+
+	public void setSEGUIR_LINHA(Boolean sEGUIR_LINHA) {
+		SEGUIR_LINHA = sEGUIR_LINHA;
 	}
 
 }

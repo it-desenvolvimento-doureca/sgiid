@@ -25,6 +25,8 @@ public class FIN_DIC_OBJETIVOS {
 	private Float VALOR_OBJETIVO;
 	@Column(name = "N_DIAS_UTEIS")
 	private Integer N_DIAS_UTEIS;
+	@Column(name = "VALOR_OBJETIVO_ANUAL")
+	private Float VALOR_OBJETIVO_ANUAL;
 
 	public Integer getID_OBJETIVO() {
 		return ID_OBJETIVO;
@@ -64,6 +66,14 @@ public class FIN_DIC_OBJETIVOS {
 
 	public void setN_DIAS_UTEIS(Integer n_DIAS_UTEIS) {
 		N_DIAS_UTEIS = n_DIAS_UTEIS;
+	}
+
+	public Float getVALOR_OBJETIVO_ANUAL() {
+		return VALOR_OBJETIVO_ANUAL;
+	}
+
+	public void setVALOR_OBJETIVO_ANUAL(Float vALOR_OBJETIVO_ANUAL) {
+		VALOR_OBJETIVO_ANUAL = vALOR_OBJETIVO_ANUAL;
 	}
 
 }

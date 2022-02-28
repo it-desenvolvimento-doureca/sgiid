@@ -29,6 +29,7 @@ public class GER_UTILIZADORES {
 	private String USER_WINDOWS;
 	private String TELEFONE;
 	private String AREA;
+	private String TIPO_LISTA_FAVORITOS;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -174,6 +175,15 @@ public class GER_UTILIZADORES {
 
 	public void setAREA(String aREA) {
 		AREA = aREA;
+	}
+
+	@Column(name = "TIPO_LISTA_FAVORITOS")
+	public String getTIPO_LISTA_FAVORITOS() {
+		return TIPO_LISTA_FAVORITOS;
+	}
+
+	public void setTIPO_LISTA_FAVORITOS(String tIPO_LISTA_FAVORITOS) {
+		TIPO_LISTA_FAVORITOS = tIPO_LISTA_FAVORITOS;
 	}
 
 }

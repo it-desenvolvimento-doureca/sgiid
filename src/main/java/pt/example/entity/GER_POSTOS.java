@@ -17,7 +17,7 @@ public class GER_POSTOS {
 	private String IP_POSTO;
 	private String IP_IMPRESSORA;
 	private String NOME_IMPRESSORA;
-
+	private String NOME_IMPRESSORA_SILVER;
 	@Id
 	@Column(name = "ID_POSTO")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,6 +72,15 @@ public class GER_POSTOS {
 
 	public void setIP_POSTO(String iP_POSTO) {
 		IP_POSTO = iP_POSTO;
+	}
+
+	@Column(name = "NOME_IMPRESSORA_SILVER")
+	public String getNOME_IMPRESSORA_SILVER() {
+		return NOME_IMPRESSORA_SILVER;
+	}
+
+	public void setNOME_IMPRESSORA_SILVER(String nOME_IMPRESSORA_SILVER) {
+		NOME_IMPRESSORA_SILVER = nOME_IMPRESSORA_SILVER;
 	}
 
 }

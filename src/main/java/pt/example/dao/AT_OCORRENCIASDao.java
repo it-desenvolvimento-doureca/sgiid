@@ -32,7 +32,7 @@ public class AT_OCORRENCIASDao extends GenericDaoJpaImpl<AT_OCORRENCIAS, Integer
 
 	public List<AT_OCORRENCIAS> getall() {
 
-		Query query = entityManager.createQuery("Select a from AT_OCORRENCIAS a");
+		Query query = entityManager.createQuery("Select a from AT_OCORRENCIAS a order by a.DATA_CRIA DESC");
 		List<AT_OCORRENCIAS> data = query.getResultList();
 		return data;
 

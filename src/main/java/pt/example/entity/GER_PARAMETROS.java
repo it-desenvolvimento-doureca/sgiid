@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Time;
 
 import javax.persistence.Column;
@@ -42,6 +43,7 @@ public class GER_PARAMETROS {
 	private Float TAXA_ABSENTISMO;
 	
 	private Float TAXA_REJEICAO;
+	private BigDecimal OBJETIVO_AUDITORIAS;
 
 	@Column(name = "TAXA_REJEICAO")
 	public Float getTAXA_REJEICAO() {
@@ -260,6 +262,15 @@ public class GER_PARAMETROS {
 
 	public void setTAXA_ABSENTISMO(Float tAXA_ABSENTISMO) {
 		TAXA_ABSENTISMO = tAXA_ABSENTISMO;
+	}
+
+	@Column(name = "OBJETIVO_AUDITORIAS")
+	public BigDecimal getOBJETIVO_AUDITORIAS() {
+		return OBJETIVO_AUDITORIAS;
+	}
+
+	public void setOBJETIVO_AUDITORIAS(BigDecimal oBJETIVO_AUDITORIAS) {
+		OBJETIVO_AUDITORIAS = oBJETIVO_AUDITORIAS;
 	}
 
 }

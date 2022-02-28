@@ -45,7 +45,7 @@ public class ReportGenerator {
 	}
 
 	@SuppressWarnings("deprecation")
-	public String relatorio(String format, String Name, Integer ID, String relatorio, String url2, String filepath,String subpasta,String CLIENTE,String DOCUMENTOS,String IDIOMA)
+	public String relatorio(String format, String Name, Integer ID, String relatorio, String url2, String filepath,String subpasta,String CLIENTE,String DOCUMENTOS,String IDIOMA,List<HashMap<String, String>> dados)
 			throws JRException, SQLException {
 		HashMap hm = null;
 		String fileName = null;
@@ -81,6 +81,26 @@ public class ReportGenerator {
 			hm.put("DOCUMENTOS", DOCUMENTOS);
 			hm.put("ID_CLIENTE", CLIENTE);
 			hm.put("IDIOMA", IDIOMA);
+		}else if(subpasta.equals("producao/") && dados != null){
+		
+			HashMap<String, String> firstMap = dados.get(0);			
+			String LINHA = firstMap.get("LINHA");
+			String DATA_INI = firstMap.get("DATA_INI");
+			String DATA_FIM = firstMap.get("DATA_FIM");
+			String PROREF = firstMap.get("PROREF");
+			String TIPO_AREA = firstMap.get("TIPO_AREA");
+			String HORA_INI = firstMap.get("HORA_INI");
+			String HORA_FIM = firstMap.get("HORA_FIM");
+			String CHECK1 = firstMap.get("CHECK1");
+			
+			hm.put("LINHA", LINHA);
+			hm.put("DATA_INI", DATA_INI);
+			hm.put("DATA_FIM", DATA_FIM);
+			hm.put("PROREF", PROREF);
+			hm.put("TIPO_AREA", TIPO_AREA);
+			hm.put("HORA_INI", HORA_INI);
+			hm.put("HORA_FIM", HORA_FIM);
+			hm.put("CHECK1", CHECK1);
 		}else{
 			hm.put("id", ID);
 		}
@@ -192,7 +212,7 @@ public class ReportGenerator {
 
 	@SuppressWarnings("deprecation")
 	public String relatorio2(String format, String Name, Integer ID, String relatorio, String pasta, String filepath,
-			String url) throws JRException, SQLException {
+			String url,String email) throws JRException, SQLException {
 		HashMap hm = null;
 		String fileName = null;
 
@@ -222,7 +242,11 @@ public class ReportGenerator {
 
 		// Create parametros
 		hm = new HashMap();
-		hm.put("id", ID);
+		if(email != null){
+			hm.put("email", email);
+		}else{
+			hm.put("id", ID);
+		}
 
 		// Generate jasper print
 		JasperPrint jprint = (JasperPrint) JasperFillManager.fillReport(jasperFileName, hm, conn);
@@ -244,6 +268,8 @@ public class ReportGenerator {
 			exporter.exportReport();
 		}
 		conn.close();
+		
+		if(email != null) deleteoldfiles(filepath);
 		return fileName;
 
 	}
@@ -255,7 +281,7 @@ public class ReportGenerator {
 
 			if (!files[index].isDirectory()) {
 				long diff = new Date().getTime() - files[index].lastModified();
-				int x = 15; // se o ficheiro não for modificado à 15 dias é
+				int x = 7; // se o ficheiro não for modificado à 7 dias é
 							// apagado
 				if (diff > x * 24 * 60 * 60 * 1000) {
 					boolean wasDeleted = files[index].delete();

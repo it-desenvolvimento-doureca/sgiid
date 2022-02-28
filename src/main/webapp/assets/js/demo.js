@@ -81,13 +81,13 @@ var waitingDialog = waitingDialog || (function ($) {
         '</div></div></div>');
 
     return {
-		/**
-		 * Opens our dialog
-		 * @param message Custom message
-		 * @param options Custom options:
-		 * 				  options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
-		 * 				  options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
-		 */
+        /**
+         * Opens our dialog
+         * @param message Custom message
+         * @param options Custom options:
+         * 				  options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
+         * 				  options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
+         */
         show: function (message, options) {
             // Assigning defaults
             if (typeof options === 'undefined') {
@@ -118,9 +118,9 @@ var waitingDialog = waitingDialog || (function ($) {
             // Opening dialog
             $dialog.modal();
         },
-		/**
-		 * Closes dialog
-		 */
+        /**
+         * Closes dialog
+         */
         hide: function () {
             $dialog.modal('hide');
         }
@@ -243,7 +243,34 @@ $(document).ready(function () {
             w5 = '100%'
         }
 
+        if ($(".cab_seguimento_faturacao").is(":visible")) {
+            w6 = $(".referenciacol").width();
+        } else {
+            w6 = '100%'
+        }
 
+
+        if ($(this).scrollTop() > 240) {
+            $('.scrollleftevolucao').css("top", $(this).scrollTop() + 65);
+            $('.scrollleftevolucao').css("position", 'fixed');
+            $('.scrollleftevolucao').css("right", 100);
+
+            $('.scrollrightevolucao').css("top", $(this).scrollTop() + 65);
+            $('.scrollrightevolucao').css("position", 'fixed');
+            $('.scrollrightevolucao').css("right", 50);
+            $('.scrollrightevolucao').css("left", 'auto');
+
+
+            $("#header_evolucao_cli").css("position", "relative");
+            $("#header_evolucao_cli").css("z-index", "1");
+            $("#header_evolucao_cli").css("top", $(this).scrollTop() - 204);
+            $("#header_evolucao_cli").css("transition", "top 0.6s ease 0s");
+
+            $("#header_evolucao_kam").css("position", "relative");
+            $("#header_evolucao_kam").css("z-index", "1");
+            $("#header_evolucao_kam").css("top", $(this).scrollTop() - 204);
+            $("#header_evolucao_kam").css("transition", "top 0.6s ease 0s");
+        }
 
         if ($(this).scrollTop() > 300) {
 
@@ -254,6 +281,7 @@ $(document).ready(function () {
             $('.scrollright').css("position", 'fixed');
             $('.scrollright').css("right", 86);
             $('.scrollright').css("left", 'auto');
+
 
 
             if ($("#cab_analiseencomendas_copy").length == 0) {
@@ -308,6 +336,20 @@ $(document).ready(function () {
             $(".cab_analiseencomendas_1").css("z-index", "1");
             $(".cab_analiseencomendas_1").css("top", $(this).scrollTop() + 182);
             $(".cab_analiseencomendas_1").css("transition", "top 0.6s ease 0s");
+
+            $(".cab_seguimento_faturacao").width(w6);
+            $(".cab_seguimento_faturacao").css("position", "fixed");
+            $(".cab_seguimento_faturacao").css("z-index", "1");
+            $(".cab_seguimento_faturacao").css("top", $(this).scrollTop() + 130);
+            $(".cab_seguimento_faturacao").css("transition", "top 0.6s ease 0s");
+
+
+            $(".filtros_seguimento_faturacao").width(w6);
+            $(".filtros_seguimento_faturacao").css("position", "fixed");
+            $(".filtros_seguimento_faturacao").css("z-index", "1");
+            $(".filtros_seguimento_faturacao").css("top", $(this).scrollTop() + 50);
+            $(".filtros_seguimento_faturacao").css("transition", "top 0.6s ease 0s");
+            $(".filtros_seguimento_faturacao").css("background", "#f5f5f5");
 
             var top3 = 0;
             if ($("#analises_prev_scroll").length != 0) {
@@ -371,11 +413,17 @@ $(document).ready(function () {
             $(".filtros_analiseencomendas_1").css("position", "initial");
             $(".filtros_analiseencomendas_1").css("width", "100%");
 
+            $(".filtros_seguimento_faturacao").css("position", "initial");
+            $(".filtros_seguimento_faturacao").css("width", "100%");
+
             $(".filtros_analiseencomendas_2").css("position", "initial");
             $(".filtros_analiseencomendas_2").css("width", "100%");
 
             $(".cab_analiseencomendas_1").css("position", "initial");
             $(".cab_analiseencomendas_1").css("width", "100%");
+
+            $(".cab_seguimento_faturacao").css("position", "initial");
+            $(".cab_seguimento_faturacao").css("width", "100%");
 
             $(".cab_analiseencomendas_3").css("position", "initial");
             $(".cab_analiseencomendas_3").css("width", "100%");
@@ -425,6 +473,16 @@ $(document).ready(function () {
             $('.scrollright').css("top", 20);
             $('.scrollright').css("right", 'auto');
             $('.scrollright').css("left", 59);
+
+            $('.scrollleftevolucao').css("position", 'absolute');
+            $('.scrollleftevolucao').css("top", 20);
+            $('.scrollleftevolucao').css("right", '48px');
+            $('.scrollrightevolucao').css("position", 'absolute');
+            $('.scrollrightevolucao').css("top", 20);
+            $('.scrollrightevolucao').css("right", '3px');
+            /*$('.scrollrightevolucao').css("left", 59);*/
+            $("#header_evolucao_cli").css("position", "initial");
+            $("#header_evolucao_kam").css("position", "initial");
 
 
         }
@@ -707,6 +765,26 @@ $(document).ready(function () {
     $('.scrollright').click(function () {
         //$("#analises_prev_scroll").animate({ scrollLeft: '+=20' }, 0);
         document.getElementById('analises_prev_scroll').scrollLeft += 20;
+        return false;
+    });
+
+    $('.scrollleft_cli').click(function () {
+        document.getElementById('analises_prev_scroll_cli').scrollLeft -= 20;
+        return false;
+    });
+
+    $('.scrollright_cli').click(function () {
+        document.getElementById('analises_prev_scroll_cli').scrollLeft += 20;
+        return false;
+    });
+
+    $('.scrollleft_kam').click(function () {
+        document.getElementById('analises_prev_scroll_kam').scrollLeft -= 20;
+        return false;
+    });
+
+    $('.scrollright_kam').click(function () {
+        document.getElementById('analises_prev_scroll_kam').scrollLeft += 20;
         return false;
     });
 });

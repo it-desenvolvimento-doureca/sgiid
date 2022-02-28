@@ -702,12 +702,13 @@ public class SIRB {
 	}
 
 	@POST
-	@Path("/getAB_MOV_MANUTENCAO/{linha}/{classif}")
+	@Path("/getAB_MOV_MANUTENCAO/{linha}/{classif}/{classif2}")
 	@Consumes("*/*")
 	@Produces("application/json")
 	public List<AB_MOV_MANUTENCAO> getAB_MOV_MANUTENCAO(@PathParam("linha") Integer linha,
-			@PathParam("classif") String classif, final ArrayList<String> query) {
-		return dao8.getall(linha, query, classif);
+			@PathParam("classif") String classif, final ArrayList<String> query,
+			@PathParam("classif2") String classif2) {
+		return dao8.getall(linha, query, classif, classif2);
 	}
 
 	@POST
@@ -746,12 +747,13 @@ public class SIRB {
 	}
 
 	@POST
-	@Path("/getAB_MOV_MANUTENCAOsorid/{linha}/{classif}")
+	@Path("/getAB_MOV_MANUTENCAOsorid/{linha}/{classif}/{classif2}")
 	@Consumes("*/*")
 	@Produces("application/json")
 	public List<AB_MOV_MANUTENCAO> getAB_MOV_MANUTENCAOsorid(@PathParam("linha") Integer linha,
-			@PathParam("classif") String classif, final ArrayList<String> query) {
-		return dao8.getallsortid(linha, query, classif);
+			@PathParam("classif") String classif, @PathParam("classif2") String classif2,
+			final ArrayList<String> query) {
+		return dao8.getallsortid(linha, query, classif, classif2);
 	}
 
 	@GET
@@ -870,6 +872,14 @@ public class SIRB {
 	@Produces("application/json")
 	public List<AB_MOV_MANUTENCAO_LINHA> getAB_MOV_MANUTENCAO_LINHAbyidmanutencaocabtotal(@PathParam("id") Integer id) {
 		return dao9.getbyidmanutencaocabtotal(id);
+	}
+
+	@GET
+	@Path("/getAB_MOV_MANUTENCAO_LINHAbyidmanutencaocabtotal2/{id}")
+	@Produces("application/json")
+	public List<AB_MOV_MANUTENCAO_LINHA> getAB_MOV_MANUTENCAO_LINHAbyidmanutencaocabtotal2(
+			@PathParam("id") Integer id) {
+		return dao9.getbyidmanutencaocabtotal2(id);
 	}
 
 	@DELETE
@@ -1004,6 +1014,13 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getDadosUtilizadorAll")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getDadosUtilizadorAll() {
+		return dao11.getDadosUtilizadorAll();
+	}
+
+	@GET
 	@Path("/getGER_UTILIZADORESbyid_utilizador/{id}")
 	@Produces("application/json")
 	public List<GER_UTILIZADORES> getGER_UTILIZADORESbyid_utilizador(@PathParam("id") Integer id) {
@@ -1084,20 +1101,22 @@ public class SIRB {
 
 		String ldapSearchBase = "";
 		String DOMAIN = "";
+		String IP_DOMAIN = "";
 
 		Query query_folder = entityManager.createNativeQuery(
-				"select top 1 NOME_USER,ID_USER,PASSWORD_USER,ldapSearchBase,DOMAIN from GER_LDAP_CONF a");
+				"select top 1 NOME_USER,ID_USER,PASSWORD_USER,ldapSearchBase,DOMAIN,IP_DOMAIN from GER_LDAP_CONF a");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		for (Object[] content : dados_folder) {
 			ldapSearchBase = content[3].toString();
 			DOMAIN = content[4].toString();
+			IP_DOMAIN = content[5].toString();
 		}
 
 		try {
 			String senha2 = new String(Base64.getDecoder().decode(password));
-			return testLDAP(user.replaceAll("\\s+", ""), senha2, DOMAIN, ldapSearchBase);
+			return testLDAP(user.replaceAll("\\s+", ""), senha2, DOMAIN, ldapSearchBase, IP_DOMAIN);
 		} catch (NamingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1115,9 +1134,10 @@ public class SIRB {
 		String PASSWORD_USER = "";
 		String ldapSearchBase = "";
 		String DOMAIN = "";
+		String IP_DOMAIN = "";
 
 		Query query_folder = entityManager.createNativeQuery(
-				"select top 1 NOME_USER,ID_USER,PASSWORD_USER,ldapSearchBase,DOMAIN from GER_LDAP_CONF a");
+				"select top 1 NOME_USER,ID_USER,PASSWORD_USER,ldapSearchBase,DOMAIN,IP_DOMAIN from GER_LDAP_CONF a");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1127,10 +1147,11 @@ public class SIRB {
 			PASSWORD_USER = content[2].toString();
 			ldapSearchBase = content[3].toString();
 			DOMAIN = content[4].toString();
+			IP_DOMAIN = content[5].toString();
 		}
 
 		try {
-			return dadosLDAP(DOMAIN, ID_USER, NOME_USER, PASSWORD_USER, ldapSearchBase);
+			return dadosLDAP(DOMAIN, ID_USER, NOME_USER, PASSWORD_USER, ldapSearchBase, IP_DOMAIN);
 		} catch (NamingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1139,12 +1160,13 @@ public class SIRB {
 	}
 
 	public static List<HashMap<String, String>> dadosLDAP(String dominio, String user, String nome, String pass,
-			String ldapSearchBase) throws NamingException {
+			String ldapSearchBase, String ip_dominio) throws NamingException {
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
 		Properties properties = new Properties();
 		properties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		properties.put(Context.PROVIDER_URL, "ldap://" + dominio);
+		properties.put(Context.PROVIDER_URL,
+				"ldap://" + ip_dominio/* + dominio */);
 		properties.put(Context.SECURITY_AUTHENTICATION, "simple");
 		properties.put(Context.SECURITY_PRINCIPAL, user + "@" + dominio);
 		properties.put(Context.SECURITY_CREDENTIALS, pass);
@@ -1155,7 +1177,7 @@ public class SIRB {
 			searchCtrls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 			String filter = "(&(objectCategory=person)(samaccountname=*))";
 			NamingEnumeration values = context.search(ldapSearchBase, filter, searchCtrls);
-			HashMap<String, String> x2 = new HashMap<>();
+			HashMap<String, String> x2 = new HashMap<String, String>();
 			x2.put("NOME", nome);
 			x2.put("ID", user);
 			list.add(x2);
@@ -1165,7 +1187,7 @@ public class SIRB {
 
 				// Attributes attrs = values.getAttributes();
 
-				HashMap<String, String> x = new HashMap<>();
+				HashMap<String, String> x = new HashMap<String, String>();
 
 				/*
 				 * System.out.println(attrs.get("distinguishedName") + " " +
@@ -1206,10 +1228,10 @@ public class SIRB {
 		return list;
 	}
 
-	public static boolean testLDAP(String user, String password, String ldapAdServer2, String ldapSearchBase)
-			throws NamingException {
+	public static boolean testLDAP(String user, String password, String ldapAdServer2, String ldapSearchBase,
+			String ip_dominio) throws NamingException {
 
-		final String ldapAdServer = "ldap://" + ldapAdServer2;
+		final String ldapAdServer = "ldap://" + ip_dominio; // + ldapAdServer2;
 		// final String ldapSearchBase = "dc=doureca,dc=local";
 
 		final String ldapUsername = user + "@" + ldapAdServer2;
@@ -1792,6 +1814,14 @@ public class SIRB {
 	@Produces("application/json")
 	public List<AB_DIC_TIPO_MANUTENCAO> getAB_DIC_TIPO_MANUTENCAO(final ArrayList<String> classif) {
 		return dao17.getall(classif);
+	}
+
+	@POST
+	@Path("/getAB_DIC_TIPO_MANUTENCAO2")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<AB_DIC_TIPO_MANUTENCAO> getAB_DIC_TIPO_MANUTENCAO2(final ArrayList<String> classif) {
+		return dao17.getall2(classif);
 	}
 
 	@DELETE
@@ -2437,6 +2467,25 @@ public class SIRB {
 		return dao78.update(PLANEAMENTO_CAB);
 	}
 
+	@POST
+	@Path("/ANALISE_PLANEAMENTO_BARRAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> ANALISE_PLANEAMENTO_BARRAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String SEMANA = firstMap.get("SEMANA");
+		String LINHA = firstMap.get("LINHA");
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC ANALISE_PLANEAMENTO_BARRAS " + SEMANA + ", " + ANO + ", " + LINHA);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
 	/************************************* TIPOS_OCORRENCIA */
 	@POST
 	@Path("/createTIPOS_OCORRENCIA")
@@ -2672,6 +2721,16 @@ public class SIRB {
 	@Produces("application/json")
 	public List<RH_FUNCIONARIOS> getRH_FUNCIONARIOS() {
 		return dao63.getall();
+	}
+
+	@POST
+	@Path("/getRH_FUNCIONARIOS2")
+	@Produces("application/json")
+	public List<RH_FUNCIONARIOS> getRH_FUNCIONARIOS2(final List<HashMap<String, String>> datas) {
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String Ativo = firstMap.get("ATIVO");
+		return dao63.getall2(Ativo);
 	}
 
 	@DELETE
@@ -2982,7 +3041,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getFamilias(getURLSILVER());
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getDefeitos")
 	@Produces("application/json")
@@ -3028,6 +3087,17 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getComponentesSaoBento")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getComponentesSaoBento() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesSaoBento(getURLSILVER());
+		return dados;
+	}
+
+	@GET
 	@Path("/GER_DIC_PROJ_CABgetComponentes")
 	@Produces("application/json")
 	public List<HashMap<String, String>> GER_DIC_PROJ_CABgetComponentes() throws SQLException, ClassNotFoundException {
@@ -3046,6 +3116,29 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getReferencias(getURLSILVER());
+		return dados;
+	}
+
+	@GET
+	@Path("/getReferenciasMANU")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getReferenciasMANU() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getReferenciasMANU(getURLSILVER());
+		return dados;
+	}
+
+	@POST
+	@Path("/getReferenciasSTOCK")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getReferenciasSTOCK(final String PROREF)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getReferenciasSTOCK(getURLSILVER(), PROREF);
 		return dados;
 	}
 
@@ -3069,6 +3162,18 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getMoradas(getURLSILVER(), clicod);
+		return dados;
+	}
+
+	@GET
+	@Path("/getMoradaClientePorReferencia/{proref}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getMoradaClientePorReferencia(@PathParam("proref") String proref)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getMoradaClientePorReferencia(getURLSILVER(), proref);
 		return dados;
 	}
 
@@ -4157,10 +4262,37 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getPA_MOV_CABAssociarPlanoEstrategico/{id_plano}/{id}")
+	@Produces("application/json")
+	public int getPA_MOV_CABAssociarPlanoEstrategico(@PathParam("id") String id,
+			@PathParam("id_plano") String id_plano) {
+		return entityManager.createNativeQuery(
+				" UPDATE PA_MOV_CAB set ID_PLANO_ESTRATEGICO = " + id_plano + " where  ID_PLANO_CAB = " + id + "")
+				.executeUpdate();
+	}
+
+	@GET
+	@Path("/getPA_MOV_CABRemoverPlanoEstrategico/{id}")
+	@Produces("application/json")
+	public int getPA_MOV_CABRemoverPlanoEstrategico(@PathParam("id") String id) {
+		return entityManager
+				.createNativeQuery(" UPDATE PA_MOV_CAB set ID_PLANO_ESTRATEGICO = null where ID_PLANO_CAB = " + id + "")
+				.executeUpdate();
+	}
+
+	@GET
 	@Path("/getPA_MOV_CABbyid/{id}")
 	@Produces("application/json")
-	public List<PA_MOV_CAB> getPA_MOV_CABbyip(@PathParam("id") Integer id) {
+	public List<PA_MOV_CAB> getPA_MOV_CABbyid(@PathParam("id") Integer id) {
 		return dao95.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPA_MOV_CABbyidPlanoEstrategico/{tipo}/{id}")
+	@Produces("application/json")
+	public List<PA_MOV_CAB> getPA_MOV_CABbyidPlanoEstrategico(@PathParam("tipo") String tipo,
+			@PathParam("id") Integer id) {
+		return dao95.getbyidPlanoEstrategico(tipo, id);
 	}
 
 	@DELETE
@@ -4193,7 +4325,9 @@ public class SIRB {
 				+ "UPDATE c set c.ESTADO = 'A',c.DATA_ANULACAO = GETDATE(),c.UTZ_ANULACAO = " + utilizador
 				+ ",c.INATIVO = 1 from PA_MOV_CAB a " + "inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
 				+ "inner join GT_MOV_TAREFAS c on b.ID_PLANO_LINHA = c.ID_CAMPO and ID_MODULO = 13 and SUB_MODULO = 'PA' "
-				+ "where a.ID_PLANO_CAB = " + id + "").executeUpdate();
+				+ "where a.ID_PLANO_CAB = " + id + "  "
+				+ "UPDATE  b set b.ESTADO = 'A'  from PA_MOV_CAB a inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
+				+ "where a.ID_PLANO_CAB = " + id + " and a.ID_PLANO_ESTRATEGICO IS NOT NULL").executeUpdate();
 	}
 
 	/************************************* PEDIDOS_APP */
@@ -4827,7 +4961,7 @@ public class SIRB {
 
 					String nome = relatorio.relatorio2("pdf", content[1].toString(),
 							Integer.parseInt(content[0].toString()), evento.getNOME_RELATORIO(), pasta_destino,
-							filepath, getURL());
+							filepath, getURL(), null);
 
 					if (evento.getANEXA_FICHEIROS() != null && evento.getANEXA_FICHEIROS())
 						ficheiros.add(nome);
@@ -6032,7 +6166,7 @@ public class SIRB {
 		ReportGenerator report = new ReportGenerator();
 		try {
 			fileName = report.relatorio(format, Name, null, relatorio, getURL(), filepath, "financeira/", CLIENTE,
-					DOCUMENTOS, IDIOMA);
+					DOCUMENTOS, IDIOMA, null);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -6237,6 +6371,13 @@ public class SIRB {
 		return dao117.getbyid(id);
 	}
 
+	@GET
+	@Path("/getFIN_REGISTO_ACOESbyidFICHEIRO/{id}")
+	@Produces("application/json")
+	public List<FIN_REGISTO_ACOES> getFIN_REGISTO_ACOESbyidFICHEIRO(@PathParam("id") String id) {
+		return dao117.getbyidFicheiro(id);
+	}
+
 	@DELETE
 	@Path("/deleteFIN_REGISTO_ACOES/{id}")
 	public void deleteFIN_REGISTO_ACOES(@PathParam("id") Integer id) {
@@ -6309,7 +6450,7 @@ public class SIRB {
 				.createNativeQuery("UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET ESTADO = 'A' where ID_RECLAMACAO = " + id
 						+ " and ESTADO != 'C' "
 						+ "UPDATE GT_MOV_TAREFAS SET ESTADO = 'A' where ID_CAMPO in (select ID from RC_MOV_RECLAMACAO_PLANOS_ACCOES where ID_RECLAMACAO = '"
-						+ id + "') and ID_MODULO='" + modulo + "' and ESTADO != 'C'");
+						+ id + "') and ID_MODULO='" + modulo + "' and SUB_MODULO != 'D' and ESTADO != 'C'");
 
 		query.executeUpdate();
 
@@ -6325,7 +6466,7 @@ public class SIRB {
 				.createNativeQuery("UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET ESTADO = 'N' where ID_RECLAMACAO = " + id
 						+ " and tipo = '" + tipo + "' "
 						+ "UPDATE GT_MOV_TAREFAS SET ESTADO = 'N' where ID_CAMPO in (select ID from RC_MOV_RECLAMACAO_PLANOS_ACCOES where ID_RECLAMACAO = "
-						+ id + "and TIPO='" + tipo + "') and ID_MODULO='" + modulo + "' ");
+						+ id + "and TIPO='" + tipo + "') and ID_MODULO='" + modulo + "' and SUB_MODULO != 'D' ");
 
 		query.executeUpdate();
 
@@ -6630,6 +6771,20 @@ public class SIRB {
 		return dao90.update(RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR);
 	}
 
+	@PUT
+	@Path("/updateORDEMRC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR updateORDEMRC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR(
+			final RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR) {
+
+		entityManager.createNativeQuery("UPDATE RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR SET ORDEM = "
+				+ RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR.getORDEM() + " WHERE ID = "
+				+ RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR.getID() + "").executeUpdate();
+
+		return RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR;
+	}
+
 	/************************************* RC_MOV_RECLAMACAO_PLANOS_ACCOES */
 	@POST
 	@Path("/createRC_MOV_RECLAMACAO_PLANOS_ACCOES")
@@ -6875,9 +7030,10 @@ public class SIRB {
 	@Produces("application/json")
 	public int atualizaTAREFA(final GT_MOV_TAREFAS data) {
 		return entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET DATA_FIM = '" + data.getDATA_FIM()
-				+ "' where id_MODULO = "+data.getID_MODULO()+" and sub_MODULO = '"+data.getSUB_MODULO()+"' and id_campo = "+data.getID_CAMPO()+"").executeUpdate();
+				+ "' where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = '" + data.getSUB_MODULO()
+				+ "' and id_campo = " + data.getID_CAMPO() + "").executeUpdate();
 	}
-	
+
 	@GET
 	@Path("/getGT_MOV_TAREFAS")
 	@Produces("application/json")
@@ -6951,7 +7107,7 @@ public class SIRB {
 		Query query = entityManager.createNativeQuery(url);
 		query.executeUpdate();
 
-		enviaEventoTarefa(id, link);
+		enviaEventoTarefa(id, link, false);
 
 	}
 
@@ -6963,22 +7119,72 @@ public class SIRB {
 
 		Query query = entityManager.createNativeQuery("select ID,ID_RECLAMACAO from RC_MOV_RECLAMACAO_PLANOS_ACCOES "
 				+ "where ID_RECLAMACAO = " + id
-				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 5 and ID_CAMPO = ID)");
+				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 5 and SUB_MODULO != 'D' and ID_CAMPO = ID)");
 
 		List<Object[]> dados = query.getResultList();
 
 		for (Object[] content : dados) {
-			String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + content[0].toString() + "," + modulo + "";
+			String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + content[0].toString() + "," + modulo + ",null";
 
 			Query query_tarefa = entityManager.createNativeQuery(url);
 			query_tarefa.executeUpdate();
 
-			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link);
+			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, false);
 		}
 
 	}
 
-	public void enviaEventoTarefa(Integer id, String link) {
+	@POST
+	@Path("/getAtualizaTarefaDerrogacoes/{id}/{modulo}")
+	@Produces("application/json")
+	public void getAtualizaTarefaDerrogacoes(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
+			final String link) {
+
+		Query query = entityManager.createNativeQuery("select ID,ID_DERROGACAO from QUA_DERROGACOES_PLANOS_ACCOES "
+				+ "where ID = " + id
+				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 5 and SUB_MODULO = 'D' and ID_CAMPO = ID)");
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+			String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + content[0].toString() + "," + modulo + ",'D'";
+
+			Query query_tarefa = entityManager.createNativeQuery(url);
+			query_tarefa.executeUpdate();
+
+			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, true);
+		}
+
+	}
+
+	@POST
+	@Path("/getAtualizaSubtarefas/{id}/{estado}/{utilizador}")
+	@Produces("application/json")
+	public void getAtualizaTarefaDerrogacoes(@PathParam("id") Integer id_pai, @PathParam("estado") String estado,
+			@PathParam("utilizador") Integer utilizador) {
+
+		String sqlq = "EXEC [GT_MOV_TAREFAS_UPDATE_SUBTAREFAS] " + id_pai + "," + utilizador + ",'" + estado + "'";
+
+		Query query_tarefa = entityManager.createNativeQuery(sqlq);
+		query_tarefa.executeUpdate();
+
+	}
+
+	@POST
+	@Path("/getValidaSubtarefas/{id}")
+	@Produces("application/json")
+	public List<Object[]> getValidaSubtarefas(@PathParam("id") Integer id_pai) {
+
+		String sqlq = "EXEC [GT_MOV_TAREFAS_VALIDA_SUBTAREFAS] " + id_pai;
+
+		Query query_tarefa = entityManager.createNativeQuery(sqlq);
+		List<Object[]> dados = query_tarefa.getResultList();
+
+		return dados;
+
+	}
+
+	public void enviaEventoTarefa(Integer id, String link, Boolean derrogacao) {
 		String observacao = "";
 		String numero_reclamacao = "";
 		String cliente = "";
@@ -6990,12 +7196,21 @@ public class SIRB {
 		String responsavel = "";
 		String email_para = "";
 		String data_prevista = "";
+		Query query = null;
 
-		Query query = entityManager.createNativeQuery(
-				"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,OBSERVACOES ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
-						+ "b.NOME_CLIENTE,b.ID_RECLAMACAO,a.DATA_PREVISTA,b.DATA_RECLAMACAO "
-						+ "from RC_MOV_RECLAMACAO_PLANOS_ACCOES a inner join RC_MOV_RECLAMACAO b on b.ID_RECLAMACAO = a.ID_RECLAMACAO "
-						+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
+		if (derrogacao) {
+			query = entityManager.createNativeQuery(
+					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,OBSERVACOES ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
+							+ "b.NOME_CLIENTE,b.ID_DERROGACAO,a.DATA_PREVISTA,b.DATA_INICIO "
+							+ "from QUA_DERROGACOES_PLANOS_ACCOES a inner join QUA_DERROGACOES b on b.ID_DERROGACAO = a.ID_DERROGACAO "
+							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
+		} else {
+			query = entityManager.createNativeQuery(
+					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,OBSERVACOES ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
+							+ "b.NOME_CLIENTE,b.ID_RECLAMACAO,a.DATA_PREVISTA,b.DATA_RECLAMACAO "
+							+ "from RC_MOV_RECLAMACAO_PLANOS_ACCOES a inner join RC_MOV_RECLAMACAO b on b.ID_RECLAMACAO = a.ID_RECLAMACAO "
+							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
+		}
 
 		List<Object[]> dados = query.getResultList();
 
@@ -7034,19 +7249,32 @@ public class SIRB {
 				primeiro = false;
 			}
 
-			List<HashMap<String, String>> data = new ArrayList<>();
+			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 			HashMap<String, String> n = new HashMap<String, String>();
 			n.put("MODULO", "5");
 			n.put("MOMENTO", "Ao Criar Tarefa");
-			n.put("PAGINA", "Reclamações Clientes");
+			if (derrogacao) {
+				n.put("PAGINA", "Derrogações");
+			} else {
+				n.put("PAGINA", "Reclamações Clientes");
+			}
 			n.put("ESTADO", "1");
 			n.put("EMAIL_PARA", email_para);
 
-			n.put("DADOS",
-					"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reclamacao::"
-							+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_reclamacao::" + data_reclamacao
-							+ "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::" + numero_tarefa
-							+ "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
+			if (derrogacao) {
+				n.put("DADOS",
+						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_derrogacao::"
+								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_derrogacao::"
+								+ data_reclamacao + "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::"
+								+ numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
+			} else {
+				n.put("DADOS",
+						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reclamacao::"
+								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_reclamacao::"
+								+ data_reclamacao + "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::"
+								+ numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
+			}
+
 			data.add(n);
 
 			verficaEventos(data);
@@ -7691,7 +7919,7 @@ public class SIRB {
 
 	public void verficaEventos(String[] keyValuePairs, String momento, String fgilepath) {
 
-		List<String> x = new ArrayList<>();
+		List<String> x = new ArrayList<String>();
 
 		Query query3 = entityManager.createQuery("Select a from GER_EVENTOS_CONF a where MODULO = 1 and MOMENTO = '"
 				+ momento + "' " + "and PAGINA = 'INTERNO' and ESTADO  != 0");
@@ -7824,15 +8052,57 @@ public class SIRB {
 
 	/* FICHEIRO ************************************/
 	@GET
-	@Path("/get/{format}/{filename}/{id}/{relatorio}")
+	@Path("/get/{format}/{filename}/{id}/{relatorio}/{subPASTA}")
 	// @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	public Response getFile(@PathParam("format") String format, @PathParam("filename") String Name,
-			@PathParam("id") Integer ID, @PathParam("relatorio") String relatorio) {
+			@PathParam("id") Integer ID, @PathParam("relatorio") String relatorio,
+			@PathParam("subPASTA") String subPASTA) {
 		String fileName = null;
 		String filepath = getFILEPATH();
+		String subPASTA_path = subPASTA + "/";
+
+		if (subPASTA.equals("nenhuma"))
+			subPASTA_path = "";
+
 		ReportGenerator report = new ReportGenerator();
 		try {
-			fileName = report.relatorio(format, Name, ID, relatorio, getURL(), filepath, "", null, null, null);
+			fileName = report.relatorio(format, Name, ID, relatorio, getURL(), filepath, subPASTA_path, null, null,
+					null, null);
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (fileName != null) {
+			File file = new File("/" + filepath + "/relatorios/" + fileName);
+			ResponseBuilder response = Response.ok((Object) file);
+			response.header("Content-Disposition", "attachment; filename=report." + format + "");
+			return response.build();
+		} else {
+			return null;
+		}
+
+	}
+
+	@POST
+	@Path("/getFILEPOST/{format}/{filename}/{id}/{relatorio}/{subPASTA}")
+	// @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	public Response getFile(@PathParam("format") String format, @PathParam("filename") String Name,
+			@PathParam("id") Integer ID, @PathParam("relatorio") String relatorio,
+			@PathParam("subPASTA") String subPASTA, final List<HashMap<String, String>> dados) {
+		String fileName = null;
+		String filepath = getFILEPATH();
+		String subPASTA_path = subPASTA + "/";
+
+		if (subPASTA.equals("nenhuma"))
+			subPASTA_path = "";
+
+		ReportGenerator report = new ReportGenerator();
+		try {
+			fileName = report.relatorio(format, Name, ID, relatorio, getURL(), filepath, subPASTA_path, null, null,
+					null, dados);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -8032,11 +8302,11 @@ public class SIRB {
 				attachemetn = (Attachment) it_list.next();
 				texto += "<i>" + attachemetn + "</i><br>";
 			}
-			
+
 			body = body.replaceAll("<!\\[endif]-->", "<![endif]");
 			body = body.replaceAll("<!\\[endif]", "<![endif]-->");
 			body = body.replaceAll("(?s)<!--.*?-->", "");
-		
+
 			List<Attachment> atts = msg.getAttachments();
 			for (Attachment att : atts) {
 				if (att instanceof FileAttachment) {
@@ -8628,16 +8898,16 @@ public class SIRB {
 			if (count > 0 && NCLRANG != null) {
 				Orig_Composant = true;
 				data += "0";
-			} else {				
-				boolean ans = values_etiqueta.contains(content[7].toString()); 
-				if(ans){
+			} else {
+				boolean ans = values_etiqueta.contains(content[7].toString());
+				if (ans) {
 					Orig_Composant = true;
 					data += "0";
-				}else{
+				} else {
 					Orig_Composant = false;
 					data += "1";
 					values_etiqueta.add(content[7].toString());
-				}				
+				}
 			}
 
 			// Référence composé
@@ -8991,7 +9261,7 @@ public class SIRB {
 		}
 
 		etiquetas += "</table>";
-		List<HashMap<String, String>> data = new ArrayList<>();
+		List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> n = new HashMap<String, String>();
 		n.put("MODULO", "1");
 		n.put("MOMENTO", "Ao Finalizar Preparação");
@@ -9184,7 +9454,7 @@ public class SIRB {
 						content[10].toString(), content[4].toString());
 
 				if (op_num.size() == 0) {
-					HashMap<String, String> x = new HashMap<>();
+					HashMap<String, String> x = new HashMap<String, String>();
 					x.put("DATA", content[3].toString());
 					x.put("REF", content[4].toString());
 					x.put("REF_DES", content[5].toString());
@@ -9702,7 +9972,7 @@ public class SIRB {
 		if (data.length() > 0) {
 			// criar_ficheiro(data, path, path_error, false, "");
 
-			Map<String, String> env = new HashMap<>();
+			Map<String, String> env = new HashMap<String, String>();
 			env.put("create", "true");
 			java.nio.file.Path pathh = Paths.get("c:/sgiid/temp_files/" + nomezip + ".zip");
 			URI uri = URI.create("jar:" + pathh.toUri());
@@ -9715,7 +9985,7 @@ public class SIRB {
 		}
 
 		if (size_etiq > 0 && imprime) {
-			Map<String, String> env = new HashMap<>();
+			Map<String, String> env = new HashMap<String, String>();
 			env.put("create", "true");
 			java.nio.file.Path pathh = Paths.get("c:/sgiid/temp_files/" + nomezip + ".zip");
 			URI uri = URI.create("jar:" + pathh.toUri());
@@ -9756,6 +10026,155 @@ public class SIRB {
 		int dados = query.executeUpdate();
 
 		return dados;
+	}
+
+	// Atualizar Estados manutenções
+	@GET
+	@Path("/atualizarestadosDosificadores/{id}")
+	@Produces("application/json")
+	public int atualizarestadosDosificadores(@PathParam("id") Integer id) {
+
+		Query query = entityManager.createNativeQuery("DECLARE @ID int = 69937 ; "
+				+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO = " + id
+				+ " and (select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO =  @ID and INATIVO != 1 ) = "
+				+ "(select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO = @ID and DATA_EXECUCAO is not null and INATIVO != 1) "
+				+ "and (select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO = @ID and INATIVO != 1 ) > 0");
+
+		int dados = query.executeUpdate();
+
+		return dados;
+	}
+
+	@GET
+	@Path("/getAlertasEncomendasPendentes")
+	@Produces("application/json")
+	public void getAlertasEncomendasPendentes() {
+
+		Query query = null;
+		SendEmail email = new SendEmail();
+		String filepath = getFILEPATH();
+		ReportGenerator relatorio = new ReportGenerator();
+		String nome = null;
+		String pasta_destino = "c:/" + filepath + "/relatorios/";
+		String nome_relatorio = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+		nome_relatorio = "AlertasEncomendasPendentes" + nome_relatorio;
+
+		/*
+		 * String url = "EXEC [MERGE_PR_ALERTA_ENCOMENDA_PENDENTE] ";
+		 * 
+		 * Query query_atualiza = entityManager.createNativeQuery(url);
+		 * List<Object[]> dados_t =query_atualiza.getResultList();
+		 */
+
+		query = entityManager.createNativeQuery(
+				"select LOWER(utinumint) utinumint,'' utinumint2  from PR_ALERTA_ENCOMENDA_PENDENTE GROUP by utinumint");
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+
+			try {
+
+				nome = relatorio.relatorio2("pdf", nome_relatorio, null,
+						"AlertasEncomendasPendentes/AlertaEncomendaPendente", pasta_destino, filepath, getURL(),
+						content[0].toString());
+
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JRException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			String email_para = "";
+			email_para += content[0].toString();
+			System.out.println(content[0].toString());
+
+			verficaEventosEncomendas("10", "Alertas de Encomendas Pendentes", "Interno", "1", email_para,
+					pasta_destino + "/" + nome);
+
+		}
+	}
+
+	public void verficaEventosEncomendas(String MODULO, String MOMENTO, String PAGINA, String ESTADO, String EMAIL_PARA,
+			String ficheiro) {
+
+		Query query3 = entityManager.createQuery("Select a from GER_EVENTOS_CONF a where MODULO = " + MODULO
+				+ " and MOMENTO = '" + MOMENTO + "' " + "and PAGINA = '" + PAGINA + "' and ESTADO = " + ESTADO + "");
+		List<GER_EVENTOS_CONF> dados = query3.getResultList();
+
+		for (GER_EVENTOS_CONF borderTypes : dados) {
+
+			// System.out.println(borderTypes.getEMAIL_ASSUNTO());
+			EMAIL email = new EMAIL();
+			email.setDE("alertas.it.doureca@gmail.com");
+
+			String email_para = (EMAIL_PARA != null && !EMAIL_PARA.toString().isEmpty()) ? "," + EMAIL_PARA : "";
+
+			email.setPARA(borderTypes.getEMAIL_PARA() + email_para);
+			String mensagem = borderTypes.getEMAIL_MENSAGEM();
+			String assunto = borderTypes.getEMAIL_ASSUNTO();
+
+			email.setASSUNTO(assunto);
+			email.setMENSAGEM(mensagem);
+
+			sendemail(email, null, ficheiro);
+		}
+	}
+
+	@GET
+	@Path("/getAlertasDerrogacoes")
+	@Produces("application/json")
+	public void getAlertasDerrogacoes() {
+
+		Query query = null;
+		SendEmail email = new SendEmail();
+
+		query = entityManager.createNativeQuery("EXEC [GET_ALERTA_DERROGACOES]");
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+
+			String email_para = "", motivo = "", causa = "", data_inicio = "", data_fim = "", numero_derrogacao = "",
+					estado = "", cliente = "", referencia = "", link = "";
+			email_para = content[0].toString();
+			motivo = content[1].toString();
+			causa = content[2].toString();
+			data_inicio = content[3].toString();
+			data_fim = content[4].toString();
+			numero_derrogacao = content[5].toString();
+			estado = content[6].toString();
+			cliente = content[7].toString();
+			referencia = content[8].toString();
+			link = content[9].toString();
+
+			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+			HashMap<String, String> n = new HashMap<String, String>();
+			n.put("MODULO", "5");
+			n.put("MOMENTO", "Alertas de Derrogações");
+
+			n.put("PAGINA", "Derrogações");
+
+			n.put("ESTADO", "1");
+			n.put("EMAIL_PARA", email_para);
+
+			n.put("DADOS",
+					"{estado::" + estado + "\n/link::" + link + numero_derrogacao + "\n/numero_derrogacao::"
+							+ numero_derrogacao + "\n/cliente::" + cliente + "\n/referencia::" + referencia
+							+ "\n/motivo::" + motivo + "\n/causa::" + causa + "\n/data_inicio::" + data_inicio
+							+ "\n/data_fim::" + data_fim + "}");
+
+			data.add(n);
+
+			verficaEventos(data);
+
+		}
+
 	}
 
 }

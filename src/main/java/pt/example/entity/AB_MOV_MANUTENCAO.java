@@ -33,6 +33,7 @@ public class AB_MOV_MANUTENCAO {
 	private Integer UTZ_ULT_IMPRES;
 	private Boolean IMPRESSO;
 	private String CLASSIF;
+	private Integer ID_TIPO_TIPOLOGIA_DOSIFICADORES;
 
 	@Column(name = "DATA_ULT_IMPRES")
 	public Timestamp getDATA_ULT_IMPRES() {
@@ -205,6 +206,15 @@ public class AB_MOV_MANUTENCAO {
 
 	public void setCLASSIF(String cLASSIF) {
 		CLASSIF = cLASSIF;
+	}
+
+	@Column(name = "ID_TIPO_TIPOLOGIA_DOSIFICADORES")
+	public Integer getID_TIPO_TIPOLOGIA_DOSIFICADORES() {
+		return ID_TIPO_TIPOLOGIA_DOSIFICADORES;
+	}
+
+	public void setID_TIPO_TIPOLOGIA_DOSIFICADORES(Integer iD_TIPO_TIPOLOGIA_DOSIFICADORES) {
+		ID_TIPO_TIPOLOGIA_DOSIFICADORES = iD_TIPO_TIPOLOGIA_DOSIFICADORES;
 	}
 
 }

@@ -27,11 +27,13 @@ public class AB_MOV_MANUTENCAO_LINHADao extends GenericDaoJpaImpl<AB_MOV_MANUTEN
 
 	}
 	
-	public List<AB_MOV_MANUTENCAO_LINHA> getbyidmanutencaocabtotal(Integer id) {
-		Query query = entityManager.createQuery("Select b, "
+	public List<AB_MOV_MANUTENCAO_LINHA> getbyidmanutencaocabtotal2(Integer id) {
+		Query query = entityManager.createNativeQuery("Select  b.cisterna,  "
 				+ "(select COUNT(h.ID_MOV_MANU_ETIQUETA) from AB_MOV_MANUTENCAO_ETIQ h where h.ID_MANUTENCAO_LIN = a.ID_MANUTENCAO_LIN) as countt, a.ID_MANUTENCAO_LIN, "
 				+ "(Select SUM(p.CONSUMIR) from AB_MOV_MANUTENCAO_ETIQ p where p.ID_MANUTENCAO_LIN = a.ID_MANUTENCAO_LIN ) as total_etiquetas, "
 				+ "a.VALOR1 "
+				+ ",(SELECT count(*) FROM SILVER.dbo.stodet x ,AB_MOV_MANUTENCAO_ETIQ cb WHERE x.PROREF= cb.PROREF AND cb.ID_MANUTENCAO_LIN = a.ID_MANUTENCAO_LIN AND x.LIECOD='DPCHI' AND x.empcod='ZONQUA' AND x.EMPCOD != cb.EMPCOD AND lotqte>0  ) as  TOTAL_ZONQUA "
+				+ ",b.nome_COMPONENTE,b.COD_REF,b.NOME_REF "
 				+ "from AB_MOV_MANUTENCAO_LINHA a, AB_DIC_COMPONENTE b where a.ID_MANUTENCAO_CAB = :id and a.ID_ADITIVO = b.ID_COMPONENTE order by a.ID_ADITIVO");
 		query.setParameter("id", id);
 		List<AB_MOV_MANUTENCAO_LINHA> data = query.getResultList();
@@ -39,6 +41,19 @@ public class AB_MOV_MANUTENCAO_LINHADao extends GenericDaoJpaImpl<AB_MOV_MANUTEN
 
 	}
 
+	public List<AB_MOV_MANUTENCAO_LINHA> getbyidmanutencaocabtotal(Integer id) {
+		Query query = entityManager.createQuery("Select b, "
+				+ "(select COUNT(h.ID_MOV_MANU_ETIQUETA) from AB_MOV_MANUTENCAO_ETIQ h where h.ID_MANUTENCAO_LIN = a.ID_MANUTENCAO_LIN) as countt, a.ID_MANUTENCAO_LIN, "
+				+ "(Select SUM(p.CONSUMIR) from AB_MOV_MANUTENCAO_ETIQ p where p.ID_MANUTENCAO_LIN = a.ID_MANUTENCAO_LIN ) as total_etiquetas, "
+				+ "a.VALOR1 "
+				+ ",(SELECT count(*) FROM SILVER.dbo.stodet x ,AB_MOV_MANUTENCAO_ETIQ cb WHERE x.PROREF= cb.PROREF AND cb.ID_MANUTENCAO_LIN = a.ID_MANUTENCAO_LIN AND x.LIECOD='DPCHI' AND x.empcod='ZONQUA' AND x.EMPCOD != cb.EMPCOD AND lotqte>0  ) as  TOTAL_ZONQUA "
+				+ "from AB_MOV_MANUTENCAO_LINHA a, AB_DIC_COMPONENTE b where a.ID_MANUTENCAO_CAB = :id and a.ID_ADITIVO = b.ID_COMPONENTE order by a.ID_ADITIVO");
+		query.setParameter("id", id);
+		List<AB_MOV_MANUTENCAO_LINHA> data = query.getResultList();
+		return data;
+
+	}
+	
 	public List<AB_MOV_MANUTENCAO_LINHA> getbyid(Integer id) {
 		Query query = entityManager
 				.createQuery("Select a from AB_MOV_MANUTENCAO_LINHA a where a.ID_MANUTENCAO_LIN = :id ");

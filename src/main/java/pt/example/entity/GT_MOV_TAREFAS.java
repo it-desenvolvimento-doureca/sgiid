@@ -49,6 +49,7 @@ public class GT_MOV_TAREFAS {
 	private Timestamp DATA_CONTROLA;
 	private Integer UTZ_CONTROLA;
 	private String JUSTIFICACAO_ALTERACAO_ESTADO;
+	private Integer ID_TAREFA_PAI;
 	
 	@Id
 	@Column(name = "ID_TAREFA")
@@ -364,6 +365,15 @@ public class GT_MOV_TAREFAS {
 
 	public void setJUSTIFICACAO_ALTERACAO_ESTADO(String jUSTIFICACAO_ALTERACAO_ESTADO) {
 		JUSTIFICACAO_ALTERACAO_ESTADO = jUSTIFICACAO_ALTERACAO_ESTADO;
+	}
+
+	@Column(name = "ID_TAREFA_PAI")
+	public Integer getID_TAREFA_PAI() {
+		return ID_TAREFA_PAI;
+	}
+
+	public void setID_TAREFA_PAI(Integer iD_TAREFA_PAI) {
+		ID_TAREFA_PAI = iD_TAREFA_PAI;
 	}
 
 }

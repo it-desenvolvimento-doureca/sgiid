@@ -26,6 +26,7 @@ public class AB_DIC_TINA {
 	private Timestamp DATA_ANULACAO;
 	private Integer UTZ_ANULACAO;
 	private Boolean INATIVO;
+	private Integer ID_TIPO_TIPOLOGIA_DOSIFICADORES;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -144,6 +145,15 @@ public class AB_DIC_TINA {
 
 	public void setUTZ_ULT_MODIF(Integer uTZ_ULT_MODIF) {
 		UTZ_ULT_MODIF = uTZ_ULT_MODIF;
+	}
+
+	@Column(name = "ID_TIPO_TIPOLOGIA_DOSIFICADORES")
+	public Integer getID_TIPO_TIPOLOGIA_DOSIFICADORES() {
+		return ID_TIPO_TIPOLOGIA_DOSIFICADORES;
+	}
+
+	public void setID_TIPO_TIPOLOGIA_DOSIFICADORES(Integer iD_TIPO_TIPOLOGIA_DOSIFICADORES) {
+		ID_TIPO_TIPOLOGIA_DOSIFICADORES = iD_TIPO_TIPOLOGIA_DOSIFICADORES;
 	}
 
 }

@@ -29,6 +29,7 @@ public class AB_DIC_BANHO_ADITIVO {
 	private Float VALOR_DOSE4;
 	private Float VALOR_DOSE5;
 	private Float QUANTIDADE_DEFEITO;
+	private String OBSERVACOES;
 
 	@Id
 	@Column(name = "ID_BANHO_ADITIVO")
@@ -174,6 +175,15 @@ public class AB_DIC_BANHO_ADITIVO {
 
 	public void setQUANTIDADE_DEFEITO(Float qUANTIDADE_DEFEITO) {
 		QUANTIDADE_DEFEITO = qUANTIDADE_DEFEITO;
+	}
+
+	@Column(name = "OBSERVACOES")
+	public String getOBSERVACOES() {
+		return OBSERVACOES;
+	}
+
+	public void setOBSERVACOES(String oBSERVACOES) {
+		OBSERVACOES = oBSERVACOES;
 	}
 
 }

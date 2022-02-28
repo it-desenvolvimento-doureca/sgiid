@@ -33,7 +33,7 @@ public class PR_PLANEAMENTO_PRODUCAO_CABDao extends GenericDaoJpaImpl<PR_PLANEAM
 	public List<PR_PLANEAMENTO_PRODUCAO_CAB> getall2() {
 
 		Query query = entityManager.createNativeQuery(
-				"Select a.ID_PLANEAMENTO_PRODUCAO_CAB,a.DATA_CRIA, (select b.NOME_UTILIZADOR from GER_UTILIZADORES b where b.ID_UTILIZADOR = a.UTZ_CRIA) UTILIZADOR, a.N_MRP,c.nome_linha,c.COR,a.ESTADO, DATEPART(iso_week,DATEADD(DAY,7,a.DATA_MRP)) PRIMEIRA_SEMANA,a.DATA_MRP from PR_PLANEAMENTO_PRODUCAO_CAB a inner join AB_DIC_LINHA c on c.id_linha = a.id_linha where a.ATIVO = 1");
+				"Select a.ID_PLANEAMENTO_PRODUCAO_CAB,a.DATA_CRIA, (select b.NOME_UTILIZADOR from GER_UTILIZADORES b where b.ID_UTILIZADOR = a.UTZ_CRIA) UTILIZADOR, a.N_MRP,c.nome_linha,c.COR,a.ESTADO, DATEPART(iso_week,DATEADD(DAY,7,a.DATA_MRP)) PRIMEIRA_SEMANA,a.DATA_MRP from PR_PLANEAMENTO_PRODUCAO_CAB a inner join AB_DIC_LINHA c on c.id_linha = a.id_linha where a.ATIVO = 1 order by a.ID_PLANEAMENTO_PRODUCAO_CAB DESC");
 		List<PR_PLANEAMENTO_PRODUCAO_CAB> data = query.getResultList();
 		return data;
 

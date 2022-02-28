@@ -14,372 +14,501 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "AT_OCORRENCIAS")
 public class AT_OCORRENCIAS {
-	public Integer ID_OCORRENCIA;
-	public Timestamp DATA_CRIA;
-	public Integer UTZ_CRIA;
-	public Timestamp DATA_MODIF;
-	public Integer UTZ_MODIF;
-	public String NOME_PESSOA;
-	public String NUMERO_PESSOA;
-	public Integer IDADE_PESSOA;
-	public String NACIONALIDADE;
-	public String FUNCAO_PESSOA;
-	public String DEPARTAMENTO;
-	public String TIPO_RELATORIO;
-	public Boolean COM_BAIXA;
-	public String TIPO_ACIDENTE;
-	public Boolean NOTIFICOU_SEGURADORA;
-	public String COMPANHIA;
-	public String N_APOLICE;
-	public Date DATA_ACIDENTE;
-	public Time HORA_ACIDENTE;
-	public String LOCAL_ACIDENTE;
-	public Integer NUMERO_PESSOAS_ENVOLVIDAS;
-	public Integer NUMERO_VITIMAS;
-	public String DESCRICAO_ACIDENTE;
-	public String GRAU_LESAO;
-	public Boolean GEROU_IT;
-	public Boolean GEROU_IP;
-	public String DANOS_MATERIAS;
-	public Boolean TRABALHADORES_SIMILARES;
-	public Boolean PA_CABECA;
-	public Boolean PA_OLHOS;
-	public Boolean PA_PESCOCO;
-	public Boolean PA_COSTAS;
-	public Boolean PA_TORAX;
-	public Boolean PA_ABDOMEN;
-	public Boolean PA_OMBRO;
-	public Boolean PA_ANTEBRACO;
-	public Boolean PA_PE;
-	public Boolean PA_DEDOS_PE;
-	public Boolean PA_LOCALIZACOES_MULTIPLAS;
-	public Boolean PA_ANCA;
-	public Boolean PA_JOELHO;
-	public Boolean PA_MAO;
-	public Boolean PA_OUTRO;
-	public String PA_OUTRO_TEXTO;
-	public String RECOLHA_EVIDENCIAS;
-	public Boolean TESTEMUNHAS;
-	public Integer NUMERO_TESTEMUNHAS;
-	public String MEDIDAS_FORMACAO;
-	public String MEDIDAS_ORGANIZACAO;
-	public String MEDIDAS_PROTECAO_COL;
-	public String MEDIDAS_PROTECAO_IND;
-	public String MEDIDAS_OUTRAS;
-	public String DIAGRAMA_TOP_ESQ;
-	public String DIAGRAMA_TOP_DIR;
-	public String DIAGRAMA_DIR;
-	public String DIAGRAMA_BT_ESQ;
-	public String DIAGRAMA_BT_DIR;
-	public String DESCRICAO_CAUSAS;
-	public String ANALISE_EFICACIA;
-	public Boolean EFICAZ;
-	private Timestamp DATA_ANULACAO;
-	private Integer UTZ_ANULACAO;
-	private Boolean INATIVO;
-	public String ESTADO;
-
 	@Id
-	@Column(name = "ID_OCORRENCIA")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_OCORRENCIA")
+	private Integer ID_OCORRENCIA;
+	@Column(name = "DATA_CRIA")
+	private Timestamp DATA_CRIA;
+	@Column(name = "UTZ_CRIA")
+	private Integer UTZ_CRIA;
+	@Column(name = "DATA_MODIF")
+	private Timestamp DATA_MODIF;
+	@Column(name = "UTZ_MODIF")
+	private Integer UTZ_MODIF;
+	@Column(name = "NOME_PESSOA")
+	private String NOME_PESSOA;
+	@Column(name = "NUMERO_PESSOA")
+	private String NUMERO_PESSOA;
+	@Column(name = "IDADE_PESSOA")
+	private Integer IDADE_PESSOA;
+	@Column(name = "NACIONALIDADE")
+	private String NACIONALIDADE;
+	@Column(name = "FUNCAO_PESSOA")
+	private String FUNCAO_PESSOA;
+	@Column(name = "DEPARTAMENTO")
+	private String DEPARTAMENTO;
+	@Column(name = "TIPO_RELATORIO")
+	private String TIPO_RELATORIO;
+	@Column(name = "COM_BAIXA")
+	private Boolean COM_BAIXA;
+	@Column(name = "TIPO_ACIDENTE")
+	private String TIPO_ACIDENTE;
+	@Column(name = "NOTIFICOU_SEGURADORA")
+	private Boolean NOTIFICOU_SEGURADORA;
+	@Column(name = "COMPANHIA")
+	private String COMPANHIA;
+	@Column(name = "N_APOLICE")
+	private String N_APOLICE;
+	@Column(name = "DATA_ACIDENTE")
+	private Date DATA_ACIDENTE;
+	@Column(name = "HORA_ACIDENTE")
+	private Time HORA_ACIDENTE;
+	@Column(name = "LOCAL_ACIDENTE")
+	private String LOCAL_ACIDENTE;
+	@Column(name = "NUMERO_PESSOAS_ENVOLVIDAS")
+	private Integer NUMERO_PESSOAS_ENVOLVIDAS;
+	@Column(name = "NUMERO_VITIMAS")
+	private Integer NUMERO_VITIMAS;
+	@Column(name = "DESCRICAO_ACIDENTE")
+	private String DESCRICAO_ACIDENTE;
+	@Column(name = "GRAU_LESAO")
+	private String GRAU_LESAO;
+	@Column(name = "GEROU_IT")
+	private Boolean GEROU_IT;
+	@Column(name = "GEROU_IP")
+	private Boolean GEROU_IP;
+	@Column(name = "DANOS_MATERIAS")
+	private String DANOS_MATERIAS;
+	@Column(name = "TRABALHADORES_SIMILARES")
+	private Boolean TRABALHADORES_SIMILARES;
+	@Column(name = "PA_CABECA")
+	private Boolean PA_CABECA;
+	@Column(name = "PA_OLHOS")
+	private Boolean PA_OLHOS;
+	@Column(name = "PA_PESCOCO")
+	private Boolean PA_PESCOCO;
+	@Column(name = "PA_COSTAS")
+	private Boolean PA_COSTAS;
+	@Column(name = "PA_TORAX")
+	private Boolean PA_TORAX;
+	@Column(name = "PA_ABDOMEN")
+	private Boolean PA_ABDOMEN;
+	@Column(name = "PA_OMBRO")
+	private Boolean PA_OMBRO;
+	@Column(name = "PA_ANTEBRACO")
+	private Boolean PA_ANTEBRACO;
+	@Column(name = "PA_PE")
+	private Boolean PA_PE;
+	@Column(name = "PA_DEDOS_PE")
+	private Boolean PA_DEDOS_PE;
+	@Column(name = "PA_LOCALIZACOES_MULTIPLAS")
+	private Boolean PA_LOCALIZACOES_MULTIPLAS;
+	@Column(name = "PA_ANCA")
+	private Boolean PA_ANCA;
+	@Column(name = "PA_JOELHO")
+	private Boolean PA_JOELHO;
+	@Column(name = "PA_MAO")
+	private Boolean PA_MAO;
+	@Column(name = "PA_OUTRO")
+	private Boolean PA_OUTRO;
+	@Column(name = "PA_OUTRO_TEXTO")
+	private String PA_OUTRO_TEXTO;
+	@Column(name = "RECOLHA_EVIDENCIAS")
+	private String RECOLHA_EVIDENCIAS;
+	@Column(name = "TESTEMUNHAS")
+	private Boolean TESTEMUNHAS;
+	@Column(name = "NUMERO_TESTEMUNHAS")
+	private Integer NUMERO_TESTEMUNHAS;
+	@Column(name = "MEDIDAS_FORMACAO")
+	private String MEDIDAS_FORMACAO;
+	@Column(name = "MEDIDAS_ORGANIZACAO")
+	private String MEDIDAS_ORGANIZACAO;
+	@Column(name = "MEDIDAS_PROTECAO_COL")
+	private String MEDIDAS_PROTECAO_COL;
+	@Column(name = "MEDIDAS_PROTECAO_IND")
+	private String MEDIDAS_PROTECAO_IND;
+	@Column(name = "MEDIDAS_OUTRAS")
+	private String MEDIDAS_OUTRAS;
+	@Column(name = "DIAGRAMA_TOP_ESQ")
+	private String DIAGRAMA_TOP_ESQ;
+	@Column(name = "DIAGRAMA_TOP_DIR")
+	private String DIAGRAMA_TOP_DIR;
+	@Column(name = "DIAGRAMA_DIR")
+	private String DIAGRAMA_DIR;
+	@Column(name = "DIAGRAMA_BT_ESQ")
+	private String DIAGRAMA_BT_ESQ;
+	@Column(name = "DIAGRAMA_BT_DIR")
+	private String DIAGRAMA_BT_DIR;
+	@Column(name = "DESCRICAO_CAUSAS")
+	private String DESCRICAO_CAUSAS;
+	@Column(name = "ANALISE_EFICACIA")
+	private String ANALISE_EFICACIA;
+	@Column(name = "EFICAZ")
+	private Boolean EFICAZ;
+	@Column(name = "DATA_ANULACAO")
+	private Timestamp DATA_ANULACAO;
+	@Column(name = "UTZ_ANULACAO")
+	private Integer UTZ_ANULACAO;
+	@Column(name = "ESTADO")
+	private String ESTADO;
+	@Column(name = "INATIVO")
+	private Boolean INATIVO;
+	@Column(name = "VINCULO")
+	private Boolean VINCULO;
+	@Column(name = "DIAS_PERDIDOS")
+	private Integer DIAS_PERDIDOS;
+	@Column(name = "CL_CORTE")
+	private Boolean CL_CORTE;
+	@Column(name = "CL_FERIDA")
+	private Boolean CL_FERIDA;
+	@Column(name = "CL_CONTUSAO")
+	private Boolean CL_CONTUSAO;
+	@Column(name = "CL_FRATURA")
+	private Boolean CL_FRATURA;
+	@Column(name = "CL_HEMATOMA")
+	private Boolean CL_HEMATOMA;
+	@Column(name = "CL_LESAO_MUSCULO_ESQUELETICA")
+	private Boolean CL_LESAO_MUSCULO_ESQUELETICA;
+	@Column(name = "CL_INTOXICACAO_ENVENENAMENTO")
+	private Boolean CL_INTOXICACAO_ENVENENAMENTO;
+	@Column(name = "CL_ENTORSE_LUXACAO")
+	private Boolean CL_ENTORSE_LUXACAO;
+	@Column(name = "CL_LESAO_OCULAR")
+	private Boolean CL_LESAO_OCULAR;
+	@Column(name = "CL_ESMAGAMENTO")
+	private Boolean CL_ESMAGAMENTO;
+	@Column(name = "CL_PERFURACAO")
+	private Boolean CL_PERFURACAO;
+	@Column(name = "CL_ENTATALAMENTO")
+	private Boolean CL_ENTATALAMENTO;
+	@Column(name = "CL_AMPUTACAO")
+	private Boolean CL_AMPUTACAO;
+	@Column(name = "CL_QUEIMADURA")
+	private Boolean CL_QUEIMADURA;
+	@Column(name = "CL_OUTRO")
+	private Boolean CL_OUTRO;
+	@Column(name = "CL_OUTRO_TEXTO")
+	private String CL_OUTRO_TEXTO;
+	/*@Column(name = "NUMERADOR_OCORRENCIAS")
+	private String NUMERADOR_OCORRENCIAS;*/
+	
 	public Integer getID_OCORRENCIA() {
 		return ID_OCORRENCIA;
 	}
 
-	@Column(name = "DATA_CRIA")
 	public Timestamp getDATA_CRIA() {
 		return DATA_CRIA;
 	}
 
-	@Column(name = "UTZ_CRIA")
 	public Integer getUTZ_CRIA() {
 		return UTZ_CRIA;
 	}
 
-	@Column(name = "DATA_MODIF")
 	public Timestamp getDATA_MODIF() {
 		return DATA_MODIF;
 	}
 
-	@Column(name = "UTZ_MODIF")
 	public Integer getUTZ_MODIF() {
 		return UTZ_MODIF;
 	}
 
-	@Column(name = "NOME_PESSOA")
 	public String getNOME_PESSOA() {
 		return NOME_PESSOA;
 	}
 
-	@Column(name = "NUMERO_PESSOA")
 	public String getNUMERO_PESSOA() {
 		return NUMERO_PESSOA;
 	}
 
-	@Column(name = "IDADE_PESSOA")
 	public Integer getIDADE_PESSOA() {
 		return IDADE_PESSOA;
 	}
 
-	@Column(name = "NACIONALIDADE")
 	public String getNACIONALIDADE() {
 		return NACIONALIDADE;
 	}
 
-	@Column(name = "FUNCAO_PESSOA")
 	public String getFUNCAO_PESSOA() {
 		return FUNCAO_PESSOA;
 	}
-
-	@Column(name = "DEPARTAMENTO")
 
 	public String getDEPARTAMENTO() {
 		return DEPARTAMENTO;
 	}
 
-	@Column(name = "TIPO_RELATORIO")
 	public String getTIPO_RELATORIO() {
 		return TIPO_RELATORIO;
 	}
 
-	@Column(name = "COM_BAIXA")
 	public Boolean getCOM_BAIXA() {
 		return COM_BAIXA;
 	}
 
-	@Column(name = "TIPO_ACIDENTE")
 	public String getTIPO_ACIDENTE() {
 		return TIPO_ACIDENTE;
 	}
 
-	@Column(name = "NOTIFICOU_SEGURADORA")
 	public Boolean getNOTIFICOU_SEGURADORA() {
 		return NOTIFICOU_SEGURADORA;
 	}
 
-	@Column(name = "COMPANHIA")
 	public String getCOMPANHIA() {
 		return COMPANHIA;
 	}
 
-	@Column(name = "N_APOLICE")
 	public String getN_APOLICE() {
 		return N_APOLICE;
 	}
 
-	@Column(name = "DATA_ACIDENTE")
 	public Date getDATA_ACIDENTE() {
 		return DATA_ACIDENTE;
 	}
 
-	@Column(name = "HORA_ACIDENTE")
 	public Time getHORA_ACIDENTE() {
 		return HORA_ACIDENTE;
 	}
 
-	@Column(name = "LOCAL_ACIDENTE")
 	public String getLOCAL_ACIDENTE() {
 		return LOCAL_ACIDENTE;
 	}
 
-	@Column(name = "NUMERO_PESSOAS_ENVOLVIDAS")
 	public Integer getNUMERO_PESSOAS_ENVOLVIDAS() {
 		return NUMERO_PESSOAS_ENVOLVIDAS;
 	}
 
-	@Column(name = "NUMERO_VITIMAS")
 	public Integer getNUMERO_VITIMAS() {
 		return NUMERO_VITIMAS;
 	}
 
-	@Column(name = "DESCRICAO_ACIDENTE")
 	public String getDESCRICAO_ACIDENTE() {
 		return DESCRICAO_ACIDENTE;
 	}
 
-	@Column(name = "GRAU_LESAO")
 	public String getGRAU_LESAO() {
 		return GRAU_LESAO;
 	}
 
-	@Column(name = "GEROU_IT")
 	public Boolean getGEROU_IT() {
 		return GEROU_IT;
 	}
 
-	@Column(name = "GEROU_IP")
 	public Boolean getGEROU_IP() {
 		return GEROU_IP;
 	}
 
-	@Column(name = "DANOS_MATERIAS")
 	public String getDANOS_MATERIAS() {
 		return DANOS_MATERIAS;
 	}
 
-	@Column(name = "TRABALHADORES_SIMILARES")
 	public Boolean getTRABALHADORES_SIMILARES() {
 		return TRABALHADORES_SIMILARES;
 	}
 
-	@Column(name = "PA_CABECA")
 	public Boolean getPA_CABECA() {
 		return PA_CABECA;
 	}
 
-	@Column(name = "PA_OLHOS")
 	public Boolean getPA_OLHOS() {
 		return PA_OLHOS;
 	}
 
-	@Column(name = "PA_PESCOCO")
 	public Boolean getPA_PESCOCO() {
 		return PA_PESCOCO;
 	}
 
-	@Column(name = "PA_COSTAS")
 	public Boolean getPA_COSTAS() {
 		return PA_COSTAS;
 	}
 
-	@Column(name = "PA_TORAX")
 	public Boolean getPA_TORAX() {
 		return PA_TORAX;
 	}
 
-	@Column(name = "PA_ABDOMEN")
 	public Boolean getPA_ABDOMEN() {
 		return PA_ABDOMEN;
 	}
 
-	@Column(name = "PA_OMBRO")
 	public Boolean getPA_OMBRO() {
 		return PA_OMBRO;
 	}
 
-	@Column(name = "PA_ANTEBRACO")
 	public Boolean getPA_ANTEBRACO() {
 		return PA_ANTEBRACO;
 	}
 
-	@Column(name = "PA_PE")
 	public Boolean getPA_PE() {
 		return PA_PE;
 	}
 
-	@Column(name = "PA_DEDOS_PE")
 	public Boolean getPA_DEDOS_PE() {
 		return PA_DEDOS_PE;
 	}
 
-	@Column(name = "PA_LOCALIZACOES_MULTIPLAS")
 	public Boolean getPA_LOCALIZACOES_MULTIPLAS() {
 		return PA_LOCALIZACOES_MULTIPLAS;
 	}
 
-	@Column(name = "PA_ANCA")
 	public Boolean getPA_ANCA() {
 		return PA_ANCA;
 	}
 
-	@Column(name = "PA_JOELHO")
 	public Boolean getPA_JOELHO() {
 		return PA_JOELHO;
 	}
 
-	@Column(name = "PA_MAO")
 	public Boolean getPA_MAO() {
 		return PA_MAO;
 	}
 
-	@Column(name = "PA_OUTRO")
 	public Boolean getPA_OUTRO() {
 		return PA_OUTRO;
 	}
 
-	@Column(name = "PA_OUTRO_TEXTO")
 	public String getPA_OUTRO_TEXTO() {
 		return PA_OUTRO_TEXTO;
 	}
 
-	@Column(name = "RECOLHA_EVIDENCIAS")
 	public String getRECOLHA_EVIDENCIAS() {
 		return RECOLHA_EVIDENCIAS;
 	}
 
-	@Column(name = "TESTEMUNHAS")
 	public Boolean getTESTEMUNHAS() {
 		return TESTEMUNHAS;
 	}
 
-	@Column(name = "NUMERO_TESTEMUNHAS")
 	public Integer getNUMERO_TESTEMUNHAS() {
 		return NUMERO_TESTEMUNHAS;
 	}
 
-	@Column(name = "MEDIDAS_FORMACAO")
 	public String getMEDIDAS_FORMACAO() {
 		return MEDIDAS_FORMACAO;
 	}
 
-	@Column(name = "MEDIDAS_ORGANIZACAO")
 	public String getMEDIDAS_ORGANIZACAO() {
 		return MEDIDAS_ORGANIZACAO;
 	}
 
-	@Column(name = "MEDIDAS_PROTECAO_COL")
 	public String getMEDIDAS_PROTECAO_COL() {
 		return MEDIDAS_PROTECAO_COL;
 	}
 
-	@Column(name = "MEDIDAS_PROTECAO_IND")
 	public String getMEDIDAS_PROTECAO_IND() {
 		return MEDIDAS_PROTECAO_IND;
 	}
 
-	@Column(name = "MEDIDAS_OUTRAS")
 	public String getMEDIDAS_OUTRAS() {
 		return MEDIDAS_OUTRAS;
 	}
 
-	@Column(name = "DIAGRAMA_TOP_ESQ")
 	public String getDIAGRAMA_TOP_ESQ() {
 		return DIAGRAMA_TOP_ESQ;
 	}
 
-	@Column(name = "DIAGRAMA_TOP_DIR")
 	public String getDIAGRAMA_TOP_DIR() {
 		return DIAGRAMA_TOP_DIR;
 	}
 
-	@Column(name = "DIAGRAMA_DIR")
 	public String getDIAGRAMA_DIR() {
 		return DIAGRAMA_DIR;
 	}
 
-	@Column(name = "DIAGRAMA_BT_ESQ")
 	public String getDIAGRAMA_BT_ESQ() {
 		return DIAGRAMA_BT_ESQ;
 	}
 
-	@Column(name = "DIAGRAMA_BT_DIR")
 	public String getDIAGRAMA_BT_DIR() {
 		return DIAGRAMA_BT_DIR;
 	}
 
-	@Column(name = "DESCRICAO_CAUSAS")
 	public String getDESCRICAO_CAUSAS() {
 		return DESCRICAO_CAUSAS;
 	}
 
-	@Column(name = "ANALISE_EFICACIA")
 	public String getANALISE_EFICACIA() {
 		return ANALISE_EFICACIA;
 	}
 
-	@Column(name = "EFICAZ")
 	public Boolean getEFICAZ() {
 		return EFICAZ;
+	}
+
+	public Timestamp getDATA_ANULACAO() {
+		return DATA_ANULACAO;
+	}
+
+	public Integer getUTZ_ANULACAO() {
+		return UTZ_ANULACAO;
+	}
+
+	public String getESTADO() {
+		return ESTADO;
+	}
+
+	public Boolean getINATIVO() {
+		return INATIVO;
+	}
+
+	public Boolean getVINCULO() {
+		return VINCULO;
+	}
+
+	public Integer getDIAS_PERDIDOS() {
+		return DIAS_PERDIDOS;
+	}
+
+	public Boolean getCL_CORTE() {
+		return CL_CORTE;
+	}
+
+	public Boolean getCL_FERIDA() {
+		return CL_FERIDA;
+	}
+
+	public Boolean getCL_CONTUSAO() {
+		return CL_CONTUSAO;
+	}
+
+	public Boolean getCL_FRATURA() {
+		return CL_FRATURA;
+	}
+
+	public Boolean getCL_HEMATOMA() {
+		return CL_HEMATOMA;
+	}
+
+	public Boolean getCL_LESAO_MUSCULO_ESQUELETICA() {
+		return CL_LESAO_MUSCULO_ESQUELETICA;
+	}
+
+	public Boolean getCL_INTOXICACAO_ENVENENAMENTO() {
+		return CL_INTOXICACAO_ENVENENAMENTO;
+	}
+
+	public Boolean getCL_ENTORSE_LUXACAO() {
+		return CL_ENTORSE_LUXACAO;
+	}
+
+	public Boolean getCL_LESAO_OCULAR() {
+		return CL_LESAO_OCULAR;
+	}
+
+	public Boolean getCL_ESMAGAMENTO() {
+		return CL_ESMAGAMENTO;
+	}
+
+	public Boolean getCL_PERFURACAO() {
+		return CL_PERFURACAO;
+	}
+
+	public Boolean getCL_ENTATALAMENTO() {
+		return CL_ENTATALAMENTO;
+	}
+
+	public Boolean getCL_AMPUTACAO() {
+		return CL_AMPUTACAO;
+	}
+
+	public Boolean getCL_QUEIMADURA() {
+		return CL_QUEIMADURA;
+	}
+
+	public Boolean getCL_OUTRO() {
+		return CL_OUTRO;
+	}
+
+	public String getCL_OUTRO_TEXTO() {
+		return CL_OUTRO_TEXTO;
 	}
 
 	public void setID_OCORRENCIA(Integer iD_OCORRENCIA) {
@@ -622,26 +751,6 @@ public class AT_OCORRENCIAS {
 		EFICAZ = eFICAZ;
 	}
 
-	@Column(name = "DATA_ANULACAO")
-	public Timestamp getDATA_ANULACAO() {
-		return DATA_ANULACAO;
-	}
-
-	@Column(name = "UTZ_ANULACAO")
-	public Integer getUTZ_ANULACAO() {
-		return UTZ_ANULACAO;
-	}
-
-	@Column(name = "INATIVO")
-	public Boolean getINATIVO() {
-		return INATIVO;
-	}
-
-	@Column(name = "ESTADO")
-	public String getESTADO() {
-		return ESTADO;
-	}
-
 	public void setDATA_ANULACAO(Timestamp dATA_ANULACAO) {
 		DATA_ANULACAO = dATA_ANULACAO;
 	}
@@ -650,12 +759,92 @@ public class AT_OCORRENCIAS {
 		UTZ_ANULACAO = uTZ_ANULACAO;
 	}
 
+	public void setESTADO(String eSTADO) {
+		ESTADO = eSTADO;
+	}
+
 	public void setINATIVO(Boolean iNATIVO) {
 		INATIVO = iNATIVO;
 	}
 
-	public void setESTADO(String eSTADO) {
-		ESTADO = eSTADO;
+	public void setVINCULO(Boolean vINCULO) {
+		VINCULO = vINCULO;
 	}
+
+	public void setDIAS_PERDIDOS(Integer dIAS_PERDIDOS) {
+		DIAS_PERDIDOS = dIAS_PERDIDOS;
+	}
+
+	public void setCL_CORTE(Boolean cL_CORTE) {
+		CL_CORTE = cL_CORTE;
+	}
+
+	public void setCL_FERIDA(Boolean cL_FERIDA) {
+		CL_FERIDA = cL_FERIDA;
+	}
+
+	public void setCL_CONTUSAO(Boolean cL_CONTUSAO) {
+		CL_CONTUSAO = cL_CONTUSAO;
+	}
+
+	public void setCL_FRATURA(Boolean cL_FRATURA) {
+		CL_FRATURA = cL_FRATURA;
+	}
+
+	public void setCL_HEMATOMA(Boolean cL_HEMATOMA) {
+		CL_HEMATOMA = cL_HEMATOMA;
+	}
+
+	public void setCL_LESAO_MUSCULO_ESQUELETICA(Boolean cL_LESAO_MUSCULO_ESQUELETICA) {
+		CL_LESAO_MUSCULO_ESQUELETICA = cL_LESAO_MUSCULO_ESQUELETICA;
+	}
+
+	public void setCL_INTOXICACAO_ENVENENAMENTO(Boolean cL_INTOXICACAO_ENVENENAMENTO) {
+		CL_INTOXICACAO_ENVENENAMENTO = cL_INTOXICACAO_ENVENENAMENTO;
+	}
+
+	public void setCL_ENTORSE_LUXACAO(Boolean cL_ENTORSE_LUXACAO) {
+		CL_ENTORSE_LUXACAO = cL_ENTORSE_LUXACAO;
+	}
+
+	public void setCL_LESAO_OCULAR(Boolean cL_LESAO_OCULAR) {
+		CL_LESAO_OCULAR = cL_LESAO_OCULAR;
+	}
+
+	public void setCL_ESMAGAMENTO(Boolean cL_ESMAGAMENTO) {
+		CL_ESMAGAMENTO = cL_ESMAGAMENTO;
+	}
+
+	public void setCL_PERFURACAO(Boolean cL_PERFURACAO) {
+		CL_PERFURACAO = cL_PERFURACAO;
+	}
+
+	public void setCL_ENTATALAMENTO(Boolean cL_ENTATALAMENTO) {
+		CL_ENTATALAMENTO = cL_ENTATALAMENTO;
+	}
+
+	public void setCL_AMPUTACAO(Boolean cL_AMPUTACAO) {
+		CL_AMPUTACAO = cL_AMPUTACAO;
+	}
+
+	public void setCL_QUEIMADURA(Boolean cL_QUEIMADURA) {
+		CL_QUEIMADURA = cL_QUEIMADURA;
+	}
+
+	public void setCL_OUTRO(Boolean cL_OUTRO) {
+		CL_OUTRO = cL_OUTRO;
+	}
+
+	public void setCL_OUTRO_TEXTO(String cL_OUTRO_TEXTO) {
+		CL_OUTRO_TEXTO = cL_OUTRO_TEXTO;
+	}
+
+	/*public String getNUMERADOR_OCORRENCIAS() {
+		return NUMERADOR_OCORRENCIAS;
+	}
+
+	public void setNUMERADOR_OCORRENCIAS(String nUMERADOR_OCORRENCIAS) {
+		NUMERADOR_OCORRENCIAS = nUMERADOR_OCORRENCIAS;
+	}*/
 
 }
