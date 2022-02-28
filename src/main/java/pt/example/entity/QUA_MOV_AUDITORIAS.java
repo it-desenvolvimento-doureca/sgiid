@@ -1,0 +1,189 @@
+package pt.example.entity;
+
+import java.sql.Date;
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "QUA_MOV_AUDITORIAS")
+public class QUA_MOV_AUDITORIAS {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_AUDITORIA")
+	private Integer ID_AUDITORIA;
+	@Column(name = "ID_TIPO_AUDITORIA")
+	private Integer ID_TIPO_AUDITORIA;
+	@Column(name = "ANO")
+	private Integer ANO;
+	@Column(name = "DATA_MODIF")
+	private Date DATA_MODIF;
+	@Column(name = "UTZ_MODIF")
+	private Integer UTZ_MODIF;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_1")
+	private Integer QUANTIDADE_REALIZADA_MES_1;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_2")
+	private Integer QUANTIDADE_REALIZADA_MES_2;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_3")
+	private Integer QUANTIDADE_REALIZADA_MES_3;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_4")
+	private Integer QUANTIDADE_REALIZADA_MES_4;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_5")
+	private Integer QUANTIDADE_REALIZADA_MES_5;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_6")
+	private Integer QUANTIDADE_REALIZADA_MES_6;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_7")
+	private Integer QUANTIDADE_REALIZADA_MES_7;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_8")
+	private Integer QUANTIDADE_REALIZADA_MES_8;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_9")
+	private Integer QUANTIDADE_REALIZADA_MES_9;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_10")
+	private Integer QUANTIDADE_REALIZADA_MES_10;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_11")
+	private Integer QUANTIDADE_REALIZADA_MES_11;
+	@Column(name = "QUANTIDADE_REALIZADA_MES_12")
+	private Integer QUANTIDADE_REALIZADA_MES_12;
+
+	public Integer getID_AUDITORIA() {
+		return ID_AUDITORIA;
+	}
+
+	public Integer getID_TIPO_AUDITORIA() {
+		return ID_TIPO_AUDITORIA;
+	}
+
+	public Integer getANO() {
+		return ANO;
+	}
+
+	public Date getDATA_MODIF() {
+		return DATA_MODIF;
+	}
+
+	public Integer getUTZ_MODIF() {
+		return UTZ_MODIF;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_1() {
+		return QUANTIDADE_REALIZADA_MES_1;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_2() {
+		return QUANTIDADE_REALIZADA_MES_2;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_3() {
+		return QUANTIDADE_REALIZADA_MES_3;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_4() {
+		return QUANTIDADE_REALIZADA_MES_4;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_5() {
+		return QUANTIDADE_REALIZADA_MES_5;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_6() {
+		return QUANTIDADE_REALIZADA_MES_6;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_7() {
+		return QUANTIDADE_REALIZADA_MES_7;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_8() {
+		return QUANTIDADE_REALIZADA_MES_8;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_9() {
+		return QUANTIDADE_REALIZADA_MES_9;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_10() {
+		return QUANTIDADE_REALIZADA_MES_10;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_11() {
+		return QUANTIDADE_REALIZADA_MES_11;
+	}
+
+	public Integer getQUANTIDADE_REALIZADA_MES_12() {
+		return QUANTIDADE_REALIZADA_MES_12;
+	}
+
+	public void setID_AUDITORIA(Integer iD_AUDITORIA) {
+		ID_AUDITORIA = iD_AUDITORIA;
+	}
+
+	public void setID_TIPO_AUDITORIA(Integer iD_TIPO_AUDITORIA) {
+		ID_TIPO_AUDITORIA = iD_TIPO_AUDITORIA;
+	}
+
+	public void setANO(Integer aNO) {
+		ANO = aNO;
+	}
+
+	public void setDATA_MODIF(Date dATA_MODIF) {
+		DATA_MODIF = dATA_MODIF;
+	}
+
+	public void setUTZ_MODIF(Integer uTZ_MODIF) {
+		UTZ_MODIF = uTZ_MODIF;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_1(Integer qUANTIDADE_REALIZADA_MES_1) {
+		QUANTIDADE_REALIZADA_MES_1 = qUANTIDADE_REALIZADA_MES_1;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_2(Integer qUANTIDADE_REALIZADA_MES_2) {
+		QUANTIDADE_REALIZADA_MES_2 = qUANTIDADE_REALIZADA_MES_2;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_3(Integer qUANTIDADE_REALIZADA_MES_3) {
+		QUANTIDADE_REALIZADA_MES_3 = qUANTIDADE_REALIZADA_MES_3;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_4(Integer qUANTIDADE_REALIZADA_MES_4) {
+		QUANTIDADE_REALIZADA_MES_4 = qUANTIDADE_REALIZADA_MES_4;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_5(Integer qUANTIDADE_REALIZADA_MES_5) {
+		QUANTIDADE_REALIZADA_MES_5 = qUANTIDADE_REALIZADA_MES_5;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_6(Integer qUANTIDADE_REALIZADA_MES_6) {
+		QUANTIDADE_REALIZADA_MES_6 = qUANTIDADE_REALIZADA_MES_6;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_7(Integer qUANTIDADE_REALIZADA_MES_7) {
+		QUANTIDADE_REALIZADA_MES_7 = qUANTIDADE_REALIZADA_MES_7;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_8(Integer qUANTIDADE_REALIZADA_MES_8) {
+		QUANTIDADE_REALIZADA_MES_8 = qUANTIDADE_REALIZADA_MES_8;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_9(Integer qUANTIDADE_REALIZADA_MES_9) {
+		QUANTIDADE_REALIZADA_MES_9 = qUANTIDADE_REALIZADA_MES_9;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_10(Integer qUANTIDADE_REALIZADA_MES_10) {
+		QUANTIDADE_REALIZADA_MES_10 = qUANTIDADE_REALIZADA_MES_10;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_11(Integer qUANTIDADE_REALIZADA_MES_11) {
+		QUANTIDADE_REALIZADA_MES_11 = qUANTIDADE_REALIZADA_MES_11;
+	}
+
+	public void setQUANTIDADE_REALIZADA_MES_12(Integer qUANTIDADE_REALIZADA_MES_12) {
+		QUANTIDADE_REALIZADA_MES_12 = qUANTIDADE_REALIZADA_MES_12;
+	}
+
+}
