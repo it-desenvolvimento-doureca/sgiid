@@ -865,3 +865,9 @@ p-chart>div {
 .analiseplanosestrategicos canvas {
     width: 100%;
 }
+
+
+.analiseplanosestrategicos p-chart>div {
+    position: relative;
+    width: 100%;
+}

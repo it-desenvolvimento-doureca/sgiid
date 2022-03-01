@@ -14,7 +14,7 @@ public class COM_ACORDOS_PRECOSDao extends GenericDaoJpaImpl<COM_ACORDOS_PRECOS,
 
 	public List<COM_ACORDOS_PRECOS> getbyid(Integer id, Integer versao) {
 
-		Query query = entityManager.createQuery("Select a from COM_ACORDOS_PRECOS a where a.ID_ACORDO = :id and a.VERSAO = :versao");
+		Query query = entityManager.createQuery("Select a from COM_ACORDOS_PRECOS a where a.ID_ACORDO = :id and a.VERSAO = :versao order by a.DATA_INICIO");
 		query.setParameter("id", id);
 		query.setParameter("versao", versao);
 		List<COM_ACORDOS_PRECOS> data = query.getResultList();

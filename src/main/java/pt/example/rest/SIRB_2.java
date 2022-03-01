@@ -5392,4 +5392,71 @@ public class SIRB_2 {
 		PE_MOV_CAB_HISTORICO.setID(id);
 		dao77.delete(PE_MOV_CAB_HISTORICO);
 	}
+
+	@POST
+	@Path("/PE_GET_ACOES_EM_ATRASO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PE_GET_ACOES_EM_ATRASO(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String PAGINA = firstMap.get("PAGINA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PE_GET_ACOES_EM_ATRASO " + ANO + ", " + PAGINA);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PE_GET_ULTIMAS_ACOES_CONCLUIDAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PE_GET_ULTIMAS_ACOES_CONCLUIDAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String PAGINA = firstMap.get("PAGINA");
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC PE_GET_ULTIMAS_ACOES_CONCLUIDAS " + ANO + ", " + PAGINA);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PE_GET_ANALISE_CONTADORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PE_GET_ANALISE_CONTADORES(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PE_GET_ANALISE_CONTADORES " + ANO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PE_GET_ANALISE_GRAFICO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PE_GET_ANALISE_GRAFICO(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PE_GET_ANALISE_GRAFICO " + ANO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
 }
