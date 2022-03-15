@@ -73,6 +73,49 @@ public class PA_MOV_LINHA {
 	private String EFICACIA_CUMPRIMENTO_OBJETIVO;
 	@Column(name = "SEGUIR_LINHA")
 	private Boolean SEGUIR_LINHA;
+	@Column(name = "OBJETIVO")
+	private String OBJETIVO;
+	
+	@Column(name = "DATA_CRIA")
+	private Timestamp DATA_CRIA;
+	@Column(name = "UTZ_CRIA")
+	private Integer UTZ_CRIA;
+	@Column(name = "DATA_MODIF")
+	private Timestamp DATA_MODIF;
+	@Column(name = "UTZ_MODIF")
+	private Integer UTZ_MODIF;
+
+	public Timestamp getDATA_CRIA() {
+		return DATA_CRIA;
+	}
+
+	public Integer getUTZ_CRIA() {
+		return UTZ_CRIA;
+	}
+
+	public Timestamp getDATA_MODIF() {
+		return DATA_MODIF;
+	}
+
+	public Integer getUTZ_MODIF() {
+		return UTZ_MODIF;
+	}
+
+	public void setDATA_CRIA(Timestamp dATA_CRIA) {
+		DATA_CRIA = dATA_CRIA;
+	}
+
+	public void setUTZ_CRIA(Integer uTZ_CRIA) {
+		UTZ_CRIA = uTZ_CRIA;
+	}
+
+	public void setDATA_MODIF(Timestamp dATA_MODIF) {
+		DATA_MODIF = dATA_MODIF;
+	}
+
+	public void setUTZ_MODIF(Integer uTZ_MODIF) {
+		UTZ_MODIF = uTZ_MODIF;
+	}
 
 	public Integer getID_PLANO_LINHA() {
 		return ID_PLANO_LINHA;
@@ -280,6 +323,14 @@ public class PA_MOV_LINHA {
 
 	public void setSEGUIR_LINHA(Boolean sEGUIR_LINHA) {
 		SEGUIR_LINHA = sEGUIR_LINHA;
+	}
+
+	public String getOBJETIVO() {
+		return OBJETIVO;
+	}
+
+	public void setOBJETIVO(String oBJETIVO) {
+		OBJETIVO = oBJETIVO;
 	}
 
 }

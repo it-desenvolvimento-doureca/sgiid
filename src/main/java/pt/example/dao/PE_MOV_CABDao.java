@@ -56,7 +56,7 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 						+ ",(select NOME_UTILIZADOR from GER_UTILIZADORES y where y.ID_UTILIZADOR = xa.RESPONSAVEL) as RESPONSAVELXA,  xa.DATA_CRIA as DATA_CRIAXA,xa.ESTADO ESTADOXA "
 						+ ",ISNULL(g.PERCENTAGEM_CONCLUSAO,0) conclusaoacao ,AVG(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY a.ID_PLANO_CAB) AS conclusaoplano, CASE WHEN (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_ESTRATEGICO = xa.ID  ) = 0 THEN 0 WHEN (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_ESTRATEGICO = xa.ID  ) = 1 THEN "
 						+ "AVG(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY xa.ID) ELSE "
-						+ "SUM(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY xa.ID) / (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_ESTRATEGICO = xa.ID  ) END AS conclusaototal  "
+						+ "SUM(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY xa.ID) / (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_ESTRATEGICO = xa.ID  ) END AS conclusaototal, b.OBJETIVO,b.SEGUIR_LINHA,b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA "
 						+ "from PE_MOV_CAB xa "
 						+ "left join PA_MOV_CAB a on xa.ID = a.ID_PLANO_ESTRATEGICO  "
 						+ "left join GER_DEPARTAMENTO xe on xa.DEPARTAMENTO = xe.ID" + " left join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
@@ -67,7 +67,7 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO "
 						+ " where  "
 						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
-						+ query_where + " order by a.DATA_CRIA desc,a.ID_PLANO_CAB desc ");
+						+ query_where + " order by a.DATA_OBJETIVO asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
 		List<PE_MOV_CAB> data = query.getResultList();
 		return data;
 

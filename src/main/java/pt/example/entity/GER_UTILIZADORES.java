@@ -30,6 +30,7 @@ public class GER_UTILIZADORES {
 	private String TELEFONE;
 	private String AREA;
 	private String TIPO_LISTA_FAVORITOS;
+	private Boolean BLOQUEADO;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -184,6 +185,15 @@ public class GER_UTILIZADORES {
 
 	public void setTIPO_LISTA_FAVORITOS(String tIPO_LISTA_FAVORITOS) {
 		TIPO_LISTA_FAVORITOS = tIPO_LISTA_FAVORITOS;
+	}
+
+	@Column(name = "BLOQUEADO")
+	public Boolean getBLOQUEADO() {
+		return BLOQUEADO;
+	}
+
+	public void setBLOQUEADO(Boolean bLOQUEADO) {
+		BLOQUEADO = bLOQUEADO;
 	}
 
 }

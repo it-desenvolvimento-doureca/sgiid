@@ -4328,13 +4328,13 @@ public class SIRB_2 {
 	}
 
 	@GET
-	@Path("/getCOM_ACORDOS_VALIDA_ACORDO/{id_contrato}/{id_referencia}")
+	@Path("/getCOM_ACORDOS_VALIDA_ACORDO/{id_contrato}/{id_referencia}/{id_acordo}")
 	@Produces("application/json")
 	public List<Object[]> getCOM_ACORDOS_VALIDA_ACORDO(@PathParam("id_contrato") Integer id_contrato,
-			@PathParam("id_referencia") Integer id_referencia) {
+			@PathParam("id_referencia") Integer id_referencia,@PathParam("id_acordo") Integer id_acordo) {
 		Query query = entityManager.createNativeQuery("DECLARE @ID_REFERENCIA int = " + id_referencia
-				+ "; DECLARE @ID_CONTRATO int = " + id_contrato + "; "
-				+ "select Count(*) as total, 'total' as txt from COM_ACORDOS a where ID_CONTRATO = @ID_CONTRATO AND ID_CONTRATO = @ID_CONTRATO AND INATIVO != 1 AND VERSAO = (select MAX(b.VERSAO) FROM COM_ACORDOS b WHERE b.ID = a.ID)");
+				+ "; DECLARE @ID_CONTRATO int = " + id_contrato + ";DECLARE @ID_ACORDO int = " + id_acordo + "; "
+				+ "select Count(*) as total, 'total' as txt from COM_ACORDOS a where ID_CONTRATO = @ID_CONTRATO AND ID_CONTRATO = @ID_CONTRATO AND INATIVO != 1 AND VERSAO = (select MAX(b.VERSAO) FROM COM_ACORDOS b WHERE b.ID = a.ID) AND a.ID != @ID_ACORDO");
 
 		List<Object[]> dados = query.getResultList();
 		return dados;
@@ -5454,6 +5454,67 @@ public class SIRB_2 {
 		String ANO = firstMap.get("ANO");
 
 		Query query_folder = entityManager.createNativeQuery("EXEC PE_GET_ANALISE_GRAFICO " + ANO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	
+	@POST
+	@Path("/getDASHBOARD_PLANEAMENTO_2")
+	@Produces("application/json")
+	public List<Object[]> getDASHBOARD_PLANEAMENTO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String SEMANA = firstMap.get("SEMANA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_PLANEAMENTO_2] " + ANO + ","+SEMANA+"");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/getDASHBOARD_PLANEAMENTO_GRAFICOS")
+	@Produces("application/json")
+	public List<Object[]> getDASHBOARD_PLANEAMENTO_GRAFICOS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String SEMANA = firstMap.get("SEMANA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_PLANEAMENTO_GRAFICOS] " + ANO + ","+SEMANA+"");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/getDASHBOARD_RECURSOS_HUMANOS")
+	@Produces("application/json")
+	public List<Object[]> getDASHBOARD_RECURSOS_HUMANOS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String SEMANA = firstMap.get("SEMANA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_RECURSOS_HUMANOS]");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/getPA_GET_TOTAIS")
+	@Produces("application/json")
+	public List<Object[]> getPA_GET_TOTAIS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String SEMANA = firstMap.get("SEMANA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [PA_GET_TOTAIS]");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

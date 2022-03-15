@@ -13,7 +13,7 @@ public class GT_LOGSDao extends GenericDaoJpaImpl<GT_LOGS, Integer> implements G
 
 	public List<GT_LOGS> getbyid(Integer id) {
 
-		Query query = entityManager.createQuery("Select a from GT_LOGS a where a.ID = :id ");
+		Query query = entityManager.createQuery("Select a,(select b.NOME_UTILIZADOR from GER_UTILIZADORES b where b.ID_UTILIZADOR = a.UTZ_CRIA ) from GT_LOGS a where a.ID_TAREFA = :id ");
 		query.setParameter("id", id);
 		List<GT_LOGS> data = query.getResultList();
 		return data;

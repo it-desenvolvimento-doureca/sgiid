@@ -50,7 +50,10 @@ public class GT_MOV_TAREFAS {
 	private Integer UTZ_CONTROLA;
 	private String JUSTIFICACAO_ALTERACAO_ESTADO;
 	private Integer ID_TAREFA_PAI;
-	
+	private String JUSTIFICACAO_DATA_FIM;
+	private Timestamp DATA_FIM_ANTIGA;
+	private String JUSTIFICACAO_RESPONSAVEL;
+
 	@Id
 	@Column(name = "ID_TAREFA")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -374,6 +377,33 @@ public class GT_MOV_TAREFAS {
 
 	public void setID_TAREFA_PAI(Integer iD_TAREFA_PAI) {
 		ID_TAREFA_PAI = iD_TAREFA_PAI;
+	}
+
+	@Column(name = "JUSTIFICACAO_DATA_FIM")
+	public String getJUSTIFICACAO_DATA_FIM() {
+		return JUSTIFICACAO_DATA_FIM;
+	}
+
+	@Column(name = "DATA_FIM_ANTIGA")
+	public Timestamp getDATA_FIM_ANTIGA() {
+		return DATA_FIM_ANTIGA;
+	}
+
+	public void setJUSTIFICACAO_DATA_FIM(String jUSTIFICACAO_DATA_FIM) {
+		JUSTIFICACAO_DATA_FIM = jUSTIFICACAO_DATA_FIM;
+	}
+
+	public void setDATA_FIM_ANTIGA(Timestamp dATA_FIM_ANTIGA) {
+		DATA_FIM_ANTIGA = dATA_FIM_ANTIGA;
+	}
+
+	@Column(name = "JUSTIFICACAO_RESPONSAVEL")
+	public String getJUSTIFICACAO_RESPONSAVEL() {
+		return JUSTIFICACAO_RESPONSAVEL;
+	}
+
+	public void setJUSTIFICACAO_RESPONSAVEL(String jUSTIFICACAO_RESPONSAVEL) {
+		JUSTIFICACAO_RESPONSAVEL = jUSTIFICACAO_RESPONSAVEL;
 	}
 
 }

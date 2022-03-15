@@ -18,7 +18,8 @@ public class GT_LOGS {
 	private Integer UTZ_CRIA;
 	private String DESCRICAO;
 	private Integer ID_TAREFA;
-
+	private String JUSTIFICACAO;
+	
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +65,15 @@ public class GT_LOGS {
 
 	public void setID_TAREFA(Integer iD_TAREFA) {
 		ID_TAREFA = iD_TAREFA;
+	}
+
+	@Column(name = "JUSTIFICACAO")
+	public String getJUSTIFICACAO() {
+		return JUSTIFICACAO;
+	}
+
+	public void setJUSTIFICACAO(String jUSTIFICACAO) {
+		JUSTIFICACAO = jUSTIFICACAO;
 	}
 
 }

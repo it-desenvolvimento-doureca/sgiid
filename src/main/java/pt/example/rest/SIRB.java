@@ -4309,7 +4309,14 @@ public class SIRB {
 	@Produces("application/json")
 	public PA_MOV_CAB updatePA_MOV_CAB(final PA_MOV_CAB PA_MOV_CAB) {
 		PA_MOV_CAB.setID_PLANO_CAB(PA_MOV_CAB.getID_PLANO_CAB());
-		return dao95.update(PA_MOV_CAB);
+		
+		PA_MOV_CAB VAL_R = dao95.update(PA_MOV_CAB);
+		entityManager.createNativeQuery("UPDATE b set b.ESTADO = 'P' from PA_MOV_CAB a "
+				+ "inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
+				+ "WHERE a.ID_PLANO_CAB = "+PA_MOV_CAB.getID_PLANO_CAB()+" AND a.ID_PLANO_ESTRATEGICO is not null "
+				+ "AND a.ESTADO = 'P' AND (b.ESTADO  ='E' or b.ESTADO  = '')").executeUpdate();
+		
+		return VAL_R;
 	}
 
 	@GET
@@ -4486,7 +4493,26 @@ public class SIRB {
 						+ " and ESTADO != 'E' END")
 				.executeUpdate();
 	}
+	
+	@GET
+	@Path("/getPA_MOV_LINHAdelete_favorito/{id}")
+	@Produces("application/json")
+	public int getPA_MOV_LINHAdelete_favorito(@PathParam("id") String id) {
+		return entityManager
+				.createNativeQuery(" UPDATE PA_MOV_LINHA set SEGUIR_LINHA = 0 where ID_PLANO_LINHA = " + id + "")
+				.executeUpdate();
+	}
 
+	@GET
+	@Path("/getPA_MOV_LINHAadd_favorito/{id}")
+	@Produces("application/json")
+	public int getPA_MOV_LINHAadd_favorito(@PathParam("id") String id) {
+		return entityManager
+				.createNativeQuery(" UPDATE PA_MOV_LINHA set SEGUIR_LINHA = 1 where ID_PLANO_LINHA = " + id + "")
+				.executeUpdate();
+	}
+
+	
 	/************************************* PA_MOV_FICHEIROS */
 	@POST
 	@Path("/createPA_MOV_FICHEIROS")
@@ -7028,10 +7054,22 @@ public class SIRB {
 	@Path("/atualizaTAREFA")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public int atualizaTAREFA(final GT_MOV_TAREFAS data) {
-		return entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET DATA_FIM = '" + data.getDATA_FIM()
+	public  List<Object[]>  atualizaTAREFA(final GT_MOV_TAREFAS data) {
+		if(data.getUTZ_ID() != null){
+			entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET UTZ_ID = '" + data.getUTZ_ID()
+			+ "', JUSTIFICACAO_RESPONSAVEL = '" + data.getJUSTIFICACAO_RESPONSAVEL() + "' where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = '" + data.getSUB_MODULO()
+			+ "' and id_campo = " + data.getID_CAMPO() + "").executeUpdate();
+
+		}
+		else{
+			entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET DATA_FIM_ANTIGA = DATA_FIM, DATA_FIM = '" + data.getDATA_FIM()		
+			+ "', JUSTIFICACAO_DATA_FIM = '" + data.getJUSTIFICACAO_DATA_FIM()
 				+ "' where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = '" + data.getSUB_MODULO()
 				+ "' and id_campo = " + data.getID_CAMPO() + "").executeUpdate();
+		}
+		
+		Query query = entityManager.createNativeQuery("select ID_TAREFA,data_INICIO,id_CAMPO from GT_MOV_TAREFAS  where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = 'PA' and id_campo = " + data.getID_CAMPO() + "");		
+		return query.getResultList();
 	}
 
 	@GET
