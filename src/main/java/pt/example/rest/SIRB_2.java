@@ -5507,14 +5507,45 @@ public class SIRB_2 {
 	}
 	
 	@POST
+	@Path("/getDASHBOARD_CUMPRIMENTO_OBJETIVO_VENDAS")
+	@Produces("application/json")
+	public List<Object[]> getDASHBOARD_CUMPRIMENTO_OBJETIVO_VENDAS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String SEMANA = firstMap.get("SEMANA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_CUMPRIMENTO_OBJETIVO_VENDAS] "+ ANO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/getDASHBOARD_VARIACAO_STOCK")
+	@Produces("application/json")
+	public List<Object[]> getDASHBOARD_VARIACAO_STOCK(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String SEMANA = firstMap.get("SEMANA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_VARIACAO_STOCK] "+ ANO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
 	@Path("/getPA_GET_TOTAIS")
 	@Produces("application/json")
 	public List<Object[]> getPA_GET_TOTAIS(final List<HashMap<String, String>> dados) {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ANO = firstMap.get("ANO");
 		String SEMANA = firstMap.get("SEMANA");
+		String UTILIZADOR = firstMap.get("UTILIZADOR");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC [PA_GET_TOTAIS]");
+		Query query_folder = entityManager.createNativeQuery("EXEC [PA_GET_TOTAIS] "+UTILIZADOR);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

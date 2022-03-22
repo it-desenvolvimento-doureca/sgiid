@@ -327,6 +327,8 @@ public class SIRB {
 	private FIN_DIVIDAS_ATIVIDADEDao dao116;
 	@Inject
 	private FIN_REGISTO_ACOESDao dao117;
+	@Inject
+	private RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOESDao dao118;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -4251,6 +4253,19 @@ public class SIRB {
 	}
 
 	@POST
+	@Path("/getPA_MOV_CABbyTIPOASSOCIAR/{tipo}")
+	@Produces("application/json")
+	public List<PA_MOV_CAB> getPA_MOV_CABbyTIPOASSOCIAR(@PathParam("tipo") String tipo,
+			final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String fastresponse = firstMap.get("FASTRESPONSE");
+		String emAtraso = firstMap.get("EM_ATRASO");
+		String id_plano = firstMap.get("ID_PLANO");
+		String ano = firstMap.get("ANO");
+		return dao95.getPA_MOV_CABbyTIPOASSOCIAR(tipo, fastresponse, emAtraso, id_plano, ano);
+	}
+
+	@POST
 	@Path("/getPA_MOV_CABbyTIPOaccoes/{tipo}")
 	@Produces("application/json")
 	public List<PA_MOV_CAB> getPA_MOV_CABbyTIPOaccoes(@PathParam("tipo") String tipo,
@@ -4266,18 +4281,21 @@ public class SIRB {
 	@Produces("application/json")
 	public int getPA_MOV_CABAssociarPlanoEstrategico(@PathParam("id") String id,
 			@PathParam("id_plano") String id_plano) {
-		return entityManager.createNativeQuery(
-				" UPDATE PA_MOV_CAB set ID_PLANO_ESTRATEGICO = " + id_plano + " where  ID_PLANO_CAB = " + id + "")
+		return entityManager
+				.createNativeQuery("IF NOT EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = " + id
+						+ " AND ID_PLANO_ESTRATEGICO = " + id_plano
+						+ " ) BEGIN INSERT INTO PE_PLANOS_ASSOCIADOS (ID_PLANO_CAB ,ID_PLANO_ESTRATEGICO ) VALUES ("
+						+ id + "," + id_plano + ") END")
 				.executeUpdate();
 	}
 
 	@GET
-	@Path("/getPA_MOV_CABRemoverPlanoEstrategico/{id}")
+	@Path("/getPA_MOV_CABRemoverPlanoEstrategico/{id_plano}/{id}")
 	@Produces("application/json")
-	public int getPA_MOV_CABRemoverPlanoEstrategico(@PathParam("id") String id) {
-		return entityManager
-				.createNativeQuery(" UPDATE PA_MOV_CAB set ID_PLANO_ESTRATEGICO = null where ID_PLANO_CAB = " + id + "")
-				.executeUpdate();
+	public int getPA_MOV_CABRemoverPlanoEstrategico(@PathParam("id") String id,
+			@PathParam("id_plano") String id_plano) {
+		return entityManager.createNativeQuery(" DELETE PE_PLANOS_ASSOCIADOS where ID_PLANO_CAB = " + id
+				+ " AND ID_PLANO_ESTRATEGICO = " + id_plano + "").executeUpdate();
 	}
 
 	@GET
@@ -4285,6 +4303,13 @@ public class SIRB {
 	@Produces("application/json")
 	public List<PA_MOV_CAB> getPA_MOV_CABbyid(@PathParam("id") Integer id) {
 		return dao95.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPlanosEstrategicosbyid/{id}")
+	@Produces("application/json")
+	public List<PA_MOV_CAB> getPlanosEstrategicosbyid(@PathParam("id") Integer id) {
+		return dao95.getPlanosEstrategicosbyid(id);
 	}
 
 	@GET
@@ -4309,13 +4334,14 @@ public class SIRB {
 	@Produces("application/json")
 	public PA_MOV_CAB updatePA_MOV_CAB(final PA_MOV_CAB PA_MOV_CAB) {
 		PA_MOV_CAB.setID_PLANO_CAB(PA_MOV_CAB.getID_PLANO_CAB());
-		
+
 		PA_MOV_CAB VAL_R = dao95.update(PA_MOV_CAB);
 		entityManager.createNativeQuery("UPDATE b set b.ESTADO = 'P' from PA_MOV_CAB a "
-				+ "inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
-				+ "WHERE a.ID_PLANO_CAB = "+PA_MOV_CAB.getID_PLANO_CAB()+" AND a.ID_PLANO_ESTRATEGICO is not null "
+				+ "inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB " + "WHERE a.ID_PLANO_CAB = "
+				+ PA_MOV_CAB.getID_PLANO_CAB()
+				+ " AND (select count(*) from PE_PLANOS_ASSOCIADOS x where x.ID_PLANO_CAB = a.ID_PLANO_CAB) > 0 "
 				+ "AND a.ESTADO = 'P' AND (b.ESTADO  ='E' or b.ESTADO  = '')").executeUpdate();
-		
+
 		return VAL_R;
 	}
 
@@ -4334,7 +4360,9 @@ public class SIRB {
 				+ "inner join GT_MOV_TAREFAS c on b.ID_PLANO_LINHA = c.ID_CAMPO and ID_MODULO = 13 and SUB_MODULO = 'PA' "
 				+ "where a.ID_PLANO_CAB = " + id + "  "
 				+ "UPDATE  b set b.ESTADO = 'A'  from PA_MOV_CAB a inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
-				+ "where a.ID_PLANO_CAB = " + id + " and a.ID_PLANO_ESTRATEGICO IS NOT NULL").executeUpdate();
+				+ "where a.ID_PLANO_CAB = " + id
+				+ " AND (select count(*) from PE_PLANOS_ASSOCIADOS x where x.ID_PLANO_CAB = a.ID_PLANO_CAB) > 0")
+				.executeUpdate();
 	}
 
 	/************************************* PEDIDOS_APP */
@@ -4470,6 +4498,11 @@ public class SIRB {
 				+ " WHERE SUB_MODULO = 'PA' AND ID_MODULO = 13 and ID_CAMPO = " + PA_MOV_LINHA.getID_PLANO_LINHA() + "")
 				.executeUpdate();
 
+		entityManager.createNativeQuery("UPDATE b set b.ESTADO = 'I' from GT_MOV_TAREFAS a "
+				+ "inner join PA_MOV_LINHA b on a.ID_CAMPO = b.ID_PLANO_LINHA and a.ID_MODULO = 13 "
+				+ "AND a.ESTADO != b.ESTADO and a.ESTADO != 'A' AND a.ESTADO in ('C') AND b.ESTADO in ('P') AND b.ID_PLANO_LINHA = "
+				+ PA_MOV_LINHA.getID_PLANO_LINHA() + "").executeUpdate();
+
 		return dados;
 	}
 
@@ -4493,7 +4526,7 @@ public class SIRB {
 						+ " and ESTADO != 'E' END")
 				.executeUpdate();
 	}
-	
+
 	@GET
 	@Path("/getPA_MOV_LINHAdelete_favorito/{id}")
 	@Produces("application/json")
@@ -4512,7 +4545,6 @@ public class SIRB {
 				.executeUpdate();
 	}
 
-	
 	/************************************* PA_MOV_FICHEIROS */
 	@POST
 	@Path("/createPA_MOV_FICHEIROS")
@@ -6476,7 +6508,23 @@ public class SIRB {
 				.createNativeQuery("UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET ESTADO = 'A' where ID_RECLAMACAO = " + id
 						+ " and ESTADO != 'C' "
 						+ "UPDATE GT_MOV_TAREFAS SET ESTADO = 'A' where ID_CAMPO in (select ID from RC_MOV_RECLAMACAO_PLANOS_ACCOES where ID_RECLAMACAO = '"
-						+ id + "') and ID_MODULO='" + modulo + "' and SUB_MODULO != 'D' and ESTADO != 'C'");
+						+ id + "') and ID_MODULO='" + modulo + "' and SUB_MODULO not in ('D','F') and ESTADO != 'C'");
+
+		query.executeUpdate();
+
+	}
+
+	@GET
+	@Path("/deleteRC_MOV_RECLAMACAO_FORNECEDORUPDATEESTADOS/{id}/{modulo}")
+	@Produces("application/json")
+	public void deleteRC_MOV_RECLAMACAO_FORNECEDORUPDATEESTADOS(@PathParam("id") Integer id,
+			@PathParam("modulo") Integer modulo) {
+
+		Query query = entityManager.createNativeQuery(
+				"UPDATE RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES SET ESTADO = 'A' where ID_RECLAMACAO = " + id
+						+ " and ESTADO != 'C' "
+						+ "UPDATE GT_MOV_TAREFAS SET ESTADO = 'A' where ID_CAMPO in (select ID from RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES where ID_RECLAMACAO = '"
+						+ id + "') and ID_MODULO='" + modulo + "' and SUB_MODULO not in ('D','C') and ESTADO != 'C'");
 
 		query.executeUpdate();
 
@@ -6492,7 +6540,8 @@ public class SIRB {
 				.createNativeQuery("UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET ESTADO = 'N' where ID_RECLAMACAO = " + id
 						+ " and tipo = '" + tipo + "' "
 						+ "UPDATE GT_MOV_TAREFAS SET ESTADO = 'N' where ID_CAMPO in (select ID from RC_MOV_RECLAMACAO_PLANOS_ACCOES where ID_RECLAMACAO = "
-						+ id + "and TIPO='" + tipo + "') and ID_MODULO='" + modulo + "' and SUB_MODULO != 'D' ");
+						+ id + "and TIPO='" + tipo + "') and ID_MODULO='" + modulo
+						+ "' and SUB_MODULO not in ('D','F') ");
 
 		query.executeUpdate();
 
@@ -7054,21 +7103,27 @@ public class SIRB {
 	@Path("/atualizaTAREFA")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public  List<Object[]>  atualizaTAREFA(final GT_MOV_TAREFAS data) {
-		if(data.getUTZ_ID() != null){
-			entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET UTZ_ID = '" + data.getUTZ_ID()
-			+ "', JUSTIFICACAO_RESPONSAVEL = '" + data.getJUSTIFICACAO_RESPONSAVEL() + "' where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = '" + data.getSUB_MODULO()
-			+ "' and id_campo = " + data.getID_CAMPO() + "").executeUpdate();
+	public List<Object[]> atualizaTAREFA(final GT_MOV_TAREFAS data) {
+		if (data.getUTZ_ID() != null) {
+			entityManager
+					.createNativeQuery("UPDATE GT_MOV_TAREFAS SET UTZ_ID = '" + data.getUTZ_ID()
+							+ "', JUSTIFICACAO_RESPONSAVEL = '" + data.getJUSTIFICACAO_RESPONSAVEL()
+							+ "' where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = '"
+							+ data.getSUB_MODULO() + "' and id_campo = " + data.getID_CAMPO() + "")
+					.executeUpdate();
 
+		} else {
+			entityManager
+					.createNativeQuery("UPDATE GT_MOV_TAREFAS SET DATA_FIM_ANTIGA = DATA_FIM, DATA_FIM = '"
+							+ data.getDATA_FIM() + "', JUSTIFICACAO_DATA_FIM = '" + data.getJUSTIFICACAO_DATA_FIM()
+							+ "' where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = '"
+							+ data.getSUB_MODULO() + "' and id_campo = " + data.getID_CAMPO() + "")
+					.executeUpdate();
 		}
-		else{
-			entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET DATA_FIM_ANTIGA = DATA_FIM, DATA_FIM = '" + data.getDATA_FIM()		
-			+ "', JUSTIFICACAO_DATA_FIM = '" + data.getJUSTIFICACAO_DATA_FIM()
-				+ "' where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = '" + data.getSUB_MODULO()
-				+ "' and id_campo = " + data.getID_CAMPO() + "").executeUpdate();
-		}
-		
-		Query query = entityManager.createNativeQuery("select ID_TAREFA,data_INICIO,id_CAMPO from GT_MOV_TAREFAS  where id_MODULO = " + data.getID_MODULO() + " and sub_MODULO = 'PA' and id_campo = " + data.getID_CAMPO() + "");		
+
+		Query query = entityManager
+				.createNativeQuery("select ID_TAREFA,data_INICIO,id_CAMPO from GT_MOV_TAREFAS  where id_MODULO = "
+						+ data.getID_MODULO() + " and sub_MODULO = 'PA' and id_campo = " + data.getID_CAMPO() + "");
 		return query.getResultList();
 	}
 
@@ -7110,44 +7165,7 @@ public class SIRB {
 		return dao59.getbyidUser(id, data);
 	}
 
-	@POST
-	@Path("/getGT_MOV_TAREFASAtualizaAccao/{id}/{modulo}")
-	@Produces("application/json")
-	public void getGT_MOV_TAREFASAtualizaAccao(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
-			final String link) {
-		String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + id + "," + modulo + "";
-		/*
-		 * Query query = entityManager.
-		 * createNativeQuery("declare @id int = 0; declare @id_insert int = 0;"
-		 * + "IF EXISTS (SELECT * FROM GT_MOV_TAREFAS a WHERE ID_MODULO = " +
-		 * modulo + " and  ID_CAMPO= " + id + ")    UPDATE a  " +
-		 * "SET @id = a.ID_TAREFA, a.DATA_FIM = b.DATA_PREVISTA,a.DATA_INICIO = b.DATA_CRIA, a.DATA_ULT_MODIF = a.DATA_ULT_MODIF,a.UTZ_ULT_MODIF = a.UTZ_ULT_MODIF,a.OBSERVACOES=b.OBSERVACOES, "
-		 * +
-		 * "a.UTZ_ID = b.RESPONSAVEL, a.UTZ_TIPO = b.TIPO_RESPONSAVEL,a.ID_ACCAO = b.ID_ACCAO, a.SUB_MODULO =  (select c.TIPO_RECLAMACAO from RC_MOV_RECLAMACAO c where c.ID_RECLAMACAO = b.ID_RECLAMACAO) "
-		 * +
-		 * ", a.PRIORIDADE =  (select c.GRAU_IMPORTANCIA from RC_MOV_RECLAMACAO c where c.ID_RECLAMACAO = b.ID_RECLAMACAO) "
-		 * +
-		 * "FROM GT_MOV_TAREFAS a inner join RC_MOV_RECLAMACAO_PLANOS_ACCOES b on a.ID_CAMPO = b.ID "
-		 * + "where a.ID_CAMPO = " + id + " and a.ID_MODULO = " + modulo + " " +
-		 * "ELSE INSERT INTO GT_MOV_TAREFAS(ID_MODULO,ID_CAMPO,DATA_FIM,DATA_INICIO,DATA_CRIA,UTZ_CRIA,DATA_ULT_MODIF,UTZ_ULT_MODIF,ESTADO,INATIVO,UTZ_ID,UTZ_TIPO,ID_ACCAO,SUB_MODULO,PRIORIDADE,OBSERVACOES) "
-		 * + "select '" + modulo +
-		 * "',ID,DATA_PREVISTA,DATA_CRIA,DATA_CRIA,UTZ_CRIA,DATA_CRIA,UTZ_CRIA,'P',0,RESPONSAVEL,TIPO_RESPONSAVEL,ID_ACCAO, (select TIPO_RECLAMACAO from RC_MOV_RECLAMACAO b where b.ID_RECLAMACAO = a.ID_RECLAMACAO), "
-		 * +
-		 * "(select GRAU_IMPORTANCIA from RC_MOV_RECLAMACAO b where b.ID_RECLAMACAO = a.ID_RECLAMACAO),OBSERVACOES from RC_MOV_RECLAMACAO_PLANOS_ACCOES a  where ID = "
-		 * + id + " IF @id != 0 " +
-		 * "UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET ID_TAREFA = @id WHERE ID = "
-		 * + id + " " + "ELSE " +
-		 * "UPDATE RC_MOV_RECLAMACAO_PLANOS_ACCOES SET @id_insert = ID_TAREFA = (SELECT ID_TAREFA FROM GT_MOV_TAREFAS WHERE ID_TAREFA = SCOPE_IDENTITY()) WHERE ID = "
-		 * + id + " " + "IF @id_insert != 0  " +
-		 * "INSERT INTO GT_LOGS ([DATA_CRIA] ,[UTZ_CRIA] ,[DESCRICAO] ,[ID_TAREFA]) VALUES (GETDATE(),(SELECT UTZ_CRIA FROM GT_MOV_TAREFAS WHERE ID_TAREFA = @id_insert),'Adicionada nova Tarefa',@id_insert)"
-		 * );
-		 */
-		Query query = entityManager.createNativeQuery(url);
-		query.executeUpdate();
-
-		enviaEventoTarefa(id, link, false);
-
-	}
+	
 
 	@POST
 	@Path("/getAtualizaTarefaReclamacao/{id}/{modulo}")
@@ -7157,7 +7175,7 @@ public class SIRB {
 
 		Query query = entityManager.createNativeQuery("select ID,ID_RECLAMACAO from RC_MOV_RECLAMACAO_PLANOS_ACCOES "
 				+ "where ID_RECLAMACAO = " + id
-				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 5 and SUB_MODULO != 'D' and ID_CAMPO = ID)");
+				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 5 and SUB_MODULO not in ('D','F') and ID_CAMPO = ID)");
 
 		List<Object[]> dados = query.getResultList();
 
@@ -7167,7 +7185,30 @@ public class SIRB {
 			Query query_tarefa = entityManager.createNativeQuery(url);
 			query_tarefa.executeUpdate();
 
-			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, false);
+			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, "C");
+		}
+
+	}
+	
+	@POST
+	@Path("/getAtualizaTarefaReclamacaoFornecedor/{id}/{modulo}")
+	@Produces("application/json")
+	public void getAtualizaTarefaReclamacaoFornecedor(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
+			final String link) {
+
+		Query query = entityManager.createNativeQuery("select ID,ID_RECLAMACAO from RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES "
+				+ "where ID_RECLAMACAO = " + id
+				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 5 and SUB_MODULO not in ('D','C') and ID_CAMPO = ID)");
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+			String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + content[0].toString() + "," + modulo + ",'F'";
+
+			Query query_tarefa = entityManager.createNativeQuery(url);
+			query_tarefa.executeUpdate();
+
+			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, "F");
 		}
 
 	}
@@ -7190,7 +7231,7 @@ public class SIRB {
 			Query query_tarefa = entityManager.createNativeQuery(url);
 			query_tarefa.executeUpdate();
 
-			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, true);
+			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, "D");
 		}
 
 	}
@@ -7222,10 +7263,10 @@ public class SIRB {
 
 	}
 
-	public void enviaEventoTarefa(Integer id, String link, Boolean derrogacao) {
+	public void enviaEventoTarefa(Integer id, String link, String submodulo) {
 		String observacao = "";
 		String numero_reclamacao = "";
-		String cliente = "";
+		String cliente = ""; 
 		String data_reclamacao = "";
 		String referencia = "";
 		String numero_tarefa = "";
@@ -7236,15 +7277,21 @@ public class SIRB {
 		String data_prevista = "";
 		Query query = null;
 
-		if (derrogacao) {
+		if (submodulo.equals("D")) {
 			query = entityManager.createNativeQuery(
-					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,OBSERVACOES ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
+					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(OBSERVACOES,'') ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
 							+ "b.NOME_CLIENTE,b.ID_DERROGACAO,a.DATA_PREVISTA,b.DATA_INICIO "
 							+ "from QUA_DERROGACOES_PLANOS_ACCOES a inner join QUA_DERROGACOES b on b.ID_DERROGACAO = a.ID_DERROGACAO "
 							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
+		}else if (submodulo.equals("F")) {
+			query = entityManager.createNativeQuery(
+					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(b.OBSERVACOES,'') ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
+							+ "b.NOME_FORNECEDOR,b.ID_RECLAMACAO,a.DATA_PREVISTA,b.DATA_RECLAMACAO "
+							+ "from RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES a inner join RC_MOV_RECLAMACAO_FORNECEDOR b on b.ID_RECLAMACAO = a.ID_RECLAMACAO "
+							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
 		} else {
 			query = entityManager.createNativeQuery(
-					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,OBSERVACOES ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
+					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(OBSERVACOES,'') ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
 							+ "b.NOME_CLIENTE,b.ID_RECLAMACAO,a.DATA_PREVISTA,b.DATA_RECLAMACAO "
 							+ "from RC_MOV_RECLAMACAO_PLANOS_ACCOES a inner join RC_MOV_RECLAMACAO b on b.ID_RECLAMACAO = a.ID_RECLAMACAO "
 							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
@@ -7255,7 +7302,7 @@ public class SIRB {
 		for (Object[] content : dados) {
 			observacao = content[3].toString();
 			numero_reclamacao = content[8].toString();
-			cliente = content[7].toString();
+			cliente = content[7].toString(); 
 			data_reclamacao = content[10].toString();
 			referencia = content[5].toString() + " - " + content[6].toString();
 			numero_tarefa = (content[0] == null) ? null : content[0].toString();
@@ -7291,21 +7338,29 @@ public class SIRB {
 			HashMap<String, String> n = new HashMap<String, String>();
 			n.put("MODULO", "5");
 			n.put("MOMENTO", "Ao Criar Tarefa");
-			if (derrogacao) {
+			if (submodulo.equals("D")) {
 				n.put("PAGINA", "Derrogações");
+			}else if (submodulo.equals("F")) {
+				n.put("PAGINA", "Reclamações Fornecedor");
 			} else {
 				n.put("PAGINA", "Reclamações Clientes");
 			}
 			n.put("ESTADO", "1");
 			n.put("EMAIL_PARA", email_para);
 
-			if (derrogacao) {
+			if (submodulo.equals("D")) {
 				n.put("DADOS",
 						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_derrogacao::"
 								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_derrogacao::"
 								+ data_reclamacao + "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::"
 								+ numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
-			} else {
+			} else if (submodulo.equals("F")) {
+				n.put("DADOS",
+						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reclamacao::"
+								+ numero_reclamacao + "\n/fornecedor::" + cliente + "\n/data_reclamacao::"
+								+ data_reclamacao + "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::"
+								+ numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
+			}else {
 				n.put("DADOS",
 						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reclamacao::"
 								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_reclamacao::"
@@ -10213,6 +10268,57 @@ public class SIRB {
 
 		}
 
+	}
+
+	/************************************* RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES */
+	@POST
+	@Path("/createRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES insertRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOESA(
+			final RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES data) {
+		return dao118.create(data);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES> getRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES() {
+		return dao118.getall();
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOESbyid_reclamacao/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES> getRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOESbyid_reclamacao(
+			@PathParam("id") Integer id) {
+		return dao118.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOESbyid/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES> getRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOESbyid(
+			@PathParam("id") Integer id) {
+		return dao118.getbyidplano(id);
+	}
+
+	@DELETE
+	@Path("/deleteRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES/{id}")
+	public void deleteRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES(@PathParam("id") Integer id) {
+		RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES = new RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES();
+		RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.setID(id);
+		dao118.delete(RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES);
+	}
+
+	@PUT
+	@Path("/updateRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES updateRC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES(
+			final RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES) {
+		RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.setID(RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.getID());
+		return dao118.update(RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES);
 	}
 
 }

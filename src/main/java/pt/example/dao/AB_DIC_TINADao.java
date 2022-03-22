@@ -24,7 +24,7 @@ public class AB_DIC_TINADao extends GenericDaoJpaImpl<AB_DIC_TINA,Integer> imple
 	public List<AB_DIC_TINA> getall(Integer linha) {
 		Query query = entityManager.createQuery("Select a,b, "
 				+ "CASE WHEN a.ID_ZONA IS NULL THEN '' ELSE (select c.NOME_ZONA from AB_DIC_ZONA c where a.ID_ZONA = c.ID_ZONA )END as nome_zona "
-				+ "from AB_DIC_TINA a,AB_DIC_LINHA b where a.ID_LINHA = b.ID_LINHA and a.INATIVO !=1 and ((not :linha != 0) or (a.ID_LINHA = :linha))");
+				+ "from AB_DIC_TINA a,AB_DIC_LINHA b where a.ID_LINHA = b.ID_LINHA and a.INATIVO !=1 and ((not :linha != 0) or (a.ID_LINHA = :linha)) order by a.COD_TINA");
 		query.setParameter("linha", linha);
 		List<AB_DIC_TINA> data = query.getResultList();
 		return data;
