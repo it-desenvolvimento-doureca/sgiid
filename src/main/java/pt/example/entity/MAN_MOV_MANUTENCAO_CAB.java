@@ -54,6 +54,8 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	private Timestamp DATA_ULT_MODIF;
 	@JsonProperty("TIPO_LOCALIZACAO")
 	private String TIPO_LOCALIZACAO;
+	@JsonProperty( "DATA_REALIZACAO")
+	private Timestamp DATA_REALIZACAO;
 	
 	public Integer getID_MANUTENCAO_CAB() {
 		return ID_MANUTENCAO_CAB;
@@ -197,6 +199,14 @@ public class MAN_MOV_MANUTENCAO_CAB {
 
 	public void setTIPO_LOCALIZACAO(String tIPO_LOCALIZACAO) {
 		TIPO_LOCALIZACAO = tIPO_LOCALIZACAO;
+	}
+
+	public Timestamp getDATA_REALIZACAO() {
+		return DATA_REALIZACAO;
+	}
+
+	public void setDATA_REALIZACAO(Timestamp dATA_REALIZACAO) {
+		DATA_REALIZACAO = dATA_REALIZACAO;
 	}
 
 }

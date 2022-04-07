@@ -51,6 +51,16 @@ public class MAN_MOV_PEDIDOS {
 	private Integer UTILIZADOR;
 	@JsonProperty( "ID_EQUIPA")
 	private Integer ID_EQUIPA;
+	@JsonProperty( "STATUS_MAQUINA")
+	private String STATUS_MAQUINA;
+	
+	public String getSTATUS_MAQUINA() {
+		return STATUS_MAQUINA;
+	}
+
+	public void setSTATUS_MAQUINA(String sTATUS_MAQUINA) {
+		STATUS_MAQUINA = sTATUS_MAQUINA;
+	}
 
 	public Integer getID_PEDIDO() {
 		return ID_PEDIDO;

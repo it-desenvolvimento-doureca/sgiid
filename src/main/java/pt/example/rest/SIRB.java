@@ -4253,6 +4253,17 @@ public class SIRB {
 	}
 
 	@POST
+	@Path("/getPA_MOV_CABbyTIPOSEGUIR/{tipo}")
+	@Produces("application/json")
+	public List<PA_MOV_CAB> getPA_MOV_CABbyTIPOSEGUIR(@PathParam("tipo") String tipo,
+			final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String fastresponse = firstMap.get("FASTRESPONSE");
+		String emAtraso = firstMap.get("EM_ATRASO");
+		return dao95.getallbyTIPOSEGUIR(tipo, fastresponse, emAtraso);
+	}
+
+	@POST
 	@Path("/getPA_MOV_CABbyTIPOASSOCIAR/{tipo}")
 	@Produces("application/json")
 	public List<PA_MOV_CAB> getPA_MOV_CABbyTIPOASSOCIAR(@PathParam("tipo") String tipo,
@@ -4494,7 +4505,11 @@ public class SIRB {
 
 		PA_MOV_LINHA dados = dao96.update(PA_MOV_LINHA);
 
-		entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET OBSERVACOES = '" + PA_MOV_LINHA.getDESCRICAO() + "' "
+		String descricao = PA_MOV_LINHA.getDESCRICAO();
+		if(descricao != null){
+			descricao = descricao.replace("'","''");
+		}
+		entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET OBSERVACOES = '" + descricao + "' "
 				+ " WHERE SUB_MODULO = 'PA' AND ID_MODULO = 13 and ID_CAMPO = " + PA_MOV_LINHA.getID_PLANO_LINHA() + "")
 				.executeUpdate();
 
@@ -7165,8 +7180,6 @@ public class SIRB {
 		return dao59.getbyidUser(id, data);
 	}
 
-	
-
 	@POST
 	@Path("/getAtualizaTarefaReclamacao/{id}/{modulo}")
 	@Produces("application/json")
@@ -7189,16 +7202,17 @@ public class SIRB {
 		}
 
 	}
-	
+
 	@POST
 	@Path("/getAtualizaTarefaReclamacaoFornecedor/{id}/{modulo}")
 	@Produces("application/json")
 	public void getAtualizaTarefaReclamacaoFornecedor(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
 			final String link) {
 
-		Query query = entityManager.createNativeQuery("select ID,ID_RECLAMACAO from RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES "
-				+ "where ID_RECLAMACAO = " + id
-				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 5 and SUB_MODULO not in ('D','C') and ID_CAMPO = ID)");
+		Query query = entityManager
+				.createNativeQuery("select ID,ID_RECLAMACAO from RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES "
+						+ "where ID_RECLAMACAO = " + id
+						+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 5 and SUB_MODULO not in ('D','C') and ID_CAMPO = ID)");
 
 		List<Object[]> dados = query.getResultList();
 
@@ -7266,7 +7280,7 @@ public class SIRB {
 	public void enviaEventoTarefa(Integer id, String link, String submodulo) {
 		String observacao = "";
 		String numero_reclamacao = "";
-		String cliente = ""; 
+		String cliente = "";
 		String data_reclamacao = "";
 		String referencia = "";
 		String numero_tarefa = "";
@@ -7283,7 +7297,7 @@ public class SIRB {
 							+ "b.NOME_CLIENTE,b.ID_DERROGACAO,a.DATA_PREVISTA,b.DATA_INICIO "
 							+ "from QUA_DERROGACOES_PLANOS_ACCOES a inner join QUA_DERROGACOES b on b.ID_DERROGACAO = a.ID_DERROGACAO "
 							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
-		}else if (submodulo.equals("F")) {
+		} else if (submodulo.equals("F")) {
 			query = entityManager.createNativeQuery(
 					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(b.OBSERVACOES,'') ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
 							+ "b.NOME_FORNECEDOR,b.ID_RECLAMACAO,a.DATA_PREVISTA,b.DATA_RECLAMACAO "
@@ -7302,7 +7316,7 @@ public class SIRB {
 		for (Object[] content : dados) {
 			observacao = content[3].toString();
 			numero_reclamacao = content[8].toString();
-			cliente = content[7].toString(); 
+			cliente = content[7].toString();
 			data_reclamacao = content[10].toString();
 			referencia = content[5].toString() + " - " + content[6].toString();
 			numero_tarefa = (content[0] == null) ? null : content[0].toString();
@@ -7340,7 +7354,7 @@ public class SIRB {
 			n.put("MOMENTO", "Ao Criar Tarefa");
 			if (submodulo.equals("D")) {
 				n.put("PAGINA", "Derrogações");
-			}else if (submodulo.equals("F")) {
+			} else if (submodulo.equals("F")) {
 				n.put("PAGINA", "Reclamações Fornecedor");
 			} else {
 				n.put("PAGINA", "Reclamações Clientes");
@@ -7360,7 +7374,7 @@ public class SIRB {
 								+ numero_reclamacao + "\n/fornecedor::" + cliente + "\n/data_reclamacao::"
 								+ data_reclamacao + "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::"
 								+ numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
-			}else {
+			} else {
 				n.put("DADOS",
 						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reclamacao::"
 								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_reclamacao::"
@@ -10257,7 +10271,7 @@ public class SIRB {
 			n.put("EMAIL_PARA", email_para);
 
 			n.put("DADOS",
-					"{estado::" + estado + "\n/link::" + link + numero_derrogacao + "\n/numero_derrogacao::"
+					"{estado::" + estado + "\n/link::" + link /*+ numero_derrogacao*/ + "\n/numero_derrogacao::"
 							+ numero_derrogacao + "\n/cliente::" + cliente + "\n/referencia::" + referencia
 							+ "\n/motivo::" + motivo + "\n/causa::" + causa + "\n/data_inicio::" + data_inicio
 							+ "\n/data_fim::" + data_fim + "}");
@@ -10268,6 +10282,56 @@ public class SIRB {
 
 		}
 
+	}
+	
+	@POST
+	@Path("/getAlertasStockManutencao")
+	@Produces("application/json")
+	public String getAlertasStockManutencao(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String IDS = firstMap.get("IDS");
+		
+		Query query = null;
+		SendEmail email = new SendEmail();
+		 
+		query = entityManager.createNativeQuery("EXEC [GET_ALERTA_STOCK_MANUTENCAO] '" + IDS + "'");
+
+		List<Object[]> dadosquery = query.getResultList();
+
+		for (Object[] content : dadosquery) {
+
+			String email_para = "", numero_manutencao = "", descricao_manutencao = "", referencia = "", link = "",quantidade = "",data_manutencao = "";
+			email_para = content[7].toString();
+			numero_manutencao = content[0].toString();				 
+			referencia = content[1].toString();
+			link = content[6].toString();
+			descricao_manutencao = content[5].toString();
+			quantidade = content[2].toString();
+			data_manutencao = content[8].toString();
+
+			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+			HashMap<String, String> n = new HashMap<String, String>();
+			n.put("MODULO", "14");
+			n.put("MOMENTO", "Alertas de Stock Manutenção");
+
+			n.put("PAGINA", "Manutenções Preventivas");
+
+			n.put("ESTADO", "1");
+			n.put("EMAIL_PARA", email_para);
+
+			n.put("DADOS",
+					"{link::" + link + "\n/numero_manutencao::"
+							+ numero_manutencao + "\n/descricao_manutencao::" + descricao_manutencao +"\n/data_manutencao::" + data_manutencao + "\n/referencia::" + referencia
+							+ "\n/quantidade::" + quantidade + "}");
+
+			data.add(n);
+
+			verficaEventos(data); 
+			
+		}
+		
+		return "OK";
 	}
 
 	/************************************* RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES */

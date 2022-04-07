@@ -49,6 +49,8 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 	private String TIPO_EQUIPA;
 	@JsonProperty("UTILIZADOR")
 	private Integer UTILIZADOR;
+	@JsonProperty("DESCRICAO_MANUTENCAO")
+	private String DESCRICAO_MANUTENCAO;
 
 	public Integer getID_MANUTENCAO() {
 		return ID_MANUTENCAO;
@@ -168,6 +170,14 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 
 	public void setUTILIZADOR(Integer uTILIZADOR) {
 		UTILIZADOR = uTILIZADOR;
+	}
+
+	public String getDESCRICAO_MANUTENCAO() {
+		return DESCRICAO_MANUTENCAO;
+	}
+
+	public void setDESCRICAO_MANUTENCAO(String dESCRICAO_MANUTENCAO) {
+		DESCRICAO_MANUTENCAO = dESCRICAO_MANUTENCAO;
 	}
 
 }

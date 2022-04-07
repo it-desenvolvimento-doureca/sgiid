@@ -34,6 +34,10 @@ public class MAN_MOV_MANUTENCAO_ACCOES {
 	private Integer UTZ_ULT_MODIF;
 	@JsonProperty("DATA_ULT_MODIF")
 	private Timestamp DATA_ULT_MODIF;
+	@JsonProperty("TEMPO")
+	private Time TEMPO;
+	@JsonProperty("TEMPO_ESTIMADO")
+	private Time TEMPO_ESTIMADO;
 
 	public Integer getID_MANUTENCAO_ACOES() {
 		return ID_MANUTENCAO_ACOES;
@@ -97,6 +101,22 @@ public class MAN_MOV_MANUTENCAO_ACCOES {
 
 	public void setDATA_ULT_MODIF(Timestamp dATA_ULT_MODIF) {
 		DATA_ULT_MODIF = dATA_ULT_MODIF;
+	}
+
+	public Time getTEMPO() {
+		return TEMPO;
+	}
+
+	public Time getTEMPO_ESTIMADO() {
+		return TEMPO_ESTIMADO;
+	}
+
+	public void setTEMPO(Time tEMPO) {
+		TEMPO = tEMPO;
+	}
+
+	public void setTEMPO_ESTIMADO(Time tEMPO_ESTIMADO) {
+		TEMPO_ESTIMADO = tEMPO_ESTIMADO;
 	}
 
 }

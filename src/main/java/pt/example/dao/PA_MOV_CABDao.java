@@ -102,6 +102,41 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 		return data;
 
 	}
+	
+	public List<PA_MOV_CAB> getallbyTIPOSEGUIR(String tipo, String fastresponse, String emAtraso) {
+		String query_where = "";
+		if (!tipo.equals("T")) {
+			query_where = "and e.MODULO = '" + tipo + "' ";
+		}
+		if (fastresponse.equals("true")) {
+			fastresponse = "1";
+		} else {
+			fastresponse = "0";
+		}
+		if (emAtraso.equals("true")) {
+			emAtraso = "1";
+		} else {
+			emAtraso = "0";
+		}
+
+		Query query = entityManager.createNativeQuery(
+				"DECLARE @fastresponse bit = " + fastresponse + " DECLARE @emAtraso bit = " + emAtraso + " " + "select "
+						+ "a.ID_PLANO_CAB,a.DATA_CRIA,a.DATA_OBJETIVO,a.AMBITO,a.ORIGEM,(select NOME_UTILIZADOR from GER_UTILIZADORES x where x.ID_UTILIZADOR = a.UTZ_CRIA) as UTZ_CRIA,a.DESCRICAO,a.ESTADO "
+						+ ",b.DATA_ACCAO,(select NOME_UTILIZADOR from GER_UTILIZADORES y where y.ID_UTILIZADOR = b.RESPONSAVEL) as RESPONSAVEL, c.DESCRICAO_PT,b.DESCRICAO as descricao_acao,d.DESCRICAO as DESCRICAO_PRIORIDADE "
+						+ ",b.ESTADO as ESTADO_ACAO,b.fastresponse ,(select sd.DESCRICAO from PA_DIC_AMBITOS sd where sd.ID_AMBITO = a.AMBITO) as AMBITO_DESC, f.DESCRICAO as TIPO_ACAO_DESC,g.ID_TAREFA,a.ID_PLANO_ESTRATEGICO,ISNULL(g.PERCENTAGEM_CONCLUSAO,0)  PERCENTAGEM_CONCLUSAO,b.EFICACIA_CUMPRIMENTO_OBJETIVO,b.OBJETIVO OBJETIVO_LINHA,b.SEGUIR_LINHA,b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA "
+						+ "from PA_MOV_CAB a " + "left join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
+						+ "left join GT_DIC_TAREFAS c on b.ID_ACCAO = c.ID "
+						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID "
+						+ "left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID "
+						+ " left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO  "
+						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO "
+						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
+						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
+						+ query_where + " and SEGUIR_LINHA = 1 order by a.DATA_CRIA asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
+		List<PA_MOV_CAB> data = query.getResultList();
+		return data;
+
+	}
 
 	public List<PA_MOV_CAB> getPA_MOV_CABbyTIPOASSOCIAR(String tipo, String fastresponse, String emAtraso,
 			String id_plano, String ano) {

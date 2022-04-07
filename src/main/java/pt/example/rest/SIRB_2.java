@@ -72,6 +72,7 @@ import pt.example.dao.MAN_MOV_MANUTENCAO_LISTA_MATERIALDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_OPERARIOSDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_PAUSASDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_PLANOSDao;
+import pt.example.dao.MAN_MOV_MAQUINAS_PARADASDao;
 import pt.example.dao.MAN_MOV_PEDIDOSDao;
 import pt.example.dao.MAN_MOV_PEDIDOS_DOCUMENTOSDao;
 import pt.example.dao.PE_MOV_CABDao;
@@ -151,6 +152,7 @@ import pt.example.entity.MAN_MOV_MANUTENCAO_LISTA_MATERIAL;
 import pt.example.entity.MAN_MOV_MANUTENCAO_OPERARIOS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_PAUSAS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_PLANOS;
+import pt.example.entity.MAN_MOV_MAQUINAS_PARADAS;
 import pt.example.entity.MAN_MOV_PEDIDOS;
 import pt.example.entity.MAN_MOV_PEDIDOS_DOCUMENTOS;
 import pt.example.entity.PA_MOV_CAB;
@@ -348,6 +350,8 @@ public class SIRB_2 {
 	private PE_MOV_FICHEIROSDao dao76;
 	@Inject
 	private PE_MOV_CAB_HISTORICODao dao77;
+	@Inject
+	private MAN_MOV_MAQUINAS_PARADASDao dao78;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -3301,6 +3305,13 @@ public class SIRB_2 {
 		return null;
 	}
 
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_CAB_HISTORICO/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CAB_HISTORICO(@PathParam("id") Integer id) {
+		return dao39.getHistorico(id);
+	}
+
 	@DELETE
 	@Path("/deleteMAN_MOV_MANUTENCAO_CAB/{id}")
 	public void deleteMAN_MOV_MANUTENCAO_CAB(@PathParam("id") Integer id) {
@@ -4331,7 +4342,7 @@ public class SIRB_2 {
 	@Path("/getCOM_ACORDOS_VALIDA_ACORDO/{id_contrato}/{id_referencia}/{id_acordo}")
 	@Produces("application/json")
 	public List<Object[]> getCOM_ACORDOS_VALIDA_ACORDO(@PathParam("id_contrato") Integer id_contrato,
-			@PathParam("id_referencia") Integer id_referencia,@PathParam("id_acordo") Integer id_acordo) {
+			@PathParam("id_referencia") Integer id_referencia, @PathParam("id_acordo") Integer id_acordo) {
 		Query query = entityManager.createNativeQuery("DECLARE @ID_REFERENCIA int = " + id_referencia
 				+ "; DECLARE @ID_CONTRATO int = " + id_contrato + ";DECLARE @ID_ACORDO int = " + id_acordo + "; "
 				+ "select Count(*) as total, 'total' as txt from COM_ACORDOS a where ID_CONTRATO = @ID_CONTRATO AND ID_CONTRATO = @ID_CONTRATO AND INATIVO != 1 AND VERSAO = (select MAX(b.VERSAO) FROM COM_ACORDOS b WHERE b.ID = a.ID) AND a.ID != @ID_ACORDO");
@@ -5459,8 +5470,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
-	
+
 	@POST
 	@Path("/getDASHBOARD_PLANEAMENTO_2")
 	@Produces("application/json")
@@ -5469,13 +5479,14 @@ public class SIRB_2 {
 		String ANO = firstMap.get("ANO");
 		String SEMANA = firstMap.get("SEMANA");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_PLANEAMENTO_2] " + ANO + ","+SEMANA+"");
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC [DASHBOARD_PLANEAMENTO_2] " + ANO + "," + SEMANA + "");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/getDASHBOARD_PLANEAMENTO_GRAFICOS")
 	@Produces("application/json")
@@ -5484,13 +5495,14 @@ public class SIRB_2 {
 		String ANO = firstMap.get("ANO");
 		String SEMANA = firstMap.get("SEMANA");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_PLANEAMENTO_GRAFICOS] " + ANO + ","+SEMANA+"");
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC [DASHBOARD_PLANEAMENTO_GRAFICOS] " + ANO + "," + SEMANA + "");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/getDASHBOARD_RECURSOS_HUMANOS")
 	@Produces("application/json")
@@ -5505,7 +5517,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/getDASHBOARD_CUMPRIMENTO_OBJETIVO_VENDAS")
 	@Produces("application/json")
@@ -5514,13 +5526,13 @@ public class SIRB_2 {
 		String ANO = firstMap.get("ANO");
 		String SEMANA = firstMap.get("SEMANA");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_CUMPRIMENTO_OBJETIVO_VENDAS] "+ ANO);
+		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_CUMPRIMENTO_OBJETIVO_VENDAS] " + ANO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/getDASHBOARD_VARIACAO_STOCK")
 	@Produces("application/json")
@@ -5529,13 +5541,13 @@ public class SIRB_2 {
 		String ANO = firstMap.get("ANO");
 		String SEMANA = firstMap.get("SEMANA");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_VARIACAO_STOCK] "+ ANO);
+		Query query_folder = entityManager.createNativeQuery("EXEC [DASHBOARD_VARIACAO_STOCK] " + ANO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/getPA_GET_TOTAIS")
 	@Produces("application/json")
@@ -5545,10 +5557,53 @@ public class SIRB_2 {
 		String SEMANA = firstMap.get("SEMANA");
 		String UTILIZADOR = firstMap.get("UTILIZADOR");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC [PA_GET_TOTAIS] "+UTILIZADOR);
+		Query query_folder = entityManager.createNativeQuery("EXEC [PA_GET_TOTAIS] " + UTILIZADOR);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
+
+	/************************************ MAN_MOV_MAQUINAS_PARADAS */
+
+	@POST
+	@Path("/createMAN_MOV_MAQUINAS_PARADAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_MOV_MAQUINAS_PARADAS insertMAN_MOV_MAQUINAS_PARADAS(final MAN_MOV_MAQUINAS_PARADAS data) {
+		return dao78.create(data);
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MAQUINAS_PARADAS")
+	@Produces("application/json")
+	public List<MAN_MOV_MAQUINAS_PARADAS> getMAN_MOV_MAQUINAS_PARADAS() {
+		return dao78.getall();
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MAQUINAS_PARADASbyid/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_MAQUINAS_PARADAS> getMAN_MOV_MAQUINAS_PARADASbyid(@PathParam("id") Integer id) {
+		return dao78.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateMAN_MOV_MAQUINAS_PARADAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_MOV_MAQUINAS_PARADAS updateMAN_MOV_MAQUINAS_PARADAS(
+			final MAN_MOV_MAQUINAS_PARADAS MAN_MOV_MAQUINAS_PARADAS) {
+		MAN_MOV_MAQUINAS_PARADAS.setID_PEDIDO(MAN_MOV_MAQUINAS_PARADAS.getID_PEDIDO());
+		return dao78.update(MAN_MOV_MAQUINAS_PARADAS);
+	}
+
+	@DELETE
+	@Path("/deleteMAN_MOV_MAQUINAS_PARADAS/{id}")
+	public void deleteMAN_MOV_MAQUINAS_PARADAS(@PathParam("id") Integer id) {
+		MAN_MOV_MAQUINAS_PARADAS MAN_MOV_MAQUINAS_PARADAS = new MAN_MOV_MAQUINAS_PARADAS();
+		MAN_MOV_MAQUINAS_PARADAS.setID_PEDIDO(id);
+		dao78.delete(MAN_MOV_MAQUINAS_PARADAS);
+	}
+
 }

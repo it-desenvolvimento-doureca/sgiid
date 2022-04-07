@@ -52,7 +52,7 @@ public class PR_AMOSTRAS_CAB {
 	@Column(name = "UNIDADE")
 	private Integer UNIDADE;
 	@Column(name = "OFNUM")
-	private Integer OFNUM;
+	private Long OFNUM;
 
 	public Integer getID_AMOSTRA() {
 		return ID_AMOSTRA;
@@ -194,7 +194,7 @@ public class PR_AMOSTRAS_CAB {
 		return UNIDADE;
 	}
 
-	public Integer getOFNUM() {
+	public Long getOFNUM() {
 		return OFNUM;
 	}
 
@@ -202,7 +202,7 @@ public class PR_AMOSTRAS_CAB {
 		UNIDADE = uNIDADE;
 	}
 
-	public void setOFNUM(Integer oFNUM) {
+	public void setOFNUM(Long oFNUM) {
 		OFNUM = oFNUM;
 	}
 

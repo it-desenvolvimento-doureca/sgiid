@@ -139,6 +139,7 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 		Integer varquery7 = 1;
 		Integer varquery8 = 1;
 		Integer varquery9 = 1;
+		Integer varquery10 = 1;
 		String estado = firstMap.get("estado");
 
 		String datacria1 = firstMap.get("datacria1");
@@ -154,6 +155,8 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 		String modulo = firstMap.get("modulo");
 		String submodulo = firstMap.get("submodulo");
 
+		String planosestrategicos = firstMap.get("planosestrategicos");
+		varquery10 = 1;
 		String query_utilizador = "";
 		/*if (tipo_utilizador != null && utilizador_grupo != null) {
 			query_utilizador = "and  (UTZ_TIPO = 'u' and UTZ_ID = " + utilizador
@@ -209,6 +212,12 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 		if (idsubtarefa == null)
 			varquery9 = 0;
 
+		if (planosestrategicos == null){
+			varquery10 = 0;
+		}else{
+			varquery10 = Integer.parseInt(planosestrategicos);
+		}
+		
 		Query query = entityManager.createNativeQuery(
 				"DECLARE @TABELA_TEMP TABLE(ID_RECLAMACAO int,CLIENTE varchar(max),REF varchar(max),NOME_REF varchar(max),ID varchar(max),RESPONSAVEL varchar(max),OBRIGA_EVIDENCIAS bit,TIPO varchar(max),MODULO int,DEPARTAMENTO int,SUB_MODULO varchar(2)) "
 						+ "INSERT @TABELA_TEMP "
@@ -244,7 +253,9 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 						+ " != 0) or (a.ID_TAREFA = " + id + "))  and ((not " + varquery9
 						+ " != 0) or (a.ID_TAREFA_PAI = " + idsubtarefa + ")) "
 						+ " and ((not " + varquery7 + " != 0) or (a.ID_MODULO = "+modulo+")) "
-						+ " and ((not " + varquery8 + " != 0) or (a.SUB_MODULO = '"+submodulo+"'))");
+						+ " and ((not " + varquery8 + " != 0) or (a.SUB_MODULO = '"+submodulo+"'))"
+						+ " and (( (" + varquery10 + " != 1 )) or (a.ID_MODULO = 13 and (select count(*) from PE_PLANOS_ASSOCIADOS x where x.ID_PLANO_CAB = b.ID_RECLAMACAO) > 0))"
+						+ " and (( (" + varquery10 + " != 2 )) or (a.ID_MODULO = 13 and (select count(*) from PE_PLANOS_ASSOCIADOS x where x.ID_PLANO_CAB = b.ID_RECLAMACAO) = 0))");
 
 		// query.setParameter("query2", estado);
 		List<GT_MOV_TAREFAS> data = query.getResultList();
