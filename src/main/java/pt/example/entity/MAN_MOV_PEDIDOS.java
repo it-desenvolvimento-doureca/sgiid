@@ -53,6 +53,18 @@ public class MAN_MOV_PEDIDOS {
 	private Integer ID_EQUIPA;
 	@JsonProperty( "STATUS_MAQUINA")
 	private String STATUS_MAQUINA;
+	@JsonProperty( "NOTAS_PLANEAMENTO")
+	private String NOTAS_PLANEAMENTO;
+	@JsonProperty( "CLASSIFICACAO")
+	private String CLASSIFICACAO;
+	@JsonProperty( "COD_FORNECEDOR")
+	private String COD_FORNECEDOR;
+	@JsonProperty( "NOME_FORNECEDOR")
+	private String NOME_FORNECEDOR;
+	@JsonProperty( "EMAIL_FORNECEDOR")
+	private String EMAIL_FORNECEDOR;
+	@JsonProperty( "AMBITO_MANUTENCAO")
+	private Integer AMBITO_MANUTENCAO;
 	
 	public String getSTATUS_MAQUINA() {
 		return STATUS_MAQUINA;
@@ -196,6 +208,54 @@ public class MAN_MOV_PEDIDOS {
 
 	public void setID_EQUIPA(Integer iD_EQUIPA) {
 		ID_EQUIPA = iD_EQUIPA;
+	}
+
+	public String getNOTAS_PLANEAMENTO() {
+		return NOTAS_PLANEAMENTO;
+	}
+
+	public String getCLASSIFICACAO() {
+		return CLASSIFICACAO;
+	}
+
+	public void setNOTAS_PLANEAMENTO(String nOTAS_PLANEAMENTO) {
+		NOTAS_PLANEAMENTO = nOTAS_PLANEAMENTO;
+	}
+
+	public void setCLASSIFICACAO(String cLASSIFICACAO) {
+		CLASSIFICACAO = cLASSIFICACAO;
+	}
+
+	public String getCOD_FORNECEDOR() {
+		return COD_FORNECEDOR;
+	}
+
+	public String getNOME_FORNECEDOR() {
+		return NOME_FORNECEDOR;
+	}
+
+	public String getEMAIL_FORNECEDOR() {
+		return EMAIL_FORNECEDOR;
+	}
+
+	public void setCOD_FORNECEDOR(String cOD_FORNECEDOR) {
+		COD_FORNECEDOR = cOD_FORNECEDOR;
+	}
+
+	public void setNOME_FORNECEDOR(String nOME_FORNECEDOR) {
+		NOME_FORNECEDOR = nOME_FORNECEDOR;
+	}
+
+	public void setEMAIL_FORNECEDOR(String eMAIL_FORNECEDOR) {
+		EMAIL_FORNECEDOR = eMAIL_FORNECEDOR;
+	}
+
+	public Integer getAMBITO_MANUTENCAO() {
+		return AMBITO_MANUTENCAO;
+	}
+
+	public void setAMBITO_MANUTENCAO(Integer aMBITO_MANUTENCAO) {
+		AMBITO_MANUTENCAO = aMBITO_MANUTENCAO;
 	}
 
 }

@@ -46,4 +46,15 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOSDao extends GenericDaoJpaImpl<MAN_MO
 
 	}
 	
+	public List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> getbyidlocalizacao(String tipo,Integer id) {
+
+		Query query = entityManager.createQuery("select a from MAN_MOV_MANUTENCAO_EQUIPAMENTOS a "
+				+ "where  a.TIPO_LOCALIZACAO = :tipo and a.LOCALIZACAO = :id");
+		query.setParameter("id", id);
+		query.setParameter("tipo", tipo);
+		List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> data = query.getResultList();
+		return data;
+
+	}
+	
 }

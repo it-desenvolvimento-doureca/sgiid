@@ -80,7 +80,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getFornecedores(String url) throws SQLException {
 
-		String query = "select FOUCOD,ADRNOM from SDTFOE where FOUETSNUM= ''";
+		String query = "select FOUCOD,ADRNOM,ADRNUMINT from SDTFOE where FOUETSNUM= ''";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -92,6 +92,7 @@ public class ConnectProgress {
 				HashMap<String, String> x = new HashMap<>();
 				x.put("FOUCOD", rs.getString("FOUCOD"));
 				x.put("ADRNOM", rs.getString("ADRNOM"));
+				x.put("ADRNUMINT", rs.getString("ADRNUMINT"));
 				list.add(x);
 			}
 			stmt.close();

@@ -1044,6 +1044,22 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getAcessoResponsavel/{user}")
+	@Produces("application/json")
+	public String getAcessoResponsavel(@PathParam("user") String user) { 
+		String acesso = "false";
+		Query query_folder = entityManager
+				.createNativeQuery("select CASE WHEN count(*) > 0 THEN 1 ELSE 0 END RESP,'' txt from MAN_DIC_EQUIPAS gd where gd.ID_RESPONSAVEL = " +user);
+		List<Object[]> dados_folder = query_folder.getResultList();
+		
+		for (Object[] content : dados_folder) {
+			acesso = (content[0].toString().equals("1")) ? "true":"false";
+		}
+ 		
+		return acesso;
+	}
+	
+	@GET
 	@Path("/getGER_UTILIZADORESbyLDAP/{code}")
 	@Produces("application/json")
 	public List<GER_UTILIZADORES> getGER_UTILIZADORESbyLDAP(@PathParam("code") String code) {
@@ -7422,7 +7438,7 @@ public class SIRB {
 							+ "	BEGIN 	UPDATE PR_AMOSTRAS_CAB set ESTADO = 'C' where ID_AMOSTRA in (select ID_AMOSTRA from PR_AMOSTRAS_ACCOES where ID_AMOSTRA_ACCAO = "
 							+ GT_MOV_TAREFAS.getID_CAMPO() + ") 	END")
 					.executeUpdate();
-		} else if (GT_MOV_TAREFAS.getID_MODULO() == 13) {
+		} else if (GT_MOV_TAREFAS.getID_MODULO() == 13 && GT_MOV_TAREFAS.getID_TAREFA_PAI() == null) {
 			if (GT_MOV_TAREFAS.getESTADO().equals("C")) {
 				entityManager.createNativeQuery("UPDATE PA_MOV_LINHA set ESTADO = 'I' WHERE ID_PLANO_LINHA = "
 						+ GT_MOV_TAREFAS.getID_CAMPO() + "").executeUpdate();
@@ -10302,13 +10318,13 @@ public class SIRB {
 		for (Object[] content : dadosquery) {
 
 			String email_para = "", numero_manutencao = "", descricao_manutencao = "", referencia = "", link = "",quantidade = "",data_manutencao = "";
-			email_para = content[7].toString();
+			email_para = (content[7] == null)? "": content[7].toString();
 			numero_manutencao = content[0].toString();				 
-			referencia = content[1].toString();
-			link = content[6].toString();
-			descricao_manutencao = content[5].toString();
-			quantidade = content[2].toString();
-			data_manutencao = content[8].toString();
+			referencia = (content[1] == null)? "": content[1].toString();
+			link = (content[6] == null)? "": content[6].toString();
+			descricao_manutencao = (content[5] == null)? "": content[5].toString();
+			quantidade = (content[2] == null)? "": content[2].toString();
+			data_manutencao = (content[8] == null)? "": content[8].toString();
 
 			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 			HashMap<String, String> n = new HashMap<String, String>();

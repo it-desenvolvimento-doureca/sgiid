@@ -32,6 +32,8 @@ public class MAN_DIC_EDIFICIOS {
 	private Timestamp DATA_ULT_MODIF;
 	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
+	@JsonProperty("UNIDADE")
+	private Integer UNIDADE;
 
 	public Integer getID() {
 		return ID;
@@ -87,6 +89,14 @@ public class MAN_DIC_EDIFICIOS {
 
 	public void setATIVO(Boolean aTIVO) {
 		ATIVO = aTIVO;
+	}
+
+	public Integer getUNIDADE() {
+		return UNIDADE;
+	}
+
+	public void setUNIDADE(Integer uNIDADE) {
+		UNIDADE = uNIDADE;
 	}
 
 }

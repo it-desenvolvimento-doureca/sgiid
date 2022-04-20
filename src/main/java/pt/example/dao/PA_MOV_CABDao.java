@@ -48,7 +48,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "from PA_MOV_CAB a "
 						+ "left join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB left join GT_DIC_TAREFAS c on b.ID_ACCAO = c.ID "
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID  left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO "
-						+ "  left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO  where  "
+						+ "  left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null  where  "
 						+ query2 + " order by a.DATA_OBJETIVO asc,b.DATA_ACCAO asc ");
 		//query.setParameter("id", id);
 		List<PA_MOV_CAB> data = query.getResultList();
@@ -94,7 +94,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID "
 						+ "left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID "
 						+ " left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO  "
-						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO "
+						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
 						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
 						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
 						+ query_where + " order by a.DATA_CRIA asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
@@ -129,7 +129,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID "
 						+ "left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID "
 						+ " left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO  "
-						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO "
+						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
 						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
 						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
 						+ query_where + " and SEGUIR_LINHA = 1 order by a.DATA_CRIA asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
@@ -166,7 +166,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID "
 						+ "left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID "
 						+ " left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO  "
-						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO "
+						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
 						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
 						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
 						+ query_where + " "
@@ -209,7 +209,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID "
 						+ "inner join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID "
 						+ " left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO  "
-						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO "
+						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
 						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
 						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
 						+ query_where + " order by a.DATA_CRIA desc,a.ID_PLANO_CAB desc ");

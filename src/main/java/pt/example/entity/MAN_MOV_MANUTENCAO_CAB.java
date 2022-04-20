@@ -56,6 +56,14 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	private String TIPO_LOCALIZACAO;
 	@JsonProperty( "DATA_REALIZACAO")
 	private Timestamp DATA_REALIZACAO;
+	@JsonProperty( "COD_FORNECEDOR")
+	private String COD_FORNECEDOR;
+	@JsonProperty( "NOME_FORNECEDOR")
+	private String NOME_FORNECEDOR;
+	@JsonProperty( "EMAIL_FORNECEDOR")
+	private String EMAIL_FORNECEDOR;
+	@JsonProperty( "AMBITO_MANUTENCAO")
+	private Integer AMBITO_MANUTENCAO;
 	
 	public Integer getID_MANUTENCAO_CAB() {
 		return ID_MANUTENCAO_CAB;

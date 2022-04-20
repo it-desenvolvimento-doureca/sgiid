@@ -51,6 +51,40 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 	private Integer UTILIZADOR;
 	@JsonProperty("DESCRICAO_MANUTENCAO")
 	private String DESCRICAO_MANUTENCAO;
+	@JsonProperty("NIVEL_CRITICIDADE")
+	private Integer NIVEL_CRITICIDADE;	
+	@JsonProperty("AMBITO_MANUTENCAO")
+	private Integer AMBITO_MANUTENCAO;
+	@JsonProperty( "COD_FORNECEDOR")
+	private String COD_FORNECEDOR;
+	@JsonProperty( "NOME_FORNECEDOR")
+	private String NOME_FORNECEDOR;
+	@JsonProperty( "EMAIL_FORNECEDOR")
+	private String EMAIL_FORNECEDOR;
+	
+	public String getCOD_FORNECEDOR() {
+		return COD_FORNECEDOR;
+	}
+
+	public String getNOME_FORNECEDOR() {
+		return NOME_FORNECEDOR;
+	}
+
+	public String getEMAIL_FORNECEDOR() {
+		return EMAIL_FORNECEDOR;
+	}
+
+	public void setCOD_FORNECEDOR(String cOD_FORNECEDOR) {
+		COD_FORNECEDOR = cOD_FORNECEDOR;
+	}
+
+	public void setNOME_FORNECEDOR(String nOME_FORNECEDOR) {
+		NOME_FORNECEDOR = nOME_FORNECEDOR;
+	}
+
+	public void setEMAIL_FORNECEDOR(String eMAIL_FORNECEDOR) {
+		EMAIL_FORNECEDOR = eMAIL_FORNECEDOR;
+	}
 
 	public Integer getID_MANUTENCAO() {
 		return ID_MANUTENCAO;
@@ -178,6 +212,22 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 
 	public void setDESCRICAO_MANUTENCAO(String dESCRICAO_MANUTENCAO) {
 		DESCRICAO_MANUTENCAO = dESCRICAO_MANUTENCAO;
+	}
+
+	public Integer getNIVEL_CRITICIDADE() {
+		return NIVEL_CRITICIDADE;
+	}
+
+	public Integer getAMBITO_MANUTENCAO() {
+		return AMBITO_MANUTENCAO;
+	}
+
+	public void setNIVEL_CRITICIDADE(Integer nIVEL_CRITICIDADE) {
+		NIVEL_CRITICIDADE = nIVEL_CRITICIDADE;
+	}
+
+	public void setAMBITO_MANUTENCAO(Integer aMBITO_MANUTENCAO) {
+		AMBITO_MANUTENCAO = aMBITO_MANUTENCAO;
 	}
 
 }

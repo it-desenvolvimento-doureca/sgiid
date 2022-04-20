@@ -54,10 +54,13 @@ import pt.example.dao.FIN_DIC_PARAMETROS_SEGUIMENTODao;
 import pt.example.dao.GER_FAVORITOSDao;
 import pt.example.dao.GER_REFERENCIAS_FASTRESPONSE_REJEICOESDao;
 import pt.example.dao.LG_ANALISE_ENVIOSDao;
+import pt.example.dao.MAN_DIC_AMBITOSDao;
+import pt.example.dao.MAN_DIC_AMBITO_UTILIZADORESDao;
 import pt.example.dao.MAN_DIC_DIVISOESDao;
 import pt.example.dao.MAN_DIC_EDIFICIOSDao;
 import pt.example.dao.MAN_DIC_EQUIPASDao;
 import pt.example.dao.MAN_DIC_EQUIPAS_UTILIZADORESDao;
+import pt.example.dao.MAN_DIC_NIVEIS_CRITICIDADEDao;
 import pt.example.dao.MAN_DIC_PISOSDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_ACCOESDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_ANEXOSDao;
@@ -134,10 +137,13 @@ import pt.example.entity.GER_FAVORITOS;
 import pt.example.entity.GER_REFERENCIAS_FASTRESPONSE_REJEICOES;
 import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.LG_ANALISE_ENVIOS;
+import pt.example.entity.MAN_DIC_AMBITOS;
+import pt.example.entity.MAN_DIC_AMBITO_UTILIZADORES;
 import pt.example.entity.MAN_DIC_DIVISOES;
 import pt.example.entity.MAN_DIC_EDIFICIOS;
 import pt.example.entity.MAN_DIC_EQUIPAS;
 import pt.example.entity.MAN_DIC_EQUIPAS_UTILIZADORES;
+import pt.example.entity.MAN_DIC_NIVEIS_CRITICIDADE;
 import pt.example.entity.MAN_DIC_PISOS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_ACCOES;
 import pt.example.entity.MAN_MOV_MANUTENCAO_ANEXOS;
@@ -352,7 +358,13 @@ public class SIRB_2 {
 	private PE_MOV_CAB_HISTORICODao dao77;
 	@Inject
 	private MAN_MOV_MAQUINAS_PARADASDao dao78;
-
+	@Inject
+	private MAN_DIC_NIVEIS_CRITICIDADEDao dao79;
+	@Inject
+	private MAN_DIC_AMBITO_UTILIZADORESDao dao80;
+	@Inject
+	private MAN_DIC_AMBITOSDao dao81;
+	
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
 
@@ -3829,6 +3841,14 @@ public class SIRB_2 {
 		return dao51.getbyid(id);
 	}
 
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_EQUIPAMENTOSgetAllLocalizacao/{tipo}/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> getMAN_MOV_MANUTENCAO_EQUIPAMENTOSgetAllLocalizacao(
+			@PathParam("tipo") String tipo, @PathParam("id") Integer id) {
+		return dao51.getbyidlocalizacao(tipo, id);
+	}
+
 	@PUT
 	@Path("/updateMAN_MOV_MANUTENCAO_EQUIPAMENTOS")
 	@Consumes("*/*")
@@ -4056,10 +4076,10 @@ public class SIRB_2 {
 	}
 
 	@GET
-	@Path("/getMAN_MOV_PEDIDOS2")
+	@Path("/getMAN_MOV_PEDIDOS2/{classificacao}")
 	@Produces("application/json")
-	public List<MAN_MOV_PEDIDOS> getMAN_MOV_PEDIDOS2() {
-		return dao56.getall2();
+	public List<MAN_MOV_PEDIDOS> getMAN_MOV_PEDIDOS2(@PathParam("classificacao") String classificacao) {
+		return dao56.getall2(classificacao);
 	}
 
 	@GET
@@ -4092,8 +4112,10 @@ public class SIRB_2 {
 	public List<Object[]> MAN_CRIAR_MANUTENCOES_CORRETIVAS(final List<HashMap<String, String>> dados) {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ID_PEDIDO = firstMap.get("ID_PEDIDO");
+		String POSICAO = firstMap.get("POSICAO");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC MAN_CRIAR_MANUTENCOES_CORRETIVAS " + ID_PEDIDO);
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC MAN_CRIAR_MANUTENCOES_CORRETIVAS " + ID_PEDIDO + "," + POSICAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -5316,7 +5338,7 @@ public class SIRB_2 {
 	@POST
 	@Path("/getPE_MOV_CABbyTIPO/{tipo}")
 	@Produces("application/json")
-	public List<PE_MOV_CAB> getPA_MOV_CABbyTIPO(@PathParam("tipo") String tipo,
+	public List<PE_MOV_CAB> getPE_MOV_CABbyTIPO(@PathParam("tipo") String tipo,
 			final List<HashMap<String, String>> dados) {
 		HashMap<String, String> firstMap = dados.get(0);
 		String emAtraso = firstMap.get("EM_ATRASO");
@@ -5604,6 +5626,155 @@ public class SIRB_2 {
 		MAN_MOV_MAQUINAS_PARADAS MAN_MOV_MAQUINAS_PARADAS = new MAN_MOV_MAQUINAS_PARADAS();
 		MAN_MOV_MAQUINAS_PARADAS.setID_PEDIDO(id);
 		dao78.delete(MAN_MOV_MAQUINAS_PARADAS);
+	}
+ 
+	/************************************ MAN_DIC_NIVEIS_CRITICIDADE */
+
+	@POST
+	@Path("/createMAN_DIC_NIVEIS_CRITICIDADE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_NIVEIS_CRITICIDADE insertMAN_DIC_NIVEIS_CRITICIDADE(final MAN_DIC_NIVEIS_CRITICIDADE data) {
+		return dao79.create(data);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_NIVEIS_CRITICIDADE")
+	@Produces("application/json")
+	public List<MAN_DIC_NIVEIS_CRITICIDADE> getMAN_DIC_NIVEIS_CRITICIDADE() {
+		return dao79.getall();
+	}
+
+	@GET
+	@Path("/getMAN_DIC_NIVEIS_CRITICIDADEbyid/{id}")
+	@Produces("application/json")
+	public List<MAN_DIC_NIVEIS_CRITICIDADE> getMAN_DIC_NIVEIS_CRITICIDADEbyid(@PathParam("id") Integer id) {
+		// return dao79.getbyid(id);
+		return null;
+	}
+
+	@GET
+	@Path("/getMAN_DIC_NIVEIS_CRITICIDADEbyNIVEL/{nivel}")
+	@Produces("application/json")
+	public List<MAN_DIC_NIVEIS_CRITICIDADE> getMAN_DIC_NIVEIS_CRITICIDADEbyNIVEL(@PathParam("nivel") Integer nivel) {
+		return dao79.getbynivel(nivel);		
+	}
+	
+	@PUT
+	@Path("/updateMAN_DIC_NIVEIS_CRITICIDADE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_NIVEIS_CRITICIDADE updateMAN_DIC_NIVEIS_CRITICIDADE(final MAN_DIC_NIVEIS_CRITICIDADE MAN_DIC_NIVEIS_CRITICIDADE) {
+		MAN_DIC_NIVEIS_CRITICIDADE.setID(MAN_DIC_NIVEIS_CRITICIDADE.getID());
+		return dao79.update(MAN_DIC_NIVEIS_CRITICIDADE);
+	}
+
+	@DELETE
+	@Path("/deleteMAN_DIC_NIVEIS_CRITICIDADE/{id}")
+	public void deleteMAN_DIC_NIVEIS_CRITICIDADE(@PathParam("id") Integer id) {
+		MAN_DIC_NIVEIS_CRITICIDADE MAN_DIC_NIVEIS_CRITICIDADE = new MAN_DIC_NIVEIS_CRITICIDADE();
+		MAN_DIC_NIVEIS_CRITICIDADE.setID(id);
+		dao79.delete(MAN_DIC_NIVEIS_CRITICIDADE);
+	}
+
+	/************************************ MAN_DIC_AMBITO_UTILIZADORES */
+
+	@POST
+	@Path("/createMAN_DIC_AMBITO_UTILIZADORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_AMBITO_UTILIZADORES insertMAN_DIC_AMBITO_UTILIZADORES(final MAN_DIC_AMBITO_UTILIZADORES data) {
+		return dao80.create(data);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITO_UTILIZADORES")
+	@Produces("application/json")
+	public List<MAN_DIC_AMBITO_UTILIZADORES> getMAN_DIC_AMBITO_UTILIZADORES() {
+		return dao80.getall();
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITO_UTILIZADORESbyid/{id}")
+	@Produces("application/json")
+	public List<MAN_DIC_AMBITO_UTILIZADORES> getMAN_DIC_AMBITO_UTILIZADORESbyid(@PathParam("id") Integer id) {
+		// return dao80.getbyid(id);
+		return null;
+	}
+
+	@PUT
+	@Path("/updateMAN_DIC_AMBITO_UTILIZADORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_AMBITO_UTILIZADORES updateMAN_DIC_AMBITO_UTILIZADORES(
+			final MAN_DIC_AMBITO_UTILIZADORES MAN_DIC_AMBITO_UTILIZADORES) {
+		MAN_DIC_AMBITO_UTILIZADORES.setID(MAN_DIC_AMBITO_UTILIZADORES.getID());
+		return dao80.update(MAN_DIC_AMBITO_UTILIZADORES);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITO_UTILIZADORES_ALLUSERS/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getMAN_DIC_AMBITO_UTILIZADORES_ALLUSERS(@PathParam("id") Integer id) {
+		return dao80.getMAN_DIC_AMBITO_UTILIZADORES_ALLUSERS(id);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITO_UTILIZADORES_EQUIPA/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getMAN_DIC_AMBITO_UTILIZADORES_EQUIPA(@PathParam("id") Integer id) {
+		return dao80.getMAN_DIC_AMBITO_UTILIZADORES_EQUIPA(id);
+	}
+
+	@DELETE
+	@Path("/deleteMAN_DIC_AMBITO_UTILIZADORES/{id}")
+	public void deleteMAN_DIC_AMBITO_UTILIZADORES(@PathParam("id") Integer id) {
+		MAN_DIC_AMBITO_UTILIZADORES MAN_DIC_AMBITO_UTILIZADORES = new MAN_DIC_AMBITO_UTILIZADORES();
+		MAN_DIC_AMBITO_UTILIZADORES.setID(id);
+		dao80.delete(MAN_DIC_AMBITO_UTILIZADORES);
+	}
+	
+	
+	/************************************ MAN_DIC_AMBITOS */
+
+	@POST
+	@Path("/createMAN_DIC_AMBITOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_AMBITOS insertMAN_DIC_AMBITOS(final MAN_DIC_AMBITOS data) {
+		return dao81.create(data);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITOS")
+	@Produces("application/json")
+	public List<MAN_DIC_AMBITOS> getMAN_DIC_AMBITOS() {
+		return dao81.getall();
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITOSbyid/{id}")
+	@Produces("application/json")
+	public List<MAN_DIC_AMBITOS> getMAN_DIC_AMBITOSbyid(@PathParam("id") Integer id) {
+		// return dao50.getbyid(id);
+		return null;
+	}
+
+	@PUT
+	@Path("/updateMAN_DIC_AMBITOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_AMBITOS updateMAN_DIC_AMBITOS(final MAN_DIC_AMBITOS MAN_DIC_AMBITOS) {
+		MAN_DIC_AMBITOS.setID(MAN_DIC_AMBITOS.getID());
+		return dao81.update(MAN_DIC_AMBITOS);
+	}
+
+	@DELETE
+	@Path("/deleteMAN_DIC_AMBITOS/{id}")
+	public void deleteMAN_DIC_AMBITOS(@PathParam("id") Integer id) {
+		MAN_DIC_AMBITOS MAN_DIC_AMBITOS = new MAN_DIC_AMBITOS();
+		MAN_DIC_AMBITOS.setID(id);
+		dao81.delete(MAN_DIC_AMBITOS);
 	}
 
 }
