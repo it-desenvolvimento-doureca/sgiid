@@ -420,6 +420,34 @@ public class ConnectProgress {
 		return list;
 	}
 
+	public List<HashMap<String, String>> getMaquinas(String url) throws SQLException {
+
+		String query = "select b.ssecod,a.SSEDES from SPASSE a inner join SDTSEC b on a.ssecod = b.ssecod ";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("ssecod", rs.getString("ssecod"));
+				x.put("SSEDES", rs.getString("SSEDES"));
+				list.add(x);
+			}
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
 	public List<HashMap<String, String>> getStock(List<HashMap<String, String>> data, String url) throws SQLException {
 
 		HashMap<String, String> firstMap = data.get(0);
@@ -579,7 +607,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getReferencias(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1 from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA') ORDER BY PROREF";
+		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA') ORDER BY PROREF";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -591,6 +619,7 @@ public class ConnectProgress {
 				HashMap<String, String> x = new HashMap<>();
 				x.put("PROREF", rs.getString("PROREF"));
 				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("FAMCOD", rs.getString("PRDFAMCOD"));
 				list.add(x);
 			}
 			stmt.close();
@@ -670,7 +699,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getComponentesTodos(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where protypcod in ('PF','COM','PSO','PCF')";
+		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where protypcod in ('PF','COM','PSO','PCF','PFI')";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -1068,7 +1097,45 @@ public class ConnectProgress {
 		}
 		return list;
 	}
+	
+	public List<HashMap<String, String>> getMoradasReferencia(String url, String referencia) throws SQLException {
 
+		String query = "select a.PROREF,a.PRODES1,a.PRODES2,d.PRDFAMCOD,c.CLICOD,c.ETSNUM,ADRLIB2,ADRLIB3,ADRLIB1,ADRBDI,ADRNOM , CASE WHEN c.ETSNUM like 'E%' THEN 'MORADA' ELSE 'CLIENTE' END TIPO "
+				+ "from SDTPRA a left join SDTCLP b on a.PROREF = b.PROREF "
+				+ "left join SDTCLE c on b.CLICOD = c.CLICOD and b.ETSNUM = c.ETSNUM left join SDTPRA d on a.PROREF = d.PROREF "
+				+ "where a.PROREF = '"+referencia+"'";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das operações
+				HashMap<String, String> x = new HashMap<>();
+				x.put("CLICOD", rs.getString("CLICOD"));
+				x.put("ETSNUM", rs.getString("ETSNUM"));
+				x.put("ADRLIB2", rs.getString("ADRLIB2"));
+				x.put("ADRLIB3", rs.getString("ADRLIB3"));
+				x.put("ADRLIB1", rs.getString("ADRLIB1"));
+				x.put("ADRBDI", rs.getString("ADRBDI"));
+				x.put("ADRNOM", rs.getString("ADRNOM"));
+				x.put("TIPO", rs.getString("TIPO"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
 	public List<HashMap<String, String>> verificaOFNUM(String url, String ofnum) throws SQLException {
 
 		String query = "select b.PROREF,(b.OFBQTEINI - b.OFBQTEREA) as QUANTIDADE,a.OFDATFP,a.DATCRE "

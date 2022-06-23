@@ -33,6 +33,8 @@ public class MAN_DIC_DIVISOES {
 	private Timestamp DATA_ULT_MODIF;
 	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
+	@JsonProperty("EMAIL_PARA")
+	private String EMAIL_PARA;
 
 	public Integer getID() {
 		return ID;
@@ -96,6 +98,14 @@ public class MAN_DIC_DIVISOES {
 
 	public void setATIVO(Boolean aTIVO) {
 		ATIVO = aTIVO;
+	}
+
+	public String getEMAIL_PARA() {
+		return EMAIL_PARA;
+	}
+
+	public void setEMAIL_PARA(String eMAIL_PARA) {
+		EMAIL_PARA = eMAIL_PARA;
 	}
 
 }

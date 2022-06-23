@@ -84,6 +84,8 @@ public class PA_MOV_LINHA {
 	private Timestamp DATA_MODIF;
 	@Column(name = "UTZ_MODIF")
 	private Integer UTZ_MODIF;
+	@Column(name = "ORIGEM")
+	private String ORIGEM;
 
 	public Timestamp getDATA_CRIA() {
 		return DATA_CRIA;
@@ -331,6 +333,14 @@ public class PA_MOV_LINHA {
 
 	public void setOBJETIVO(String oBJETIVO) {
 		OBJETIVO = oBJETIVO;
+	}
+
+	public String getORIGEM() {
+		return ORIGEM;
+	}
+
+	public void setORIGEM(String oRIGEM) {
+		ORIGEM = oRIGEM;
 	}
 
 }

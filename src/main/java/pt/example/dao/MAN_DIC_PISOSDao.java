@@ -23,10 +23,10 @@ public class MAN_DIC_PISOSDao extends GenericDaoJpaImpl<MAN_DIC_PISOS, Integer> 
 	
 	public List<MAN_DIC_PISOS> getALLLOCALLIZACOES() {
 
-		Query query = entityManager.createNativeQuery("select ID,DESCRICAO,'E' as tipo from MAN_DIC_EDIFICIOS union "
-				+ "select a.ID,b.DESCRICAO + '/' + a.DESCRICAO ,'P' as tipo from MAN_DIC_PISOS a inner join MAN_DIC_EDIFICIOS b on a.ID_EDIFICIO = b.ID "
+		Query query = entityManager.createNativeQuery("select ID,DESCRICAO,'E' as tipo,null as EMAIL_PARA from MAN_DIC_EDIFICIOS union "
+				+ "select a.ID,b.DESCRICAO + '/' + a.DESCRICAO ,'P' as tipo,null as EMAIL_PARA from MAN_DIC_PISOS a inner join MAN_DIC_EDIFICIOS b on a.ID_EDIFICIO = b.ID "
 				+ "union "
-				+ "select a.ID,c.DESCRICAO + '/' + b.DESCRICAO+ '/' + a.DESCRICAO,'D' as tipo from MAN_DIC_DIVISOES a inner join MAN_DIC_PISOS b on a.ID_PISO = b.ID inner join MAN_DIC_EDIFICIOS c on b.ID_EDIFICIO = c.ID "
+				+ "select a.ID,c.DESCRICAO + '/' + b.DESCRICAO+ '/' + a.DESCRICAO,'D' as tipo,EMAIL_PARA from MAN_DIC_DIVISOES a inner join MAN_DIC_PISOS b on a.ID_PISO = b.ID inner join MAN_DIC_EDIFICIOS c on b.ID_EDIFICIO = c.ID "
 				+ "order by DESCRICAO");
 
 		List<MAN_DIC_PISOS> utz = query.getResultList();

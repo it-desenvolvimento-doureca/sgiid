@@ -36,7 +36,7 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 	} 
 	
 	
-	public List<PE_MOV_CAB> getallbyTIPO(String tipo, String emAtraso) {
+	public List<PE_MOV_CAB> getallbyTIPO(String tipo, String emAtraso,String user) {
 		String query_where = "";
 		if (!tipo.equals("T")) {
 			query_where = "and xa.TIPO = '" + tipo + "' ";
@@ -56,7 +56,9 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 						+ ",(select NOME_UTILIZADOR from GER_UTILIZADORES y where y.ID_UTILIZADOR = xa.RESPONSAVEL) as RESPONSAVELXA,  xa.DATA_CRIA as DATA_CRIAXA,xa.ESTADO ESTADOXA "
 						+ ",ISNULL(g.PERCENTAGEM_CONCLUSAO,0) conclusaoacao ,AVG(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY a.ID_PLANO_CAB) AS conclusaoplano, CASE WHEN (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_CAB in (select vp.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS vp WHERE vp.ID_PLANO_ESTRATEGICO = xa.ID)  ) = 0 THEN 0 WHEN (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_CAB in (select vp.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS vp WHERE vp.ID_PLANO_ESTRATEGICO = xa.ID)  ) = 1 THEN "
 						+ "AVG(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY xa.ID) ELSE "
-						+ "SUM(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY xa.ID) / (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_CAB in (select vp.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS vp WHERE vp.ID_PLANO_ESTRATEGICO = xa.ID)  ) END AS conclusaototal, b.OBJETIVO,b.SEGUIR_LINHA,b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA "
+						+ "(SUM(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY xa.ID)/count(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY a.ID_PLANO_CAB)) / (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_CAB in (select vp.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS vp WHERE vp.ID_PLANO_ESTRATEGICO = xa.ID)  ) END AS conclusaototal, b.OBJETIVO"
+						+ ",CASE WHEN (select COUNT(x.ID) from PA_MOV_SEGUIR_LINHA x where  x.ID_PLANO_LINHA = b.ID_PLANO_LINHA  AND x.UTILIZADOR = "+user+" ) > 0 THEN 1 ELSE 0 END SEGUIR_LINHA"
+						+ ",b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA ,a.OBJETIVO OBJETIVO_ACAO,b.INVESTIMENTOS "
 						+ "from PE_MOV_CAB xa "
 						+ "left join PE_PLANOS_ASSOCIADOS xb on xa.ID = xb.ID_PLANO_ESTRATEGICO "
 						+ "left join PA_MOV_CAB a on xb.ID_PLANO_CAB = a.ID_PLANO_CAB   "

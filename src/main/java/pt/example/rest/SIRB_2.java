@@ -2,19 +2,26 @@ package pt.example.rest;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.activation.DataSource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.mail.util.ByteArrayDataSource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -23,10 +30,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataParam;
+
+import com.lowagie.text.pdf.codec.Base64.OutputStream;
 
 import pt.example.bootstrap.ConnectionSQL;
 import pt.example.dao.AB_DIC_DOSIFICACAODao;
@@ -50,6 +61,9 @@ import pt.example.dao.CO_ANALISE_CLIENTESDao;
 import pt.example.dao.CO_ANALISE_CLIENTES_ACCOESDao;
 import pt.example.dao.CO_ANALISE_CLIENTES_OBSERVACOESDao;
 import pt.example.dao.CO_ANALISE_CLIENTES_QUANTIDADEDao;
+import pt.example.dao.DOC_DIC_POSTOSDao;
+import pt.example.dao.DOC_DIC_TIPOS_DOCUMENTODao;
+import pt.example.dao.DOC_FICHA_DOCUMENTOSDao;
 import pt.example.dao.FIN_DIC_PARAMETROS_SEGUIMENTODao;
 import pt.example.dao.GER_FAVORITOSDao;
 import pt.example.dao.GER_REFERENCIAS_FASTRESPONSE_REJEICOESDao;
@@ -72,6 +86,7 @@ import pt.example.dao.MAN_MOV_MANUTENCAO_DOCUMENTOSDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_EQUIPAMENTOSDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIADao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_LISTA_MATERIALDao;
+import pt.example.dao.MAN_MOV_MANUTENCAO_NOTASDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_OPERARIOSDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_PAUSASDao;
 import pt.example.dao.MAN_MOV_MANUTENCAO_PLANOSDao;
@@ -131,6 +146,9 @@ import pt.example.entity.CO_ANALISE_CLIENTES;
 import pt.example.entity.CO_ANALISE_CLIENTES_ACCOES;
 import pt.example.entity.CO_ANALISE_CLIENTES_OBSERVACOES;
 import pt.example.entity.CO_ANALISE_CLIENTES_QUANTIDADE;
+import pt.example.entity.DOC_DIC_POSTOS;
+import pt.example.entity.DOC_DIC_TIPOS_DOCUMENTO;
+import pt.example.entity.DOC_FICHA_DOCUMENTOS;
 import pt.example.entity.FIN_DIC_PARAMETROS_SEGUIMENTO;
 import pt.example.entity.FIN_REGISTO_ACOES;
 import pt.example.entity.GER_FAVORITOS;
@@ -155,6 +173,7 @@ import pt.example.entity.MAN_MOV_MANUTENCAO_DOCUMENTOS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_EQUIPAMENTOS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA;
 import pt.example.entity.MAN_MOV_MANUTENCAO_LISTA_MATERIAL;
+import pt.example.entity.MAN_MOV_MANUTENCAO_NOTAS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_OPERARIOS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_PAUSAS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_PLANOS;
@@ -364,7 +383,15 @@ public class SIRB_2 {
 	private MAN_DIC_AMBITO_UTILIZADORESDao dao80;
 	@Inject
 	private MAN_DIC_AMBITOSDao dao81;
-	
+	@Inject
+	private MAN_MOV_MANUTENCAO_NOTASDao dao82;
+	@Inject
+	private DOC_FICHA_DOCUMENTOSDao dao83;
+	@Inject
+	private DOC_DIC_TIPOS_DOCUMENTODao dao84;
+	@Inject
+	private DOC_DIC_POSTOSDao dao85;
+
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
 
@@ -3313,8 +3340,52 @@ public class SIRB_2 {
 	@Path("/getMAN_MOV_MANUTENCAO_CABbyid/{id}")
 	@Produces("application/json")
 	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CABbyid(@PathParam("id") Integer id) {
-		// return .getbyid(id);
+		return dao39.getbyId(id);
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_CAB2/{classificacao}/{user}")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CAB2(@PathParam("classificacao") String classificacao,
+			@PathParam("user") String user) {
+		return dao39.getall2(classificacao, user);
+	}
+
+	@GET
+	@Path("/MAN_GET_MANUTENCOES_MELHORIA/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_CAB> MAN_GET_MANUTENCOES_MELHORIA(@PathParam("id") String id) {
+		return dao39.MAN_GET_MANUTENCOES_MELHORIA(id);
+	}
+
+	@POST
+	@Path("/MAN_TERMINAR_PEDIDO_MELHORIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_MOV_MANUTENCAO_OPERARIOS MAN_TERMINAR_PEDIDO_MELHORIA(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID_OPERARIO = firstMap.get("ID_OPERARIO");
+		String ID_MANUTENCAO_CAB = firstMap.get("ID_MANUTENCAO_CAB");
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC MAN_TERMINAR_PEDIDO_MELHORIA " + ID_OPERARIO + "," + ID_MANUTENCAO_CAB);
+		query_folder.executeUpdate();
 		return null;
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_CABbyid_MANUTENCAO/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CABbyid_MANUTENCAO(@PathParam("id") Integer id) {
+		return dao39.getbyid_MANUTENCAO(id);
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_PENDENTES/{tipo}/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_PENDENTES(@PathParam("tipo") String tipo,
+			@PathParam("id") String id) {
+		return dao39.getall3(tipo, id);
 	}
 
 	@GET
@@ -3330,6 +3401,32 @@ public class SIRB_2 {
 		MAN_MOV_MANUTENCAO_CAB MAN_MOV_MANUTENCAO_CAB = new MAN_MOV_MANUTENCAO_CAB();
 		MAN_MOV_MANUTENCAO_CAB.setID_MANUTENCAO_CAB(id);
 		dao39.delete(MAN_MOV_MANUTENCAO_CAB);
+	}
+
+	@PUT
+	@Path("/updateMAN_MOV_MANUTENCAO_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_MOV_MANUTENCAO_CAB updateMAN_MOV_MANUTENCAO_CAB(final MAN_MOV_MANUTENCAO_CAB data) {
+		return dao39.update(data);
+	}
+
+	@POST
+	@Path("/MAN_MOV_MANUTENCAO_CREATE_HISTORICO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_MOV_MANUTENCAO_CAB MAN_MOV_MANUTENCAO_CREATE_HISTORICO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID_OPERARIO = firstMap.get("ID_OPERARIO");
+		String ID_MANUTENCAO_CAB = firstMap.get("ID_MANUTENCAO_CAB");
+		String MOTIVO = firstMap.get("MOTIVO");
+
+		Query query_folder = entityManager.createNativeQuery(
+				"INSERT INTO [dbo].[MAN_MOV_MANUTENCAO_HISTORICO] ([DESCRICAO] ,[DATA_CRIA],ID_MANUTENCAO_CAB) "
+						+ " select (select NOME_UTILIZADOR from GER_UTILIZADORES where ID_UTILIZADOR  = " + ID_OPERARIO
+						+ ") + ' " + MOTIVO + "',GETDATE()," + ID_MANUTENCAO_CAB + "");
+		query_folder.executeUpdate();
+		return null;
 	}
 
 	/************************************* MAN_MOV_MANUTENCAO_OPERARIOS */
@@ -3353,8 +3450,7 @@ public class SIRB_2 {
 	@Path("/getMAN_MOV_MANUTENCAO_OPERARIOSbyid/{id}")
 	@Produces("application/json")
 	public List<MAN_MOV_MANUTENCAO_OPERARIOS> getMAN_MOV_MANUTENCAO_OPERARIOSbyid(@PathParam("id") Integer id) {
-		// return dao40.getbyid(id);
-		return null;
+		return dao40.getbyid(id);
 	}
 
 	@DELETE
@@ -3419,8 +3515,7 @@ public class SIRB_2 {
 	@Path("/getMAN_MOV_MANUTENCAO_ACCOESbyid/{id}")
 	@Produces("application/json")
 	public List<MAN_MOV_MANUTENCAO_ACCOES> getMAN_MOV_MANUTENCAO_ACCOESbyid(@PathParam("id") Integer id) {
-		// return dao42.getbyid(id);
-		return null;
+		return dao42.getbyId(id);
 	}
 
 	@DELETE
@@ -3741,7 +3836,13 @@ public class SIRB_2 {
 	public MAN_MOV_MANUTENCAO_PLANOS updateMAN_MOV_MANUTENCAO_PLANOS(
 			final MAN_MOV_MANUTENCAO_PLANOS MAN_MOV_MANUTENCAO_PLANOS) {
 		MAN_MOV_MANUTENCAO_PLANOS.setID(MAN_MOV_MANUTENCAO_PLANOS.getID());
-		return dao49.update(MAN_MOV_MANUTENCAO_PLANOS);
+		MAN_MOV_MANUTENCAO_PLANOS MAN_MOV_MANUTENCAO_PLANOSUP = dao49.update(MAN_MOV_MANUTENCAO_PLANOS);
+
+		Query query = entityManager
+				.createNativeQuery("EXEC [MAN_ATUALIZA_PROXIMA_DATA] " + MAN_MOV_MANUTENCAO_PLANOSUP.getID());
+		query.executeUpdate();
+
+		return MAN_MOV_MANUTENCAO_PLANOSUP;
 	}
 
 	@DELETE
@@ -4116,6 +4217,22 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager
 				.createNativeQuery("EXEC MAN_CRIAR_MANUTENCOES_CORRETIVAS " + ID_PEDIDO + "," + POSICAO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/MAN_FORCA_CRIAR_MANUTENCOES_PREVENTIVAS")
+	@Produces("application/json")
+	public List<Object[]> MAN_FORCA_CRIAR_MANUTENCOES_PREVENTIVAS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IDS = firstMap.get("IDS");
+		String USER = firstMap.get("USER");
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC MAN_FORCA_CRIAR_MANUTENCOES_PREVENTIVAS '" + IDS + "'," + USER);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -5342,7 +5459,8 @@ public class SIRB_2 {
 			final List<HashMap<String, String>> dados) {
 		HashMap<String, String> firstMap = dados.get(0);
 		String emAtraso = firstMap.get("EM_ATRASO");
-		return dao75.getallbyTIPO(tipo, emAtraso);
+		String user = firstMap.get("USER");
+		return dao75.getallbyTIPO(tipo, emAtraso, user);
 	}
 
 	/************************************* PE_MOV_FICHEIROS */
@@ -5627,7 +5745,7 @@ public class SIRB_2 {
 		MAN_MOV_MAQUINAS_PARADAS.setID_PEDIDO(id);
 		dao78.delete(MAN_MOV_MAQUINAS_PARADAS);
 	}
- 
+
 	/************************************ MAN_DIC_NIVEIS_CRITICIDADE */
 
 	@POST
@@ -5657,14 +5775,15 @@ public class SIRB_2 {
 	@Path("/getMAN_DIC_NIVEIS_CRITICIDADEbyNIVEL/{nivel}")
 	@Produces("application/json")
 	public List<MAN_DIC_NIVEIS_CRITICIDADE> getMAN_DIC_NIVEIS_CRITICIDADEbyNIVEL(@PathParam("nivel") Integer nivel) {
-		return dao79.getbynivel(nivel);		
+		return dao79.getbynivel(nivel);
 	}
-	
+
 	@PUT
 	@Path("/updateMAN_DIC_NIVEIS_CRITICIDADE")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public MAN_DIC_NIVEIS_CRITICIDADE updateMAN_DIC_NIVEIS_CRITICIDADE(final MAN_DIC_NIVEIS_CRITICIDADE MAN_DIC_NIVEIS_CRITICIDADE) {
+	public MAN_DIC_NIVEIS_CRITICIDADE updateMAN_DIC_NIVEIS_CRITICIDADE(
+			final MAN_DIC_NIVEIS_CRITICIDADE MAN_DIC_NIVEIS_CRITICIDADE) {
 		MAN_DIC_NIVEIS_CRITICIDADE.setID(MAN_DIC_NIVEIS_CRITICIDADE.getID());
 		return dao79.update(MAN_DIC_NIVEIS_CRITICIDADE);
 	}
@@ -5733,8 +5852,7 @@ public class SIRB_2 {
 		MAN_DIC_AMBITO_UTILIZADORES.setID(id);
 		dao80.delete(MAN_DIC_AMBITO_UTILIZADORES);
 	}
-	
-	
+
 	/************************************ MAN_DIC_AMBITOS */
 
 	@POST
@@ -5750,6 +5868,13 @@ public class SIRB_2 {
 	@Produces("application/json")
 	public List<MAN_DIC_AMBITOS> getMAN_DIC_AMBITOS() {
 		return dao81.getall();
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITOS2")
+	@Produces("application/json")
+	public List<MAN_DIC_AMBITOS> getMAN_DIC_AMBITOS2() {
+		return dao81.getall2();
 	}
 
 	@GET
@@ -5777,4 +5902,326 @@ public class SIRB_2 {
 		dao81.delete(MAN_DIC_AMBITOS);
 	}
 
+	/************************************ MAN_MOV_MANUTENCAO_NOTAS */
+
+	@POST
+	@Path("/createMAN_MOV_MANUTENCAO_NOTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_MOV_MANUTENCAO_NOTAS insertMAN_MOV_MANUTENCAO_NOTAS(final MAN_MOV_MANUTENCAO_NOTAS data) {
+		return dao82.create(data);
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_NOTAS")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_NOTAS> getMAN_MOV_MANUTENCAO_NOTAS() {
+		return dao82.getall();
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_NOTASbyid/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_NOTAS> getMAN_MOV_MANUTENCAO_NOTASbyid(@PathParam("id") Integer id) {
+		return dao82.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateMAN_MOV_MANUTENCAO_NOTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_MOV_MANUTENCAO_NOTAS updateMAN_MOV_MANUTENCAO_NOTAS(
+			final MAN_MOV_MANUTENCAO_NOTAS MAN_MOV_MANUTENCAO_NOTAS) {
+		MAN_MOV_MANUTENCAO_NOTAS.setID(MAN_MOV_MANUTENCAO_NOTAS.getID());
+		return dao82.update(MAN_MOV_MANUTENCAO_NOTAS);
+	}
+
+	@DELETE
+	@Path("/deleteMAN_MOV_MANUTENCAO_NOTAS/{id}")
+	public void deleteMAN_MOV_MANUTENCAO_NOTAS(@PathParam("id") Integer id) {
+		MAN_MOV_MANUTENCAO_NOTAS MAN_MOV_MANUTENCAO_NOTAS = new MAN_MOV_MANUTENCAO_NOTAS();
+		MAN_MOV_MANUTENCAO_NOTAS.setID(id);
+		dao82.delete(MAN_MOV_MANUTENCAO_NOTAS);
+	}
+
+	@GET
+	@Path("/getIP")
+	@Produces("application/xlm")
+	public String getData(@Context HttpServletRequest request) {
+		String ip = request.getRemoteAddr();
+		return ip;
+	}
+
+	/************************************ DOC_FICHA_DOCUMENTOS */
+
+	@POST
+	@Path("/createDOC_FICHA_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_FICHA_DOCUMENTOS insertDOC_FICHA_DOCUMENTOS(final DOC_FICHA_DOCUMENTOS data) {
+		return dao83.create(data);
+	}
+
+	@GET
+	@Path("/getDOC_FICHA_DOCUMENTOS")
+	@Produces("application/json")
+	public List<DOC_FICHA_DOCUMENTOS> getDOC_FICHA_DOCUMENTOS() {
+		return dao83.getall();
+	}
+
+	@GET
+	@Path("/getDOC_FICHA_DOCUMENTOSbyid/{id}")
+	@Produces("application/json")
+	public List<DOC_FICHA_DOCUMENTOS> getDOC_FICHA_DOCUMENTOSbyid(@PathParam("id") Integer id) {
+		return dao83.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateDOC_FICHA_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_FICHA_DOCUMENTOS updateDOC_FICHA_DOCUMENTOS(final DOC_FICHA_DOCUMENTOS DOC_FICHA_DOCUMENTOS) {
+		DOC_FICHA_DOCUMENTOS.setID(DOC_FICHA_DOCUMENTOS.getID());
+		return dao83.update(DOC_FICHA_DOCUMENTOS);
+	}
+
+	@POST
+	@Path("/checkIfCodeExist")
+	@Produces("application/json")
+	public List<Object[]> checkIfCodeExist(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String SECTOR = firstMap.get("SECTOR");
+		String MAQUINA = firstMap.get("MAQUINA");
+		String ID = firstMap.get("ID");
+		String REFERENCIA = firstMap.get("REFERENCIA");
+		String CODIGO = firstMap.get("CODIGO");
+
+		Query query_folder = entityManager.createNativeQuery(
+				"SELECT CASE WHEN EXISTS( SELECT d.ID, d.SECTOR,d.COD_MAQUINA " + "FROM DOC_FICHA_DOCUMENTOS d "
+						+ "WHERE d.COD_DOCUMENTO = '" + CODIGO + "' " + "AND (" + SECTOR + " IS NULL OR d.SECTOR = "
+						+ SECTOR + ") " + "AND ('" + MAQUINA + "' = 'null' OR d.COD_MAQUINA = '" + MAQUINA + "') "
+						+ "AND ('" + REFERENCIA + "' = 'null' OR d.REFERENCIA = '" + REFERENCIA + "') " + "AND (" + ID
+						+ " IS NULL OR d.ID != " + ID + ")) THEN 1 ELSE 0 END Valor , '' txt ");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/getTotalPredefinidos")
+	@Produces("application/json")
+	public List<Integer> getTotalPredefinidos(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String SECTOR = firstMap.get("SECTOR");
+		String MAQUINA = firstMap.get("MAQUINA");
+		String ID = firstMap.get("ID");
+		String REFERENCIA = firstMap.get("REFERENCIA");
+
+		Query query_folder = entityManager
+				.createNativeQuery("select COUNT(documento.ID) as total FROM DOC_FICHA_DOCUMENTOS documento "
+						+ "left join DOC_DIC_TIPOS_DOCUMENTO tipoDocumento ON documento.TIPO_DOCUMENTO = tipoDocumento.ID "
+						+ "WHERE  (" + SECTOR + " IS NULL OR documento.SECTOR = " + SECTOR + ") " + " AND ('" + MAQUINA
+						+ "' = 'null' OR documento.COD_MAQUINA = '" + MAQUINA + "') AND " + " ('" + REFERENCIA
+						+ "' = 'null' OR documento.REFERENCIA = '" + REFERENCIA + "') AND "
+						+ " tipoDocumento.DOCUMENTO_PREDEFINIDO = 1 AND documento.ID != " + ID + "");
+
+		List<Integer> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@DELETE
+	@Path("/deleteDOC_FICHA_DOCUMENTOS/{id}")
+	public void deleteDOC_FICHA_DOCUMENTOS(@PathParam("id") Integer id) {
+		DOC_FICHA_DOCUMENTOS DOC_FICHA_DOCUMENTOS = new DOC_FICHA_DOCUMENTOS();
+		DOC_FICHA_DOCUMENTOS.setID(id);
+		dao83.delete(DOC_FICHA_DOCUMENTOS);
+	}
+
+	@POST
+	@Path("/DOC_GET_INFORMACAO_POSTO")
+	@Produces("application/json")
+	public List<Object[]> DOC_GET_INFORMACAO_POSTO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IP_POSTO = firstMap.get("IP_POSTO");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC DOC_GET_INFORMACAO_POSTO '" + IP_POSTO + "'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/DOC_GET_OBJETIVO_CADENCIA")
+	@Produces("application/json")
+	public List<Object[]> DOC_GET_OBJETIVO_CADENCIA(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String REFERENCIA = firstMap.get("REFERENCIA");
+		String TIPO = firstMap.get("TIPO");
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC DOC_GET_OBJETIVO_CADENCIA '" + REFERENCIA + "','" + TIPO + "'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/DOC_GET_OBJETIVO_REJEICAO")
+	@Produces("application/json")
+	public List<Object[]> DOC_GET_OBJETIVO_REJEICAO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String REFERENCIA = firstMap.get("REFERENCIA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC DOC_GET_OBJETIVO_REJEICAO '" + REFERENCIA + "' ");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/DOC_GET_LOTE_REFRENCIA")
+	@Produces("application/json")
+	public List<Object[]> DOC_GET_LOTE_REFRENCIA(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String REFERENCIA = firstMap.get("REFERENCIA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC DOC_GET_LOTE_REFRENCIA '" + REFERENCIA + "' ");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/DOC_GET_DETALHES_REJEICAO")
+	@Produces("application/json")
+	public List<Object[]> DOC_GET_DETALHES_REJEICAO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String LOTE = firstMap.get("LOTE");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC DOC_GET_DETALHES_REJEICAO '" + LOTE + "' ");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/************************************ DOC_DIC_TIPOS_DOCUMENTO */
+
+	@POST
+	@Path("/createDOC_DIC_TIPOS_DOCUMENTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DIC_TIPOS_DOCUMENTO insertDOC_DIC_TIPOS_DOCUMENTO(final DOC_DIC_TIPOS_DOCUMENTO data) {
+		return dao84.create(data);
+	}
+
+	@GET
+	@Path("/getDOC_DIC_TIPOS_DOCUMENTO")
+	@Produces("application/json")
+	public List<DOC_DIC_TIPOS_DOCUMENTO> getDOC_DIC_TIPOS_DOCUMENTO() {
+		return dao84.getall();
+	}
+
+	@GET
+	@Path("/getDOC_DIC_TIPOS_DOCUMENTObyid/{id}")
+	@Produces("application/json")
+	public List<DOC_DIC_TIPOS_DOCUMENTO> getDOC_DIC_TIPOS_DOCUMENTObyid(@PathParam("id") Integer id) {
+		return dao84.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateDOC_DIC_TIPOS_DOCUMENTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DIC_TIPOS_DOCUMENTO updateDOC_DIC_TIPOS_DOCUMENTO(
+			final DOC_DIC_TIPOS_DOCUMENTO DOC_DIC_TIPOS_DOCUMENTO) {
+		DOC_DIC_TIPOS_DOCUMENTO.setID(DOC_DIC_TIPOS_DOCUMENTO.getID());
+		return dao84.update(DOC_DIC_TIPOS_DOCUMENTO);
+	}
+
+	@DELETE
+	@Path("/deleteDOC_DIC_TIPOS_DOCUMENTO/{id}")
+	public void deleteDOC_DIC_TIPOS_DOCUMENTO(@PathParam("id") Integer id) {
+		DOC_DIC_TIPOS_DOCUMENTO DOC_DIC_TIPOS_DOCUMENTO = new DOC_DIC_TIPOS_DOCUMENTO();
+		DOC_DIC_TIPOS_DOCUMENTO.setID(id);
+		dao84.delete(DOC_DIC_TIPOS_DOCUMENTO);
+	}
+
+	/************************************ DOC_DIC_POSTOS */
+
+	@POST
+	@Path("/createDOC_DIC_POSTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DIC_POSTOS insertDOC_DIC_POSTOS(final DOC_DIC_POSTOS data) {
+		return dao85.create(data);
+	}
+
+	@GET
+	@Path("/getDOC_DIC_POSTOS")
+	@Produces("application/json")
+	public List<DOC_DIC_POSTOS> getDOC_DIC_POSTOS() {
+		return dao85.getall();
+	}
+
+	@GET
+	@Path("/getDOC_DIC_POSTOSbyid/{id}")
+	@Produces("application/json")
+	public List<DOC_DIC_POSTOS> getDOC_DIC_POSTOSbyid(@PathParam("id") Integer id) {
+		return dao85.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateDOC_DIC_POSTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DIC_POSTOS updateDOC_DIC_POSTOS(final DOC_DIC_POSTOS DOC_DIC_POSTOS) {
+		DOC_DIC_POSTOS.setID(DOC_DIC_POSTOS.getID());
+		return dao85.update(DOC_DIC_POSTOS);
+	}
+
+	@DELETE
+	@Path("/deleteDOC_DIC_POSTOS/{id}")
+	public void deleteDOC_DIC_POSTOS(@PathParam("id") Integer id) {
+		DOC_DIC_POSTOS DOC_DIC_POSTOS = new DOC_DIC_POSTOS();
+		DOC_DIC_POSTOS.setID(id);
+		dao85.delete(DOC_DIC_POSTOS);
+	}
+
+	@GET
+	@Path("/getFILE/{tabela}/{campo}/{id}/{tipo}")
+	@Produces("application/pdf")
+	public Response getFILE(@PathParam("tabela") String tabela, @PathParam("campo") String campo,
+			@PathParam("tipo") String tipo, @PathParam("id") Integer id) {
+		String encodedString = "";
+		String nomeficheiro = "";
+
+		Query query_folder = entityManager
+				.createNativeQuery("select FICHEIRO ,NOME from " + tabela + " a where " + campo + " = " + id);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			encodedString = content[0].toString();
+			nomeficheiro = content[1].toString();
+		}
+
+		String[] parts = encodedString.split(",");
+		String bas64file = parts[1];
+
+		Base64.Decoder decoder = Base64.getMimeDecoder();
+		byte[] decodedBytes = decoder.decode(bas64file);
+
+		DataSource dataSource = new ByteArrayDataSource(decodedBytes, "application/pdf");
+		ResponseBuilder response = Response.ok(dataSource);
+
+		response.header("Content-Disposition", "inline; filename=" + nomeficheiro);
+		return response.build();
+	}
 }

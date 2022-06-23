@@ -68,6 +68,6 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jackson-annotations-2.9.7.jar" sourcepath="C:/Users/it2/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.9.7/jackson-annotations-2.9.7-sources.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/javax.persistence-api-2.2.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/java-json.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jackson-core-2.13.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jackson-core-2.13.1.jar" sourcepath="C:/Users/it2/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.13.1/jackson-core-2.13.1-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

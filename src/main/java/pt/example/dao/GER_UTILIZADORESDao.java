@@ -61,7 +61,7 @@ public class GER_UTILIZADORESDao extends GenericDaoJpaImpl<GER_UTILIZADORES, Int
 	public List<GER_UTILIZADORES> getDadosUtilizador(Integer id) {
 		Query query = entityManager
 				.createNativeQuery("Select top 1 c.DES_SECTOR,d.ID_DEPARTAMENTO from GER_UTILIZADORES a "
-						+ "left join RH_FUNCIONARIOS b on a.COD_UTZ = b.COD_FUNC_ORIGEM "
+						+ "left join RH_FUNCIONARIOS b on CASE WHEN a.COD_UTZ = '9889' THEN 0 ELSE a.COD_UTZ END = b.COD_FUNC_ORIGEM "
 						+ "left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR "
 						+ "left join GER_DEPARTAMENTOS_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
 						+ "where a.ID_UTILIZADOR = :id and  a.INATIVO != 1");

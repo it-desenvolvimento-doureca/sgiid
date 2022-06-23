@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -19,7 +20,7 @@ public class PR_DIC_PRODUCAO_SEMANA {
 	@Column(name = "SEMANA")
 	private Integer SEMANA;
 	@Column(name = "N_DIAS_PRODUCAO")
-	private Integer N_DIAS_PRODUCAO;
+	private BigDecimal N_DIAS_PRODUCAO;
 	@Column(name = "ANO")
 	private Integer ANO;
 	@Column(name = "DATA_CRIA")
@@ -119,11 +120,11 @@ public class PR_DIC_PRODUCAO_SEMANA {
 		ATIVO = aTIVO;
 	}
 
-	public Integer getN_DIAS_PRODUCAO() {
+	public BigDecimal getN_DIAS_PRODUCAO() {
 		return N_DIAS_PRODUCAO;
 	}
 
-	public void setN_DIAS_PRODUCAO(Integer n_DIAS_PRODUCAO) {
+	public void setN_DIAS_PRODUCAO(BigDecimal n_DIAS_PRODUCAO) {
 		N_DIAS_PRODUCAO = n_DIAS_PRODUCAO;
 	}
 

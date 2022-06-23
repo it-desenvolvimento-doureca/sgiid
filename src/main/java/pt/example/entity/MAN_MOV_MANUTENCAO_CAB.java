@@ -54,6 +54,10 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	private Timestamp DATA_ULT_MODIF;
 	@JsonProperty("TIPO_LOCALIZACAO")
 	private String TIPO_LOCALIZACAO;
+	@JsonProperty( "TIPO_RESPONSAVEL")
+	private String TIPO_RESPONSAVEL;
+	@JsonProperty( "UTILIZADOR")
+	private Integer UTILIZADOR;
 	@JsonProperty( "DATA_REALIZACAO")
 	private Timestamp DATA_REALIZACAO;
 	@JsonProperty( "COD_FORNECEDOR")
@@ -63,8 +67,72 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	@JsonProperty( "EMAIL_FORNECEDOR")
 	private String EMAIL_FORNECEDOR;
 	@JsonProperty( "AMBITO_MANUTENCAO")
-	private Integer AMBITO_MANUTENCAO;
+	private Integer AMBITO_MANUTENCAO;	
+	@JsonProperty( "NOTAS_PLANEAMENTO")
+	private String NOTAS_PLANEAMENTO;
+	@JsonProperty( "STATUS_MAQUINA")
+	private String STATUS_MAQUINA;
+	@JsonProperty( "ORDEM")
+	private Integer ORDEM;
+	@JsonProperty( "ID_ORIGEM")
+	private Integer ID_ORIGEM;
 	
+	public String getCOD_FORNECEDOR() {
+		return COD_FORNECEDOR;
+	}
+
+	public String getNOME_FORNECEDOR() {
+		return NOME_FORNECEDOR;
+	}
+
+	public String getEMAIL_FORNECEDOR() {
+		return EMAIL_FORNECEDOR;
+	}
+
+	public Integer getAMBITO_MANUTENCAO() {
+		return AMBITO_MANUTENCAO;
+	}
+
+	public String getNOTAS_PLANEAMENTO() {
+		return NOTAS_PLANEAMENTO;
+	}
+
+	public String getSTATUS_MAQUINA() {
+		return STATUS_MAQUINA;
+	}
+
+	public Integer getORDEM() {
+		return ORDEM;
+	}
+
+	public void setCOD_FORNECEDOR(String cOD_FORNECEDOR) {
+		COD_FORNECEDOR = cOD_FORNECEDOR;
+	}
+
+	public void setNOME_FORNECEDOR(String nOME_FORNECEDOR) {
+		NOME_FORNECEDOR = nOME_FORNECEDOR;
+	}
+
+	public void setEMAIL_FORNECEDOR(String eMAIL_FORNECEDOR) {
+		EMAIL_FORNECEDOR = eMAIL_FORNECEDOR;
+	}
+
+	public void setAMBITO_MANUTENCAO(Integer aMBITO_MANUTENCAO) {
+		AMBITO_MANUTENCAO = aMBITO_MANUTENCAO;
+	}
+
+	public void setNOTAS_PLANEAMENTO(String nOTAS_PLANEAMENTO) {
+		NOTAS_PLANEAMENTO = nOTAS_PLANEAMENTO;
+	}
+
+	public void setSTATUS_MAQUINA(String sTATUS_MAQUINA) {
+		STATUS_MAQUINA = sTATUS_MAQUINA;
+	}
+
+	public void setORDEM(Integer oRDEM) {
+		ORDEM = oRDEM;
+	}
+
 	public Integer getID_MANUTENCAO_CAB() {
 		return ID_MANUTENCAO_CAB;
 	}
@@ -215,6 +283,30 @@ public class MAN_MOV_MANUTENCAO_CAB {
 
 	public void setDATA_REALIZACAO(Timestamp dATA_REALIZACAO) {
 		DATA_REALIZACAO = dATA_REALIZACAO;
+	}
+
+	public String getTIPO_RESPONSAVEL() {
+		return TIPO_RESPONSAVEL;
+	}
+
+	public Integer getUTILIZADOR() {
+		return UTILIZADOR;
+	}
+
+	public Integer getID_ORIGEM() {
+		return ID_ORIGEM;
+	}
+
+	public void setTIPO_RESPONSAVEL(String tIPO_RESPONSAVEL) {
+		TIPO_RESPONSAVEL = tIPO_RESPONSAVEL;
+	}
+
+	public void setUTILIZADOR(Integer uTILIZADOR) {
+		UTILIZADOR = uTILIZADOR;
+	}
+
+	public void setID_ORIGEM(Integer iD_ORIGEM) {
+		ID_ORIGEM = iD_ORIGEM;
 	}
 
 }
