@@ -6885,6 +6885,13 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyidTAREFA2/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidTAREFA2(@PathParam("id") Integer id) {
+		return dao46.getbyidtarefa2(id);
+	}
+	
+	@GET
 	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO/{id}")
 	@Produces("application/json")
 	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO(@PathParam("id") Integer id) {
@@ -7605,7 +7612,21 @@ public class SIRB {
 	public List<GT_MOV_FICHEIROS> getGT_MOV_FICHEIROSbyidTAREFA(@PathParam("id") Integer id) {
 		return dao99.getbyid(id);
 	}
-
+	
+	@GET
+	@Path("/getGT_MOV_FICHEIROSbyidTAREFA2/{id}")
+	@Produces("application/json")
+	public List<GT_MOV_FICHEIROS> getGT_MOV_FICHEIROSbyidTAREFA2(@PathParam("id") Integer id) {
+		return dao99.getbyidtarefa2(id);
+	}
+	
+	@GET
+	@Path("/getGT_MOV_FICHEIROSbyidFICHEIRO/{id}")
+	@Produces("application/json")
+	public List<GT_MOV_FICHEIROS> getGT_MOV_FICHEIROSbyidFICHEIRO(@PathParam("id") Integer id) {
+		return dao99.getbyidFICHEIRO(id);
+	}
+	
 	@DELETE
 	@Path("/deleteGT_MOV_FICHEIROS/{id}")
 	public void deleteGT_MOV_FICHEIROS(@PathParam("id") Integer id) {

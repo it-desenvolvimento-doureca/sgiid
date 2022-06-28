@@ -277,7 +277,7 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 		Query query = entityManager
 				.createNativeQuery("DECLARE @DATA date = '" + data1 + "'; " + "DECLARE @DATA2 date = '" + data2 + "';  "
-						+ "select b.COD_FUNCIONARIO,b.NOME,b.ATIVO,b.LOCAL,b.RESPONSAVEL,b.COD_SECTOR,c.DES_SECTOR,(select NOME from RH_FUNCIONARIOS where COD_FUNCIONARIO = c.CHEFE1) ,a.datdeb,a.proref,a.prodes1,a.opecod "
+						+ "select * from ( select b.COD_FUNCIONARIO,b.NOME,b.ATIVO,b.LOCAL,b.RESPONSAVEL,b.COD_SECTOR,c.DES_SECTOR,(select NOME from RH_FUNCIONARIOS where COD_FUNCIONARIO = c.CHEFE1) chefe ,a.datdeb,a.proref,a.prodes1,a.opecod "
 						+ ",a.opedes,CONVERT(decimal(10,1),SUM(a.total)) quant, "
 						+ "SUM(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoPrep/total_ofref)*a.totalproref ELSE a.TempoPrep*a.totalproref END)   TempoPrep, "
 						+ "SUM(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoExec/total_ofref)*a.totalproref ELSE a.TempoExec*a.totalproref END)   TempoExec, "
@@ -315,21 +315,21 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 						+ ",xfa.typof,xa.svanumenr as svanumenr2 from SILVER_BI.dbo.SCPSVA xa "
 						+ "left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
 						+ "left JOIN SILVER_BI.dbo.SOFA xfa on xa.ofanumenr = xfa.ofanumenr "
-						+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= DATEADD(DAY,3,@DATA2) "
+						+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= DATEADD(DAY,3,@DATA2) AND NOT EXISTS (SELECT svanumenr FROM SILVER.dbo.SCPSVB WHERE svanumenr IN (xa.svanumenr)) "
 						+ "	) tag) taby where (typof in ('OFC1', 'OFC2','OFCF') or (total_pecas is not null)) group by ofdnumenr,svanumenr,svanumori) tabx )  txa on txa.SVANUMENR = (CASE WHEN t.SVANUMORI = 0 THEN t.SVANUMENR ELSE t.SVANUMORI END) "
 						+ "left join SILVER_BI.dbo.SDTPRA p on p.proref=q.proref "
 						+ "/*left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
 						+ "from SILVER_BI.dbo.SCPSVQ ty "
 						+ "inner join (select svanumenr,ofanumenr,heudeb,datdeb from SILVER_BI.dbo.SCPSVA) th on ty.svanumenr = th.svanumenr "
 						+ "inner join SILVER_BI.dbo.SOFA tj on tj.ofanumenr = th.ofanumenr GROUP BY ofref,heudeb,datdeb,th.svanumenr	) j on j.datdeb = t.datdeb /*and j.heudeb = t.heudeb*/ and j.ofref = a.ofref and j.svanumenr = q.svanumenr*/ WHERE t.datdeb>=@DATA and t.datdeb<=@DATA2"
-						+ "	and t.restypcod='MO' /*and p.proref is not null*/ and ((((stpse - atpse)+(stpsp-atpsp)) > 0.1) or (((stpse - atpse)+(stpsp-atpsp)) < -0.1) )) ) as a  "
+						+ "	and t.restypcod='MO' /*and p.proref is not null*/ /*and ((((stpse - atpse)+(stpsp-atpsp)) > 0.1) or (((stpse - atpse)+(stpsp-atpsp)) < -0.1) )*/ ) ) as a  "
 						+ "left join RH_FUNCIONARIOS b on  cast(a.rescod as int) = b.COD_FUNCIONARIO left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR "
 						+ query_tipo_cadencia + " " + "where /*total is not null and*/ (b.COD_SECTOR in ("
 						+ SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + sectornull
 						+ " is not null) or (c.COD_SECTOR  in (" + Sector + ") )) and ((not " + Operario
 						+ " is not null) or (b.COD_FUNCIONARIO  = " + Operario + " )) " + querywhere + ""
 						+ "  group by  b.COD_FUNCIONARIO,b.NOME,b.ATIVO,b.LOCAL,b.RESPONSAVEL,b.COD_SECTOR,c.DES_SECTOR,c.CHEFE1,a.datdeb,a.proref,a.prodes1,a.opecod ,a.opedes ,a.heudeb,a.heufin,a.ofnum ,k.PecasHora,a.typof,a.total_ofref,a.totalproref   "
-						+ " order by a.datdeb desc ,a.heudeb desc,heufin desc");
+						+ " ) a where TempoTotal <> 0 order by a.datdeb desc ,a.heudeb desc,heufin desc");
 		List<RH_FUNCIONARIOS> data = query.getResultList();
 		return data;
 

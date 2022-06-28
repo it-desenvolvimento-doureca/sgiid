@@ -6202,8 +6202,13 @@ public class SIRB_2 {
 		String encodedString = "";
 		String nomeficheiro = "";
 
+		String select = "FICHEIRO";
+		if (tabela.equals("GT_MOV_FICHEIROS")) {
+			select = "CONCAT(a.FICHEIRO_1,a.FICHEIRO_2) as FICHEIRO";
+		}
+
 		Query query_folder = entityManager
-				.createNativeQuery("select FICHEIRO ,NOME from " + tabela + " a where " + campo + " = " + id);
+				.createNativeQuery("select " + select + " ,NOME from " + tabela + " a where " + campo + " = " + id);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

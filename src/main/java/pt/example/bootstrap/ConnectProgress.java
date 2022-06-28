@@ -1103,7 +1103,7 @@ public class ConnectProgress {
 		String query = "select a.PROREF,a.PRODES1,a.PRODES2,d.PRDFAMCOD,c.CLICOD,c.ETSNUM,ADRLIB2,ADRLIB3,ADRLIB1,ADRBDI,ADRNOM , CASE WHEN c.ETSNUM like 'E%' THEN 'MORADA' ELSE 'CLIENTE' END TIPO "
 				+ "from SDTPRA a left join SDTCLP b on a.PROREF = b.PROREF "
 				+ "left join SDTCLE c on b.CLICOD = c.CLICOD and b.ETSNUM = c.ETSNUM left join SDTPRA d on a.PROREF = d.PROREF "
-				+ "where a.PROREF = '"+referencia+"'";
+				+ "where a.PROREF = '"+referencia+"' and c.CLICOD is not null ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
