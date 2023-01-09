@@ -1625,8 +1625,13 @@ body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-odd, body .
     background: #c7c7c7;
 }
 
-.gestao .ui-datatable .ui-datatable-thead>tr>th, body .ui-datatable .ui-datatable-tfoot>tr>td {
+.gestao .ui-datatable .ui-datatable-thead>tr>th, body .ui-datatable .ui-datatable-tfoot>tr>td:not(.tabela_manu_dashboard td) {
     background-color: #b2b2b2 !important;
+}
+
+.tabela_manu_dashboard .ui-rowgroup-header-name {
+    width: 100%;
+
 }
 
 .ui-dialog .ui-dialog-buttonpane button {
@@ -3412,6 +3417,10 @@ textarea:not(.form-control2) {
     vertical-align: middle;
 }
 
+#tabelaplanoslistaacoes {
+    font-size: 11px;
+}
+
 #tabelaplanos .ui-selection-column {
     padding: 10px ! important;
 }
@@ -4950,7 +4959,8 @@ checkbox {
 }
 
 .wid100 input {
-    width: 102%;
+    /*width: 102%;*/
+    width: 200px;
 }
 
 
@@ -5529,6 +5539,13 @@ body .ui-panel .ui-panel-footer {
     background-size: contain;
 }
 
+.ExcelTable2007 thead th.ui-state-active {
+    background-color: #b7b6b6 !important;
+    border-color: #c7c7c7 !important;
+    color: black !important;
+    font-weight: bold !important;
+}
+
 .ExcelTable2007 table TD {
     border: 0px;
     /*background-color: white;*/
@@ -6019,6 +6036,10 @@ body>.ui-dropdown-panel {
     color: #292929 !important;
 }
 
+.tabela_manu_dashboard table {
+    font-size: 10px;
+}
+
 .tabela_planos_acao_dashboard tr tr th {
     background: #8f95a77d !important;
 }
@@ -6034,7 +6055,7 @@ body>.ui-dropdown-panel {
 }
 
 .pgrowlmsg .ui-growl {
-    z-index: 1148 !important;
+    z-index: 2148 !important;
 }
 
 .ui-growl .ui-growl-message-success {

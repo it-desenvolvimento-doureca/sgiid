@@ -29,4 +29,14 @@ public class MAN_DIC_NIVEIS_CRITICIDADEDao extends GenericDaoJpaImpl<MAN_DIC_NIV
 		return utz;
 
 	}
+	
+	public List<MAN_DIC_NIVEIS_CRITICIDADE> getbydepartamento(Integer departamento) {
+
+		Query query = entityManager.createNativeQuery("Select b.ID,b.DESCRICAO,b.NIVEL from  MAN_DIC_NIVEIS_CRITICIDADE b inner join MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA a on a.NIVEL = b.NIVEL "
+				+ "where a.ID_DEPARTAMENTO  = :departamento AND b.ATIVO = 1 GROUP BY b.ID,b.DESCRICAO,b.NIVEL ");
+		query.setParameter("departamento", departamento);
+		List<MAN_DIC_NIVEIS_CRITICIDADE> utz = query.getResultList();
+		return utz;
+
+	}
 }

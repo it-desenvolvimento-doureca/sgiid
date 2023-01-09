@@ -329,7 +329,9 @@ public class SIRB {
 	private FIN_REGISTO_ACOESDao dao117;
 	@Inject
 	private RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOESDao dao118;
-
+	@Inject
+	private AT_ENTREVISTAS_RESPONSAVELDao dao119;
+	
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
 
@@ -1000,6 +1002,21 @@ public class SIRB {
 	public List<GER_UTILIZADORES> getGER_UTILIZADORES() {
 		return dao11.getAll();
 	}
+	
+
+	@GET
+	@Path("/getGER_UTILIZADORESORDER")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getGER_UTILIZADORESORDER() {
+		return dao11.getAllORDERNAME();
+	}
+
+	@GET
+	@Path("/getGER_UTILIZADORES_INATIVO")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getGER_UTILIZADORESInativo() {
+		return dao11.getAllInativo();
+	}
 
 	@GET
 	@Path("/getGER_UTILIZADORES_SECTOR")
@@ -1362,7 +1379,7 @@ public class SIRB {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/getRejeicoesRefeTOP20")
 	@Produces("application/json")
@@ -1477,10 +1494,13 @@ public class SIRB {
 		String HORA_INI = firstMap.get("HORA_INI");
 		String HORA_FIM = firstMap.get("HORA_FIM");
 		String FASE = firstMap.get("FASE");
+
+		if (FASE != null)
+			FASE = "'" + FASE + "'";
 		
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC SILVER_BI.dbo.QUERY_REJEICOES_FAM_DEFEITOS " + LINHA + ",'" + DATA_INI + "','" + DATA_FIM + "','"
-						+ PROREF + "'," + FAM + "," + AREA_PECA + " ,'" + HORA_INI + "','" + HORA_FIM + "'");
+						+ PROREF + "'," + FAM + "," + AREA_PECA + " ,'" + HORA_INI + "','" + HORA_FIM + "',"+FASE);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1502,10 +1522,13 @@ public class SIRB {
 		String HORA_INI = firstMap.get("HORA_INI");
 		String HORA_FIM = firstMap.get("HORA_FIM");
 		String FASE = firstMap.get("FASE");
+
+		if (FASE != null)
+			FASE = "'" + FASE + "'";
 		
 		Query query_folder = entityManager.createNativeQuery("EXEC SILVER_BI.dbo.QUERY_REJEICOES_FAM_DEFEITOS_LOTE "
 				+ LINHA + ",'" + DATA_INI + "','" + DATA_FIM + "','" + PROREF + "'," + DEFEITO + "," + AREA_PECA + " ,'"
-				+ HORA_INI + "','" + HORA_FIM + "'");
+				+ HORA_INI + "','" + HORA_FIM + "',"+FASE);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1527,10 +1550,13 @@ public class SIRB {
 		String HORA_INI = firstMap.get("HORA_INI");
 		String HORA_FIM = firstMap.get("HORA_FIM");
 		String FASE = firstMap.get("FASE");
+
+		if (FASE != null)
+			FASE = "'" + FASE + "'";
 		
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC SILVER_BI.dbo.QUERY_REJEICOES_DEFEITOS " + LINHA + ",'" + DATA_INI + "','" + DATA_FIM + "','"
-						+ PROREF + "'," + FAM + "," + AREA_PECA + " ,'" + HORA_INI + "','" + HORA_FIM + "'");
+						+ PROREF + "'," + FAM + "," + AREA_PECA + " ,'" + HORA_INI + "','" + HORA_FIM + "',"+FASE);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -2353,6 +2379,46 @@ public class SIRB {
 		return dao74.update(AT_ENTREVISTAS);
 	}
 
+	/************************************* AT_ENTREVISTAS_RESPONSAVEL */
+	@POST
+	@Path("/createAT_ENTREVISTAS_RESPONSAVEL")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_ENTREVISTAS_RESPONSAVEL insertAT_ENTREVISTAS_RESPONSAVEL(final AT_ENTREVISTAS_RESPONSAVEL data) {
+		return dao119.create(data);
+	}
+
+	@GET
+	@Path("/getAT_ENTREVISTAS_RESPONSAVELbyid/{id}")
+	@Produces("application/json")
+	public List<AT_ENTREVISTAS_RESPONSAVEL> getAT_ENTREVISTAS_RESPONSAVELbyid(@PathParam("id") Integer id) {
+		return dao119.getbyid(id);
+	}
+
+	@GET
+	@Path("/getAT_ENTREVISTAS_RESPONSAVEL")
+	@Produces("application/json")
+	public List<AT_ENTREVISTAS_RESPONSAVEL> getAT_ENTREVISTAS_RESPONSAVEL() {
+		return dao119.getall();
+	}
+
+	@DELETE
+	@Path("/deleteAT_ENTREVISTAS_RESPONSAVEL/{id}")
+	public void deleteAT_ENTREVISTAS_RESPONSAVEL(@PathParam("id") Integer id) {
+		AT_ENTREVISTAS_RESPONSAVEL AT_ENTREVISTAS_RESPONSAVEL = new AT_ENTREVISTAS_RESPONSAVEL();
+		AT_ENTREVISTAS_RESPONSAVEL.setID_ENTREVISTA(id);
+		dao119.delete(AT_ENTREVISTAS_RESPONSAVEL);
+	}
+
+	@PUT
+	@Path("/updateAT_ENTREVISTAS_RESPONSAVEL")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_ENTREVISTAS_RESPONSAVEL updateAT_ENTREVISTAS_RESPONSAVEL(final AT_ENTREVISTAS_RESPONSAVEL AT_ENTREVISTAS_RESPONSAVEL) {
+		AT_ENTREVISTAS_RESPONSAVEL.setID_ENTREVISTA(AT_ENTREVISTAS_RESPONSAVEL.getID_ENTREVISTA());
+		return dao119.update(AT_ENTREVISTAS_RESPONSAVEL);
+	}
+	
 	/************************************* AT_OCORRENCIAS */
 	@POST
 	@Path("/createAT_OCORRENCIA")
@@ -3224,7 +3290,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getMaquinas(getURLSILVER());
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getMoradas/{clicod}")
 	@Produces("application/json")
@@ -3236,7 +3302,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getMoradas(getURLSILVER(), clicod);
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getMoradasReferencia/{referencia}")
 	@Produces("application/json")
@@ -4370,7 +4436,9 @@ public class SIRB {
 		HashMap<String, String> firstMap = dados.get(0);
 		String fastresponse = firstMap.get("FASTRESPONSE");
 		String emAtraso = firstMap.get("EM_ATRASO");
-		return dao95.getallbyTIPOaccoes(tipo, fastresponse, emAtraso);
+		String DATA_INI = firstMap.get("DATA_INI");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		return dao95.getallbyTIPOaccoes(tipo, fastresponse, emAtraso,DATA_INI,DATA_FIM);
 	}
 
 	@GET
@@ -4591,31 +4659,29 @@ public class SIRB {
 
 		PA_MOV_LINHA dados = dao96.update(PA_MOV_LINHA);
 
-		String descricao = PA_MOV_LINHA.getDESCRICAO();
-		if (descricao != null) {
-			descricao = descricao.replace("'", "''");
-		}
-		entityManager.createNativeQuery("UPDATE GT_MOV_TAREFAS SET OBSERVACOES = '" + descricao + "' "
-				+ " WHERE SUB_MODULO = 'PA' AND ID_MODULO = 13 and ID_CAMPO = " + PA_MOV_LINHA.getID_PLANO_LINHA() + "")
-				.executeUpdate();
-
-		entityManager.createNativeQuery("UPDATE b set b.ESTADO = 'I' from GT_MOV_TAREFAS a "
-				+ "inner join PA_MOV_LINHA b on a.ID_CAMPO = b.ID_PLANO_LINHA and a.ID_MODULO = 13 "
-				+ "AND a.ESTADO != b.ESTADO and a.ESTADO != 'A' AND a.ESTADO in ('C') AND b.ESTADO in ('P') AND b.ID_PLANO_LINHA = "
-				+ PA_MOV_LINHA.getID_PLANO_LINHA() + "").executeUpdate();
-
 		return dados;
 	}
+
+ 
 
 	@GET
 	@Path("/getPA_MOV_LINHAAtualizaESTADOS/{id}")
 	@Produces("application/json")
 	public int getPA_MOV_LINHAAtualizaESTADOS(@PathParam("id") Integer id) {
+		
+		
+		entityManager.createNativeQuery("UPDATE a SET a.OBSERVACOES = b.DESCRICAO from GT_MOV_TAREFAS   a "
+				+ "inner join PA_MOV_LINHA b on a.ID_CAMPO = b.ID_PLANO_LINHA and a.ID_MODULO = 13 AND b.ID_PLANO_CAB = "+ id).executeUpdate();
+
+		entityManager
+				.createNativeQuery("UPDATE b SET b.ESTADO = 'I' from GT_MOV_TAREFAS a "
+						+ "inner join PA_MOV_LINHA b on a.ID_CAMPO = b.ID_PLANO_LINHA and a.ID_MODULO = 13 "
+						+ "AND a.ESTADO != b.ESTADO and a.ESTADO != 'A' AND a.ESTADO in ('C') AND b.ESTADO in ('P') AND b.ID_PLANO_CAB = " + id).executeUpdate();
 		return entityManager.createNativeQuery(
 				"DECLARE @TOTAL int = (SELECT COUNT(*) FROM PA_MOV_LINHA where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB =  "
 						+ id + ") ) "
 						+ "IF (SELECT COUNT(*) FROM PA_MOV_LINHA where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB =  "
-						+ id + ") and ESTADO = 'C') = @TOTAL BEGIN "
+						+ id + ") and ESTADO = 'I') = @TOTAL BEGIN "
 						+ "	UPDATE PA_MOV_CAB set ESTADO = 'C' where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB = "
 						+ id + " ) END "
 						+ "ELSE IF (SELECT COUNT(*) FROM PA_MOV_LINHA where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB =  "
@@ -4667,6 +4733,20 @@ public class SIRB {
 	@Produces("application/json")
 	public List<PA_MOV_FICHEIROS> getPA_MOV_FICHEIROSbyidPLANO(@PathParam("id") Integer id) {
 		return dao98.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPA_MOV_FICHEIROSbyidPLANO2/{id}")
+	@Produces("application/json")
+	public List<PA_MOV_FICHEIROS> getPA_MOV_FICHEIROSbyidPLANO2(@PathParam("id") Integer id) {
+		return dao98.getbyid3(id);
+	}
+
+	@GET
+	@Path("/getPA_MOV_FICHEIROSbyidFICHEIRO/{id}")
+	@Produces("application/json")
+	public List<PA_MOV_FICHEIROS> getPA_MOV_FICHEIROSbyidFICHEIRO(@PathParam("id") Integer id) {
+		return dao98.getbyidFICHEIRO(id);
 	}
 
 	@DELETE
@@ -4748,6 +4828,13 @@ public class SIRB {
 	@Produces("application/json")
 	public List<PR_AMOSTRAS_ACCOES> getPR_AMOSTRAS_ACCOESbyip(@PathParam("id") Integer id) {
 		return dao86.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPR_AMOSTRAS_ACCOESbyid2/{id}")
+	@Produces("application/json")
+	public List<PR_AMOSTRAS_ACCOES> getPR_AMOSTRAS_ACCOESbyip2(@PathParam("id") Integer id) {
+		return dao86.getbyid2(id);
 	}
 
 	@DELETE
@@ -6890,35 +6977,36 @@ public class SIRB {
 	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidTAREFA2(@PathParam("id") Integer id) {
 		return dao46.getbyidtarefa2(id);
 	}
-	
+
 	@GET
 	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO/{id}")
 	@Produces("application/json")
 	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO(@PathParam("id") Integer id) {
 		return dao46.getbyid(id);
 	}
-	
+
 	@GET
 	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyid/{id}")
 	@Produces("application/json")
 	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyid(@PathParam("id") Integer id) {
 		return dao46.getbyid2(id);
 	}
-	
+
 	@GET
 	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO2/{id}")
 	@Produces("application/json")
-	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO2(@PathParam("id") Integer id) {
+	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAO2(
+			@PathParam("id") Integer id) {
 		return dao46.getbyid3(id);
 	}
-	
+
 	@GET
 	@Path("/getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAOFICHEIRO/{id}")
 	@Produces("application/json")
-	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAOFICHEIRO(@PathParam("id") Integer id) {
+	public List<RC_MOV_RECLAMACAO_FICHEIROS> getRC_MOV_RECLAMACAO_FICHEIROSbyidRECLAMACAOFICHEIRO(
+			@PathParam("id") Integer id) {
 		return dao46.getbyidFICHEIRO(id);
 	}
-
 
 	@DELETE
 	@Path("/deleteRC_MOV_RECLAMACAO_FICHEIROS/{id}")
@@ -7231,7 +7319,12 @@ public class SIRB {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public GT_MOV_TAREFAS insertGT_MOV_TAREFASA(final GT_MOV_TAREFAS data) {
-		return dao59.create(data);
+		GT_MOV_TAREFAS dados = dao59.create(data);
+		if (data.getID_TAREFA_PAI() != null) {
+			int queryconc = entityManager.createNativeQuery("EXEC GT_ATUALIZA_CONCLUSAO " + data.getID_TAREFA_PAI())
+					.executeUpdate();
+		}
+		return dados;
 	}
 
 	@POST
@@ -7256,9 +7349,9 @@ public class SIRB {
 					.executeUpdate();
 		}
 
-		Query query = entityManager
-				.createNativeQuery("select ID_TAREFA,data_INICIO,id_CAMPO from GT_MOV_TAREFAS  where id_MODULO = "
-						+ data.getID_MODULO() + " and sub_MODULO = 'PA' and id_campo = " + data.getID_CAMPO() + "");
+		Query query = entityManager.createNativeQuery(
+				"select ID_TAREFA,data_INICIO,id_CAMPO from GT_MOV_TAREFAS  where id_MODULO = " + data.getID_MODULO()
+						+ " and sub_MODULO = '" + data.getSUB_MODULO() + "' and id_campo = " + data.getID_CAMPO() + "");
 		return query.getResultList();
 	}
 
@@ -7371,6 +7464,29 @@ public class SIRB {
 	}
 
 	@POST
+	@Path("/getAtualizaTarefaReunioes/{id}/{modulo}")
+	@Produces("application/json")
+	public void getAtualizaTarefaReunioes(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
+			final String link) {
+
+		Query query = entityManager.createNativeQuery("select ID,ID_REUNIAO from REU_REUNIOES_PLANOS_ACCOES "
+				+ "where ID = " + id
+				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 19 and SUB_MODULO = 'R' and ID_CAMPO = ID)");
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+			String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + content[0].toString() + "," + modulo + ",'R'";
+
+			Query query_tarefa = entityManager.createNativeQuery(url);
+			query_tarefa.executeUpdate();
+
+			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, "REU");
+		}
+
+	}
+
+	@POST
 	@Path("/getAtualizaSubtarefas/{id}/{estado}/{utilizador}")
 	@Produces("application/json")
 	public void getAtualizaTarefaDerrogacoes(@PathParam("id") Integer id_pai, @PathParam("estado") String estado,
@@ -7423,6 +7539,12 @@ public class SIRB {
 							+ "b.NOME_FORNECEDOR,b.ID_RECLAMACAO,a.DATA_PREVISTA,b.DATA_RECLAMACAO "
 							+ "from RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES a inner join RC_MOV_RECLAMACAO_FORNECEDOR b on b.ID_RECLAMACAO = a.ID_RECLAMACAO "
 							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
+		} else if (submodulo.equals("REU")) {
+			query = entityManager.createNativeQuery(
+					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(OBSERVACOES,'') ,c.DESCRICAO_PT,'' REFERENCIA,'' DESIGNACAO_REF,"
+							+ "'' NOME_CLIENTE,b.ID_REUNIAO,a.DATA_PREVISTA,b.DATA_REUNIAO "
+							+ "from REU_REUNIOES_PLANOS_ACCOES a inner join REU_REUNIOES b on b.ID_REUNIAO = a.ID_REUNIAO "
+							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID  where a.ID = " + id);
 		} else {
 			query = entityManager.createNativeQuery(
 					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(OBSERVACOES,'') ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
@@ -7470,13 +7592,19 @@ public class SIRB {
 
 			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 			HashMap<String, String> n = new HashMap<String, String>();
-			n.put("MODULO", "5");
+
 			n.put("MOMENTO", "Ao Criar Tarefa");
 			if (submodulo.equals("D")) {
+				n.put("MODULO", "5");
 				n.put("PAGINA", "Derrogações");
 			} else if (submodulo.equals("F")) {
+				n.put("MODULO", "5");
 				n.put("PAGINA", "Reclamações Fornecedor");
+			} else if (submodulo.equals("REU")) {
+				n.put("MODULO", "19");
+				n.put("PAGINA", "Reuniões");
 			} else {
+				n.put("MODULO", "5");
 				n.put("PAGINA", "Reclamações Clientes");
 			}
 			n.put("ESTADO", "1");
@@ -7484,7 +7612,7 @@ public class SIRB {
 
 			if (submodulo.equals("D")) {
 				n.put("DADOS",
-						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_derrogacao::"
+						"{observacao::" + observacao + "\n/link::" + link + numero_reclamacao + "\n/numero_derrogacao::"
 								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_derrogacao::"
 								+ data_reclamacao + "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::"
 								+ numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
@@ -7494,6 +7622,12 @@ public class SIRB {
 								+ numero_reclamacao + "\n/fornecedor::" + cliente + "\n/data_reclamacao::"
 								+ data_reclamacao + "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::"
 								+ numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
+			} else if (submodulo.equals("REU")) {
+				n.put("DADOS",
+						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reuniao::"
+								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_reuniao::" + data_reclamacao
+								+ "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::" + numero_tarefa
+								+ "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
 			} else {
 				n.put("DADOS",
 						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reclamacao::"
@@ -7587,6 +7721,18 @@ public class SIRB {
 
 		}
 
+		/*
+		 * int queryconc =
+		 * entityManager.createNativeQuery("EXEC GT_ATUALIZA_CONCLUSAO " +
+		 * GT_MOV_TAREFAS.getID_TAREFA()) .executeUpdate();
+		 */
+
+		if (GT_MOV_TAREFAS.getID_TAREFA_PAI() != null) {
+			int queryconc2 = entityManager
+					.createNativeQuery("EXEC GT_ATUALIZA_CONCLUSAO " + GT_MOV_TAREFAS.getID_TAREFA_PAI())
+					.executeUpdate();
+		}
+
 		return GT_MOV_TAREFA;
 	}
 
@@ -7612,21 +7758,21 @@ public class SIRB {
 	public List<GT_MOV_FICHEIROS> getGT_MOV_FICHEIROSbyidTAREFA(@PathParam("id") Integer id) {
 		return dao99.getbyid(id);
 	}
-	
+
 	@GET
 	@Path("/getGT_MOV_FICHEIROSbyidTAREFA2/{id}")
 	@Produces("application/json")
 	public List<GT_MOV_FICHEIROS> getGT_MOV_FICHEIROSbyidTAREFA2(@PathParam("id") Integer id) {
 		return dao99.getbyidtarefa2(id);
 	}
-	
+
 	@GET
 	@Path("/getGT_MOV_FICHEIROSbyidFICHEIRO/{id}")
 	@Produces("application/json")
 	public List<GT_MOV_FICHEIROS> getGT_MOV_FICHEIROSbyidFICHEIRO(@PathParam("id") Integer id) {
 		return dao99.getbyidFICHEIRO(id);
 	}
-	
+
 	@DELETE
 	@Path("/deleteGT_MOV_FICHEIROS/{id}")
 	public void deleteGT_MOV_FICHEIROS(@PathParam("id") Integer id) {
@@ -9224,7 +9370,7 @@ public class SIRB {
 			 */
 
 			// Type quantité
-			data += "1"; // Signe
+			data += "1"; 
 
 			// Quantité
 			if (content[19] != null) {
@@ -10114,7 +10260,7 @@ public class SIRB {
 			 */
 
 			// Type quantité
-			data += "1"; // Signe
+			data += "1"; 
 
 			// Quantité
 			if (content[19] != null) {
@@ -10333,7 +10479,7 @@ public class SIRB {
 
 			String email_para = "";
 			email_para += content[0].toString();
-			System.out.println(content[0].toString());
+			//System.out.println(content[0].toString());
 
 			verficaEventosEncomendas("10", "Alertas de Encomendas Pendentes", "Interno", "1", email_para,
 					pasta_destino + "/" + nome);

@@ -24,7 +24,7 @@ public class DOC_DIC_POSTOS {
 	@JsonProperty("IP_POSTO")
 	private String IP_POSTO;
 	@JsonProperty("SECTOR")
-	private Integer SECTOR;
+	private String SECTOR;
 	@JsonProperty("DATA_CRIA")
 	private Timestamp DATA_CRIA;
 	@JsonProperty("UTZ_CRIA")
@@ -46,7 +46,7 @@ public class DOC_DIC_POSTOS {
 		return IP_POSTO;
 	}
 
-	public Integer getSECTOR() {
+	public String getSECTOR() {
 		return SECTOR;
 	}
 
@@ -78,7 +78,7 @@ public class DOC_DIC_POSTOS {
 		IP_POSTO = iP_POSTO;
 	}
 
-	public void setSECTOR(Integer sECTOR) {
+	public void setSECTOR(String sECTOR) {
 		SECTOR = sECTOR;
 	}
 

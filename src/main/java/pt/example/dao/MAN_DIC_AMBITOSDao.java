@@ -23,7 +23,7 @@ public class MAN_DIC_AMBITOSDao extends GenericDaoJpaImpl<MAN_DIC_AMBITOS, Integ
 	
 	public List<MAN_DIC_AMBITOS> getall2() {
 
-		Query query = entityManager.createNativeQuery("select a.ID,NOME, STRING_AGG(c.EMAIL,',') from MAN_DIC_AMBITOS a "
+		Query query = entityManager.createNativeQuery("select a.ID,NOME, STRING_AGG(c.EMAIL,',') as EMAIL from MAN_DIC_AMBITOS a "
 				+ "LEFT JOIN MAN_DIC_AMBITO_UTILIZADORES b on a.ID = b.ID_EQUIPA LEFT JOIN GER_UTILIZADORES c on b.ID_UTILIZADOR = c.ID_UTILIZADOR GROUP BY a.ID,NOME");
 
 		List<MAN_DIC_AMBITOS> utz = query.getResultList();

@@ -76,6 +76,8 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	private Integer ORDEM;
 	@JsonProperty( "ID_ORIGEM")
 	private Integer ID_ORIGEM;
+	@JsonProperty( "ID_TIPOLOGIA_AVARIA")
+	private Integer ID_TIPOLOGIA_AVARIA;
 	
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
@@ -307,6 +309,14 @@ public class MAN_MOV_MANUTENCAO_CAB {
 
 	public void setID_ORIGEM(Integer iD_ORIGEM) {
 		ID_ORIGEM = iD_ORIGEM;
+	}
+
+	public Integer getID_TIPOLOGIA_AVARIA() {
+		return ID_TIPOLOGIA_AVARIA;
+	}
+
+	public void setID_TIPOLOGIA_AVARIA(Integer iD_TIPOLOGIA_AVARIA) {
+		ID_TIPOLOGIA_AVARIA = iD_TIPOLOGIA_AVARIA;
 	}
 
 }

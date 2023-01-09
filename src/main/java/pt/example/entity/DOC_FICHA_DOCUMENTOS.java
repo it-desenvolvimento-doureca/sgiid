@@ -20,7 +20,7 @@ public class DOC_FICHA_DOCUMENTOS {
 	@JsonProperty("ID")
 	private Integer ID;
 	@JsonProperty("SECTOR")
-	private Integer SECTOR;
+	private String SECTOR;
 	@JsonProperty("DESC_MAQUINA")
 	private String DESC_MAQUINA;
 	@JsonProperty("COD_MAQUINA")
@@ -65,13 +65,15 @@ public class DOC_FICHA_DOCUMENTOS {
 	private String NOME_FICHEIRO;
 	@JsonProperty("TIPO_FICHEIRO")
 	private String TIPO_FICHEIRO;
+	@JsonProperty("ID_CAMINHO")
+	private Integer ID_CAMINHO;
 	
 
 	public Integer getID() {
 		return ID;
 	}
 
-	public Integer getSECTOR() {
+	public String getSECTOR() {
 		return SECTOR;
 	}
 
@@ -147,7 +149,7 @@ public class DOC_FICHA_DOCUMENTOS {
 		ID = iD;
 	}
 
-	public void setSECTOR(Integer sECTOR) {
+	public void setSECTOR(String sECTOR) {
 		SECTOR = sECTOR;
 	}
 
@@ -257,6 +259,14 @@ public class DOC_FICHA_DOCUMENTOS {
 
 	public void setTIPO_FICHEIRO(String tIPO_FICHEIRO) {
 		TIPO_FICHEIRO = tIPO_FICHEIRO;
+	}
+
+	public Integer getID_CAMINHO() {
+		return ID_CAMINHO;
+	}
+
+	public void setID_CAMINHO(Integer iD_CAMINHO) {
+		ID_CAMINHO = iD_CAMINHO;
 	}
 
 }

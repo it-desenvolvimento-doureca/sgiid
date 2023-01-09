@@ -1,0 +1,242 @@
+package pt.example.rest;
+
+import java.util.HashMap;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+
+import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
+import pt.example.dao.GER_CONF_CONSUMOS_SILVER_OFDao;
+import pt.example.dao.MAN_DIC_ARTIGOS_TIPOLOGIADao;
+import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
+import pt.example.entity.GER_CONF_CONSUMOS_SILVER_OF;
+import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
+
+@Stateless
+@Path("/sirb")
+public class SIRB_3 {
+
+	@Inject
+	private GER_CONF_CONSUMOS_SILVERDao dao1;
+	@Inject
+	private GER_CONF_CONSUMOS_SILVER_OFDao dao2;
+	@Inject
+	private MAN_DIC_ARTIGOS_TIPOLOGIADao dao3;
+
+	@PersistenceContext(unitName = "persistenceUnit")
+	protected EntityManager entityManager;
+
+	/************************************* GER_CONF_CONSUMOS_SILVER */
+	@POST
+	@Path("/createGER_CONF_CONSUMOS_SILVER")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_CONF_CONSUMOS_SILVER insertGER_CONF_CONSUMOS_SILVERA(final GER_CONF_CONSUMOS_SILVER data) {
+		return dao1.create(data);
+	}
+
+	@GET
+	@Path("/getGER_CONF_CONSUMOS_SILVER")
+	@Produces("application/json")
+	public List<GER_CONF_CONSUMOS_SILVER> getGER_CONF_CONSUMOS_SILVER() {
+		return dao1.getall();
+	}
+
+	@GET
+	@Path("/getGER_CONF_CONSUMOS_SILVERbyid/{id}")
+	@Produces("application/json")
+	public List<GER_CONF_CONSUMOS_SILVER> getGER_CONF_CONSUMOS_SILVERbyip(@PathParam("id") Integer id) {
+		return dao1.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_CONF_CONSUMOS_SILVER/{id}")
+	public void deleteGER_CONF_CONSUMOS_SILVER(@PathParam("id") Integer id) {
+		GER_CONF_CONSUMOS_SILVER GER_CONF_CONSUMOS_SILVER = new GER_CONF_CONSUMOS_SILVER();
+		GER_CONF_CONSUMOS_SILVER.setID_CONF(id);
+		dao1.delete(GER_CONF_CONSUMOS_SILVER);
+	}
+
+	@PUT
+	@Path("/updateGER_CONF_CONSUMOS_SILVER")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_CONF_CONSUMOS_SILVER updateGER_CONF_CONSUMOS_SILVER(
+			final GER_CONF_CONSUMOS_SILVER GER_CONF_CONSUMOS_SILVER) {
+		GER_CONF_CONSUMOS_SILVER.setID_CONF(GER_CONF_CONSUMOS_SILVER.getID_CONF());
+		return dao1.update(GER_CONF_CONSUMOS_SILVER);
+	}
+
+	/************************************* GER_CONF_CONSUMOS_SILVER_OF */
+	@POST
+	@Path("/createGER_CONF_CONSUMOS_SILVER_OF")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_CONF_CONSUMOS_SILVER_OF insertGER_CONF_CONSUMOS_SILVER_OFA(final GER_CONF_CONSUMOS_SILVER_OF data) {
+		return dao2.create(data);
+	}
+
+	@GET
+	@Path("/getGER_CONF_CONSUMOS_SILVER_OF")
+	@Produces("application/json")
+	public List<GER_CONF_CONSUMOS_SILVER_OF> getGER_CONF_CONSUMOS_SILVER_OF() {
+		return dao2.getall();
+	}
+
+	@GET
+	@Path("/getGER_CONF_CONSUMOS_SILVER_OFbyidconf/{id}")
+	@Produces("application/json")
+	public List<GER_CONF_CONSUMOS_SILVER_OF> getGER_CONF_CONSUMOS_SILVER_OFbyip(@PathParam("id") Integer id) {
+		return dao2.getbyidlinha(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_CONF_CONSUMOS_SILVER_OF/{id}")
+	public void deleteGER_CONF_CONSUMOS_SILVER_OF(@PathParam("id") Integer id) {
+		GER_CONF_CONSUMOS_SILVER_OF GER_CONF_CONSUMOS_SILVER_OF = new GER_CONF_CONSUMOS_SILVER_OF();
+		GER_CONF_CONSUMOS_SILVER_OF.setID_CONF_OF(id);
+		dao2.delete(GER_CONF_CONSUMOS_SILVER_OF);
+	}
+
+	@PUT
+	@Path("/updateGER_CONF_CONSUMOS_SILVER_OF")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_CONF_CONSUMOS_SILVER_OF updateGER_CONF_CONSUMOS_SILVER_OF(
+			final GER_CONF_CONSUMOS_SILVER_OF GER_CONF_CONSUMOS_SILVER_OF) {
+		GER_CONF_CONSUMOS_SILVER_OF.setID_CONF_OF(GER_CONF_CONSUMOS_SILVER_OF.getID_CONF_OF());
+		return dao2.update(GER_CONF_CONSUMOS_SILVER_OF);
+	}
+
+	/************************************* MAN_DIC_ARTIGOS_TIPOLOGIA */
+	@POST
+	@Path("/createMAN_DIC_ARTIGOS_TIPOLOGIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_ARTIGOS_TIPOLOGIA insertMAN_DIC_ARTIGOS_TIPOLOGIAA(final MAN_DIC_ARTIGOS_TIPOLOGIA data) {
+		return dao3.create(data);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_ARTIGOS_TIPOLOGIA")
+	@Produces("application/json")
+	public List<MAN_DIC_ARTIGOS_TIPOLOGIA> getMAN_DIC_ARTIGOS_TIPOLOGIA() {
+		return dao3.getall();
+	}
+
+	@DELETE
+	@Path("/deleteMAN_DIC_ARTIGOS_TIPOLOGIA/{id}")
+	public void deleteMAN_DIC_ARTIGOS_TIPOLOGIA(@PathParam("id") Integer id) {
+		MAN_DIC_ARTIGOS_TIPOLOGIA MAN_DIC_ARTIGOS_TIPOLOGIA = new MAN_DIC_ARTIGOS_TIPOLOGIA();
+		MAN_DIC_ARTIGOS_TIPOLOGIA.setID(id);
+		dao3.delete(MAN_DIC_ARTIGOS_TIPOLOGIA);
+	}
+
+	@PUT
+	@Path("/updateMAN_DIC_ARTIGOS_TIPOLOGIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_ARTIGOS_TIPOLOGIA updateMAN_DIC_ARTIGOS_TIPOLOGIA(
+			final MAN_DIC_ARTIGOS_TIPOLOGIA MAN_DIC_ARTIGOS_TIPOLOGIA) {
+		MAN_DIC_ARTIGOS_TIPOLOGIA.setID(MAN_DIC_ARTIGOS_TIPOLOGIA.getID());
+		return dao3.update(MAN_DIC_ARTIGOS_TIPOLOGIA);
+
+	}
+	
+	@POST
+	@Path("/MAN_ANALISE_TEMPOS_PREVISTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> MAN_ANALISE_TEMPOS_PREVISTOS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_ANALISE_TEMPOS_PREVISTOS");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/MAN_ANALISE_TRABALHOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> MAN_ANALISE_TRABALHOS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String OPERARIO = firstMap.get("OPERARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_ANALISE_TRABALHOS " + DATA_INICIO + ", "+ DATA_FIM + ", " + OPERARIO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	
+	@POST
+	@Path("/MAN_PRODUTIVIDADE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> MAN_PRODUTIVIDADE(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String OPERARIO = firstMap.get("OPERARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'"; 
+
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_PRODUTIVIDADE " + DATA_INICIO + ", "+ DATA_FIM + ", " + OPERARIO );
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/MAN_RANKING_MANUTENCOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> MAN_RANKING_MANUTENCOES (final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String AMBITO = firstMap.get("AMBITO"); 
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'"; 
+		
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_RANKING_MANUTENCOES " + DATA_INICIO + ", " + DATA_FIM + ", " + AMBITO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+}

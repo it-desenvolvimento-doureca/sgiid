@@ -62,6 +62,13 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 	@JsonProperty( "EMAIL_FORNECEDOR")
 	private String EMAIL_FORNECEDOR;
 	
+	@JsonProperty("UTZ_OBSOLETO")
+	private Integer UTZ_OBSOLETO;
+	@JsonProperty("DATA_OBSOLETO")
+	private Timestamp DATA_OBSOLETO;
+	@JsonProperty("OBSOLETO")
+	private Boolean OBSOLETO;
+	
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
 	}
@@ -228,6 +235,30 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 
 	public void setAMBITO_MANUTENCAO(Integer aMBITO_MANUTENCAO) {
 		AMBITO_MANUTENCAO = aMBITO_MANUTENCAO;
+	}
+
+	public Integer getUTZ_OBSOLETO() {
+		return UTZ_OBSOLETO;
+	}
+
+	public Timestamp getDATA_OBSOLETO() {
+		return DATA_OBSOLETO;
+	}
+
+	public Boolean getOBSOLETO() {
+		return OBSOLETO;
+	}
+
+	public void setUTZ_OBSOLETO(Integer uTZ_OBSOLETO) {
+		UTZ_OBSOLETO = uTZ_OBSOLETO;
+	}
+
+	public void setDATA_OBSOLETO(Timestamp dATA_OBSOLETO) {
+		DATA_OBSOLETO = dATA_OBSOLETO;
+	}
+
+	public void setOBSOLETO(Boolean oBSOLETO) {
+		OBSOLETO = oBSOLETO;
 	}
 
 }

@@ -15,6 +15,7 @@ public class AT_ENTREVISTAS {
 	public Integer ID_OCORRENCIA;
 	public String NOME;
 	public String FUNCAO;
+	public String TESTEMUNHO;
 
 	@Id
 	@Column(name = "ID_ENTREVISTA")
@@ -52,6 +53,15 @@ public class AT_ENTREVISTAS {
 
 	public void setFUNCAO(String fUNCAO) {
 		FUNCAO = fUNCAO;
+	}
+
+	@Column(name = "TESTEMUNHO")
+	public String getTESTEMUNHO() {
+		return TESTEMUNHO;
+	}
+
+	public void setTESTEMUNHO(String tESTEMUNHO) {
+		TESTEMUNHO = tESTEMUNHO;
 	}
 
 }

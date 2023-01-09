@@ -23,7 +23,7 @@ public class MAN_MOV_MANUTENCAO_CABDao extends GenericDaoJpaImpl<MAN_MOV_MANUTEN
 	
 	public List<MAN_MOV_MANUTENCAO_CAB> getHistorico(Integer id) {
 
-		Query query = entityManager.createNativeQuery("select a.TIPO_MANUTENCAO,a.ESTADO,a.DATA_INICIO,a.DATA_FIM,a.DATA_HORA_PEDIDO,a.DATA_CRIA from MAN_MOV_MANUTENCAO_CAB a "
+		Query query = entityManager.createNativeQuery("select a.TIPO_MANUTENCAO,a.ESTADO,a.DATA_INICIO,a.DATA_FIM,a.DATA_HORA_PEDIDO,a.DATA_CRIA,a.ID_MANUTENCAO_CAB from MAN_MOV_MANUTENCAO_CAB a "
 				+ "where EQUIPAMENTO = "+id+" and ESTADO in ('P','C') and ESTADO not in ('A') order by DATA_HORA_PEDIDO desc");
 
 		List<MAN_MOV_MANUTENCAO_CAB> utz = query.getResultList();

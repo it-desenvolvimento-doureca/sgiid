@@ -22,6 +22,27 @@ public class PA_MOV_FICHEIROSDao extends GenericDaoJpaImpl<PA_MOV_FICHEIROS, Int
 
 	}
 	
+	public List<PA_MOV_FICHEIROS> getbyidFICHEIRO(Integer id) {
+
+		Query query = entityManager.createQuery("select a from PA_MOV_FICHEIROS a "
+				+ "where   a.ID = :id  ");
+		query.setParameter("id", id);
+		List<PA_MOV_FICHEIROS> data = query.getResultList();
+		return data;
+
+	}
+	
+	public List<PA_MOV_FICHEIROS> getbyid3(Integer id) {
+
+		Query query = entityManager.createNativeQuery("select a.data_CRIA,a.ID,b.NOME_UTILIZADOR, NOME,caminho,tipo,DATATYPE,TAMANHO,DESCRICAO "
+				+ " from PA_MOV_FICHEIROS a left join GER_UTILIZADORES b on a.UTZ_CRIA = b.ID_UTILIZADOR "
+				+ "where a.ID_PLANO_CAB = :id order by a.DATA_CRIA");
+		query.setParameter("id", id);
+		List<PA_MOV_FICHEIROS> data = query.getResultList();
+		return data;
+
+	}
+	
 	public List<PA_MOV_FICHEIROS> getbyid2(Integer id) {
 
 		Query query = entityManager.createQuery("Select a from PA_MOV_FICHEIROS a where a.ID_PLANO_CAB = :id ");

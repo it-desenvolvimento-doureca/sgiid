@@ -51,7 +51,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getTipoFalta(String url) throws SQLException {
 
-		String query = "select DISTINCT * from SPAARR";
+		String query = "select DISTINCT * from SPAARR order by arrlib";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -607,7 +607,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getReferencias(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA') ORDER BY PROREF";
+		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI') ORDER BY PROREF";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -667,7 +667,7 @@ public class ConnectProgress {
 	
 	public List<HashMap<String, String>> getReferenciasSTOCK(String url,String proref) throws SQLException {
 
-		String query = "SELECT proref Referencia, liecod Armazem, empcod Localizacao, sum(lotqte) stock FROM stodet where proref = '"+proref+"' "
+		String query = "SELECT proref Referencia, liecod Armazem, empcod Localizacao, sum(lotqte) stock FROM stodet where proref = '"+proref+"' and lotqte <> 0  "
 				+ "GROUP BY proref, liecod, empcod ORDER BY proref, liecod, empcod";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
@@ -1102,7 +1102,7 @@ public class ConnectProgress {
 
 		String query = "select a.PROREF,a.PRODES1,a.PRODES2,d.PRDFAMCOD,c.CLICOD,c.ETSNUM,ADRLIB2,ADRLIB3,ADRLIB1,ADRBDI,ADRNOM , CASE WHEN c.ETSNUM like 'E%' THEN 'MORADA' ELSE 'CLIENTE' END TIPO "
 				+ "from SDTPRA a left join SDTCLP b on a.PROREF = b.PROREF "
-				+ "left join SDTCLE c on b.CLICOD = c.CLICOD and b.ETSNUM = c.ETSNUM left join SDTPRA d on a.PROREF = d.PROREF "
+				+ "left join SDTCLE c on b.CLICOD = c.CLICOD and (b.ETSNUM = c.ETSNUM or c.ETSNUM = '') left join SDTPRA d on a.PROREF = d.PROREF "
 				+ "where a.PROREF = '"+referencia+"' and c.CLICOD is not null ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
@@ -1572,7 +1572,7 @@ public class ConnectProgress {
 				+ "inner join SDTCLP b on a.PROREF = b.PROREF "
 				+ "inner join SDTCLE c on b.CLICOD = c.CLICOD and b.ETSNUM = c.ETSNUM "
 				+ "left join SDTPRA d on a.PROREF = d.PROREF " + "where c.CLICOD = '" + CLICOD + "' and c.ETSNUM = '"
-				+ ETSNUM + "' and d.protypcod in ('PF','COM','PSO','PCF','PSOF')";
+				+ ETSNUM + "' and d.protypcod in ('PF','COM','PSO','PCF','PSOF','PFI')";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 

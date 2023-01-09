@@ -15,7 +15,7 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 	public List<PE_MOV_CAB> getbyid(Integer id) {
 
 		Query query = entityManager.createQuery("Select a,(select NOME_UTILIZADOR from GER_UTILIZADORES b where b.ID_UTILIZADOR = a.UTZ_CRIA) "
-				+ ",(select d.DES_SECTOR from GER_UTILIZADORES xb, RH_FUNCIONARIOS c,RH_SECTORES d where  xb.ID_UTILIZADOR = a.UTZ_CRIA and c.COD_FUNC_ORIGEM = xb.COD_UTZ and c.COD_SECTOR = d.COD_SECTOR) "
+				+ ",(select d.DES_SECTOR from GER_UTILIZADORES xb, RH_FUNCIONARIOS c,RH_SECTORES d where  xb.ID_UTILIZADOR = a.UTZ_CRIA and CASE WHEN xb.COD_UTZ = '9889' THEN 0 ELSE xb.COD_UTZ END = c.COD_FUNC_ORIGEM and c.COD_SECTOR = d.COD_SECTOR) "
 				+ "from PE_MOV_CAB a where a.ID = :id ");
 		query.setParameter("id", id);
 		List<PE_MOV_CAB> data = query.getResultList();
@@ -28,7 +28,7 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 
 		Query query = entityManager.createQuery("Select a "
 				+ ",(select c.DESCRICAO from GER_DEPARTAMENTO c WHERE c.ID  = a.DEPARTAMENTO) as DEPARTAMENTO "
-				+ ",(select d.DES_SECTOR from GER_UTILIZADORES xb, RH_FUNCIONARIOS c,RH_SECTORES d where  xb.ID_UTILIZADOR = a.UTZ_CRIA and c.COD_FUNC_ORIGEM = xb.COD_UTZ and c.COD_SECTOR = d.COD_SECTOR) " 
+				+ ",(select d.DES_SECTOR from GER_UTILIZADORES xb, RH_FUNCIONARIOS c,RH_SECTORES d where  xb.ID_UTILIZADOR = a.UTZ_CRIA and CASE WHEN xb.COD_UTZ = '9889' THEN 0 ELSE xb.COD_UTZ END = c.COD_FUNC_ORIGEM and c.COD_SECTOR = d.COD_SECTOR) " 
 				+ " from PE_MOV_CAB a where a.ATIVO  = 1 order by DATA_CRIA desc,a.ID desc");
 		List<PE_MOV_CAB> data = query.getResultList();
 		return data;
@@ -56,9 +56,14 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 						+ ",(select NOME_UTILIZADOR from GER_UTILIZADORES y where y.ID_UTILIZADOR = xa.RESPONSAVEL) as RESPONSAVELXA,  xa.DATA_CRIA as DATA_CRIAXA,xa.ESTADO ESTADOXA "
 						+ ",ISNULL(g.PERCENTAGEM_CONCLUSAO,0) conclusaoacao ,AVG(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY a.ID_PLANO_CAB) AS conclusaoplano, CASE WHEN (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_CAB in (select vp.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS vp WHERE vp.ID_PLANO_ESTRATEGICO = xa.ID)  ) = 0 THEN 0 WHEN (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_CAB in (select vp.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS vp WHERE vp.ID_PLANO_ESTRATEGICO = xa.ID)  ) = 1 THEN "
 						+ "AVG(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY xa.ID) ELSE "
-						+ "(SUM(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY xa.ID)/count(ISNULL(g.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY a.ID_PLANO_CAB)) / (select COUNT(DISTINCT t1.ID_PLANO_CAB)  from PA_MOV_CAB t1 where t1.ID_PLANO_CAB in (select vp.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS vp WHERE vp.ID_PLANO_ESTRATEGICO = xa.ID)  ) END AS conclusaototal, b.OBJETIVO"
+						+ "ISNULL((select AVG(ISNULL(PERCENTAGEM_CONCLUSAO,0)) from (select AVG(ISNULL(PERCENTAGEM_CONCLUSAO,0)) PERCENTAGEM_CONCLUSAO  from "
+						+ "(select t1.ID_PLANO_CAB,AVG(ISNULL(t3.PERCENTAGEM_CONCLUSAO,0)) OVER(PARTITION BY t1.ID_PLANO_CAB)PERCENTAGEM_CONCLUSAO 	from PA_MOV_CAB t1 	 left join PA_MOV_LINHA t2 on t1.ID_PLANO_CAB = t2.ID_PLANO_CAB "
+						+ " left join GT_MOV_TAREFAS t3 on t3.ID_MODULO = 13 and t3.SUB_MODULO = 'PA' and t2.ID_PLANO_LINHA = t3.ID_CAMPO and t3.ID_TAREFA_PAI is null "
+						+ " where t1.ID_PLANO_CAB in (select vp.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS vp WHERE vp.ID_PLANO_ESTRATEGICO = xa.ID)  ) t4 group by ID_PLANO_CAB ) t5),0) END AS conclusaototal, b.OBJETIVO "
 						+ ",CASE WHEN (select COUNT(x.ID) from PA_MOV_SEGUIR_LINHA x where  x.ID_PLANO_LINHA = b.ID_PLANO_LINHA  AND x.UTILIZADOR = "+user+" ) > 0 THEN 1 ELSE 0 END SEGUIR_LINHA"
-						+ ",b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA ,a.OBJETIVO OBJETIVO_ACAO,b.INVESTIMENTOS "
+						+ ",b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA ,a.OBJETIVO OBJETIVO_ACAO,b.INVESTIMENTOS,g.DATA_CONCLUSAO,CASE WHEN EXISTS(select xg.ID_TAREFA from GT_MOV_TAREFAS xg where xg.ID_MODULO = 13 and xg.SUB_MODULO = 'PA' and  xg.ID_CAMPO in (select xb.ID_PLANO_LINHA from PA_MOV_LINHA xb where xb.ID_PLANO_CAB = a.ID_PLANO_CAB) and xg.ID_TAREFA_PAI is null and xg.ESTADO in ('P','L','E') ) "
+						+ "THEN null ELSE (select MAX(DATA_CONCLUSAO) DATA_CONCLUSAO from GT_MOV_TAREFAS xg where xg.ID_MODULO = 13 and xg.SUB_MODULO = 'PA' and  xg.ID_CAMPO in (select xb.ID_PLANO_LINHA from PA_MOV_LINHA xb where xb.ID_PLANO_CAB = a.ID_PLANO_CAB) and xg.ID_TAREFA_PAI is null and xg.ESTADO not in ('A','P','L','E') ) End DATA_CONCLUSAO_PLANO "
+						+ " ,(select count(*) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = g.ID_TAREFA ) subtarefas "
 						+ "from PE_MOV_CAB xa "
 						+ "left join PE_PLANOS_ASSOCIADOS xb on xa.ID = xb.ID_PLANO_ESTRATEGICO "
 						+ "left join PA_MOV_CAB a on xb.ID_PLANO_CAB = a.ID_PLANO_CAB   "

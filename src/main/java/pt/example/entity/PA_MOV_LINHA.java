@@ -87,6 +87,17 @@ public class PA_MOV_LINHA {
 	@Column(name = "ORIGEM")
 	private String ORIGEM;
 
+	@Column(name = "ORDENACAO")
+	private String ORDENACAO;
+	
+	@Column(name = "DATA_ACCAO_ORIGINAL")
+	private Date DATA_ACCAO_ORIGINAL;
+	@Column(name = "HORA_ACCAO_ORIGINAL")
+	private Time HORA_ACCAO_ORIGINAL;
+	
+	@Column(name = "JUSTIFICACAO")
+	private String JUSTIFICACAO;
+	
 	public Timestamp getDATA_CRIA() {
 		return DATA_CRIA;
 	}
@@ -341,6 +352,38 @@ public class PA_MOV_LINHA {
 
 	public void setORIGEM(String oRIGEM) {
 		ORIGEM = oRIGEM;
+	}
+
+	public String getORDENACAO() {
+		return ORDENACAO;
+	}
+
+	public void setORDENACAO(String oRDENACAO) {
+		ORDENACAO = oRDENACAO;
+	}
+
+	public Date getDATA_ACCAO_ORIGINAL() {
+		return DATA_ACCAO_ORIGINAL;
+	}
+
+	public Time getHORA_ACCAO_ORIGINAL() {
+		return HORA_ACCAO_ORIGINAL;
+	}
+
+	public void setDATA_ACCAO_ORIGINAL(Date dATA_ACCAO_ORIGINAL) {
+		DATA_ACCAO_ORIGINAL = dATA_ACCAO_ORIGINAL;
+	}
+
+	public void setHORA_ACCAO_ORIGINAL(Time hORA_ACCAO_ORIGINAL) {
+		HORA_ACCAO_ORIGINAL = hORA_ACCAO_ORIGINAL;
+	}
+
+	public String getJUSTIFICACAO() {
+		return JUSTIFICACAO;
+	}
+
+	public void setJUSTIFICACAO(String jUSTIFICACAO) {
+		JUSTIFICACAO = jUSTIFICACAO;
 	}
 
 }
