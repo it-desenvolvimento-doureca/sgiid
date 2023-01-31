@@ -4236,7 +4236,7 @@ public class SIRB {
 	public int updatePR_AMOSTRAS_CAB_EVENTOS(@PathParam("id") Integer id, @PathParam("utilizador") Integer utilizador) {
 		return entityManager.createNativeQuery(
 				"INSERT INTO GT_LOGS(ID_TAREFA,UTZ_CRIA,DATA_CRIA,DESCRICAO) " + "select c.ID_TAREFA," + utilizador
-						+ ",GETDATE(),('Alterado Estado de '+ (CASE WHEN c.ESTADO = 'P' THEN 'Pendente'  ELSE CASE WHEN c.ESTADO = 'L' THEN 'Lida'  ELSE CASE WHEN c.ESTADO = 'E' THEN 'Em Curso'  ELSE CASE WHEN c.ESTADO = 'R' THEN 'Rejeitada'  ELSE CASE WHEN c.ESTADO = 'N' THEN 'Não Respondida' END END END END END) +' para Cancelada') descricao   from PR_AMOSTRAS_CAB a "
+						+ ",GETDATE(),('Alterado Estado de '+ (CASE WHEN c.ESTADO = 'P' THEN 'Pendente'  ELSE CASE WHEN c.ESTADO = 'L' THEN 'Lida'  ELSE CASE WHEN c.ESTADO = 'E' THEN 'Em Curso'  ELSE CASE WHEN c.ESTADO = 'R' THEN 'Rejeitada'  ELSE CASE WHEN c.ESTADO = 'N' THEN 'NÃ£o Respondida' END END END END END) +' para Cancelada') descricao   from PR_AMOSTRAS_CAB a "
 						+ "inner join PR_AMOSTRAS_ACCOES b on a.ID_AMOSTRA = b.ID_AMOSTRA "
 						+ "inner join GT_MOV_TAREFAS c on b.ID_AMOSTRA_ACCAO = c.ID_CAMPO and ID_MODULO = 10 and SUB_MODULO = 'A' "
 						+ "where a.ID_AMOSTRA = " + id + ""
@@ -4516,7 +4516,7 @@ public class SIRB {
 	public int updatePA_MOV_CAB_EVENTOS(@PathParam("id") Integer id, @PathParam("utilizador") Integer utilizador) {
 		return entityManager.createNativeQuery("INSERT INTO GT_LOGS(ID_TAREFA,UTZ_CRIA,DATA_CRIA,DESCRICAO) "
 				+ "select c.ID_TAREFA," + utilizador
-				+ ",GETDATE(),('Alterado Estado de '+ (CASE WHEN c.ESTADO = 'P' THEN 'Pendente'  ELSE CASE WHEN c.ESTADO = 'L' THEN 'Lida'  ELSE CASE WHEN c.ESTADO = 'E' THEN 'Em Curso'  ELSE CASE WHEN c.ESTADO = 'R' THEN 'Rejeitada'  ELSE CASE WHEN c.ESTADO = 'N' THEN 'Não Respondida' END END END END END) +' para Cancelada') descricao   from PA_MOV_CAB a "
+				+ ",GETDATE(),('Alterado Estado de '+ (CASE WHEN c.ESTADO = 'P' THEN 'Pendente'  ELSE CASE WHEN c.ESTADO = 'L' THEN 'Lida'  ELSE CASE WHEN c.ESTADO = 'E' THEN 'Em Curso'  ELSE CASE WHEN c.ESTADO = 'R' THEN 'Rejeitada'  ELSE CASE WHEN c.ESTADO = 'N' THEN 'NÃ£o Respondida' END END END END END) +' para Cancelada') descricao   from PA_MOV_CAB a "
 				+ "inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
 				+ "inner join GT_MOV_TAREFAS c on b.ID_PLANO_LINHA = c.ID_CAMPO and ID_MODULO = 13 and SUB_MODULO = 'PA' "
 				+ "where a.ID_PLANO_CAB = " + id + ""
@@ -6661,6 +6661,13 @@ public class SIRB {
 	public List<RC_MOV_RECLAMACAO> getRC_MOV_RECLAMACAO() {
 		return dao42.getall();
 	}
+	
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO2")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO> getRC_MOV_RECLAMACAO2() {
+		return dao42.getall2();
+	}
 
 	@GET
 	@Path("/getRC_MOV_RECLAMACAObyid/{id}")
@@ -7596,16 +7603,16 @@ public class SIRB {
 			n.put("MOMENTO", "Ao Criar Tarefa");
 			if (submodulo.equals("D")) {
 				n.put("MODULO", "5");
-				n.put("PAGINA", "Derrogações");
+				n.put("PAGINA", "DerrogaÃ§Ãµes");
 			} else if (submodulo.equals("F")) {
 				n.put("MODULO", "5");
-				n.put("PAGINA", "Reclamações Fornecedor");
+				n.put("PAGINA", "ReclamaÃ§Ãµes Fornecedor");
 			} else if (submodulo.equals("REU")) {
 				n.put("MODULO", "19");
-				n.put("PAGINA", "Reuniões");
+				n.put("PAGINA", "ReuniÃµes");
 			} else {
 				n.put("MODULO", "5");
-				n.put("PAGINA", "Reclamações Clientes");
+				n.put("PAGINA", "ReclamaÃ§Ãµes Clientes");
 			}
 			n.put("ESTADO", "1");
 			n.put("EMAIL_PARA", email_para);
@@ -8352,7 +8359,7 @@ public class SIRB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// se for diário
+		// se for diï¿½rio
 		if (tipo == 1) {
 			data = new Timestamp(getTomorrowDAy(hora, minutos, diasemana).getTime());
 		} else if (tipo == 2) {
@@ -9240,19 +9247,19 @@ public class SIRB {
 			}
 
 			// System.out.println(content[0]);
-			data += "01        ";// Société
+			data += "01        ";// Sociï¿½tï¿½
 			data += datatual; // Date suivi
-			data += sequencia; // N° séquence
+			data += sequencia; // Nï¿½ sï¿½quence
 
 			data += "    ";// + Ligne de production
 
-			data += "1";// Type N° OF
-			data += (of + "          ").substring(0, 10); // N° OF
+			data += "1";// Type Nï¿½ OF
+			data += (of + "          ").substring(0, 10); // Nï¿½ OF
 
-			data += "1";// Type opération
+			data += "1";// Type opï¿½ration
 
 			// OP_NUM
-			data += ("0010").substring(0, 4);// N° Opération
+			data += ("0010").substring(0, 4);// Nï¿½ Opï¿½ration
 
 			data += "1";// Position ( S12 )
 
@@ -9262,7 +9269,7 @@ public class SIRB {
 			// Code sous-section
 			data += (SUBSECCAO + "          ").substring(0, 10);
 
-			data += "  "; // N° d'équipe
+			data += "  "; // Nï¿½ d'ï¿½quipe
 
 			// Type de ressource
 			data += ("    ").substring(0, 4);
@@ -9270,11 +9277,11 @@ public class SIRB {
 			// Code ressource
 			data += ("          ").substring(0, 10);
 
-			data += "   C"; // N° établissement + Type d'élément C
+			data += "   C"; // Nï¿½ ï¿½tablissement + Type d'ï¿½lï¿½ment C
 
-			// Date début
+			// Date dï¿½but
 			data += datatual;
-			// Heure début
+			// Heure dï¿½but
 			data += horatual.substring(0, 6);
 			// Date fin
 			data += datatual;
@@ -9297,25 +9304,25 @@ public class SIRB {
 				}
 			}
 
-			// Référence composé
+			// Rï¿½fï¿½rence composï¿½
 			data += (REF_COMPOSTO + "                 ").substring(0, 17);
 
-			// Variante composé (1)
+			// Variante composï¿½ (1)
 			data += ("          ").substring(0, 10);
 
-			// Variante composé (2)
+			// Variante composï¿½ (2)
 			data += ("          ").substring(0, 10);
 
-			// Indice du composé
+			// Indice du composï¿½
 			data += ("          ").substring(0, 10);
 
-			// N° enregistrement Csé
+			// Nï¿½ enregistrement Csï¿½
 			String enregistrementcse = "000000000";
 			String sizecse = enregistrementcse + INDNUMCSE;
 			enregistrementcse = (sizecse).substring(sizecse.length() - 9, sizecse.length());
 			data += enregistrementcse;
 
-			// N° de rang
+			// Nï¿½ de rang
 			/*
 			 * String rang = "00000"; if (Orig_Composant) { String size = rang +
 			 * NCLRANG; rang = (size).substring(size.length() - 5,
@@ -9328,7 +9335,7 @@ public class SIRB {
 				data += ("     ").substring(0, 5);
 			}
 
-			// Référence composant
+			// Rï¿½fï¿½rence composant
 			data += (content[7] + "                 ").substring(0, 17);
 
 			// Variante composant (1)
@@ -9352,7 +9359,7 @@ public class SIRB {
 				data += "          ";
 			}
 
-			// N° enregistrement Cst
+			// Nï¿½ enregistrement Cst
 
 			String enregistrement = "000000000";
 			if (content[14] != null) {
@@ -9369,10 +9376,10 @@ public class SIRB {
 			 * ("         ").substring(0, 9); }
 			 */
 
-			// Type quantité
+			// Type quantitï¿½
 			data += "1"; 
 
-			// Quantité
+			// Quantitï¿½
 			if (content[19] != null) {
 				String result = String.format("%.3f", content[19]).replace("$", ",");
 				String[] parts = result.split(",");
@@ -9398,14 +9405,14 @@ public class SIRB {
 			} else {
 				data += content[23]; // Signe
 			}
-			// Unité
+			// Unitï¿½
 			if (content[8] != null) {
 				data += (content[8] + "    ").substring(0, 4);
 			} else {
 				data += "    ";
 			}
 
-			// Quantité (US2)
+			// Quantitï¿½ (US2)
 			data += "               ";
 
 			// Lieu origine
@@ -9422,14 +9429,14 @@ public class SIRB {
 				data += "          ";
 			}
 
-			// Référence du lot
+			// Rï¿½fï¿½rence du lot
 			if (content[10] != null) {
 				data += (content[10] + "                                   ").substring(0, 35);
 			} else {
 				data += "                                   ";
 			}
 
-			// N° de lot interne
+			// Nï¿½ de lot interne
 			String lotinterne = "000000000";
 			if (content[12] != null) {
 				String size = lotinterne + content[12];
@@ -9439,14 +9446,14 @@ public class SIRB {
 				data += lotinterne;
 			}
 
-			// N° d'étiquette
+			// Nï¿½ d'ï¿½tiquette
 			if (content[0] != null) {
 				data += (content[0] + "          ").substring(0, 10);
 			} else {
 				data += "          ";
 			}
 
-			// N° enreg. étiquette
+			// Nï¿½ enreg. ï¿½tiquette
 			String etiquette = "000000000";
 			if (content[1] != null) {
 				String size = etiquette + content[11];
@@ -9563,7 +9570,7 @@ public class SIRB {
 				utilizador = "", total_consumido = "", valor_aditivo = "", linha = "", tipo_manutencao = "",
 				ref_aditivo = "", nome_aditivo = "";
 
-		String etiquetas = "<table  border='1'><tr><th><b>Nº Etiqueta</b></th><th><b>Qtd.</b></th><th><b>Consumido</b></th><th><b>Qtd. Final</b></th></tr>";
+		String etiquetas = "<table  border='1'><tr><th><b>NÂº Etiqueta</b></th><th><b>Qtd.</b></th><th><b>Consumido</b></th><th><b>Qtd. Final</b></th></tr>";
 		String valor = null, total = null;
 		Query query = entityManager.createNativeQuery(
 				"select d.ID_MANUTENCAO,c.ETQNUM,c.CONSUMIR,b.VALOR1,d.DATA_PLANEAMENTO,d.HORA_PLANEAMENTO, "
@@ -9651,8 +9658,8 @@ public class SIRB {
 		List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> n = new HashMap<String, String>();
 		n.put("MODULO", "1");
-		n.put("MOMENTO", "Ao Finalizar Preparação");
-		n.put("PAGINA", "Manutenções");
+		n.put("MOMENTO", "Ao Finalizar PreparaÃ§Ã£o");
+		n.put("PAGINA", "ManutenÃ§Ãµes");
 		n.put("ESTADO", "1");
 		n.put("EMAIL_PARA", email_para);
 
@@ -10137,19 +10144,19 @@ public class SIRB {
 			}
 
 			// System.out.println(content[0]);
-			data += "01        ";// Société
+			data += "01        ";// Sociï¿½tï¿½
 			data += datatual; // Date suivi
-			data += sequencia; // N° séquence
+			data += sequencia; // Nï¿½ sï¿½quence
 
 			data += "    ";// + Ligne de production
 
-			data += "1";// Type N° OF
-			data += (of + "          ").substring(0, 10); // N° OF
+			data += "1";// Type Nï¿½ OF
+			data += (of + "          ").substring(0, 10); // Nï¿½ OF
 
-			data += "1";// Type opération
+			data += "1";// Type opï¿½ration
 
 			// OP_NUM
-			data += ("0010").substring(0, 4);// N° Opération
+			data += ("0010").substring(0, 4);// Nï¿½ Opï¿½ration
 
 			data += "1";// Position ( S12 )
 
@@ -10159,7 +10166,7 @@ public class SIRB {
 			// Code sous-section
 			data += (SUBSECCAO + "          ").substring(0, 10);
 
-			data += "  "; // N° d'équipe
+			data += "  "; // Nï¿½ d'ï¿½quipe
 
 			// Type de ressource
 			data += ("    ").substring(0, 4);
@@ -10167,11 +10174,11 @@ public class SIRB {
 			// Code ressource
 			data += ("          ").substring(0, 10);
 
-			data += "   C"; // N° établissement + Type d'élément C
+			data += "   C"; // Nï¿½ ï¿½tablissement + Type d'ï¿½lï¿½ment C
 
-			// Date début
+			// Date dï¿½but
 			data += datatual;
-			// Heure début
+			// Heure dï¿½but
 			data += horatual.substring(0, 6);
 			// Date fin
 			data += datatual;
@@ -10187,25 +10194,25 @@ public class SIRB {
 				data += "1";
 			}
 
-			// Référence composé
+			// Rï¿½fï¿½rence composï¿½
 			data += (REF_COMPOSTO + "                 ").substring(0, 17);
 
-			// Variante composé (1)
+			// Variante composï¿½ (1)
 			data += ("          ").substring(0, 10);
 
-			// Variante composé (2)
+			// Variante composï¿½ (2)
 			data += ("          ").substring(0, 10);
 
-			// Indice du composé
+			// Indice du composï¿½
 			data += ("          ").substring(0, 10);
 
-			// N° enregistrement Csé
+			// Nï¿½ enregistrement Csï¿½
 			String enregistrementcse = "000000000";
 			String sizecse = enregistrementcse + INDNUMCSE;
 			enregistrementcse = (sizecse).substring(sizecse.length() - 9, sizecse.length());
 			data += enregistrementcse;
 
-			// N° de rang
+			// Nï¿½ de rang
 			/*
 			 * String rang = "00000"; if (Orig_Composant) { String size = rang +
 			 * NCLRANG; rang = (size).substring(size.length() - 5,
@@ -10218,7 +10225,7 @@ public class SIRB {
 				data += ("     ").substring(0, 5);
 			}
 
-			// Référence composant
+			// Rï¿½fï¿½rence composant
 			data += (content[7] + "                 ").substring(0, 17);
 
 			// Variante composant (1)
@@ -10242,7 +10249,7 @@ public class SIRB {
 				data += "          ";
 			}
 
-			// N° enregistrement Cst
+			// Nï¿½ enregistrement Cst
 
 			String enregistrement = "000000000";
 			if (content[14] != null) {
@@ -10259,10 +10266,10 @@ public class SIRB {
 			 * ("         ").substring(0, 9); }
 			 */
 
-			// Type quantité
+			// Type quantitï¿½
 			data += "1"; 
 
-			// Quantité
+			// Quantitï¿½
 			if (content[19] != null) {
 				String result = String.format("%.3f", content[19]).replace("$", ",");
 				String[] parts = result.split(",");
@@ -10288,14 +10295,14 @@ public class SIRB {
 			} else {
 				data += content[23]; // Signe
 			}
-			// Unité
+			// Unitï¿½
 			if (content[8] != null) {
 				data += (content[8] + "    ").substring(0, 4);
 			} else {
 				data += "    ";
 			}
 
-			// Quantité (US2)
+			// Quantitï¿½ (US2)
 			data += "               ";
 
 			// Lieu origine
@@ -10312,14 +10319,14 @@ public class SIRB {
 				data += "          ";
 			}
 
-			// Référence du lot
+			// Rï¿½fï¿½rence du lot
 			if (content[10] != null) {
 				data += (content[10] + "                                   ").substring(0, 35);
 			} else {
 				data += "                                   ";
 			}
 
-			// N° de lot interne
+			// Nï¿½ de lot interne
 			String lotinterne = "000000000";
 			if (content[12] != null) {
 				String size = lotinterne + content[12];
@@ -10329,14 +10336,14 @@ public class SIRB {
 				data += lotinterne;
 			}
 
-			// N° d'étiquette
+			// Nï¿½ d'ï¿½tiquette
 			if (content[0] != null) {
 				data += (content[0] + "          ").substring(0, 10);
 			} else {
 				data += "          ";
 			}
 
-			// N° enreg. étiquette
+			// Nï¿½ enreg. ï¿½tiquette
 			String etiquette = "000000000";
 			if (content[1] != null) {
 				String size = etiquette + content[11];
@@ -10386,7 +10393,7 @@ public class SIRB {
 
 	}
 
-	// Atualizar Estados manutenções
+	// Atualizar Estados manutenÃ§Ãµes
 	@GET
 	@Path("/atualizarestados/{id}")
 	@Produces("application/json")
@@ -10401,7 +10408,7 @@ public class SIRB {
 						+ "and  (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
 						+ " and DATA_EXECUCAO is not null and INATIVO != 1) = 0 "
 						+ "and (select ESTADO from AB_MOV_MANUTENCAO where ID_MANUTENCAO = " + id
-						+ "  and INATIVO != 1 ) ='Em Preparação' and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = "
+						+ "  and INATIVO != 1 ) ='Em PreparaÃ§Ã£o' and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = "
 						+ id + "  and INATIVO != 1 ) > 0 "
 						+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO = " + id + " and "
 						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
@@ -10415,7 +10422,7 @@ public class SIRB {
 		return dados;
 	}
 
-	// Atualizar Estados manutenções
+	// Atualizar Estados manutenÃ§Ãµes
 	@GET
 	@Path("/atualizarestadosDosificadores/{id}")
 	@Produces("application/json")
@@ -10543,9 +10550,9 @@ public class SIRB {
 			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 			HashMap<String, String> n = new HashMap<String, String>();
 			n.put("MODULO", "5");
-			n.put("MOMENTO", "Alertas de Derrogações");
+			n.put("MOMENTO", "Alertas de DerrogaÃ§Ãµes");
 
-			n.put("PAGINA", "Derrogações");
+			n.put("PAGINA", "DerrogaÃ§Ãµes");
 
 			n.put("ESTADO", "1");
 			n.put("EMAIL_PARA", email_para);
@@ -10594,9 +10601,9 @@ public class SIRB {
 			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 			HashMap<String, String> n = new HashMap<String, String>();
 			n.put("MODULO", "14");
-			n.put("MOMENTO", "Alertas de Stock Manutenção");
+			n.put("MOMENTO", "Alertas de Stock ManutenÃ§Ã£o");
 
-			n.put("PAGINA", "Manutenções Preventivas");
+			n.put("PAGINA", "ManutenÃ§Ãµes Preventivas");
 
 			n.put("ESTADO", "1");
 			n.put("EMAIL_PARA", email_para);

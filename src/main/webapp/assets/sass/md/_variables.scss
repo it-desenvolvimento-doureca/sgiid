@@ -261,7 +261,7 @@ $input-color:                    $gray !default;
 //** `<input>` border color
 $input-border:                   #ccc !default;
 
-// TODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
+// T1ODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
 //** Default `.form-control` border radius
 // This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
 $input-border-radius:            $border-radius-base !default;
@@ -952,8 +952,8 @@ $mdb-animation-curve-default: $mdb-animation-curve-fast-out-slow-in !default;
 
 
 //---
-// FIXME: Similar but not quite the same as Bootstrap variables
-// FIXME: these need to either a) be converted to $mdb- or b) converted to bs variables
+// F1IXME: Similar but not quite the same as Bootstrap variables
+// F1IXME: these need to either a) be converted to $mdb- or b) converted to bs variables
 $contrast-factor: 40% !default;
 //---
 
@@ -971,7 +971,7 @@ $mdb-input-font-size-base: 14px !default;
 $mdb-input-font-size-large: ceil(($font-size-base * 1.25)) !default; // ~20px
 $mdb-input-font-size-small: ceil(($font-size-base * 0.75)) !default; // ~12px
 
-// FIXME: with #733 customization of bootstrap, consider how these could be based on the original bs customized variables
+// FI1XME: with #733 customization of bootstrap, consider how these could be based on the original bs customized variables
 //** Unit-less `line-height` for use in components like buttons.
 
 $mdb-input-line-height-base:        $line-height-base; //1.428571429 !default; // 20/14

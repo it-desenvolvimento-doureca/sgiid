@@ -103,7 +103,7 @@
       }
 
       & + .checkbox-material .check:after {
-        //background-color: $brand-success; // FIXME: seems like tho wrong color, test and make sure it can be removed
+        //background-color: $brand-success; // F1IXME: seems like tho wrong color, test and make sure it can be removed
         animation: rippleOn $mdb-checkbox-animation-ripple forwards; // Ripple effect on check
       }
     }

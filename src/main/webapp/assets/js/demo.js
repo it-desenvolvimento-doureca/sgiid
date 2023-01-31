@@ -274,12 +274,14 @@ $(document).ready(function () {
 
         if ($(this).scrollTop() > 300) {
 
-            $('.scrollleft').css("top", $(this).scrollTop() + 50);
+            $('.scrollleft').css("top", $(this).scrollTop() + 55);
             $('.scrollleft').css("position", 'fixed');
+            $('.scrollleft').css("right", 86);
+            $('.scrollleft').css("left", 'auto');
 
-            $('.scrollright').css("top", $(this).scrollTop() + 50);
+            $('.scrollright').css("top", $(this).scrollTop() + 55);
             $('.scrollright').css("position", 'fixed');
-            $('.scrollright').css("right", 86);
+            $('.scrollright').css("right", 39);
             $('.scrollright').css("left", 'auto');
 
 
@@ -469,10 +471,12 @@ $(document).ready(function () {
 
             $('.scrollleft').css("position", 'absolute');
             $('.scrollleft').css("top", 20);
+            $('.scrollleft').css("right", 'auto');
+
             $('.scrollright').css("position", 'absolute');
             $('.scrollright').css("top", 20);
             $('.scrollright').css("right", 'auto');
-            $('.scrollright').css("left", 59);
+            $('.scrollright').css("left", 70);
 
             $('.scrollleftevolucao').css("position", 'absolute');
             $('.scrollleftevolucao').css("top", 20);
