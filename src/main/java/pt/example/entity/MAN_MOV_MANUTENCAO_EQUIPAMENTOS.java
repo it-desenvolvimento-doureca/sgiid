@@ -68,6 +68,10 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 	private Timestamp DATA_OBSOLETO;
 	@JsonProperty("OBSOLETO")
 	private Boolean OBSOLETO;
+	@JsonProperty( "COD_MAQUINA")
+	private String COD_MAQUINA;
+	@JsonProperty( "DESC_MAQUINA")
+	private String DESC_MAQUINA;
 	
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
@@ -259,6 +263,22 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 
 	public void setOBSOLETO(Boolean oBSOLETO) {
 		OBSOLETO = oBSOLETO;
+	}
+
+	public String getCOD_MAQUINA() {
+		return COD_MAQUINA;
+	}
+
+	public void setCOD_MAQUINA(String cOD_MAQUINA) {
+		COD_MAQUINA = cOD_MAQUINA;
+	}
+
+	public String getDESC_MAQUINA() {
+		return DESC_MAQUINA;
+	}
+
+	public void setDESC_MAQUINA(String dESC_MAQUINA) {
+		DESC_MAQUINA = dESC_MAQUINA;
 	}
 
 }

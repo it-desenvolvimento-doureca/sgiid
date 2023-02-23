@@ -20,4 +20,14 @@ public class MAN_MOV_MANUTENCAO_LISTA_MATERIALDao extends GenericDaoJpaImpl<MAN_
 		return utz;
 
 	}
+	
+	public List<MAN_MOV_MANUTENCAO_LISTA_MATERIAL> getbyId(Integer id) {
+		Query query = entityManager.createQuery(
+				"select a from MAN_MOV_MANUTENCAO_LISTA_MATERIAL a where a.ID_MANUTENCAO_CAB = :id");
+		query.setParameter("id", id);
+		List<MAN_MOV_MANUTENCAO_LISTA_MATERIAL> data = query.getResultList();
+		return data;
+
+	}
+	
 }

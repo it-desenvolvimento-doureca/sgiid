@@ -19,9 +19,11 @@ import javax.ws.rs.Produces;
 
 import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVER_OFDao;
+import pt.example.dao.GER_INFO_PAGINASDao;
 import pt.example.dao.MAN_DIC_ARTIGOS_TIPOLOGIADao;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER_OF;
+import pt.example.entity.GER_INFO_PAGINAS;
 import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
 
 @Stateless
@@ -34,6 +36,8 @@ public class SIRB_3 {
 	private GER_CONF_CONSUMOS_SILVER_OFDao dao2;
 	@Inject
 	private MAN_DIC_ARTIGOS_TIPOLOGIADao dao3;
+	@Inject
+	private GER_INFO_PAGINASDao dao4;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -179,7 +183,7 @@ public class SIRB_3 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String DATA_INICIO = firstMap.get("DATA_INICIO");
 		String DATA_FIM = firstMap.get("DATA_FIM");
-		String OPERARIO = firstMap.get("OPERARIO");
+		String OPERARIO = firstMap.get("FUNCIONARIO");
 
 		if (DATA_INICIO != null)
 			DATA_INICIO = "'" + DATA_INICIO + "'";
@@ -203,7 +207,7 @@ public class SIRB_3 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String DATA_INICIO = firstMap.get("DATA_INICIO");
 		String DATA_FIM = firstMap.get("DATA_FIM");
-		String OPERARIO = firstMap.get("OPERARIO");
+		String OPERARIO = firstMap.get("FUNCIONARIO");
 
 		if (DATA_INICIO != null)
 			DATA_INICIO = "'" + DATA_INICIO + "'";
@@ -239,4 +243,79 @@ public class SIRB_3 {
 
 		return dados_folder;
 	}
+	
+	@POST
+	@Path("/PAINEL_FUNC_FALTAR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PAINEL_FUNC_FALTAR(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		
+		Query query_folder = entityManager.createNativeQuery("DECLARE @DATA date = GETDATE(); EXEC PAINEL_FUNC_FALTAR @DATA,null");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/PAINEL_GERAL_CARDS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PAINEL_GERAL_CARDS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		
+		Query query_folder = entityManager.createNativeQuery("DECLARE @DATA date = GETDATE(); EXEC PAINEL_GERAL_CARDS @DATA,null");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	/************************************* GER_INFO_PAGINAS */
+
+	@POST
+	@Path("/createGER_INFO_PAGINAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_INFO_PAGINAS insertGER_INFO_PAGINASA(final GER_INFO_PAGINAS data) {
+		return dao4.create(data);
+	}
+
+	@GET
+	@Path("/getGER_INFO_PAGINASbyid/{urlencod}")
+	@Produces("application/json")
+	public List<GER_INFO_PAGINAS> getGER_INFO_PAGINASbyip(@PathParam("urlencod") String urlencod) {
+		String url = java.net.URLDecoder.decode(urlencod);
+		return dao4.getbyId(url);
+	}
+
+	@DELETE
+	@Path("/deleteGER_INFO_PAGINAS/{id}")
+	public void deleteGER_INFO_PAGINAS(@PathParam("id") Integer id) {
+		GER_INFO_PAGINAS GER_INFO_PAGINAS = new GER_INFO_PAGINAS();
+		GER_INFO_PAGINAS.setID(id);
+		dao4.delete(GER_INFO_PAGINAS);
+	}
+
+	@PUT
+	@Path("/updateGER_INFO_PAGINAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_INFO_PAGINAS updateGER_INFO_PAGINAS(final GER_INFO_PAGINAS GER_INFO_PAGINAS) {
+		GER_INFO_PAGINAS.setID(GER_INFO_PAGINAS.getID());
+		return dao4.update(GER_INFO_PAGINAS);
+	}
+
+	@GET
+	@Path("/getUPDATETIPO_LISTA/{id}/{tipo_lista}")
+	@Produces("application/json")
+	public boolean getUPDATETIPO_LISTA(@PathParam("id") Integer id, @PathParam("tipo_lista") String tipo_lista) {
+		entityManager.createNativeQuery("UPDATE GER_UTILIZADORES SET TIPO_LISTA_FAVORITOS = '" + tipo_lista
+				+ "' WHERE ID_UTILIZADOR = " + id + "").executeUpdate();
+		return true;
+	}
+
 }

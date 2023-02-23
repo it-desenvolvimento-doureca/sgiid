@@ -40,7 +40,7 @@ public class Printer {
 
 		File f = new File("C:/"+localizacao+"/relatorios/" + documento + ".pdf");
 		if (!f.exists()) {
-			 return Response.status(404).entity("Ficheiro n„o existe").build();
+			 return Response.status(404).entity("Ficheiro n√£o existe").build();
 		}
 
 		try {
@@ -48,11 +48,11 @@ public class Printer {
 		} catch (InvalidPasswordException e1) {
 			// TODO Auto-generated catch block
 			// e1.printStackTrace();
-			 return Response.status(404).entity("Ficheiro n„o existe").build();
+			 return Response.status(404).entity("Ficheiro n√£o existe").build();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			// e1.printStackTrace();
-			 return Response.status(404).entity("Ficheiro n„o existe").build();
+			 return Response.status(404).entity("Ficheiro n√£o existe").build();
 		}
 
 		try {
@@ -121,8 +121,8 @@ public class Printer {
 			
 			job.print();
 		} else {
-			//System.out.println("N„o encontrou a impressora");
-			 return Response.status(404).entity("Impressora n„o existe ou n„o est· disponÌvel").build();
+			//System.out.println("N√£o encontrou a impressora");
+			 return Response.status(404).entity("Impressora n√£o existe ou n√£o est√° dispon√≠vel").build();
 		}
 		document.close();
 		 return Response.ok().entity("Impresso").build();

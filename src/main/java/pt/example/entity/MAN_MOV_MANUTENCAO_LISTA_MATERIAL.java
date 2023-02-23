@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -38,6 +39,10 @@ public class MAN_MOV_MANUTENCAO_LISTA_MATERIAL {
 	private Integer UTZ_ULT_MODIF;
 	@JsonProperty( "DATA_ULT_MODIF")
 	private Timestamp DATA_ULT_MODIF;
+	@JsonProperty( "PRECO_MATERIAL")
+	private BigDecimal PRECO_MATERIAL;
+	@JsonProperty( "UNIDADE")
+	private String UNIDADE;
 
 	public Integer getID_MANUTENCAO_LISTA_MATERIAL() {
 		return ID_MANUTENCAO_LISTA_MATERIAL;
@@ -117,6 +122,22 @@ public class MAN_MOV_MANUTENCAO_LISTA_MATERIAL {
 
 	public void setDATA_ULT_MODIF(Timestamp dATA_ULT_MODIF) {
 		DATA_ULT_MODIF = dATA_ULT_MODIF;
+	}
+
+	public BigDecimal getPRECO_MATERIAL() {
+		return PRECO_MATERIAL;
+	}
+
+	public void setPRECO_MATERIAL(BigDecimal pRECO_MATERIAL) {
+		PRECO_MATERIAL = pRECO_MATERIAL;
+	}
+
+	public String getUNIDADE() {
+		return UNIDADE;
+	}
+
+	public void setUNIDADE(String uNIDADE) {
+		UNIDADE = uNIDADE;
 	}
 
 }
