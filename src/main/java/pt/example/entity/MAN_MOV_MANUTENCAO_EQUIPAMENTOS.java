@@ -72,6 +72,14 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 	private String COD_MAQUINA;
 	@JsonProperty( "DESC_MAQUINA")
 	private String DESC_MAQUINA;
+	@JsonProperty( "FABRICANTE")
+	private String FABRICANTE;
+	@JsonProperty( "MODELO")
+	private String MODELO;
+	@JsonProperty( "ANO")
+	private String ANO;
+	@JsonProperty( "N_SERIE")
+	private String N_SERIE;
 	
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
@@ -279,6 +287,38 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 
 	public void setDESC_MAQUINA(String dESC_MAQUINA) {
 		DESC_MAQUINA = dESC_MAQUINA;
+	}
+
+	public String getFABRICANTE() {
+		return FABRICANTE;
+	}
+
+	public void setFABRICANTE(String fABRICANTE) {
+		FABRICANTE = fABRICANTE;
+	}
+
+	public String getMODELO() {
+		return MODELO;
+	}
+
+	public void setMODELO(String mODELO) {
+		MODELO = mODELO;
+	}
+
+	public String getANO() {
+		return ANO;
+	}
+
+	public void setANO(String aNO) {
+		ANO = aNO;
+	}
+
+	public String getN_SERIE() {
+		return N_SERIE;
+	}
+
+	public void setN_SERIE(String n_SERIE) {
+		N_SERIE = n_SERIE;
 	}
 
 }

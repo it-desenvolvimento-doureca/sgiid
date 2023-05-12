@@ -39,18 +39,11 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jersey-server.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/pdfbox-app-2.0.8.jar" sourcepath="C:/Users/it2/.m2/repository/org/apache/pdfbox/pdfbox-app/2.0.8/pdfbox-app-2.0.8-sources.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/sqljdbc42.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-beanutils-1.9.3.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/groovy-all-2.4.5.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/itext-2.1.7.js6.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-collections-3.2.2.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-javaflow-6.5.1.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-digester-1.7.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jdbc.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jcifs-1.3.15.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/msgparser-1.1.15.jar" sourcepath="C:/Users/it2/.m2/repository/com/auxilii/msgparser/msgparser/1.1.15/msgparser-1.1.15-sources.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-3.9.jar" sourcepath="C:/Users/it2/.m2/repository/org/apache/poi/poi/3.9/poi-3.9-sources.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-scratchpad-3.9.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/ucanaccess-4.0.4.jar" sourcepath="C:/Users/it2/.m2/repository/net/sf/ucanaccess/ucanaccess/4.0.4/ucanaccess-4.0.4-sources.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jackcess-3.0.0.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/hsqldb-2.4.1.jar"/>
@@ -60,6 +53,29 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/javax.persistence-api-2.2.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/java-json.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jackson-core-2.13.1.jar" sourcepath="C:/Users/it2/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.13.1/jackson-core-2.13.1-sources.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jackson-databind-2.9.7.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-4.0.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-examples-4.0.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-ooxml-4.0.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-ooxml-schemas-4.0.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/poi-scratchpad-4.0.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/itext-2.1.7.js8.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-annotation-processors-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-castor-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-chart-customizers-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-chart-themes-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-custom-visualization-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-fonts-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-functions-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-javaflow-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/jasperreports-metadata-6.20.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-compress-1.18.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-digester-2.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-beanutils-1.9.4.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-collections4-4.4.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

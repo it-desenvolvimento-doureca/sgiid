@@ -3256,6 +3256,17 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getReferenciasBudget")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getReferenciasBudget() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getReferenciasBudget(getURLSILVER());
+		return dados;
+	}
+
+	@GET
 	@Path("/getReferencia/{proref}")
 	@Produces("application/json")
 	public List<HashMap<String, String>> getReferencia(@PathParam("proref") String proref)
@@ -3321,7 +3332,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getMaquinasSilver(getURLSILVER());
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getMoradas/{clicod}")
 	@Produces("application/json")
@@ -3331,6 +3342,17 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getMoradas(getURLSILVER(), clicod);
+		return dados;
+	}
+
+	@GET
+	@Path("/getMoradasTodas")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getMoradas() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getMoradasTodas(getURLSILVER());
 		return dados;
 	}
 

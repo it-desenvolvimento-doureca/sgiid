@@ -396,12 +396,12 @@ body .p-radiobutton .p-radiobutton-box.p-state-focus {
     overflow: hidden;
     position: relative;
     top: -0.4em;
-}*/
+}
 
 body .p-inputswitch {
     background-color: #0275d8;
     text-transform: uppercase;
-}
+}*/
 
 body .p-inputswitch .p-inputswitch-handle {
     background-color: #ffffff;
@@ -1502,8 +1502,12 @@ body #main_dashboard_css .p-tabview .p-tabview-panels {
     border-bottom: none !important;
     background-color: transparent !important;
     padding: 0;
-    height: 71vh;
+    height: 80vh;
     overflow: auto;
+}
+
+body #main_dashboard_css .p-tabview .p-tabview-panels .step_recursos_humanos .p-tabview-panel {
+    height: 100%;
 }
 
 body .p-scrollpanel .p-scrollpanel-drag {

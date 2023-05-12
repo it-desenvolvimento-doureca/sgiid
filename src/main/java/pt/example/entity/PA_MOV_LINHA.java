@@ -98,6 +98,11 @@ public class PA_MOV_LINHA {
 	@Column(name = "JUSTIFICACAO")
 	private String JUSTIFICACAO;
 	
+	@Column(name = "DATA_INICIO_ACCAO")
+	private Date DATA_INICIO_ACCAO;
+	@Column(name = "HORA_INICIO_ACCAO")
+	private Time HORA_INICIO_ACCAO;
+	
 	public Timestamp getDATA_CRIA() {
 		return DATA_CRIA;
 	}
@@ -384,6 +389,22 @@ public class PA_MOV_LINHA {
 
 	public void setJUSTIFICACAO(String jUSTIFICACAO) {
 		JUSTIFICACAO = jUSTIFICACAO;
+	}
+
+	public Date getDATA_INICIO_ACCAO() {
+		return DATA_INICIO_ACCAO;
+	}
+
+	public void setDATA_INICIO_ACCAO(Date dATA_INICIO_ACCAO) {
+		DATA_INICIO_ACCAO = dATA_INICIO_ACCAO;
+	}
+
+	public Time getHORA_INICIO_ACCAO() {
+		return HORA_INICIO_ACCAO;
+	}
+
+	public void setHORA_INICIO_ACCAO(Time hORA_INICIO_ACCAO) {
+		HORA_INICIO_ACCAO = hORA_INICIO_ACCAO;
 	}
 
 }

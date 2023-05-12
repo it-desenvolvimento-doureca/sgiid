@@ -187,7 +187,7 @@ public class SendEmail {
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(messageBodyPart);
 
-			// cógigo para ficheiro aqui!
+			// cï¿½gigo para ficheiro aqui!
 			if (ficheiros.size() > 0) {
 
 				for (String pair : ficheiros) {

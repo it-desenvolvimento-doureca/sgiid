@@ -6383,8 +6383,8 @@ public class SIRB_2 {
 						+ "',',') EXCEPT (select value from string_split(d.SECTOR,','))  )  ) " + "AND ('" + SECTOR
 						+ "'  = 'null' OR NOT EXISTS(select value from string_split('" + SECTOR
 						+ "',',') EXCEPT (select value from string_split(d.SECTOR,',')) UNION select value from string_split(d.SECTOR,',') EXCEPT (select value from string_split('"
-						+ SECTOR + "',','))  )  ) " + "AND ('" + MAQUINA + "' = 'null' OR d.COD_MAQUINA = '" + MAQUINA
-						+ "') " + "AND ('" + REFERENCIA + "' = 'null' OR d.REFERENCIA = '" + REFERENCIA + "') "
+						+ SECTOR + "',','))  )  ) " + "AND ISNULL(d.COD_MAQUINA,'null') = '" + MAQUINA + "' " 
+						+ "AND  ISNULL(d.REFERENCIA,'null') = '" + REFERENCIA + "' "
 						+ "AND (" + ID + " IS NULL OR d.ID != " + ID + ")) THEN 1 ELSE 0 END Valor , '' txt ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();

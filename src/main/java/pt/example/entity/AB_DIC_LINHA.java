@@ -26,6 +26,7 @@ public class AB_DIC_LINHA {
 	private String UTILIZADOR;
 	private String SENHA;
 	private String DOMINIO;
+	private Boolean DESATIVA;
 
 	@Column(name = "SECCAO")
 	public String getSECCAO() {
@@ -144,6 +145,15 @@ public class AB_DIC_LINHA {
 
 	public void setDOMINIO(String dOMINIO) {
 		DOMINIO = dOMINIO;
+	}
+
+	@Column(name = "DESATIVA")
+	public Boolean getDESATIVA() {
+		return DESATIVA;
+	}
+
+	public void setDESATIVA(Boolean dESATIVA) {
+		DESATIVA = dESATIVA;
 	}
 
 }
