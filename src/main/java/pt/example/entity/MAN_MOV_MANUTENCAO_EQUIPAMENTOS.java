@@ -80,6 +80,9 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 	private String ANO;
 	@JsonProperty( "N_SERIE")
 	private String N_SERIE;
+	@JsonProperty("MAQUINA_PRODUTIVA")
+	private Boolean MAQUINA_PRODUTIVA;
+	
 	
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
@@ -319,6 +322,14 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 
 	public void setN_SERIE(String n_SERIE) {
 		N_SERIE = n_SERIE;
+	}
+
+	public Boolean getMAQUINA_PRODUTIVA() {
+		return MAQUINA_PRODUTIVA;
+	}
+
+	public void setMAQUINA_PRODUTIVA(Boolean mAQUINA_PRODUTIVA) {
+		MAQUINA_PRODUTIVA = mAQUINA_PRODUTIVA;
 	}
 
 }

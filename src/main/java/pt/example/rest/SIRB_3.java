@@ -20,6 +20,7 @@ import javax.ws.rs.Produces;
 import pt.example.dao.COM_BUDGETSDao;
 import pt.example.dao.COM_BUDGETS_ANALISESDao;
 import pt.example.dao.COM_BUDGETS_LINHASDao;
+import pt.example.dao.COM_CUSTOMERS_GROUPSDao;
 import pt.example.dao.COM_CUSTOMER_GROUPSDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVER_OFDao;
@@ -28,11 +29,12 @@ import pt.example.dao.MAN_DIC_ARTIGOS_TIPOLOGIADao;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
 import pt.example.entity.COM_BUDGETS_LINHAS;
+import pt.example.entity.COM_CUSTOMERS_GROUPS;
 import pt.example.entity.COM_CUSTOMER_GROUPS;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER_OF;
 import pt.example.entity.GER_INFO_PAGINAS;
-import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA; 
+import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
 
 @Stateless
 @Path("/sirb")
@@ -54,6 +56,8 @@ public class SIRB_3 {
 	private COM_BUDGETS_ANALISESDao dao7;
 	@Inject
 	private COM_BUDGETS_LINHASDao dao8;
+	@Inject
+	private COM_CUSTOMERS_GROUPSDao dao9;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -387,6 +391,10 @@ public class SIRB_3 {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public COM_BUDGETS insertCOM_BUDGETS(final COM_BUDGETS data) {
+		 
+		List<Object[]> dados = entityManager.createNativeQuery("select ISNULL(MAX(ID),0)+1,0 as teste FROM COM_BUDGETS").getResultList();
+		data.setID(Integer.parseInt(dados.get(0)[0].toString()));
+
 		return dao6.create(data);
 	}
 
@@ -398,10 +406,10 @@ public class SIRB_3 {
 	}
 
 	@GET
-	@Path("/getCOM_BUDGETSbyid/{id}")
+	@Path("/getCOM_BUDGETSbyid/{id}/{versao}")
 	@Produces("application/json")
-	public List<COM_BUDGETS> getCOM_BUDGETSbyid(@PathParam("id") Integer id) {
-		return dao6.getbyid(id);
+	public List<COM_BUDGETS> getCOM_BUDGETSbyid(@PathParam("id") Integer id,@PathParam("versao") Integer versao) {
+		return dao6.getbyid(id,versao);
 	}
 
 	@PUT
@@ -410,6 +418,7 @@ public class SIRB_3 {
 	@Produces("application/json")
 	public COM_BUDGETS updateCOM_BUDGETS(final COM_BUDGETS COM_BUDGETS) {
 		COM_BUDGETS.setID(COM_BUDGETS.getID());
+		COM_BUDGETS.setVERSAO(COM_BUDGETS.getVERSAO());
 		return dao6.update(COM_BUDGETS);
 	}
 
@@ -422,11 +431,13 @@ public class SIRB_3 {
 	}
 
 	@GET
-	@Path("/getCOM_BUDGETSbyverificaseexiste/{id}/{ano}")
+	@Path("/getCOM_BUDGETSbyverificaseexiste/{id}/{ano}/{versao}")
 	@Produces("application/json")
-	public List<COM_BUDGETS> getCOM_BUDGETSbyverificaseexiste(@PathParam("id") Integer id, @PathParam("ano") Integer ano) {
-		return dao6.verificaseexiste(id, ano);
+	public List<COM_BUDGETS> getCOM_BUDGETSbyverificaseexiste(@PathParam("id") Integer id,
+			@PathParam("ano") Integer ano,@PathParam("versao") Integer versao) {
+		return dao6.verificaseexiste(id, ano,versao);
 	}
+
 	/************************************ COM_BUDGETS_LINHAS */
 
 	@POST
@@ -447,17 +458,17 @@ public class SIRB_3 {
 	@GET
 	@Path("/getCOM_BUDGETS_LINHASbyid/{id}")
 	@Produces("application/json")
-	public List<COM_BUDGETS_LINHAS> getCOM_BUDGETS_LINHASbyid(@PathParam("id") Integer id) {
-		return dao8.getbyid(id);
+	public List<COM_BUDGETS_LINHAS> getCOM_BUDGETS_LINHASbyid(@PathParam("id") Integer id,@PathParam("versao") Integer versao) {
+		return dao8.getbyid(id,versao);
 	}
 
 	@GET
-	@Path("/getCOM_BUDGETS_LINHASbyid2/{id}")
+	@Path("/getCOM_BUDGETS_LINHASbyid2/{id}/{versao}")
 	@Produces("application/json")
-	public List<COM_BUDGETS_LINHAS> getCOM_BUDGETS_LINHASbyid2(@PathParam("id") Integer id) {
-		return dao8.getbyid2(id);
+	public List<COM_BUDGETS_LINHAS> getCOM_BUDGETS_LINHASbyid2(@PathParam("id") Integer id,@PathParam("versao") Integer versao) {
+		return dao8.getbyid2(id,versao);
 	}
-	
+
 	@PUT
 	@Path("/updateCOM_BUDGETS_LINHAS")
 	@Consumes("*/*")
@@ -475,7 +486,49 @@ public class SIRB_3 {
 		dao8.delete(COM_BUDGETS_LINHAS);
 	}
 
-		/************************************ COM_BUDGETS_ANALISES */
+	/************************************ COM_CUSTOMERS_GROUPS */
+
+	@POST
+	@Path("/createCOM_CUSTOMERS_GROUPS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public COM_CUSTOMERS_GROUPS insertCOM_CUSTOMERS_GROUPS(final COM_CUSTOMERS_GROUPS data) {
+		return dao9.create(data);
+	}
+
+	@GET
+	@Path("/getCOM_CUSTOMERS_GROUPS")
+	@Produces("application/json")
+	public List<COM_CUSTOMERS_GROUPS> getCOM_CUSTOMERS_GROUPS() {
+		return dao9.getall();
+	}
+
+	@GET
+	@Path("/getCOM_CUSTOMERS_GROUPSbyid/{id}")
+	@Produces("application/json")
+	public List<COM_CUSTOMERS_GROUPS> getCOM_CUSTOMERS_GROUPSbyid(@PathParam("id") Integer id) {
+		// return dao9.getbyid(id);
+		return null;
+	}
+
+	@PUT
+	@Path("/updateCOM_CUSTOMERS_GROUPS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public COM_CUSTOMERS_GROUPS updateCOM_CUSTOMERS_GROUPS(final COM_CUSTOMERS_GROUPS COM_CUSTOMERS_GROUPS) {
+		COM_CUSTOMERS_GROUPS.setID(COM_CUSTOMERS_GROUPS.getID());
+		return dao9.update(COM_CUSTOMERS_GROUPS);
+	}
+
+	@DELETE
+	@Path("/deleteCOM_CUSTOMERS_GROUPS/{id}")
+	public void deleteCOM_CUSTOMERS_GROUPS(@PathParam("id") Integer id) {
+		COM_CUSTOMERS_GROUPS COM_CUSTOMERS_GROUPS = new COM_CUSTOMERS_GROUPS();
+		COM_CUSTOMERS_GROUPS.setID(id);
+		dao9.delete(COM_CUSTOMERS_GROUPS);
+	}
+
+	/************************************ COM_BUDGETS_ANALISES */
 
 	@POST
 	@Path("/createCOM_BUDGETS_ANALISES")
@@ -516,20 +569,19 @@ public class SIRB_3 {
 		dao7.delete(COM_BUDGETS_ANALISES);
 	}
 
-	
 	@POST
 	@Path("/COM_GET_CUSTOMERS")
 	@Consumes("*/*")
 	@Produces("application/json")
 	public List<Object[]> COM_GET_CUSTOMERS(final List<HashMap<String, String>> dados) {
-		
+
 		Query query_folder = entityManager.createNativeQuery("EXEC [COM_GET_CUSTOMERS]");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/COM_GET_REFERENCE_CUSTOMER")
 	@Consumes("*/*")
@@ -539,14 +591,14 @@ public class SIRB_3 {
 		String CLICOD = firstMap.get("CLICOD");
 		String ETSNUM = firstMap.get("ETSNUM");
 		String PROREF = firstMap.get("PROREF");
-		Query query_folder = entityManager.createNativeQuery("EXEC [COM_GET_REFERENCE_CUSTOMER] '"+CLICOD+"','"+ETSNUM+"','"+PROREF+"'");
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC [COM_GET_REFERENCE_CUSTOMER] '" + CLICOD + "','" + ETSNUM + "','" + PROREF + "'");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
-	
+
 	@POST
 	@Path("/COM_GET_BUDGET_ANALISE")
 	@Consumes("*/*")
@@ -557,14 +609,31 @@ public class SIRB_3 {
 		String ID_CUSTOMER = firstMap.get("ID_CUSTOMER");
 		String CUSTOMER_GROUP = firstMap.get("CUSTOMER_GROUP");
 		String REFERENCE_INTERNAL = firstMap.get("REFERENCE_INTERNAL");
-		
+
 		if (ID_CUSTOMER != null)
 			ID_CUSTOMER = "'" + ID_CUSTOMER + "'";
-		
+
 		if (REFERENCE_INTERNAL != null)
 			REFERENCE_INTERNAL = "'" + REFERENCE_INTERNAL + "'";
-		
-		Query query_folder = entityManager.createNativeQuery("EXEC [COM_GET_BUDGET_ANALISE] "+ANO+","+ID_CUSTOMER+","+CUSTOMER_GROUP+","+REFERENCE_INTERNAL+"");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [COM_GET_BUDGET_ANALISE] " + ANO + "," + ID_CUSTOMER
+				+ "," + CUSTOMER_GROUP + "," + REFERENCE_INTERNAL + "");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/COM_GET_BUDGET_ANALISE_TOOLS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> COM_GET_BUDGET_ANALISE_TOOLS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String MES = firstMap.get("MES");
+ 		 
+		Query query_folder = entityManager.createNativeQuery("EXEC [COM_GET_BUDGET_ANALISE_TOOLS] " + ANO + "," + MES);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

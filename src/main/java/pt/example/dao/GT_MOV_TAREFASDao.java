@@ -118,6 +118,11 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO= 19 and SUB_MODULO = 'R' " + query_utilizador+ " and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO ) as TOTAL_TAREFAS_REUNIAO "
 				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO= 19 and SUB_MODULO = 'R' " + query_utilizador+ " and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO AND UTZ_ENCAMINHADO is not null) as TAREFAS_ENCAMINHADAS_REUNIAO "
 				+ ",(select count(*) from GT_MOV_TAREFAS where DATA_FIM<GETDATE() AND ID_MODULO= 19 and SUB_MODULO = 'R' " + query_utilizador+ " and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO ) as TOTAL_TAREFAS_ATRASO_REUNIAO "
+						
+				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO is null and SUB_MODULO is null   and ( ( UTZ_TIPO = 'u' and (UTZ_ID = 1 OR UTZ_ENCAMINHADO  =1 and 1 = CASE WHEN UTZ_ENCAMINHADO is not null and UTZ_ENCAMINHADO  != 1 THEN 0 ELSE 1 END )))  and ESTADO ='P' and ID_ACCAO = a.ID_ACCAO ) as TAREFAS_NAO_LIDAS_DIVERSOS "
+				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO is null and SUB_MODULO is null  and ( ( UTZ_TIPO = 'u' and (UTZ_ID = 1 OR UTZ_ENCAMINHADO  =1 and 1 = CASE WHEN UTZ_ENCAMINHADO is not null and UTZ_ENCAMINHADO  != 1 THEN 0 ELSE 1 END )))  and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO ) as TOTAL_TAREFAS_DIVERSOS "
+				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO is null and SUB_MODULO is null  and ( ( UTZ_TIPO = 'u' and (UTZ_ID = 1 OR UTZ_ENCAMINHADO  =1 and 1 = CASE WHEN UTZ_ENCAMINHADO is not null and UTZ_ENCAMINHADO  != 1 THEN 0 ELSE 1 END )))  and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO AND UTZ_ENCAMINHADO is not null) as TAREFAS_ENCAMINHADAS_DIVERSOS "
+				+ ",(select count(*) from GT_MOV_TAREFAS where DATA_FIM<GETDATE() AND ID_MODULO  is null and SUB_MODULO  is null  and ( ( UTZ_TIPO = 'u' and (UTZ_ID = 1 OR UTZ_ENCAMINHADO  =1 and 1 = CASE WHEN UTZ_ENCAMINHADO is not null and UTZ_ENCAMINHADO  != 1 THEN 0 ELSE 1 END )))  and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO ) as TOTAL_TAREFAS_ATRASO_DIVERSOS "
 				
 				+ "from GT_MOV_TAREFAS a where ESTADO in ('P','L','E') AND INATIVO != 1 " + query_utilizador
 				+ " GROUP BY a.ID_ACCAO ORDER BY accao");
@@ -242,13 +247,15 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 						+ "from REU_REUNIOES_PLANOS_ACCOES d inner join REU_REUNIOES e on d.ID_REUNIAO = e.ID_REUNIAO "
 						
 						+ "select (select DESCRICAO_PT from GT_DIC_TAREFAS where ID = a.ID_ACCAO) as NOME_TAREFA, "
-						+ "(select NOME_UTILIZADOR from GER_UTILIZADORES where ID_UTILIZADOR = b.RESPONSAVEL) as UTILIZADOR_ORIGEM, a.DATA_CRIA as DATA_ATRIBUICAO, "
+						+ "(select NOME_UTILIZADOR from GER_UTILIZADORES where ID_UTILIZADOR = CASE WHEN a.ID_MODULO is null THEN  a.UTZ_CRIA ELSE b.RESPONSAVEL END) as UTILIZADOR_ORIGEM, a.DATA_CRIA as DATA_ATRIBUICAO, "
 						+ "(select NOME_UTILIZADOR from GER_UTILIZADORES where ID_UTILIZADOR = a.UTZ_ID) as ATRIBUIDO, (select NOME_UTILIZADOR from GER_UTILIZADORES where ID_UTILIZADOR = a.UTZ_ENCAMINHADO) as ENCAMINHADO,"
 						+ "a.DATA_ENCAMINHADO, a.DATA_FIM,  (select c.DESCRICAO from RC_DIC_GRAU_IMPORTANCIA c where c.ID = a.PRIORIDADE) as PRIORIDADE, a.ESTADO, b.CLIENTE, b.REF, "
 						+ "b.NOME_REF, a.DATA_CONCLUSAO, (select NOME_UTILIZADOR from GER_UTILIZADORES where ID_UTILIZADOR = a.UTZ_CONCLUSAO) as UTILIZADOR_CONCLUIU,a.ID_TAREFA "
 						+ ",b.ID_RECLAMACAO ,CASE WHEN a.UTZ_TIPO = 'g' THEN (select g.DESCRICAO from GER_GRUPO g where g.ID= a.UTZ_ID) WHEN  a.UTZ_TIPO = 's' THEN (select s.DES_SECTOR from RH_SECTORES s where s.COD_SECTOR= a.UTZ_ID)  ELSE null   END,a.PERCENTAGEM_CONCLUSAO,a.DESCRICAO,a.TEMPO_GASTO, "
 						+ "a.UTZ_ENCAMINHADO,a.OBSERVACOES,a.ID_CAMPO,a.UTZ_ID,b.RESPONSAVEL,b.OBRIGA_EVIDENCIAS, "
-						+ "(select EMAIL from GER_UTILIZADORES where ID_UTILIZADOR = b.RESPONSAVEL) as UTILIZADOR_ORIGEM_EMAIL,b.TIPO,a.ID_MODULO,a.SUB_MODULO,(select DESCRICAO from GER_DEPARTAMENTO where ID = b.DEPARTAMENTO) NOME_DEPARTAMENTO, a.MOTIVO_REJEICAO,a.JUSTIFICACAO_ALTERACAO_ESTADO,a.ID_TAREFA_PAI   "
+						+ "(select EMAIL from GER_UTILIZADORES where ID_UTILIZADOR = CASE WHEN a.ID_MODULO is null THEN  a.UTZ_CRIA ELSE b.RESPONSAVEL END) as UTILIZADOR_ORIGEM_EMAIL,b.TIPO,a.ID_MODULO,a.SUB_MODULO,(select DESCRICAO from GER_DEPARTAMENTO where ID = CASE WHEN a.ID_MODULO is null THEN (Select top 1  d.ID_DEPARTAMENTO from GER_UTILIZADORES xa "
+						+ "left join RH_FUNCIONARIOS b on CASE WHEN xa.COD_UTZ = '9889' THEN 0 ELSE xa.COD_UTZ END = b.COD_FUNC_ORIGEM left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR left join GER_DEPARTAMENTOS_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
+						+ "where xa.ID_UTILIZADOR = a.UTZ_CRIA) ELSE b.DEPARTAMENTO END) NOME_DEPARTAMENTO, a.MOTIVO_REJEICAO,a.JUSTIFICACAO_ALTERACAO_ESTADO,a.ID_TAREFA_PAI   "
 						+ " ,(select count(*) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = a.ID_TAREFA ) subtarefas "
 						+ "from  GT_MOV_TAREFAS a  left join " + " @TABELA_TEMP b "
 						+ "on a.ID_CAMPO = b.ID and b.MODULO = a.ID_MODULO and b.SUB_MODULO = a.SUB_MODULO where ((not " + varquery + " != 0) or (a.ESTADO in (" + estado + ")))  "

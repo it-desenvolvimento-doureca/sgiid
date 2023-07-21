@@ -31,10 +31,10 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 
 		/*
 		 * Query query = entityManager.createNativeQuery(
-		 * "Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+		 * "Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em ExecuÃ§Ã£o' THEN '1' "
 		 * + "WHEN a.ESTADO = 'Planeado' THEN '3' " +
 		 * "WHEN a.ESTADO = 'Preparado' THEN '5' " +
-		 * "WHEN a.ESTADO = 'Em Preparação' THEN '4' " +
+		 * "WHEN a.ESTADO = 'Em PreparaÃ§Ã£o' THEN '4' " +
 		 * "WHEN a.ESTADO = 'Em Planeamento' THEN '2' " +
 		 * "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery +
 		 * " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
@@ -53,14 +53,14 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		 * );
 		 */
 		Query query = entityManager.createNativeQuery(
-				"Select a.ID_MANUTENCAO,CASE WHEN a.ID_TIPO_TIPOLOGIA_DOSIFICADORES IS NULL THEN c.NOME_TIPO_MANUTENCAO ELSE c.NOME_TIPO_MANUTENCAO +' - '+ f.NOME END as NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+				"Select a.ID_MANUTENCAO,CASE WHEN a.ID_TIPO_TIPOLOGIA_DOSIFICADORES IS NULL THEN c.NOME_TIPO_MANUTENCAO ELSE c.NOME_TIPO_MANUTENCAO +' - '+ f.NOME END as NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em ExecuÃ§Ã£o' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
-						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
+						+ "WHEN a.ESTADO = 'Em PreparaÃ§Ã£o' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 						+ "  ,CASE WHEN a.CLASSIF = 'D' THEN  a.DATA_PLANEAMENTO ELSE cast(cc.data as date) END as dt_prev "
 						+ " ,CASE WHEN a.CLASSIF = 'D' THEN  a.HORA_PLANEAMENTO ELSE cast(cc.data as time) END as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
-						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo,a.CLASSIF "
+						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo,a.CLASSIF,a.ID_LINHA  "
 						+ "from AB_MOV_MANUTENCAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
 						+ " left join AB_DIC_TIPO_MANUTENCAO c on c.ID_TIPO_MANUTENCAO = a.ID_TIPO_MANUTENCAO "
 						+ " left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
@@ -99,10 +99,10 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 
 		/*
 		 * Query query = entityManager.createNativeQuery(
-		 * "Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+		 * "Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em ExecuÃ§Ã£o' THEN '1' "
 		 * + "WHEN a.ESTADO = 'Planeado' THEN '3' " +
 		 * "WHEN a.ESTADO = 'Preparado' THEN '5' " +
-		 * "WHEN a.ESTADO = 'Em Preparação' THEN '4' " +
+		 * "WHEN a.ESTADO = 'Em PreparaÃ§Ã£o' THEN '4' " +
 		 * "WHEN a.ESTADO = 'Em Planeamento' THEN '2' " +
 		 * "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF " +
 		 * " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO  and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
@@ -122,14 +122,14 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 
 		Query query = entityManager.createNativeQuery(
 				"Select a.ID_MANUTENCAO,CASE WHEN a.ID_TIPO_TIPOLOGIA_DOSIFICADORES IS NULL THEN c.NOME_TIPO_MANUTENCAO ELSE c.NOME_TIPO_MANUTENCAO +' - '+ f.NOME END as NOME_TIPO_MANUTENCAO, "
-						+ "a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+						+ "a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em ExecuÃ§Ã£o' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
-						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
+						+ "WHEN a.ESTADO = 'Em PreparaÃ§Ã£o' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF "
 						+ " ,CASE WHEN a.CLASSIF = 'D' THEN  a.DATA_PLANEAMENTO ELSE cast(cc.data as date) END as dt_prev "
 						+ ",CASE WHEN a.CLASSIF = 'D' THEN  a.HORA_PLANEAMENTO ELSE cast(cc.data as time) END as h_prev "
 						+ ",(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla,"
-						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo "
+						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,c.COR as cortipo,a.ID_LINHA  "
 						+ "from AB_MOV_MANUTENCAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
 						+ "left join AB_DIC_TIPO_MANUTENCAO c on c.ID_TIPO_MANUTENCAO = a.ID_TIPO_MANUTENCAO "
 						+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
@@ -313,9 +313,9 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		}
 
 		Query query = entityManager.createNativeQuery(
-				"Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+				"Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em ExecuÃ§Ã£o' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
-						+ "WHEN a.ESTADO = 'Em Preparação' THEN '3' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
+						+ "WHEN a.ESTADO = 'Em PreparaÃ§Ã£o' THEN '3' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 						+ " ,(select top 1 DATA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO  and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
 						+ " (select top 1 HORA_PREVISTA from AB_MOV_MANUTENCAO_CAB x where  x.ID_MANUTENCAO = a.ID_MANUTENCAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
@@ -353,9 +353,9 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 		}
 
 		Query query = entityManager.createNativeQuery(
-				"Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+				"Select a.ID_MANUTENCAO,c.NOME_TIPO_MANUTENCAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em ExecuÃ§Ã£o' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
-						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
+						+ "WHEN a.ESTADO = 'Em PreparaÃ§Ã£o' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 						+ " ,cast(cc.data as date) as dt_prev," + "cast(cc.data as time) as h_prev, "
 						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
@@ -379,9 +379,9 @@ public class AB_MOV_MANUTENCAODao extends GenericDaoJpaImpl<AB_MOV_MANUTENCAO, I
 	}
 
 	public List<AB_MOV_MANUTENCAO> getbyid(Integer id, Integer linha) {
-		Query query = entityManager.createQuery("Select a,b,c,d,e, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+		Query query = entityManager.createQuery("Select a,b,c,d,e, CASE WHEN a.ESTADO = 'Em ExecuÃ§Ã£o' THEN '1' "
 				+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
-				+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
+				+ "WHEN a.ESTADO = 'Em PreparaÃ§Ã£o' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B from AB_MOV_MANUTENCAO a,AB_DIC_LINHA b,AB_DIC_TIPO_MANUTENCAO c,AB_DIC_TURNO d,GER_UTILIZADORES e where a.UTZ_PLANEAMENTO = e.ID_UTILIZADOR and a.ID_LINHA = b.ID_LINHA and a.ID_TIPO_MANUTENCAO = c.ID_TIPO_MANUTENCAO and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1 and a.ID_MANUTENCAO = :id "
 				+ "and ((not :linha != 0) or (a.ID_LINHA = :linha))  order by B,a.DATA_PLANEAMENTO");
 		query.setParameter("id", id);

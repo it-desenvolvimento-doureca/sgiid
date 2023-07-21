@@ -12,19 +12,21 @@ public class COM_BUDGETS_LINHASDao extends GenericDaoJpaImpl<COM_BUDGETS_LINHAS,
 		super(COM_BUDGETS_LINHAS.class);
 	}
 
-	public List<COM_BUDGETS_LINHAS> getbyid(Integer id) {
+	public List<COM_BUDGETS_LINHAS> getbyid(Integer id,Integer versao) {
 
-		Query query = entityManager.createQuery("Select a from COM_BUDGETS_LINHAS a where a.ID_BUDGET = :id ");
+		Query query = entityManager.createQuery("Select a from COM_BUDGETS_LINHAS a where a.ID_BUDGET = :id AND a.VERSAO_BUDGET = :versao ");
 		query.setParameter("id", id);
+		query.setParameter("versao", versao);
 		List<COM_BUDGETS_LINHAS> data = query.getResultList();
 		return data;
 
 	}
 
-	public List<COM_BUDGETS_LINHAS> getbyid2(Integer id) {
+	public List<COM_BUDGETS_LINHAS> getbyid2(Integer id,Integer versao) {
 
-		Query query = entityManager.createNativeQuery("EXEC [COM_GET_BUDGETS_LINHAS]  :id ");
+		Query query = entityManager.createNativeQuery("EXEC [COM_GET_BUDGETS_LINHAS]  :id,:versao ");
 		query.setParameter("id", id);
+		query.setParameter("versao", versao);
 		List<COM_BUDGETS_LINHAS> data = query.getResultList();
 		return data;
 

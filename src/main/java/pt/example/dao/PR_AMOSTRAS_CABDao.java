@@ -23,7 +23,7 @@ public class PR_AMOSTRAS_CABDao extends GenericDaoJpaImpl<PR_AMOSTRAS_CAB, Integ
 
 	public List<PR_AMOSTRAS_CAB> getall() {
 
-		Query query = entityManager.createQuery("Select a,(select COR from AB_DIC_LINHA WHERE ID_LINHA  = a.ID_LINHA),(select x.DESCRICAO from PR_DIC_TIPOLOGIA_ENSAIO x where x.ID_TIPOLOGIA_ENSAIO = a.ID_TIPOLOGIA_ENSAIO) as TIPOLOGIA_ENSAIO_DESC"
+		Query query = entityManager.createQuery("Select a,(select COR from AB_DIC_LINHA WHERE ID_LINHA  = a.ID_LINHA),(select x.DESCRICAO from PR_DIC_TIPOLOGIA_ENSAIO x where x.ID_TIPOLOGIA_ENSAIO = a.ID_TIPOLOGIA_ENSAIO) as TIPOLOGIA_ENSAIO_DESC,(select NOME_LINHA from AB_DIC_LINHA WHERE ID_LINHA  = a.ID_LINHA) as NOME_LINHA "
 				+ " from PR_AMOSTRAS_CAB a where a.ATIVO  = 1 order by DATA_LANCAMENTO desc,ID_AMOSTRA desc");
 		List<PR_AMOSTRAS_CAB> data = query.getResultList();
 		return data;

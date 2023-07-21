@@ -737,6 +737,17 @@ getUserIP(function (ip) {
 });
 
 $(document).ready(function () {
+    $(function () {
+        $(".divbudget_analises_table_wrapper").width($(".budget_analises_table .p-datatable-wrapper").width());
+        $(".budget_analises_table_wrapper").scroll(function () {
+            $(".budget_analises_table").scrollLeft($(".budget_analises_table_wrapper").scrollLeft());
+        });
+        $(".budget_analises_table").scroll(function () {
+            $(".budget_analises_table_wrapper").scrollLeft($(".budget_analises_table").scrollLeft());
+        });
+    });
+
+
     var clicked = false, clickX;
     $('[id^=analises_prev_scroll]').on({
         'mousemove': function (e) {

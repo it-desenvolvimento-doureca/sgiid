@@ -4403,6 +4403,7 @@ public class SIRB_2 {
 		String AMBITO = firstMap.get("AMBITO");
 		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
 		String TRIMESTRE = firstMap.get("TRIMESTRE");
+		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
 
 		if (LOCALIZACAO != null)
 			LOCALIZACAO = "'" + LOCALIZACAO + "'";
@@ -4413,9 +4414,9 @@ public class SIRB_2 {
 		if (DATA_FIM != null)
 			DATA_FIM = "'" + DATA_FIM + "'";
 
-		Query query_folder = entityManager
-				.createNativeQuery("EXEC MAN_GET_MTBF_MTTR " + ANO + "," + MES + "," + DATA_INICIO + "," + DATA_FIM
-						+ "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO + "," + EQUIPAMENTO + "," + TRIMESTRE);
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_MTBF_MTTR " + ANO + "," + MES + ","
+				+ DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO + ","
+				+ EQUIPAMENTO + "," + TRIMESTRE + "," + MAQUINA_PRODUTIVA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -4467,6 +4468,7 @@ public class SIRB_2 {
 		String LOCALIZACAO = firstMap.get("LOCALIZACAO");
 		String AMBITO = firstMap.get("AMBITO");
 		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
 
 		if (LOCALIZACAO != null)
 			LOCALIZACAO = "'" + LOCALIZACAO + "'";
@@ -4477,9 +4479,9 @@ public class SIRB_2 {
 		if (DATA_FIM != null)
 			DATA_FIM = "'" + DATA_FIM + "'";
 
-		Query query_folder = entityManager
-				.createNativeQuery("EXEC MAN_GET_INDICADORES " + ANO + "," + TIPO_MANUTENCAO + "," + EQUIPAMENTO + ","
-						+ DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO);
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC MAN_GET_INDICADORES " + ANO + "," + TIPO_MANUTENCAO + "," + EQUIPAMENTO + "," + DATA_INICIO + ","
+						+ DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO + "," + MAQUINA_PRODUTIVA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -4500,6 +4502,7 @@ public class SIRB_2 {
 		String LOCALIZACAO = firstMap.get("LOCALIZACAO");
 		String AMBITO = firstMap.get("AMBITO");
 		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
 
 		if (LOCALIZACAO != null)
 			LOCALIZACAO = "'" + LOCALIZACAO + "'";
@@ -4510,9 +4513,9 @@ public class SIRB_2 {
 		if (DATA_FIM != null)
 			DATA_FIM = "'" + DATA_FIM + "'";
 
-		Query query_folder = entityManager
-				.createNativeQuery("EXEC MAN_GET_ANALISE_MANUTENCAO " + ANO + "," + TIPO_MANUTENCAO + "," + DATA_INICIO
-						+ "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO + "," + EQUIPAMENTO);
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_ANALISE_MANUTENCAO " + ANO + ","
+				+ TIPO_MANUTENCAO + "," + DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + ","
+				+ FUNCIONARIO + "," + EQUIPAMENTO + "," + MAQUINA_PRODUTIVA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -6383,9 +6386,9 @@ public class SIRB_2 {
 						+ "',',') EXCEPT (select value from string_split(d.SECTOR,','))  )  ) " + "AND ('" + SECTOR
 						+ "'  = 'null' OR NOT EXISTS(select value from string_split('" + SECTOR
 						+ "',',') EXCEPT (select value from string_split(d.SECTOR,',')) UNION select value from string_split(d.SECTOR,',') EXCEPT (select value from string_split('"
-						+ SECTOR + "',','))  )  ) " + "AND ISNULL(d.COD_MAQUINA,'null') = '" + MAQUINA + "' " 
-						+ "AND  ISNULL(d.REFERENCIA,'null') = '" + REFERENCIA + "' "
-						+ "AND (" + ID + " IS NULL OR d.ID != " + ID + ")) THEN 1 ELSE 0 END Valor , '' txt ");
+						+ SECTOR + "',','))  )  ) " + "AND ISNULL(d.COD_MAQUINA,'null') = '" + MAQUINA + "' "
+						+ "AND  ISNULL(d.REFERENCIA,'null') = '" + REFERENCIA + "' " + "AND (" + ID
+						+ " IS NULL OR d.ID != " + ID + ")) THEN 1 ELSE 0 END Valor , '' txt ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -6408,9 +6411,9 @@ public class SIRB_2 {
 						+ "WHERE  ('" + SECTOR
 						+ "'  = 'null' OR  NOT EXISTS(select value from string_split(documento.SECTOR,',') EXCEPT (select value from string_split('"
 						+ SECTOR + "',',')) UNION select value from string_split('" + SECTOR
-						+ "',',') EXCEPT (select value from string_split(documento.SECTOR,','))  ) ) " + " AND ('"
-						+ MAQUINA + "' = 'null' OR documento.COD_MAQUINA = '" + MAQUINA + "') AND " + " ('" + REFERENCIA
-						+ "' = 'null' OR documento.REFERENCIA = '" + REFERENCIA + "') AND "
+						+ "',',') EXCEPT (select value from string_split(documento.SECTOR,','))  ) ) "
+						+ " AND ISNULL(documento.COD_MAQUINA,'null') = '" + MAQUINA + "' AND "
+						+ " ISNULL(documento.REFERENCIA,'null') = '" + REFERENCIA + "'  AND "
 						+ " tipoDocumento.DOCUMENTO_PREDEFINIDO = 1 AND documento.ID != " + ID + "");
 
 		List<Integer> dados_folder = query_folder.getResultList();

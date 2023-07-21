@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -9,17 +10,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
+@IdClass(PK_COM_BUDGETS.class)
 @Table(name = "COM_BUDGETS")
-public class COM_BUDGETS {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class COM_BUDGETS implements Serializable{
+	@Id 
 	@JsonProperty("ID")
 	private Integer ID;
+	@Id
+	@JsonProperty("VERSAO")
+    private Integer VERSAO;
+	@JsonProperty("VERSAO_ATIVA")
+    private Boolean VERSAO_ATIVA;
 	@JsonProperty("ANO")
 	private Integer ANO;
 	@JsonProperty("DATA_CRIA")
@@ -110,6 +117,30 @@ public class COM_BUDGETS {
 
 	public void setANO(Integer aNO) {
 		ANO = aNO;
+	}
+
+	public Integer getVERSAO() {
+		return VERSAO;
+	}
+
+	public void setVERSAO(Integer vERSAO) {
+		VERSAO = vERSAO;
+	}
+
+	public Boolean getVERSAO_ATIVA() {
+		return VERSAO_ATIVA;
+	}
+
+	public void setVERSAO_ATIVA(Boolean vERSAO_ATIVA) {
+		VERSAO_ATIVA = vERSAO_ATIVA;
+	}
+
+	public String getESTADO() {
+		return ESTADO;
+	}
+
+	public void setESTADO(String eSTADO) {
+		ESTADO = eSTADO;
 	}
 
 }

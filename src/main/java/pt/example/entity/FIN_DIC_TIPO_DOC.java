@@ -20,6 +20,10 @@ public class FIN_DIC_TIPO_DOC {
 	private String TIPO_DOCUMENTO;
 	@Column(name = "NOME_DOCUMENTO")
 	private String NOME_DOCUMENTO;
+	@Column(name = "TIPO_FICHEIRO_1")
+	private String TIPO_FICHEIRO_1;
+	@Column(name = "TIPO_FICHEIRO_2")
+	private String TIPO_FICHEIRO_2;
 
 	public Integer getID() {
 		return ID;
@@ -43,6 +47,22 @@ public class FIN_DIC_TIPO_DOC {
 
 	public void setNOME_DOCUMENTO(String nOME_DOCUMENTO) {
 		NOME_DOCUMENTO = nOME_DOCUMENTO;
+	}
+
+	public String getTIPO_FICHEIRO_1() {
+		return TIPO_FICHEIRO_1;
+	}
+
+	public void setTIPO_FICHEIRO_1(String tIPO_FICHEIRO_1) {
+		TIPO_FICHEIRO_1 = tIPO_FICHEIRO_1;
+	}
+
+	public String getTIPO_FICHEIRO_2() {
+		return TIPO_FICHEIRO_2;
+	}
+
+	public void setTIPO_FICHEIRO_2(String tIPO_FICHEIRO_2) {
+		TIPO_FICHEIRO_2 = tIPO_FICHEIRO_2;
 	}
 
 }

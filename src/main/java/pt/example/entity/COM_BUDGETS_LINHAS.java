@@ -1,6 +1,7 @@
 package pt.example.entity;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -56,6 +57,11 @@ public class COM_BUDGETS_LINHAS {
 	private Integer UTZ_CRIA;
 	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
+	@JsonProperty("SOP_DATE")
+	private Timestamp SOP_DATE;
+	@JsonProperty("VERSAO_BUDGET")
+	private Integer VERSAO_BUDGET;
+	
 
 	public Integer getID() {
 		return ID;
@@ -209,6 +215,22 @@ public class COM_BUDGETS_LINHAS {
 
 	public void setID_BUDGET(Integer iD_BUDGET) {
 		ID_BUDGET = iD_BUDGET;
+	}
+
+	public Timestamp getSOP_DATE() {
+		return SOP_DATE;
+	}
+
+	public void setSOP_DATE(Timestamp sOP_DATE) {
+		SOP_DATE = sOP_DATE;
+	}
+
+	public Integer getVERSAO_BUDGET() {
+		return VERSAO_BUDGET;
+	}
+
+	public void setVERSAO_BUDGET(Integer vERSAO_BUDGET) {
+		VERSAO_BUDGET = vERSAO_BUDGET;
 	}
 
 	 

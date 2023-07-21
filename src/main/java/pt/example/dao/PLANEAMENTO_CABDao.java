@@ -24,7 +24,7 @@ public class PLANEAMENTO_CABDao extends GenericDaoJpaImpl<PLANEAMENTO_CAB, Integ
 	public List<PLANEAMENTO_CAB> getall() {
 
 		Query query = entityManager.createQuery(
-				"Select a,(select COR from AB_DIC_LINHA WHERE ID_LINHA  = a.LINHA) from PLANEAMENTO_CAB a order by ano desc,semana desc ");
+				"Select a,(select COR from AB_DIC_LINHA WHERE ID_LINHA  = a.LINHA),(select NOME_LINHA from AB_DIC_LINHA WHERE ID_LINHA  = a.LINHA) as NOME_LINHA from PLANEAMENTO_CAB a order by ano desc,semana desc ");
 		List<PLANEAMENTO_CAB> data = query.getResultList();
 		return data;
 
