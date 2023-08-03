@@ -3464,6 +3464,18 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
+	@GET
+	@Path("/REABRIR_MANUTENCAO/{id}/{user}")
+	@Produces("application/json")
+	public List<Object[]> REABRIR_MANUTENCAO(@PathParam("id") Integer id, @PathParam("user") Integer user) {
+
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_REABRIR_MANUTENCAO :user,:id")
+				.setParameter("id", id).setParameter("user", user);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+		return dados_folder;
+	}
+
 	/************************************* MAN_MOV_MANUTENCAO_OPERARIOS */
 
 	@POST
@@ -6409,10 +6421,13 @@ public class SIRB_2 {
 				.createNativeQuery("select COUNT(documento.ID) as total FROM DOC_FICHA_DOCUMENTOS documento "
 						+ "left join DOC_DIC_TIPOS_DOCUMENTO tipoDocumento ON documento.TIPO_DOCUMENTO = tipoDocumento.ID "
 						+ "WHERE  ('" + SECTOR
-						+ "'  = 'null' OR  NOT EXISTS(select value from string_split(documento.SECTOR,',') EXCEPT (select value from string_split('"
+						+ "'  = 'null' OR ( NOT EXISTS(select value from string_split(documento.SECTOR,',') EXCEPT (select value from string_split('"
 						+ SECTOR + "',',')) UNION select value from string_split('" + SECTOR
-						+ "',',') EXCEPT (select value from string_split(documento.SECTOR,','))  ) ) "
-						+ " AND ISNULL(documento.COD_MAQUINA,'null') = '" + MAQUINA + "' AND "
+						+ "',',') EXCEPT (select value from string_split(documento.SECTOR,','))  ) AND "
+						+ "NOT EXISTS( select value from string_split('" + SECTOR
+						+ "',',') EXCEPT (select value from string_split(documento.SECTOR,',')) UNION  "
+						+ "select value from string_split(documento.SECTOR,',') EXCEPT (select value from string_split('"
+						+ SECTOR + "',','))) )) " + " AND ISNULL(documento.COD_MAQUINA,'null') = '" + MAQUINA + "' AND "
 						+ " ISNULL(documento.REFERENCIA,'null') = '" + REFERENCIA + "'  AND "
 						+ " tipoDocumento.DOCUMENTO_PREDEFINIDO = 1 AND documento.ID != " + ID + "");
 
