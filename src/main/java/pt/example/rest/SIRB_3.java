@@ -1,5 +1,7 @@
 package pt.example.rest;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import pt.example.bootstrap.ConnectProgress;
 import pt.example.dao.COM_BUDGETSDao;
 import pt.example.dao.COM_BUDGETS_ANALISESDao;
 import pt.example.dao.COM_BUDGETS_LINHASDao;
@@ -26,6 +29,16 @@ import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVER_OFDao;
 import pt.example.dao.GER_INFO_PAGINASDao;
 import pt.example.dao.MAN_DIC_ARTIGOS_TIPOLOGIADao;
+import pt.example.dao.PIN_DIC_ARMAZEMDao;
+import pt.example.dao.PIN_DIC_CABINESDao;
+import pt.example.dao.PIN_DIC_POTESDao;
+import pt.example.dao.PIN_DIC_PRODUTOSDao;
+import pt.example.dao.PIN_DIC_PRODUTOS_RELACIONADOSDao;
+import pt.example.dao.PIN_DIC_TIPO_ACABAMENTODao;
+import pt.example.dao.PIN_MOV_PREPARACAODao;
+import pt.example.dao.PIN_MOV_PREPARACAO_CABDao;
+import pt.example.dao.PIN_MOV_PREPARACAO_ETIQDao;
+import pt.example.dao.PIN_MOV_PREPARACAO_LINHADao;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
 import pt.example.entity.COM_BUDGETS_LINHAS;
@@ -35,6 +48,16 @@ import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER_OF;
 import pt.example.entity.GER_INFO_PAGINAS;
 import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
+import pt.example.entity.PIN_DIC_ARMAZEM;
+import pt.example.entity.PIN_DIC_CABINES;
+import pt.example.entity.PIN_DIC_POTES;
+import pt.example.entity.PIN_DIC_PRODUTOS;
+import pt.example.entity.PIN_DIC_PRODUTOS_RELACIONADOS;
+import pt.example.entity.PIN_DIC_TIPO_ACABAMENTO;
+import pt.example.entity.PIN_MOV_PREPARACAO;
+import pt.example.entity.PIN_MOV_PREPARACAO_CAB;
+import pt.example.entity.PIN_MOV_PREPARACAO_ETIQ;
+import pt.example.entity.PIN_MOV_PREPARACAO_LINHA;
 
 @Stateless
 @Path("/sirb")
@@ -58,6 +81,26 @@ public class SIRB_3 {
 	private COM_BUDGETS_LINHASDao dao8;
 	@Inject
 	private COM_CUSTOMERS_GROUPSDao dao9;
+	@Inject
+	private PIN_DIC_TIPO_ACABAMENTODao dao10;
+	@Inject
+	private PIN_DIC_ARMAZEMDao dao11;
+	@Inject
+	private PIN_DIC_CABINESDao dao12;
+	@Inject
+	private PIN_DIC_POTESDao dao13;
+	@Inject
+	private PIN_DIC_PRODUTOSDao dao14;
+	@Inject
+	private PIN_DIC_PRODUTOS_RELACIONADOSDao dao15;
+	@Inject
+	private PIN_MOV_PREPARACAODao dao16;
+	@Inject
+	private PIN_MOV_PREPARACAO_CABDao dao17;
+	@Inject
+	private PIN_MOV_PREPARACAO_LINHADao dao18;
+	@Inject
+	private PIN_MOV_PREPARACAO_ETIQDao dao19;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -391,8 +434,9 @@ public class SIRB_3 {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public COM_BUDGETS insertCOM_BUDGETS(final COM_BUDGETS data) {
-		 
-		List<Object[]> dados = entityManager.createNativeQuery("select ISNULL(MAX(ID),0)+1,0 as teste FROM COM_BUDGETS").getResultList();
+
+		List<Object[]> dados = entityManager.createNativeQuery("select ISNULL(MAX(ID),0)+1,0 as teste FROM COM_BUDGETS")
+				.getResultList();
 		data.setID(Integer.parseInt(dados.get(0)[0].toString()));
 
 		return dao6.create(data);
@@ -408,8 +452,8 @@ public class SIRB_3 {
 	@GET
 	@Path("/getCOM_BUDGETSbyid/{id}/{versao}")
 	@Produces("application/json")
-	public List<COM_BUDGETS> getCOM_BUDGETSbyid(@PathParam("id") Integer id,@PathParam("versao") Integer versao) {
-		return dao6.getbyid(id,versao);
+	public List<COM_BUDGETS> getCOM_BUDGETSbyid(@PathParam("id") Integer id, @PathParam("versao") Integer versao) {
+		return dao6.getbyid(id, versao);
 	}
 
 	@PUT
@@ -434,8 +478,8 @@ public class SIRB_3 {
 	@Path("/getCOM_BUDGETSbyverificaseexiste/{id}/{ano}/{versao}")
 	@Produces("application/json")
 	public List<COM_BUDGETS> getCOM_BUDGETSbyverificaseexiste(@PathParam("id") Integer id,
-			@PathParam("ano") Integer ano,@PathParam("versao") Integer versao) {
-		return dao6.verificaseexiste(id, ano,versao);
+			@PathParam("ano") Integer ano, @PathParam("versao") Integer versao) {
+		return dao6.verificaseexiste(id, ano, versao);
 	}
 
 	/************************************ COM_BUDGETS_LINHAS */
@@ -458,15 +502,17 @@ public class SIRB_3 {
 	@GET
 	@Path("/getCOM_BUDGETS_LINHASbyid/{id}")
 	@Produces("application/json")
-	public List<COM_BUDGETS_LINHAS> getCOM_BUDGETS_LINHASbyid(@PathParam("id") Integer id,@PathParam("versao") Integer versao) {
-		return dao8.getbyid(id,versao);
+	public List<COM_BUDGETS_LINHAS> getCOM_BUDGETS_LINHASbyid(@PathParam("id") Integer id,
+			@PathParam("versao") Integer versao) {
+		return dao8.getbyid(id, versao);
 	}
 
 	@GET
 	@Path("/getCOM_BUDGETS_LINHASbyid2/{id}/{versao}")
 	@Produces("application/json")
-	public List<COM_BUDGETS_LINHAS> getCOM_BUDGETS_LINHASbyid2(@PathParam("id") Integer id,@PathParam("versao") Integer versao) {
-		return dao8.getbyid2(id,versao);
+	public List<COM_BUDGETS_LINHAS> getCOM_BUDGETS_LINHASbyid2(@PathParam("id") Integer id,
+			@PathParam("versao") Integer versao) {
+		return dao8.getbyid2(id, versao);
 	}
 
 	@PUT
@@ -623,7 +669,7 @@ public class SIRB_3 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/COM_GET_BUDGET_ANALISE_TOOLS")
 	@Consumes("*/*")
@@ -632,11 +678,613 @@ public class SIRB_3 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ANO = firstMap.get("ANO");
 		String MES = firstMap.get("MES");
- 		 
+
 		Query query_folder = entityManager.createNativeQuery("EXEC [COM_GET_BUDGET_ANALISE_TOOLS] " + ANO + "," + MES);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
+	}
+
+	/************************************* PIN_DIC_TIPO_ACABAMENTO */
+	@POST
+	@Path("/createPIN_DIC_TIPO_ACABAMENTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_TIPO_ACABAMENTO insertPIN_DIC_TIPO_ACABAMENTO(final PIN_DIC_TIPO_ACABAMENTO data) {
+		return dao10.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_TIPO_ACABAMENTObyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_TIPO_ACABAMENTO> getPIN_DIC_TIPO_ACABAMENTObyid_linha(@PathParam("id") Integer id) {
+		return dao10.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_TIPO_ACABAMENTO")
+	@Produces("application/json")
+	public List<PIN_DIC_TIPO_ACABAMENTO> getPIN_DIC_TIPO_ACABAMENTO() {
+		return dao10.getall();
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_TIPO_ACABAMENTO/{id}")
+	public void deletePIN_DIC_TIPO_ACABAMENTO(@PathParam("id") Integer id) {
+		PIN_DIC_TIPO_ACABAMENTO PIN_DIC_TIPO_ACABAMENTO = new PIN_DIC_TIPO_ACABAMENTO();
+		PIN_DIC_TIPO_ACABAMENTO.setID(id);
+		dao10.delete(PIN_DIC_TIPO_ACABAMENTO);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_TIPO_ACABAMENTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_TIPO_ACABAMENTO updatePIN_DIC_TIPO_ACABAMENTO(
+			final PIN_DIC_TIPO_ACABAMENTO PIN_DIC_TIPO_ACABAMENTO) {
+		PIN_DIC_TIPO_ACABAMENTO.setID(PIN_DIC_TIPO_ACABAMENTO.getID());
+		return dao10.update(PIN_DIC_TIPO_ACABAMENTO);
+	}
+
+	/************************************* PIN_DIC_ARMAZEM */
+	@POST
+	@Path("/createPIN_DIC_ARMAZEM")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_ARMAZEM insertPIN_DIC_ARMAZEM(final PIN_DIC_ARMAZEM data) {
+		return dao11.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_ARMAZEM")
+	@Produces("application/json")
+	public List<PIN_DIC_ARMAZEM> getPIN_DIC_ARMAZEM() {
+		return dao11.allEntries();
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_ARMAZEM/{id}")
+	public void deletePIN_DIC_ARMAZEM(@PathParam("id") Integer id) {
+		PIN_DIC_ARMAZEM PIN_DIC_ARMAZEM = new PIN_DIC_ARMAZEM();
+		PIN_DIC_ARMAZEM.setID_ARMAZEM(id);
+		dao11.delete(PIN_DIC_ARMAZEM);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_ARMAZEM")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_ARMAZEM updatePIN_DIC_ARMAZEM(final PIN_DIC_ARMAZEM PIN_DIC_ARMAZEM) {
+		PIN_DIC_ARMAZEM.setID_ARMAZEM(PIN_DIC_ARMAZEM.getID_ARMAZEM());
+		return dao11.update(PIN_DIC_ARMAZEM);
+	}
+
+	/************************************* PIN_DIC_CABINES */
+	@POST
+	@Path("/createPIN_DIC_CABINES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_CABINES insertAB_DIC_ADITIVO(final PIN_DIC_CABINES data) {
+		return dao12.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CABINESyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_CABINES> getPIN_DIC_CABINESyid_banho(@PathParam("id") Integer id) {
+		return dao12.getbyid(id, 0);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CABINES")
+	@Produces("application/json")
+	public List<PIN_DIC_CABINES> getPIN_DIC_CABINES() {
+		return dao12.allEntries();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CABINES2")
+	@Produces("application/json")
+	public List<PIN_DIC_CABINES> getPIN_DIC_CABINESLINHA() {
+		return dao12.getall(0);
+	}
+
+	/*
+	 * @GET
+	 * 
+	 * @Path("/getAllLINHAbylinha_tipo/{id}/{linha}/{tipo}")
+	 * 
+	 * @Produces("application/json") public List<PIN_DIC_CABINES>
+	 * getAllLINHAbylinha_tipo(@PathParam("id") Integer id, @PathParam("linha")
+	 * Integer linha,
+	 * 
+	 * @PathParam("tipo") String tipo) { return dao12.getAllLINHAbylinha_tipo(id,
+	 * linha, tipo); }
+	 */
+
+	@DELETE
+	@Path("/deletePIN_DIC_CABINES/{id}")
+	public void deletePIN_DIC_CABINES(@PathParam("id") Integer id) {
+		PIN_DIC_CABINES PIN_DIC_CABINES = new PIN_DIC_CABINES();
+		PIN_DIC_CABINES.setID(id);
+		dao12.delete(PIN_DIC_CABINES);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_CABINES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_CABINES updatePIN_DIC_CABINES(final PIN_DIC_CABINES PIN_DIC_CABINES) {
+		PIN_DIC_CABINES.setID(PIN_DIC_CABINES.getID());
+		return dao12.update(PIN_DIC_CABINES);
+	}
+
+	/************************************* PIN_DIC_POTES */
+	@POST
+	@Path("/createPIN_DIC_POTES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_POTES insertPIN_DIC_POTES(final PIN_DIC_POTES data) {
+		return dao13.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_POTES")
+	@Produces("application/json")
+	public List<PIN_DIC_POTES> getPIN_DIC_POTES() {
+		return dao13.allEntries();
+	}
+
+	@GET
+	@Path("/getallPIN_DIC_POTES/{linha}")
+	@Produces("application/json")
+	public List<PIN_DIC_POTES> getallPIN_DIC_POTES(@PathParam("linha") Integer linha) {
+		return dao13.getall(linha);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_POTESbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_POTES> getPIN_DIC_POTESvbyid_tina(@PathParam("id") Integer id) {
+		return dao13.getbyid(id, 0);
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_POTES/{id}")
+	public void deletePIN_DIC_POTES(@PathParam("id") Integer id) {
+		PIN_DIC_POTES PIN_DIC_POTES = new PIN_DIC_POTES();
+		PIN_DIC_POTES.setID(id);
+		dao13.delete(PIN_DIC_POTES);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_POTES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_POTES updatePIN_DIC_POTES(final PIN_DIC_POTES PIN_DIC_POTES) {
+		PIN_DIC_POTES.setID(PIN_DIC_POTES.getID());
+		return dao13.update(PIN_DIC_POTES);
+	}
+
+	/************************************* PIN_DIC_PRODUTOS */
+	@POST
+	@Path("/createPIN_DIC_PRODUTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_PRODUTOS insertPIN_DIC_PRODUTOS(final PIN_DIC_PRODUTOS data) {
+		return dao14.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_PRODUTOS")
+	@Produces("application/json")
+	public List<PIN_DIC_PRODUTOS> getPIN_DIC_PRODUTOS() {
+		return dao14.getAll();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_PRODUTOSbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_PRODUTOS> getPIN_DIC_PRODUTOSbyid(@PathParam("id") Integer id) {
+		return dao14.getbyid(id);
+	}
+	
+	@GET
+	@Path("/getPIN_DIC_PRODUTOSbyTipoAcabamento/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_PRODUTOS> getPIN_DIC_PRODUTOSbyTipoAcabamento(@PathParam("id") Integer id) {
+		return dao14.getbyTipoAcabamento(id);
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_PRODUTOS/{id}")
+	public void deletePIN_DIC_PRODUTOS(@PathParam("id") Integer id) {
+		PIN_DIC_PRODUTOS PIN_DIC_PRODUTOS = new PIN_DIC_PRODUTOS();
+		PIN_DIC_PRODUTOS.setID(id);
+		dao14.delete(PIN_DIC_PRODUTOS);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_PRODUTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_PRODUTOS updatePIN_DIC_PRODUTOS(final PIN_DIC_PRODUTOS PIN_DIC_PRODUTOS) {
+		PIN_DIC_PRODUTOS.setID(PIN_DIC_PRODUTOS.getID());
+		return dao14.update(PIN_DIC_PRODUTOS);
+	}
+
+	/************************************* PIN_DIC_PRODUTOS_RELACIONADOS */
+	@POST
+	@Path("/createPIN_DIC_PRODUTOS_RELACIONADOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_PRODUTOS_RELACIONADOS insertPIN_DIC_PRODUTOS_RELACIONADOS(final PIN_DIC_PRODUTOS_RELACIONADOS data) {
+		return dao15.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_PRODUTOS_RELACIONADOS")
+	@Produces("application/json")
+	public List<PIN_DIC_PRODUTOS_RELACIONADOS> getPIN_DIC_PRODUTOS_RELACIONADOS() {
+		return dao15.gelAll();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_PRODUTOS_RELACIONADOSbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_PRODUTOS_RELACIONADOS> getPIN_DIC_PRODUTOS_RELACIONADOSbyid_componente(
+			@PathParam("id") Integer id) {
+		return dao15.getbyid_componente(id);
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_PRODUTOS_RELACIONADOS/{id}")
+	public void deletePIN_DIC_PRODUTOS_RELACIONADOS(@PathParam("id") Integer id) {
+		PIN_DIC_PRODUTOS_RELACIONADOS PIN_DIC_PRODUTOS_RELACIONADOS = new PIN_DIC_PRODUTOS_RELACIONADOS();
+		PIN_DIC_PRODUTOS_RELACIONADOS.setID(id);
+		dao15.delete(PIN_DIC_PRODUTOS_RELACIONADOS);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_PRODUTOS_RELACIONADOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_PRODUTOS_RELACIONADOS updatePIN_DIC_PRODUTOS_RELACIONADOS(
+			final PIN_DIC_PRODUTOS_RELACIONADOS PIN_DIC_PRODUTOS_RELACIONADOS) {
+		PIN_DIC_PRODUTOS_RELACIONADOS.setID(PIN_DIC_PRODUTOS_RELACIONADOS.getID());
+		return dao15.update(PIN_DIC_PRODUTOS_RELACIONADOS);
+	}
+	/************************************* PIN_MOV_PREPARACAO */
+	@POST
+	@Path("/createPIN_MOV_PREPARACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_PREPARACAO insertPIN_MOV_PREPARACAOA(final PIN_MOV_PREPARACAO data) {
+		return dao16.create(data);
+	}
+
+	@POST
+	@Path("/getPIN_MOV_PREPARACAO/{linha}/{classif}/{classif2}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO> getPIN_MOV_PREPARACAO(@PathParam("linha") Integer linha,
+			@PathParam("classif") String classif, final ArrayList<String> query,
+			@PathParam("classif2") String classif2) {
+		return dao16.getall(linha, query, classif, classif2);
+	}
+
+	@POST
+	@Path("/getPIN_MOV_PREPARACAOall/{linha}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO> getPIN_MOV_PREPARACAOall(@PathParam("linha") Integer linha,
+			final List<HashMap<String, String>> query) {
+		return dao16.getallmanu(linha, query);
+	}
+
+	
+
+	@POST
+	@Path("/getPIN_MOV_PREPARACAOidpote/{linha}/{classif}/{idpote}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO> getPIN_MOV_PREPARACAOidpote(@PathParam("linha") Integer linha,
+			@PathParam("classif") String classif, final ArrayList<String> query,
+			@PathParam("idpote") Integer idpote) {
+		return dao16.getallidabanho(linha, query, classif, idpote);
+	}
+
+	@POST
+	@Path("/getPIN_MOV_PREPARACAOsorid/{linha}/{classif}/{classif2}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO> getPIN_MOV_PREPARACAOsorid(@PathParam("linha") Integer linha,
+			@PathParam("classif") String classif, @PathParam("classif2") String classif2,
+			final ArrayList<String> query) {
+		return dao16.getallsortid(linha, query, classif, classif2);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAObyid/{id}/{linha}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO> getPIN_MOV_PREPARACAObyid(@PathParam("id") Integer id,
+			@PathParam("linha") Integer linha) {
+		return dao16.getbyid(id, linha);
+	}
+
+	@DELETE
+	@Path("/deletePIN_MOV_PREPARACAO/{id}")
+	public void deletePIN_MOV_PREPARACAO(@PathParam("id") Integer id) {
+		PIN_MOV_PREPARACAO PIN_MOV_PREPARACAO = new PIN_MOV_PREPARACAO();
+		PIN_MOV_PREPARACAO.setID_PREPARACAO(id);
+		dao16.delete(PIN_MOV_PREPARACAO);
+	}
+
+	@PUT
+	@Path("/updatePIN_MOV_PREPARACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_PREPARACAO updateAB_MOV_ANALISE_LINHA(final PIN_MOV_PREPARACAO PIN_MOV_PREPARACAO) {
+		PIN_MOV_PREPARACAO.setID_PREPARACAO(PIN_MOV_PREPARACAO.getID_PREPARACAO());
+		return dao16.update(PIN_MOV_PREPARACAO);
+	}
+	
+	/************************************ PIN_MOV_PREPARACAO_CAB */
+	@POST
+	@Path("/createPIN_MOV_PREPARACAO_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_PREPARACAO_CAB insertPIN_MOV_PREPARACAO_CAB(final PIN_MOV_PREPARACAO_CAB data) {
+		return dao17.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_CAB")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_CAB> getPIN_MOV_PREPARACAO_CAB() {
+		return dao17.allEntries();
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_CABbyidPREPARACAO/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_CAB> getPIN_MOV_PREPARACAO_CABbyidPREPARACAO(@PathParam("id") Integer id) {
+		return dao17.getbyidPREPARACAO(id);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_CABbyid_banho/{idpote}/{inicio}/{fim}/{id_man}/{classif}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_CAB> getPIN_MOV_PREPARACAO_CABbyid_banho(@PathParam("idpote") Integer idpote,
+			@PathParam("inicio") Integer inicio, @PathParam("fim") Integer fim, @PathParam("id_man") Integer id_man,
+			@PathParam("classif") String classif) {
+		return dao17.getbyidpote(idpote, inicio, fim, id_man, classif);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_CABbyid_banhoall/{idpote}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_CAB> getPIN_MOV_PREPARACAO_CABbyid_banhoall(@PathParam("idpote") Integer idpote) {
+		return dao17.getbyidpoteall(idpote);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_CABbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_CAB> getPIN_MOV_PREPARACAO_CABbyid(@PathParam("id") Integer id) {
+		return dao17.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePIN_MOV_PREPARACAO_CAB/{id}")
+	public void deletePIN_MOV_PREPARACAO_CABA(@PathParam("id") Integer id) {
+		PIN_MOV_PREPARACAO_CAB PIN_MOV_PREPARACAO_CAB = new PIN_MOV_PREPARACAO_CAB();
+		PIN_MOV_PREPARACAO_CAB.setID_PREPARACAO_CAB(id);
+		dao17.delete(PIN_MOV_PREPARACAO_CAB);
+	}
+
+	@PUT
+	@Path("/updatePIN_MOV_PREPARACAO_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_PREPARACAO_CAB updatePIN_MOV_PREPARACAO_CAB(final PIN_MOV_PREPARACAO_CAB PIN_MOV_PREPARACAO_CAB) {
+		PIN_MOV_PREPARACAO_CAB.setID_PREPARACAO_CAB(PIN_MOV_PREPARACAO_CAB.getID_PREPARACAO_CAB());
+		return dao17.update(PIN_MOV_PREPARACAO_CAB);
+	}
+
+	/************************************* PIN_MOV_PREPARACAO_LINHA */
+	@POST
+	@Path("/createPIN_MOV_PREPARACAO_LINHA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_PREPARACAO_LINHA insertAPIN_MOV_PREPARACAO_LINHA(final PIN_MOV_PREPARACAO_LINHA data) {
+		return dao18.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_LINHA")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_LINHA> getPIN_MOV_PREPARACAO_LINHA() {
+		return dao18.allEntries();
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_LINHAbyidPREPARACAOcab/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_LINHA> getPIN_MOV_PREPARACAO_LINHAbyidPREPARACAOcab(@PathParam("id") Integer id) {
+		return dao18.getbyidPREPARACAOcab(id);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_LINHAbyidPREPARACAOcabtotal/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_LINHA> getPIN_MOV_PREPARACAO_LINHAbyidPREPARACAOcabtotal(@PathParam("id") Integer id) {
+		return dao18.getbyidPREPARACAOcabtotal(id);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_LINHAbyidPREPARACAOcabtotal2/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_LINHA> getPIN_MOV_PREPARACAO_LINHAbyidPREPARACAOcabtotal2(
+			@PathParam("id") Integer id) {
+		return dao18.getbyidPREPARACAOcabtotal2(id);
+	}
+
+	@DELETE
+	@Path("/apagar_linhasPintura/{id}")
+	public void apagar_linhas(@PathParam("id") Integer id) {
+		dao18.apagar_linhas(id);
+	}
+
+	@POST
+	@Path("/getPIN_MOV_PREPARACAO_LINHAbyid_analise_comp/{id}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_LINHA> getbyid_analise_comp(@PathParam("id") Integer id,
+			final ArrayList<Integer> data) {
+		return dao18.getbyid_manut_comp(id, data);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_LINHAbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_LINHA> getPIN_MOV_PREPARACAO_LINHAbyid(@PathParam("id") Integer id) {
+		return dao18.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePIN_MOV_PREPARACAO_LINHA/{id}")
+	public void deletePIN_MOV_PREPARACAO_LINHA(@PathParam("id") Integer id) {
+		PIN_MOV_PREPARACAO_LINHA PIN_MOV_PREPARACAO_LINHA = new PIN_MOV_PREPARACAO_LINHA();
+		PIN_MOV_PREPARACAO_LINHA.setID_PREPARACAO_LIN(id);
+		dao18.delete(PIN_MOV_PREPARACAO_LINHA);
+	}
+
+	@PUT
+	@Path("/updatePIN_MOV_PREPARACAO_LINHA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_PREPARACAO_LINHA updatePIN_MOV_PREPARACAO_LINHA(
+			final PIN_MOV_PREPARACAO_LINHA PIN_MOV_PREPARACAO_LINHA) {
+		PIN_MOV_PREPARACAO_LINHA.setID_PREPARACAO_LIN(PIN_MOV_PREPARACAO_LINHA.getID_PREPARACAO_LIN());
+		return dao18.update(PIN_MOV_PREPARACAO_LINHA);
+	}
+	
+	/************************************* PIN_MOV_PREPARACAO_ETIQ */
+	@POST
+	@Path("/createPIN_MOV_PREPARACAO_ETIQ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_PREPARACAO_ETIQ insertPIN_MOV_PREPARACAO_ETIQA(final PIN_MOV_PREPARACAO_ETIQ data) {
+		if (data.getID_PREPARACAO_LIN() == 0 || data.getID_PREPARACAO_LIN() == null) {
+			return dao19.create(data);
+		} else {
+			Query query = entityManager.createNativeQuery("select ID_PREPARACAO_LIN,ID_MOV_MANU_ETIQUETA "
+					+ "from PIN_MOV_PREPARACAO_ETIQ where ID_PREPARACAO_LIN = " + data.getID_PREPARACAO_LIN()
+					+ " and ETQNUM = '" + data.getETQNUM() + "' ");
+
+			List<Object[]> dados = query.getResultList();
+			String id = null;
+			for (Object[] content : dados) {
+				id = content[0].toString();
+			}
+
+			if (id == null) {
+				return dao19.create(data);
+			}
+		}
+		return null;
+	}
+
+
+
+	@GET
+	@Path("/ATUALIZAQUANTAOAPAGARPINTURA/{id}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public void ATUALIZAQUANTAOAPAGAR(@PathParam("id") Integer id) {
+
+		final ConnectProgress connectionProgress = new ConnectProgress();
+		String url = getURLSILVER();
+		Query query = entityManager.createNativeQuery(
+				"select ETQNUM,(QUANT - QUANT_FINAL) from PIN_MOV_PREPARACAO_ETIQ where ID_PREPARACAO_LIN in "
+						+ "(select ID_PREPARACAO_LIN from PIN_MOV_PREPARACAO_LINHA where ID_PREPARACAO_CAB = " + id
+						+ ")");
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+			try {
+				connectionProgress.EXEC_SINCRO_AO_APAGAR(content[0].toString(), Float.parseFloat(content[1].toString()),
+						url);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_ETIQbyidmanu/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_ETIQ> getPIN_MOV_PREPARACAO_ETIQbyip(@PathParam("id") Integer id) {
+		return dao19.getbyid_manu(id);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_ETIQbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_ETIQ> getPIN_MOV_PREPARACAO_ETIQbyid(@PathParam("id") Integer id) {
+		return dao19.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_ETIQbyref/{id}/{ref}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_ETIQ> getPIN_MOV_PREPARACAO_ETIQbyref(@PathParam("id") Integer id,
+			@PathParam("ref") String ref) {
+		return dao19.getbyRef(id, ref);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_PREPARACAO_ETIQbyref2/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_PREPARACAO_ETIQ> getPIN_MOV_PREPARACAO_ETIQbyref2(@PathParam("id") Integer id) {
+		return dao19.getbyRef2(id);
+	}
+
+	@DELETE
+	@Path("/deletePIN_MOV_PREPARACAO_ETIQ/{id}")
+	public void deletePIN_MOV_PREPARACAO_ETIQ(@PathParam("id") Integer id) {
+		PIN_MOV_PREPARACAO_ETIQ PIN_MOV_PREPARACAO_ETIQ = new PIN_MOV_PREPARACAO_ETIQ();
+		PIN_MOV_PREPARACAO_ETIQ.setID_MOV_PREP_ETIQUETA(id);
+		dao19.delete(PIN_MOV_PREPARACAO_ETIQ);
+	}
+
+	@PUT
+	@Path("/updatePIN_MOV_PREPARACAO_ETIQ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_PREPARACAO_ETIQ updatePIN_MOV_PREPARACAO_ETIQ(final PIN_MOV_PREPARACAO_ETIQ PIN_MOV_PREPARACAO_ETIQ) {
+		PIN_MOV_PREPARACAO_ETIQ.setID_MOV_PREP_ETIQUETA(PIN_MOV_PREPARACAO_ETIQ.getID_MOV_PREP_ETIQUETA());
+		return dao19.update(PIN_MOV_PREPARACAO_ETIQ);
+	}
+	
+	
+	public String getURLSILVER() {
+		String url = "";
+		Query query_folder = entityManager.createNativeQuery("select top 1 * from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			url = content[2].toString();
+		}
+
+		return url;
 	}
 }

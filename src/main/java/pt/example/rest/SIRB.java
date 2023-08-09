@@ -3118,6 +3118,19 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getStock(data, getURLSILVER());
 		return dados;
 	}
+	
+	@POST
+	@Path("/getStockPintura")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getStockPintura(final List<HashMap<String, String>> data)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getStockPintura(data, getURLSILVER());
+		return dados;
+	}
 
 	@GET
 	@Path("/getDadosEtiqueta/{etiqueta}")
@@ -3164,6 +3177,17 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getComponentes(getURLSILVER());
+		return dados;
+	}
+	
+	@GET
+	@Path("/getComponentesPintura")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getComponentesPintura() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesPintura(getURLSILVER());
 		return dados;
 	}
 

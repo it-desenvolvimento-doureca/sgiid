@@ -15,8 +15,8 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table(name = "AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES")
-public class AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES {
+@Table(name = "PIN_DIC_TIPO_ACABAMENTO")
+public class PIN_DIC_TIPO_ACABAMENTO {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty("ID")
