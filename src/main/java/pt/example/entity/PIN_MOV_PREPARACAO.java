@@ -28,7 +28,7 @@ public class PIN_MOV_PREPARACAO {
 	@JsonProperty("DATA_PLANEAMENTO")
 	private Date DATA_PLANEAMENTO;
 	@JsonProperty("HORA_PLANEAMENTO")
-	private Time HORA_PLANEAMENTO;
+	private String HORA_PLANEAMENTO;
 	@JsonProperty("UTZ_PLANEAMENTO")
 	private Integer UTZ_PLANEAMENTO;
 	@JsonProperty("ESTADO")
@@ -88,11 +88,11 @@ public class PIN_MOV_PREPARACAO {
 		DATA_PLANEAMENTO = dATA_PLANEAMENTO;
 	}
 
-	public Time getHORA_PLANEAMENTO() {
+	public String getHORA_PLANEAMENTO() {
 		return HORA_PLANEAMENTO;
 	}
 
-	public void setHORA_PLANEAMENTO(Time hORA_PLANEAMENTO) {
+	public void setHORA_PLANEAMENTO(String hORA_PLANEAMENTO) {
 		HORA_PLANEAMENTO = hORA_PLANEAMENTO;
 	}
 

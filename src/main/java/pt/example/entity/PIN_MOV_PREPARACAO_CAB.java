@@ -40,17 +40,17 @@ public class PIN_MOV_PREPARACAO_CAB {
 	@JsonProperty("DATA_PREVISTA")
 	private Date DATA_PREVISTA;
 	@JsonProperty("HORA_PREVISTA")
-	private Time HORA_PREVISTA;
+	private String HORA_PREVISTA;
 	@JsonProperty("DATA_PREPARACAO")
 	private Date DATA_PREPARACAO;
 	@JsonProperty("HORA_PREPARACAO")
-	private Time HORA_PREPARACAO;
+	private String HORA_PREPARACAO;
 	@JsonProperty("UTZ_PREPARACAO")
 	private Integer UTZ_PREPARACAO;
 	@JsonProperty("DATA_EXECUCAO")
 	private Date DATA_EXECUCAO;
 	@JsonProperty("HORA_EXECUCAO")
-	private Time HORA_EXECUCAO;
+	private String HORA_EXECUCAO;
 	@JsonProperty("UTZ_EXECUCAO")
 	private Integer UTZ_EXECUCAO;
 	@JsonProperty("DATA_ULT_MODIF")
@@ -150,11 +150,11 @@ public class PIN_MOV_PREPARACAO_CAB {
 		DATA_PREVISTA = dATA_PREVISTA;
 	}
 
-	public Time getHORA_PREVISTA() {
+	public String getHORA_PREVISTA() {
 		return HORA_PREVISTA;
 	}
 
-	public void setHORA_PREVISTA(Time hORA_PREVISTA) {
+	public void setHORA_PREVISTA(String hORA_PREVISTA) {
 		HORA_PREVISTA = hORA_PREVISTA;
 	}
 
@@ -166,11 +166,11 @@ public class PIN_MOV_PREPARACAO_CAB {
 		DATA_PREPARACAO = dATA_PREPARACAO;
 	}
 
-	public Time getHORA_PREPARACAO() {
+	public String getHORA_PREPARACAO() {
 		return HORA_PREPARACAO;
 	}
 
-	public void setHORA_PREPARACAO(Time hORA_PREPARACAO) {
+	public void setHORA_PREPARACAO(String hORA_PREPARACAO) {
 		HORA_PREPARACAO = hORA_PREPARACAO;
 	}
 
@@ -190,11 +190,11 @@ public class PIN_MOV_PREPARACAO_CAB {
 		DATA_EXECUCAO = dATA_EXECUCAO;
 	}
 
-	public Time getHORA_EXECUCAO() {
+	public String getHORA_EXECUCAO() {
 		return HORA_EXECUCAO;
 	}
 
-	public void setHORA_EXECUCAO(Time hORA_EXECUCAO) {
+	public void setHORA_EXECUCAO(String hORA_EXECUCAO) {
 		HORA_EXECUCAO = hORA_EXECUCAO;
 	}
 

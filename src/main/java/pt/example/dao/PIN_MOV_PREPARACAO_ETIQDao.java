@@ -25,7 +25,7 @@ public class PIN_MOV_PREPARACAO_ETIQDao extends GenericDaoJpaImpl<PIN_MOV_PREPAR
 	public List<PIN_MOV_PREPARACAO_ETIQ> getbyid(Integer id) {
 
 		Query query = entityManager
-				.createQuery("Select a from PIN_MOV_PREPARACAO_ETIQ a where a.ID_MOV_MANU_ETIQUETA = :id");
+				.createQuery("Select a from PIN_MOV_PREPARACAO_ETIQ a where a.ID_MOV_PREP_ETIQUETA = :id");
 		query.setParameter("id", id);
 		List<PIN_MOV_PREPARACAO_ETIQ> data = query.getResultList();
 		return data;

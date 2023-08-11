@@ -1,7 +1,16 @@
 package pt.example.rest;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,6 +48,8 @@ import pt.example.dao.PIN_MOV_PREPARACAODao;
 import pt.example.dao.PIN_MOV_PREPARACAO_CABDao;
 import pt.example.dao.PIN_MOV_PREPARACAO_ETIQDao;
 import pt.example.dao.PIN_MOV_PREPARACAO_LINHADao;
+import pt.example.dao.PIN_MOV_RECEITASDao;
+import pt.example.dao.PIN_MOV_RECEITAS_LINHASDao;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
 import pt.example.entity.COM_BUDGETS_LINHAS;
@@ -58,6 +69,8 @@ import pt.example.entity.PIN_MOV_PREPARACAO;
 import pt.example.entity.PIN_MOV_PREPARACAO_CAB;
 import pt.example.entity.PIN_MOV_PREPARACAO_ETIQ;
 import pt.example.entity.PIN_MOV_PREPARACAO_LINHA;
+import pt.example.entity.PIN_MOV_RECEITAS;
+import pt.example.entity.PIN_MOV_RECEITAS_LINHAS;
 
 @Stateless
 @Path("/sirb")
@@ -101,6 +114,10 @@ public class SIRB_3 {
 	private PIN_MOV_PREPARACAO_LINHADao dao18;
 	@Inject
 	private PIN_MOV_PREPARACAO_ETIQDao dao19;
+	@Inject
+	private PIN_MOV_RECEITASDao dao20;
+	@Inject
+	private PIN_MOV_RECEITAS_LINHASDao dao21;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -1180,7 +1197,7 @@ public class SIRB_3 {
 		if (data.getID_PREPARACAO_LIN() == 0 || data.getID_PREPARACAO_LIN() == null) {
 			return dao19.create(data);
 		} else {
-			Query query = entityManager.createNativeQuery("select ID_PREPARACAO_LIN,ID_MOV_MANU_ETIQUETA "
+			Query query = entityManager.createNativeQuery("select ID_PREPARACAO_LIN,ID_MOV_PREP_ETIQUETA "
 					+ "from PIN_MOV_PREPARACAO_ETIQ where ID_PREPARACAO_LIN = " + data.getID_PREPARACAO_LIN()
 					+ " and ETQNUM = '" + data.getETQNUM() + "' ");
 
@@ -1287,4 +1304,833 @@ public class SIRB_3 {
 
 		return url;
 	}
+	
+	
+	// CRIAR
+		// FICHEIRO****************************************************************
+
+		@POST
+		@Path("/ficheirocorrecaoPintura")
+		@Consumes("*/*")
+		@Produces("application/json")
+		public void ficheirocorrecaoPintura(final List<HashMap<String, String>> data) {
+
+			HashMap<String, String> firstMap = data.get(0);
+			String id = firstMap.get("id");
+			String linha = firstMap.get("linha");
+			String nome_ficheiro = "";
+			String ip_posto = firstMap.get("ip_posto");
+			String ids = "";
+			List<String> listStrings = new ArrayList<String>(Arrays.asList(id.split(",")));
+			Boolean varbol = false;
+			for (String current : listStrings) {
+				if (varbol) {
+					ids += "," + current;
+				} else {
+					ids += current;
+					varbol = true;
+				}
+			}
+
+			Query query = entityManager.createNativeQuery(
+					"Select (select top 1 OF_NUM from AB_DIC_LINHA_OF e where ID_LINHA = a.id_linha and DATA <= GETDATE() order by e.DATA desc) as ofnum,a.SECCAO,a.SUBSECCAO,a.REF_COMPOSTO "
+							+ "from AB_DIC_LINHA a where a.ID_LINHA = " + linha + "");
+
+			List<Object[]> dados = query.getResultList();
+
+			String data_path = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+			for (Object[] content : dados) {
+				// nome_ficheiro = data + "_ETIQUETA_" + content[0].toString() +
+				// ".txt";
+				nome_ficheiro = "ETIQUETA_CORRECAO_PINTURA" + data_path + ".txt";
+
+				criarFicheiro(null, nome_ficheiro, content[0].toString(), content[1].toString(), content[2].toString(),
+						content[3].toString(), null, ip_posto, ids);
+
+			}
+		}
+
+		@POST
+		@Path("/ficheiroimprimiretiquetaPintura")
+		@Consumes("*/*")
+		@Produces("application/json")
+		public void ficheiroimprimiretiquetaPintura(final List<HashMap<String, String>> data) {
+			SIRB SIRB= new SIRB();
+			HashMap<String, String> firstMap = data.get(0);
+			String ip_posto = firstMap.get("ip_posto");
+			String modelo_REPORT = "";
+			String nomeimpressora = "";
+			String ipimpressora = "";
+			String data_etiq = "";
+			String path2 = "";
+			String path_error = "";
+
+			/*** CAMPOS PARA O FICHEIRO ***/
+
+			String DATCRE = firstMap.get("DATCRE");
+			String QUANT = firstMap.get("QUANT");
+			String UNIDADE = firstMap.get("UNIDADE");
+			String ETIQUETA = firstMap.get("ETIQUETA");
+			String PROREF = firstMap.get("PROREF");
+			String ETQORILOT1 = firstMap.get("ETQORILOT1");
+			String PRODES = firstMap.get("PRODES");
+
+			/******************************/
+
+			Query query_folder = entityManager.createNativeQuery(
+					"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,NOME_IMPRESSORA,IP_IMPRESSORA,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a,GER_POSTOS b where IP_POSTO ='"
+							+ ip_posto + "'");
+
+			List<Object[]> dados_folder = query_folder.getResultList();
+
+			String nome_ficheiro = "ETIQUETA_PINTURA_NUM_" + ETIQUETA + ".txt";
+
+			for (Object[] content : dados_folder) {
+				path2 = content[1].toString() + nome_ficheiro;
+				path_error = content[5].toString() + nome_ficheiro;
+				nomeimpressora = content[2].toString();
+				if (content[3] != null) {
+					ipimpressora = content[3].toString();
+				}
+				modelo_REPORT = content[4].toString();
+			}
+
+			data_etiq += "LAB_NAME=" + modelo_REPORT + "\r\n";
+			if (!ipimpressora.isEmpty() && ipimpressora != null) {
+				ipimpressora = ",->" + ipimpressora;
+			}
+			data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
+			data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			java.util.Date date1 = null;
+			try {
+				date1 = formatter.parse(DATCRE);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			formatter = new SimpleDateFormat("yyMMdd");
+			String datas = formatter.format(date1);
+
+			String quant = String.format("%.3f", Float.parseFloat(QUANT)).replace("$", ",");
+			data_etiq += "DOURECA - PT- 4940;DOURECA - PT- 4940;;EW93 404D52 DA;P;";
+			data_etiq += quant + " " + ((UNIDADE != null) ? UNIDADE : "") + ";" // AF3
+					+ ";" // A3
+					+ ";" // AF4
+					+ ";" // A4
+					+ ETIQUETA + ";" // AF5
+					+ "S;" // A5
+					+ PRODES + ";" // AF6
+					+ PROREF + ";" // AF7
+					+ ";" // A7
+					+ ";" // AF8
+					+ ";" // AF9
+					+ ";" // AF10
+					+ ";" // AF11
+					+ ";" // AF24
+					+ ";" // AF12
+					+ "D" + datas + ";" // AF16
+					+ ";" // A16
+					+ ";" // AF17
+					+ ";" // AF18
+					+ ";" // AF19
+					+ ";" // AF20
+					+ ";" // A20
+					+ ETQORILOT1 + ";" // AF21
+					+ ";" // A21
+					+ ";" // AF22
+					+ ";" // AF23
+					+ ";" // AF25
+					+ ";" // AF26
+					+ ";" // AF27
+					+ ";" // AF28
+					+ ";" // AF29
+					+ ";" // AF30
+					+ ";" // AF31
+					+ ";" // AF32
+					+ ";" // AF33
+					+ ";" // AF34
+					+ ";" // AF35
+					+ ";" // AF36
+					+ ";" // AF37
+					+ ";" // AF38
+					+ ";" // AF39
+					+ ";" // AF40
+					+ ";" // AF41
+					+ ";" // AF42
+					+ ";" // AF43
+					+ ";" // AF44
+					+ ";\r\n";
+
+			SIRB.criar_ficheiro(data_etiq, path2, path_error, false, "");
+		}
+
+		@POST
+		@Path("/ficheiroPintura")
+		@Produces("application/json")
+		public void getFicheiroPintura(final List<HashMap<String, String>> data2) throws IOException, ParseException {
+			HashMap<String, String> firstMap = data2.get(0);
+			String ip_posto = firstMap.get("ip_posto");
+			String id = firstMap.get("id");
+			try {
+				// Thread.sleep(3000);
+				Integer comp_num = 1;
+
+				String data = new SimpleDateFormat("yyyyMMddHHmmss_").format(new java.util.Date());
+				String nome_ficheiro = "";
+
+			
+				Query query = entityManager.createNativeQuery(
+						"Select a.ID_PREPARACAO_CAB,(select top 1 OF_NUM from AB_DIC_LINHA_OF e where ID_LINHA = c.id_linha and DATA <= GETDATE() order by e.DATA desc) as ofnum,c.SECCAO,c.SUBSECCAO,c.REF_COMPOSTO,a.ID_PREPARACAO "
+								+ "from PIN_MOV_PREPARACAO_CAB a "
+								+ "inner join PIN_MOV_PREPARACAO b on  a.ID_PREPARACAO = b.ID_PREPARACAO "
+								+ "inner join AB_DIC_LINHA c on  b.ID_LINHA = c.ID_LINHA " + "where a.ID_PREPARACAO_CAB = "
+								+ id);
+
+				List<Object[]> dados = query.getResultList();
+
+				for (Object[] content : dados) {
+					nome_ficheiro = "ETIQUETA_PINTURA_ID" + content[0].toString() + ".txt";
+
+					criarFicheiro(content[0].toString(), nome_ficheiro, content[1].toString(), content[2].toString(),
+							content[3].toString(), content[4].toString(), content[5].toString(), ip_posto, null);
+
+				}
+
+				Query query2 = entityManager.createNativeQuery(
+						"select ID_PREPARACAO_LIN,ID_PREPARACAO_CAB from PIN_MOV_PREPARACAO_LINHA where ID_PREPARACAO_CAB = "
+								+ id);
+
+				List<Object[]> dados2 = query2.getResultList();
+
+				for (Object[] content2 : dados2) {
+					alerta_etiquetas(Integer.parseInt(content2[0].toString()));
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public void criarFicheiro(String id, String nome_ficheiro, String of, String SECCAO, String SUBSECCAO,
+				String REF_COMPOSTO, String num_manutencao, String ip_posto, String ids) {
+			SIRB SIRB= new SIRB();
+			java.util.Date datacria = new java.util.Date();
+			SimpleDateFormat formate = new SimpleDateFormat("yyyyMMdd");
+			SimpleDateFormat horaformate = new SimpleDateFormat("HHmmss");
+			String datatual = formate.format(datacria);
+			String horatual = horaformate.format(datacria);
+			String sequencia = "000000000";
+			String path = "";
+			String path2 = "";
+			String path_error = "";
+			String path_error2 = "";
+			String modelo_REPORT = "";
+			String nomeimpressora = "";
+			String ipimpressora = "";
+			String data_etiq = "";
+			/*
+			 * Query query = entityManager.createNativeQuery(
+			 * "select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO from PIN_MOV_PREPARACAO_ETIQ a where ID_PREPARACAO_LIN = "
+			 * + id + "");
+			 */
+
+			Query query = entityManager.createNativeQuery(
+					"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES,a.DATCRE "
+							+ ",(select ID_PREPARACAO from PIN_MOV_PREPARACAO_CAB where ID_PREPARACAO_CAB = b.ID_PREPARACAO_CAB) as id2 "
+							+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN (( a.QUANT  - a.QUANT_FINAL) * -1) ELSE ( a.QUANT  - a.QUANT_FINAL) END as qtt , t.CISTERNA "
+							+ ",( a.QUANT_FINAL / (CASE WHEN t.FACTOR_CONVERSAO IS NULL  THEN 1 WHEN t.FACTOR_CONVERSAO = 0 THEN 1 ELSE t.FACTOR_CONVERSAO END) ) as qtt2 "
+							+ ",(select MEDIDA from AB_DIC_UNIDADE_MEDIDA where ID_MEDIDA = t.ID_UNIDADE) as unidaditivo "
+							+ ", CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN '-' ELSE '+' END as sinal,a.ID_MOV_PREP_ETIQUETA "
+							+ "from PIN_MOV_PREPARACAO_ETIQ a "
+							+ "inner join PIN_MOV_PREPARACAO_LINHA b on a.ID_PREPARACAO_LIN = b.ID_PREPARACAO_LIN "
+							+ "inner join PIN_DIC_PRODUTOS t on  t.ID = b.ID_PRODUTO "
+							+ "where b.ID_PREPARACAO_CAB  = " + id + "");
+
+			Query query2 = entityManager.createNativeQuery(
+					"select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES,a.DATCRE "
+							+ ",'correcao'+CONVERT(varchar(10), ID_MOV_PREP_ETIQUETA), a.CONSUMIR as cons, '0' as id2,a.QUANT_FINAL as qtdf,a.UNISTO as unnd,a.sinal,a.ID_MOV_PREP_ETIQUETA "
+							+ "from PIN_MOV_PREPARACAO_ETIQ a where a.ID_MOV_PREP_ETIQUETA in (" + ids + ")");
+
+			Query query_folder = entityManager.createNativeQuery(
+					"select top 1  PASTA_FICHEIRO,PASTA_ETIQUETAS,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a");
+
+			Query query_impressora = entityManager.createNativeQuery(
+					"select top 1  NOME_IMPRESSORA,IP_IMPRESSORA from GER_POSTOS b where IP_POSTO ='" + ip_posto + "'");
+
+			List<Object[]> dados_folder = query_folder.getResultList();
+			List<Object[]> dados_impressora = query_impressora.getResultList();
+			Boolean imprime = false;
+
+			for (Object[] content : dados_folder) {
+				path = content[0] + nome_ficheiro;
+				path2 = content[1].toString();
+				path_error = content[3] + nome_ficheiro;
+				path_error2 = content[3].toString();
+				modelo_REPORT = content[2].toString();
+			}
+
+			for (Object[] content2 : dados_impressora) {
+				nomeimpressora = content2[0].toString();
+				if (content2[1] != null) {
+					ipimpressora = content2[1].toString();
+				}
+				imprime = true;
+			}
+
+			sequencia = sequencia();
+
+			List<Object[]> dados = null;
+			if (id != null) {
+				dados = query.getResultList();
+			} else {
+				dados = query2.getResultList();
+			}
+
+			final ConnectProgress connectionProgress = new ConnectProgress();
+			List<HashMap<String, String>> lista = null;
+			List<HashMap<String, String>> lista2 = null;
+			Boolean Orig_Composant = false;
+			ArrayList<String> values_etiqueta = new ArrayList<String>();
+			Integer count = 0;
+			String data = "";
+			String INDNUMCSE = "";
+			String NCLRANG = "";
+			Integer size_etiq = 0;
+			data_etiq += "LAB_NAME=" + modelo_REPORT + "\r\n";
+
+			if (!ipimpressora.isEmpty() && ipimpressora != null) {
+				ipimpressora = ",->" + ipimpressora;
+			}
+
+			String data_path = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+			if (id != null) {
+				path2 = path2 + "ETIQUETA" + id + ".txt";
+				path_error2 = path_error2 + "ETIQUETA" + id + ".txt";
+			} else {
+				path2 = path2 + "ETIQUETA_CORRECAO_IMPRE_" + data_path + ".txt";
+				path_error2 = path_error2 + "ETIQUETA_CORRECAO_IMPRE_" + data_path + ".txt";
+			}
+			data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
+			data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
+
+			try {
+				lista2 = connectionProgress.getOrigineComposant2(getURLSILVER(), REF_COMPOSTO, of);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (lista2.size() > 0) {
+				INDNUMCSE = lista2.get(0).get("INDNUMENR");
+			}
+
+			for (Object[] content : dados) {
+				count = 0;
+				NCLRANG = "";
+				lista = null;
+
+				String cisterna = (content[20] != null) ? content[20].toString() : "false";
+				if (Float.parseFloat(content[3].toString()) != 0 && !content[3].toString().equals(content[1].toString())
+						&& !cisterna.equals("true")) {
+					// path2 = path2 + data_path + "_" + content[0].toString();
+
+					// criar ficheiro que gera etiquetas
+					data_etiq += SIRB.criaFicheiroEtiqueta(content);
+					size_etiq++;
+				}
+
+				try {
+					connectionProgress.EXEC_SINCRO(content[0].toString(), Float.parseFloat(content[3].toString()),
+							getURLSILVER());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				try {
+					lista = connectionProgress.getOrigineComposant(getURLSILVER(), content[7].toString(), of);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (lista.size() > 0) {
+					count = Integer.parseInt(lista.get(0).get("total"));
+					NCLRANG = lista.get(0).get("NCLRANG");
+				}
+
+				// System.out.println(content[0]);
+				data += "01        ";// Soci�t�
+				data += datatual; // Date suivi
+				data += sequencia; // N� s�quence
+
+				data += "    ";// + Ligne de production
+
+				data += "1";// Type N� OF
+				data += (of + "          ").substring(0, 10); // N� OF
+
+				data += "1";// Type op�ration
+
+				// OP_NUM
+				data += ("0010").substring(0, 4);// N� Op�ration
+
+				data += "1";// Position ( S12 )
+
+				// Code section
+				data += (SECCAO + "          ").substring(0, 10);
+
+				// Code sous-section
+				data += (SUBSECCAO + "          ").substring(0, 10);
+
+				data += "  "; // N� d'�quipe
+
+				// Type de ressource
+				data += ("    ").substring(0, 4);
+
+				// Code ressource
+				data += ("          ").substring(0, 10);
+
+				data += "   C"; // N� �tablissement + Type d'�l�ment C
+
+				// Date d�but
+				data += datatual;
+				// Heure d�but
+				data += horatual.substring(0, 6);
+				// Date fin
+				data += datatual;
+				// Heure fin
+				data += horatual.substring(0, 6);
+
+				// Origine composant
+				if (count > 0 && NCLRANG != null) {
+					Orig_Composant = true;
+					data += "0";
+				} else {
+					boolean ans = values_etiqueta.contains(content[7].toString());
+					if (ans) {
+						Orig_Composant = true;
+						data += "0";
+					} else {
+						Orig_Composant = false;
+						data += "1";
+						values_etiqueta.add(content[7].toString());
+					}
+				}
+
+				// R�f�rence compos�
+				data += (REF_COMPOSTO + "                 ").substring(0, 17);
+
+				// Variante compos� (1)
+				data += ("          ").substring(0, 10);
+
+				// Variante compos� (2)
+				data += ("          ").substring(0, 10);
+
+				// Indice du compos�
+				data += ("          ").substring(0, 10);
+
+				// N� enregistrement Cs�
+				String enregistrementcse = "000000000";
+				String sizecse = enregistrementcse + INDNUMCSE;
+				enregistrementcse = (sizecse).substring(sizecse.length() - 9, sizecse.length());
+				data += enregistrementcse;
+
+				// N� de rang
+				/*
+				 * String rang = "00000"; if (Orig_Composant) { String size = rang + NCLRANG;
+				 * rang = (size).substring(size.length() - 5, size.length()); data += rang; }
+				 * else { data += rang; }
+				 */
+
+				if (Orig_Composant) {
+					data += (NCLRANG + "     ").substring(0, 5);
+				} else {
+					data += ("     ").substring(0, 5);
+				}
+
+				// R�f�rence composant
+				data += (content[7] + "                 ").substring(0, 17);
+
+				// Variante composant (1)
+				if (content[5] != null) {
+					data += (content[5] + "          ").substring(0, 10);
+				} else {
+					data += "          ";
+				}
+
+				// Variante composant (2)
+				if (content[6] != null) {
+					data += (content[6] + "          ").substring(0, 10);
+				} else {
+					data += "          ";
+				}
+
+				// Indice du composant
+				if (content[4] != null) {
+					data += (content[4] + "          ").substring(0, 10);
+				} else {
+					data += "          ";
+				}
+
+				// N� enregistrement Cst
+
+				String enregistrement = "000000000";
+				if (content[14] != null) {
+					String size = enregistrement + content[14];
+					enregistrement = (size).substring(size.length() - 9, size.length());
+					data += enregistrement;
+				} else {
+					data += enregistrement;
+				}
+
+				/*
+				 * if (content[14] != null) { data += (content[14] + "         ").substring(0,
+				 * 9); } else { data += ("         ").substring(0, 9); }
+				 */
+
+				// Type quantit�
+				data += "1";
+
+				// Quantit�
+				if (content[19] != null) {
+					String result = String.format("%.3f", content[19]).replace("$", ",");
+					String[] parts = result.split(",");
+					String part1 = "00000000000";
+					String part2 = "0000";
+					if (parts.length > 0) {
+						if (parts[0] != null) {
+							String size = part1 + parts[0];
+							part1 = (size).substring(size.length() - 11, size.length());
+						}
+						if (parts.length > 1) {
+							String size = parts[1] + part2;
+							part2 = (size).substring(0, 4);
+						}
+					}
+					data += (part1 + part2 + "  ").substring(0, 17);
+				} else {
+					data += "000000000000000  ";
+				}
+
+				if (id != null) {
+					data += content[23].toString(); // Signe
+				} else {
+					data += content[23]; // Signe
+				}
+				// Unit�
+				if (content[8] != null) {
+					data += (content[8] + "    ").substring(0, 4);
+				} else {
+					data += "    ";
+				}
+
+				// Quantit� (US2)
+				data += "               ";
+
+				// Lieu origine
+				if (content[9] != null) {
+					data += (content[9] + "          ").substring(0, 10);
+				} else {
+					data += "          ";
+				}
+
+				// Emplacement origine
+				if (content[15] != null) {
+					data += (content[15] + "          ").substring(0, 10);
+				} else {
+					data += "          ";
+				}
+
+				// R�f�rence du lot
+				if (content[10] != null) {
+					data += (content[10] + "                                   ").substring(0, 35);
+				} else {
+					data += "                                   ";
+				}
+
+				// N� de lot interne
+				String lotinterne = "000000000";
+				if (content[12] != null) {
+					String size = lotinterne + content[12];
+					lotinterne = (size).substring(size.length() - 9, size.length());
+					data += lotinterne;
+				} else {
+					data += lotinterne;
+				}
+
+				// N� d'�tiquette
+				if (content[0] != null) {
+					data += (content[0] + "          ").substring(0, 10);
+				} else {
+					data += "          ";
+				}
+
+				// N� enreg. �tiquette
+				String etiquette = "000000000";
+				if (content[1] != null) {
+					String size = etiquette + content[11];
+					etiquette = (size).substring(size.length() - 9, size.length());
+					data += etiquette;
+				} else {
+					data += etiquette;
+				}
+
+				// Texte libre
+				if (id != null) {
+					data += (num_manutencao + "                                        ").substring(0, 40);
+				} else {
+					data += (content[18] + "                                        ").substring(0, 40);
+				}
+				data += "\r\n";
+
+				String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(datacria);
+				entityManager.createNativeQuery("UPDATE PIN_MOV_PREPARACAO_ETIQ SET DATA_PREP_EXEC = '" + timeStamp
+						+ "' where ID_MOV_PREP_ETIQUETA = " + content[24] + "").executeUpdate();
+			}
+
+			if (data.length() > 0) {
+				SIRB.criar_ficheiro(data, path, path_error, false, "");
+			}
+
+			if (size_etiq > 0 && imprime) {
+				SIRB.criar_ficheiro(data_etiq, path2, path_error2, false, "");
+			}	
+
+		}
+		
+		public String sequencia() {
+			String sequencia = "000000000";
+			Query query_seq = entityManager.createNativeQuery(
+					"select top 1 NUMERO_SEQUENCIA,DATA_SEQUENCIA from GER_SEQUENCIA_FICHEIRO where DATA_SEQUENCIA = CONVERT (date, GETDATE())");
+
+			List<Object[]> dados_seq = query_seq.getResultList();
+			if (dados_seq.size() > 0) {
+				Integer val = 1;
+				for (Object[] contentseq : dados_seq) {
+					val = Integer.parseInt(contentseq[0].toString()) + 1;
+					sequencia = ("000000000" + val).substring(("000000000" + val).length() - 9,
+							("000000000" + val).length());
+				}
+				entityManager.createNativeQuery("UPDATE GER_SEQUENCIA_FICHEIRO SET NUMERO_SEQUENCIA = " + val
+						+ " where DATA_SEQUENCIA = CONVERT (date, GETDATE())").executeUpdate();
+			} else {
+				sequencia = "000000001";
+				entityManager
+						.createNativeQuery(
+								"INSERT INTO GER_SEQUENCIA_FICHEIRO (DATA_SEQUENCIA,NUMERO_SEQUENCIA) VALUES (GETDATE(),1)")
+						.executeUpdate();
+			}
+			return sequencia;
+		}
+
+		public void alerta_etiquetas(Integer id) {
+			SIRB SIRB= new SIRB();
+			DecimalFormat decimalFormat = new DecimalFormat("#0.000");
+
+			String email_para = "", numero_manutencao = "", data_manutencao = "", nome_pote = "", cabine = "",
+					utilizador = "", total_consumido = "", valor_aditivo = "", linha = "", tipo_manutencao = "",
+					ref_aditivo = "", nome_aditivo = "";
+
+			String etiquetas = "<table  border='1'><tr><th><b>Nº Etiqueta</b></th><th><b>Qtd.</b></th><th><b>Consumido</b></th><th><b>Qtd. Final</b></th></tr>";
+			String valor = null, total = null;
+			Query query = entityManager.createNativeQuery(
+					"select d.ID_PREPARACAO,c.ETQNUM,c.CONSUMIR,b.VALOR,d.DATA_PLANEAMENTO,d.HORA_PLANEAMENTO, "
+							+ "(select SUM(v.CONSUMIR) from PIN_MOV_PREPARACAO_ETIQ v where v.ID_PREPARACAO_LIN = b.ID_PREPARACAO_LIN) as total, "
+							+ "(select MEDIDA from AB_DIC_UNIDADE_MEDIDA where ID_MEDIDA = b.ID_UNIDADE) as unidade, "
+							+ "(select f.NOME from PIN_DIC_POTES f where f.ID = a.ID_POTE) as banho, a.ID_POTE,  "
+							+ "/*(select f.EMAIL_PARA from AB_DIC_BANHO f where f.ID_BANHO = a.ID_BANHO)*/ null as email_banho, "
+							+ "(select g.NOME_CABINE from PIN_DIC_POTES f left join PIN_DIC_CABINES g on f.ID_CABINE = g.ID where f.ID = a.ID_POTE) as cabine, "
+							+ "(select h.NOME_TIPO_MANUTENCAO from AB_DIC_TIPO_MANUTENCAO h where h.ID_TIPO_MANUTENCAO = d.ID_TIPO_MANUTENCAO) as tipo, "
+							+ "(select NOME_UTILIZADOR from GER_UTILIZADORES h where ID_UTILIZADOR = d.UTZ_ULT_MODIF) as utilizador, "
+							+ "(select NOME_LINHA from AB_DIC_LINHA h where ID_LINHA = d.ID_LINHA) as linha, "
+							+ "CASE WHEN ( c.QUANT  - c.QUANT_FINAL) < 0 THEN 0 ELSE ( c.QUANT  - c.QUANT_FINAL) END as qtt , c.UNICOD,c.QUANT, t.FACTOR_CONVERSAO,t.NOME_REF,t.COD_REF,c.QUANT_FINAL, "
+							+ "a.DATA_PREPARACAO,a.HORA_PREPARACAO,a.DATA_EXECUCAO,a.HORA_EXECUCAO "
+							+ "from PIN_MOV_PREPARACAO_CAB a "
+							+ "inner join PIN_MOV_PREPARACAO_LINHA b on a.ID_PREPARACAO_CAB = b.ID_PREPARACAO_CAB "
+							+ "left join PIN_MOV_PREPARACAO_ETIQ c on b.ID_PREPARACAO_LIN = c.ID_PREPARACAO_LIN "
+							+ "inner join PIN_MOV_PREPARACAO d on a.ID_PREPARACAO = d.ID_PREPARACAO "
+							+ "inner join PIN_DIC_PRODUTOS t on b.ID_PRODUTO =  t.ID "
+							+ "where b.ID_PREPARACAO_LIN =" + id);
+			// ( c.CONSUMIR / (CASE WHEN t.FACTOR_CONVERSAO IS NULL THEN 1 WHEN
+			// t.FACTOR_CONVERSAO = 0 THEN 1 ELSE t.FACTOR_CONVERSAO END) )
+			List<Object[]> dados = query.getResultList();
+
+			String datahoraexecucao = "";
+			String datahorapreparacao = "";
+
+			for (Object[] content : dados) {
+
+				if (content[24] != null) {
+					datahoraexecucao = content[24].toString() + " " + content[25].toString().substring(0, 8);
+				}
+
+				if (content[22] != null) {
+					datahorapreparacao = content[22].toString() + " " + content[23].toString().substring(0, 8);
+				}
+
+				String vv = (content[3] != null) ? content[3].toString() : "0";
+				String tt = (content[6] != null) ? content[6].toString() : "0";
+				Double valor2 = Double.valueOf(vv.replace(",", "."));
+				Double total2 = Double.valueOf(tt.replace(",", "."));
+				valor = decimalFormat.format(valor2);
+				total = decimalFormat.format(total2);
+
+				numero_manutencao = content[0].toString();
+				valor_aditivo = valor + " " + content[7].toString();
+				data_manutencao = content[4].toString() + " " + content[5].toString().substring(0, 8);
+				total_consumido = total + " " + content[7].toString();
+				nome_pote = content[9].toString() + "/" + content[8].toString();
+				email_para = (content[10] != null) ? content[10].toString() : "";
+				cabine = content[11].toString();
+				tipo_manutencao = content[12].toString();
+				utilizador = content[13].toString();
+				linha = content[14].toString();
+				nome_aditivo = (content[19] != null) ? content[19].toString() : "";
+				ref_aditivo = (content[20] != null) ? content[20].toString() : "";
+
+				String cc = (content[2] != null) ? content[2].toString() : "0";
+				Double total3 = Double.valueOf(cc.replace(",", "."));
+				String qq = (content[15] != null) ? content[15].toString() : "0";
+				Double total4 = Double.valueOf(qq.replace(",", "."));
+				String dd = (content[17] != null) ? content[17].toString() : "0";
+				Double total5 = Double.valueOf(dd.replace(",", "."));
+				Double factor = Double.valueOf(((content[18] != null) ? content[18].toString() : "0").replace(",", "."));
+				String qf = (content[21] != null) ? content[21].toString() : "0";
+				Double qtdfinal = Double.valueOf(qf.replace(",", "."));
+
+				factor = (factor == 0 || factor == null) ? 1 : factor;
+
+				String yy = (content[16] != null) ? content[16].toString() : "--";
+				String qtd = decimalFormat.format(total5).replace("$", ",") + " " + yy + "/"
+						+ decimalFormat.format(total5 / factor).replace("$", ",") + " " + content[7].toString();
+
+				String etn = (content[1] != null) ? content[1].toString() : "Sem Etiqueta";
+				String etn1 = (content[7] != null) ? content[7].toString() : "0";
+				etiquetas += "<tr><td style='padding: 0px 5px 0px 5px;'>" + etn
+						+ "</td><td style='padding: 0px 5px 0px 5px;'>" + qtd
+						+ "</td><td style='padding: 0px 5px 0px 5px;'>"
+						+ decimalFormat.format(total3 * factor).replace("$", ",") + " " + yy + "/"
+						+ decimalFormat.format(total3).replace("$", ",") + " " + etn1
+						+ "</td><td style='padding: 0px 5px 0px 5px;'>" + decimalFormat.format(qtdfinal).replace("$", ",")
+						+ " " + yy + "</td></tr>";
+			}
+
+			etiquetas += "</table>";
+			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+			HashMap<String, String> n = new HashMap<String, String>();
+			n.put("MODULO", "1");
+			n.put("MOMENTO", "Ao Finalizar Preparação");
+			n.put("PAGINA", "Preparações Pintura");
+			n.put("ESTADO", "1");
+			n.put("EMAIL_PARA", email_para);
+
+			n.put("DADOS",
+					"{numero_manutencao::" + numero_manutencao + "\n/datahorapreparacao::" + datahorapreparacao
+							+ "\n/datahoraexecucao::" + datahoraexecucao + "\n/data_manutencao::" + data_manutencao + ""
+							+ "\n/nome_pote::" + nome_pote + "" + "\n/cabine::" + cabine + "\n/utilizador::" + utilizador + ""
+							+ "\n/dados_etiquetas::" + etiquetas + "" + "" + "\n/total_consumido::"
+							+ total_consumido.replace("$", ",") + "\n/valor_aditivo::" + valor_aditivo.replace("$", ",")
+							+ "" + "\n/linha::" + linha + "" + "\n/tipo_manutencao::" + tipo_manutencao
+							+ "\n/nome_aditivo::" + nome_aditivo + "\n/ref_aditivo::" + ref_aditivo + "}");
+			data.add(n);
+
+			if (valor != null && !valor.equals(total))
+				SIRB.verficaEventos(data);
+		}
+		
+		/************************************* PIN_MOV_RECEITAS */
+		@POST
+		@Path("/createPIN_MOV_RECEITAS")
+		@Consumes("*/*")
+		@Produces("application/json")
+		public PIN_MOV_RECEITAS insertAB_DIC_ADITIVO(final PIN_MOV_RECEITAS data) {
+			return dao20.create(data);
+		}
+
+		@GET
+		@Path("/getPIN_MOV_RECEITASyid/{id}")
+		@Produces("application/json")
+		public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASyid(@PathParam("id") Integer id) {
+			return dao20.getbyid(id, 0);
+		}
+
+		@GET
+		@Path("/getPIN_MOV_RECEITAS")
+		@Produces("application/json")
+		public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITAS() {
+			return dao20.allEntries();
+		}
+
+		@GET
+		@Path("/getPIN_MOV_RECEITAS2")
+		@Produces("application/json")
+		public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASLINHA() {
+			return dao20.getall(0);
+		}
+
+		
+		@DELETE
+		@Path("/deletePIN_MOV_RECEITAS/{id}")
+		public void deletePIN_MOV_RECEITAS(@PathParam("id") Integer id) {
+			PIN_MOV_RECEITAS PIN_MOV_RECEITAS = new PIN_MOV_RECEITAS();
+			PIN_MOV_RECEITAS.setID(id);
+			dao20.delete(PIN_MOV_RECEITAS);
+		}
+
+		@PUT
+		@Path("/updatePIN_MOV_RECEITAS")
+		@Consumes("*/*")
+		@Produces("application/json")
+		public PIN_MOV_RECEITAS updatePIN_MOV_RECEITAS(final PIN_MOV_RECEITAS PIN_MOV_RECEITAS) {
+			PIN_MOV_RECEITAS.setID(PIN_MOV_RECEITAS.getID());
+			return dao20.update(PIN_MOV_RECEITAS);
+		}
+		
+		
+		/************************************* PIN_MOV_RECEITAS_LINHAS */
+		@POST
+		@Path("/createPIN_MOV_RECEITAS_LINHAS")
+		@Consumes("*/*")
+		@Produces("application/json")
+		public PIN_MOV_RECEITAS_LINHAS insertAB_DIC_ADITIVO(final PIN_MOV_RECEITAS_LINHAS data) {
+			return dao21.create(data);
+		}
+
+		@GET
+		@Path("/getPIN_MOV_RECEITAS_LINHASyid/{id}")
+		@Produces("application/json")
+		public List<PIN_MOV_RECEITAS_LINHAS> getPIN_MOV_RECEITAS_LINHASyid(@PathParam("id") Integer id) {
+			return dao21.getbyid(id);
+		}
+
+		@GET
+		@Path("/getPIN_MOV_RECEITAS_LINHAS")
+		@Produces("application/json")
+		public List<PIN_MOV_RECEITAS_LINHAS> getPIN_MOV_RECEITAS_LINHAS() {
+			return dao21.allEntries();
+		}
+
+		@GET
+		@Path("/getPIN_MOV_RECEITAS_LINHAS2")
+		@Produces("application/json")
+		public List<PIN_MOV_RECEITAS_LINHAS> getPIN_MOV_RECEITAS_LINHASLINHA() {
+			return dao21.getall();
+		}
+
+		
+		@DELETE
+		@Path("/deletePIN_MOV_RECEITAS_LINHAS/{id}")
+		public void deletePIN_MOV_RECEITAS_LINHAS(@PathParam("id") Integer id) {
+			PIN_MOV_RECEITAS_LINHAS PIN_MOV_RECEITAS_LINHAS = new PIN_MOV_RECEITAS_LINHAS();
+			PIN_MOV_RECEITAS_LINHAS.setID(id);
+			dao21.delete(PIN_MOV_RECEITAS_LINHAS);
+		}
+
+		@PUT
+		@Path("/updatePIN_MOV_RECEITAS_LINHAS")
+		@Consumes("*/*")
+		@Produces("application/json")
+		public PIN_MOV_RECEITAS_LINHAS updatePIN_MOV_RECEITAS_LINHAS(final PIN_MOV_RECEITAS_LINHAS PIN_MOV_RECEITAS_LINHAS) {
+			PIN_MOV_RECEITAS_LINHAS.setID(PIN_MOV_RECEITAS_LINHAS.getID());
+			return dao21.update(PIN_MOV_RECEITAS_LINHAS);
+		}
 }

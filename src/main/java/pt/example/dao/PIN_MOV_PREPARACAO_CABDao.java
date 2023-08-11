@@ -14,13 +14,14 @@ public class PIN_MOV_PREPARACAO_CABDao extends GenericDaoJpaImpl<PIN_MOV_PREPARA
 
 	public List<PIN_MOV_PREPARACAO_CAB> getbyidPREPARACAO(Integer id) {
 		Query query = entityManager.createQuery(
-				"Select DISTINCT a ,CASE WHEN a.ID_ANALISE IS NULL THEN '' ELSE (select c.NOME_BANHO from AB_MOV_ANALISE b, AB_DIC_BANHO c where b.ID_BANHO = c.ID_BANHO and b.ID_ANALISE = a.ID_ANALISE)END as nome,"
+				/*CASE WHEN a.ID_ANALISE IS NULL THEN '' ELSE (select c.NOME_BANHO from AB_MOV_ANALISE b, AB_DIC_BANHO c where b.ID_BANHO = c.ID_BANHO and b.ID_ANALISE = a.ID_ANALISE)END*/
+				"Select DISTINCT a , '' as nome,"
 						+ "CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select b.CAPACIDADE from PIN_DIC_POTES b where b.ID = a.ID_POTE)END as capacidade, "
-						+ "CASE WHEN d.ID195 IS NULL THEN '' ELSE (select e.ID_REG_PARAM_OPERA from AB_MOV_REG_PARAM_OPERACAO e where e.ID_PREPARACAO_CAB = a.ID_PREPARACAO_CAB and e.INATIVO != 1 )END as operacao,  "
+						+ "'' as operacao,  "
 						+ "CASE WHEN a.UTZ_EXECUCAO IS NULL THEN '' ELSE (select g.NOME_UTILIZADOR from GER_UTILIZADORES g where g.ID_UTILIZADOR = a.UTZ_EXECUCAO)END as nomeutz, "
 						+ "CASE WHEN a.UTZ_PREPARACAO IS NULL THEN '' ELSE (select f.NOME_UTILIZADOR from GER_UTILIZADORES f where f.ID_UTILIZADOR = a.UTZ_PREPARACAO)END as nomeutz2, "
-						+ "CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select b.COD_TINA from PIN_DIC_POTES b where b.ID = a.ID_POTE)END as cod_tina, "
-						+ "CASE WHEN d.ID195 IS NULL THEN '' ELSE (select m.DATA_VALIDA from AB_MOV_REG_PARAM_OPERACAO m where m.ID_PREPARACAO_CAB = a.ID_PREPARACAO_CAB and m.INATIVO != 1 )END as dataoperacao "
+						+ "CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select fc.NOME_CABINE from PIN_DIC_POTES f,PIN_DIC_CABINES fc where f.ID = a.ID_POTE and fc.ID = f.ID_CABINE)END as cabine, "
+						+ "'' as dataoperacao "
 						+ ", CASE WHEN a.DATA_PREPARACAO IS NULL THEN '1' WHEN a.DATA_EXECUCAO is null THEN '2' WHEN a.DATA_EXECUCAO is not null THEN '4' WHEN a.DATA_PREPARACAO is not null THEN '3' END AS B "
 						+ "from PIN_MOV_PREPARACAO_CAB a where  a.ID_PREPARACAO = :id and a.INATIVO != 1 order by B,DATA_PREVISTA,HORA_PREVISTA,DATA_CRIA");
 		query.setParameter("id", id);
@@ -55,14 +56,18 @@ public class PIN_MOV_PREPARACAO_CABDao extends GenericDaoJpaImpl<PIN_MOV_PREPARA
 	}
 	public List<PIN_MOV_PREPARACAO_CAB> getbyid(Integer id) {
 		Query query = entityManager.createQuery(
-				"Select DISTINCT a ,null as nome,/*CASE WHEN a.ID_ANALISE IS NULL THEN '' ELSE (select c.NOME_BANHO from AB_MOV_ANALISE b, AB_DIC_BANHO c where b.ID_BANHO = c.ID_BANHO and b.ID_ANALISE = a.ID_ANALISE)END as nome,*/ "
-						+ "CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select b.CAPACIDADE from PIN_DIC_POTES b where b.ID = a.ID_POTE)END as capacidade, "
-						+ "null as operacao,-- CASE WHEN d.ID195 IS NULL THEN '' ELSE (select e.ID_REG_PARAM_OPERA from AB_MOV_REG_PARAM_OPERACAO e where e.ID_PREPARACAO_CAB = a.ID_PREPARACAO_CAB and e.INATIVO != 1)END as operacao, "
+				/*CASE WHEN a.ID_ANALISE IS NULL THEN '' ELSE (select c.NOME_BANHO from AB_MOV_ANALISE b, AB_DIC_BANHO c where b.ID_BANHO = c.ID_BANHO and b.ID_ANALISE = a.ID_ANALISE)END as nome,
+				 * -- CASE WHEN d.ID195 IS NULL THEN '' ELSE (select e.ID_REG_PARAM_OPERA from AB_MOV_REG_PARAM_OPERACAO e where e.ID_PREPARACAO_CAB = a.ID_PREPARACAO_CAB and e.INATIVO != 1)END as operacao, 
+				 * --CASE WHEN d.ID195 IS NULL THEN '' ELSE (select m.DATA_VALIDA from AB_MOV_REG_PARAM_OPERACAO m where m.ID_PREPARACAO_CAB = a.ID_PREPARACAO_CAB and m.INATIVO != 1 )END as dataoperacao, 
+				 * */ 
+				"Select DISTINCT a ,'' as nome "
+						+ ", CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select b.CAPACIDADE from PIN_DIC_POTES b where b.ID = a.ID_POTE)END as capacidade, "
+						+ "'' as operacao, "
 						+ "CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select fc.NOME_CABINE from PIN_DIC_POTES f,PIN_DIC_CABINES fc where f.ID = a.ID_POTE and fc.ID = f.ID_CABINE)END as cabine, "
 						+ "CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select b.NOME from PIN_DIC_POTES b where b.ID = a.ID_POTE)END as cod, "
 						+ "CASE WHEN a.UTZ_EXECUCAO IS NULL THEN '' ELSE (select g.NOME_UTILIZADOR from GER_UTILIZADORES g where g.ID_UTILIZADOR = a.UTZ_EXECUCAO)END as nomeutz, h, "
 						+ "CASE WHEN a.UTZ_PREPARACAO IS NULL THEN '' ELSE (select f.NOME_UTILIZADOR from GER_UTILIZADORES f where f.ID_UTILIZADOR = a.UTZ_PREPARACAO)END as nomeutz2, "
-						+ "null as dataoperacao,--CASE WHEN d.ID195 IS NULL THEN '' ELSE (select m.DATA_VALIDA from AB_MOV_REG_PARAM_OPERACAO m where m.ID_PREPARACAO_CAB = a.ID_PREPARACAO_CAB and m.INATIVO != 1 )END as dataoperacao, "
+						+ "'' as dataoperacao, "
 						+ "i.DATA_PLANEAMENTO,i.HORA_PLANEAMENTO "
 						+ "from PIN_MOV_PREPARACAO_CAB a,AB_DIC_LINHA h, PIN_MOV_PREPARACAO i where i.ID_PREPARACAO = a.ID_PREPARACAO and i.ID_LINHA=h.ID_LINHA and "
 						+ " a.ID_PREPARACAO_CAB = :id and a.INATIVO != 1 ");

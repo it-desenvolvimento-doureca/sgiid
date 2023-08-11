@@ -33,7 +33,7 @@ public class PIN_MOV_PREPARACAO_LINHA {
 	@JsonProperty("ID_UNIDADE")
 	private Integer ID_UNIDADE;
 	@JsonProperty("HORA_PREVISTA")
-	private Time HORA_PREVISTA;
+	private String HORA_PREVISTA;
 	@JsonProperty("OBS_PLANEAMENTO")
 	private String OBS_PLANEAMENTO;
 	@JsonProperty("STKUNIT")
@@ -99,11 +99,11 @@ public class PIN_MOV_PREPARACAO_LINHA {
 		ID_UNIDADE = iD_UNIDADE;
 	}
 
-	public Time getHORA_PREVISTA() {
+	public String getHORA_PREVISTA() {
 		return HORA_PREVISTA;
 	}
 
-	public void setHORA_PREVISTA(Time hORA_PREVISTA) {
+	public void setHORA_PREVISTA(String hORA_PREVISTA) {
 		HORA_PREVISTA = hORA_PREVISTA;
 	}
 
