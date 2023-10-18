@@ -3118,7 +3118,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getStock(data, getURLSILVER());
 		return dados;
 	}
-	
+
 	@POST
 	@Path("/getStockPintura")
 	@Consumes("*/*")
@@ -3129,6 +3129,19 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getStockPintura(data, getURLSILVER());
+		return dados;
+	}
+
+	@POST
+	@Path("/getArmazemStockPintura")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getArmazemStockPintura(final List<HashMap<String, String>> data)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getArmazemStockPintura(data, getURLSILVER());
 		return dados;
 	}
 
@@ -3179,7 +3192,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getComponentes(getURLSILVER());
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getComponentesPintura")
 	@Produces("application/json")
@@ -3188,6 +3201,40 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getComponentesPintura(getURLSILVER());
+		return dados;
+	}
+
+	@GET
+	@Path("/getComponentesPintura2")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getComponentesPintura2() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesPintura2(getURLSILVER());
+		return dados;
+	}
+
+	@GET
+	@Path("/getComponentesPintura3")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getComponentesPintura3() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesPintura3(getURLSILVER());
+		return dados;
+	}
+
+	@GET
+	@Path("/getTiposAcabamento/{tipo}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getTiposAcabamento(@PathParam("tipo") String tipo)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getTiposAcabamento(getURLSILVER(), tipo);
 		return dados;
 	}
 
@@ -7739,7 +7786,7 @@ public class SIRB {
 		/*
 		 * && GT_MOV_TAREFAS.getSUB_MODULO( ).equals("A")
 		 */
-		if (GT_MOV_TAREFAS.getID_MODULO() != null && GT_MOV_TAREFAS.getID_MODULO() == 10 ) {
+		if (GT_MOV_TAREFAS.getID_MODULO() != null && GT_MOV_TAREFAS.getID_MODULO() == 10) {
 			entityManager.createNativeQuery(
 					"IF (select COUNT(*) from PR_AMOSTRAS_CAB a	inner join PR_AMOSTRAS_ACCOES b on a.ID_AMOSTRA = b.ID_AMOSTRA "
 							+ "	inner join GT_MOV_TAREFAS c on b.ID_AMOSTRA_ACCAO = c.ID_CAMPO and ID_MODULO = 10 and SUB_MODULO = 'A' "
@@ -7752,7 +7799,8 @@ public class SIRB {
 							+ "	BEGIN 	UPDATE PR_AMOSTRAS_CAB set ESTADO = 'C' where ID_AMOSTRA in (select ID_AMOSTRA from PR_AMOSTRAS_ACCOES where ID_AMOSTRA_ACCAO = "
 							+ GT_MOV_TAREFAS.getID_CAMPO() + ") 	END")
 					.executeUpdate();
-		} else if (GT_MOV_TAREFAS.getID_MODULO() != null && GT_MOV_TAREFAS.getID_MODULO() == 13 && GT_MOV_TAREFAS.getID_TAREFA_PAI() == null) {
+		} else if (GT_MOV_TAREFAS.getID_MODULO() != null && GT_MOV_TAREFAS.getID_MODULO() == 13
+				&& GT_MOV_TAREFAS.getID_TAREFA_PAI() == null) {
 			if (GT_MOV_TAREFAS.getESTADO().equals("C")) {
 				entityManager.createNativeQuery("UPDATE PA_MOV_LINHA set ESTADO = 'I' WHERE ID_PLANO_LINHA = "
 						+ GT_MOV_TAREFAS.getID_CAMPO() + "").executeUpdate();

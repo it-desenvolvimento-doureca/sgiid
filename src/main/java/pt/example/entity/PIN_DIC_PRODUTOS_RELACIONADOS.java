@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -27,7 +28,11 @@ public class PIN_DIC_PRODUTOS_RELACIONADOS {
 	private String NOME_REF;
 	@JsonProperty("OBS")
 	private String OBS;
-
+	@JsonProperty("PERC_DILUICAO")
+	private BigDecimal PERC_DILUICAO;
+	@JsonProperty("ID_REF")
+	private Integer ID_REF;
+	
 	public Integer getID() {
 		return ID;
 	}
@@ -66,6 +71,22 @@ public class PIN_DIC_PRODUTOS_RELACIONADOS {
 
 	public void setOBS(String oBS) {
 		OBS = oBS;
+	}
+
+	public BigDecimal getPERC_DILUICAO() {
+		return PERC_DILUICAO;
+	}
+
+	public void setPERC_DILUICAO(BigDecimal pERC_DILUICAO) {
+		PERC_DILUICAO = pERC_DILUICAO;
+	}
+
+	public Integer getID_REF() {
+		return ID_REF;
+	}
+
+	public void setID_REF(Integer iD_REF) {
+		ID_REF = iD_REF;
 	}
 
 }

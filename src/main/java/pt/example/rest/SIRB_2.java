@@ -1377,6 +1377,20 @@ public class SIRB_2 {
 	}
 
 	@POST
+	@Path("/GET_RACKS_QUANTIDADES")
+	@Produces("application/json")
+	public List<Object[]> GET_RACKS_QUANTIDADES(final List<HashMap<String, String>> dados) {
+		// HashMap<String, String> firstMap = dados.get(0);
+		// String DATA = firstMap.get("DATA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_RACKS_QUANTIDADES]");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
 	@Path("/getEvolucaoDefeitoRef")
 	@Produces("application/json")
 	public List<Object[]> getEvolucaoDefeitoRef(final List<HashMap<String, String>> dados) {

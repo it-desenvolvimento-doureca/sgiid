@@ -59,10 +59,10 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 		String querybanho = "";
 		Integer varquery = 1;
 
-		if (firstMap.get("querybanho") != null) {
+		/*if (firstMap.get("querybanho") != null) {
 			querybanho = " and a.ID_PREPARACAO in (SELECT t.ID_PREPARACAO FROM PIN_MOV_PREPARACAO_CAB t where t.ID_POTE = "
 					+ firstMap.get("querybanho") + " and t.INATIVO != 1 )";
-		}
+		}*/
 
 		if (query2 == null) {
 			varquery = 0;
@@ -114,7 +114,7 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 				.createNativeQuery("select a.ID_PREPARACAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,a.ESTADO,a.CLASSIF, "
 						+ " g.NOME_LINHA,h.NOME_TURNO, "
 						+ "(select top 1 x.NOME_UTILIZADOR from GER_UTILIZADORES x where x.ID_UTILIZADOR = a.UTZ_PLANEAMENTO) as UTZ_PLAN, "
-						+ "b.ID_POTE,f.NOME,t.NOME_CABINE,b.OBS_EXECUCAO,b.OBS_PLANEAMENTO, "
+						+ "c.ID_POTE,f.NOME,t.NOME_CABINE,b.OBS_EXECUCAO,b.OBS_PLANEAMENTO, "
 						+ "b.OBS_PREPARACAO,b.DATA_EXECUCAO,b.HORA_EXECUCAO,b.DATA_PREPARACAO,b.HORA_PREPARACAO,b.DATA_PREVISTA,b.HORA_PREVISTA, "
 						+ "(select top 1 x.NOME_UTILIZADOR from GER_UTILIZADORES x where x.ID_UTILIZADOR = b.UTZ_EXECUCAO) as UTZ_EXE, "
 						+ "(select top 1 x.NOME_UTILIZADOR from GER_UTILIZADORES x where x.ID_UTILIZADOR = b.UTZ_PREPARACAO) as UTZ_PREP, "
@@ -125,7 +125,7 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ " left join PIN_MOV_PREPARACAO_LINHA c on b.ID_PREPARACAO_CAB = c.ID_PREPARACAO_CAB "
 						+ "left join PIN_MOV_PREPARACAO_ETIQ d on c.ID_PREPARACAO_LIN = d.ID_PREPARACAO_LIN "
 						+ "left join PIN_DIC_PRODUTOS e on c.ID_PRODUTO = e.ID "
-						+ "left join PIN_DIC_POTES f on b.ID_POTE = f.ID "
+						+ "left join PIN_DIC_POTES f on c.ID_POTE = f.ID "
 						+ "left join AB_DIC_LINHA g on a.ID_LINHA = g.ID_LINHA "
 						+ "left join AB_DIC_TURNO h on a.ID_TURNO = h.ID_TURNO "
 						+ "left join PIN_DIC_CABINES t on f.ID_CABINE = t.ID " + "where "						
@@ -178,7 +178,7 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 				.createNativeQuery("select a.ID_PREPARACAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,a.ESTADO,a.CLASSIF, "
 						+ " g.NOME_LINHA,h.NOME_TURNO, "
 						+ "(select top 1 x.NOME_UTILIZADOR from GER_UTILIZADORES x where x.ID_UTILIZADOR = a.UTZ_PLANEAMENTO) as UTZ_PLAN, "
-						+ "b.ID_POTE,f.NOME,t.NOME_CABINE,b.OBS_EXECUCAO,b.OBS_PLANEAMENTO, "
+						+ "c.ID_POTE,f.NOME,t.NOME_CABINE,b.OBS_EXECUCAO,b.OBS_PLANEAMENTO, "
 						+ "b.OBS_PREPARACAO,b.DATA_EXECUCAO,b.HORA_EXECUCAO,b.DATA_PREPARACAO,b.HORA_PREPARACAO,b.DATA_PREVISTA,b.HORA_PREVISTA, "
 						+ "(select top 1 x.NOME_UTILIZADOR from GER_UTILIZADORES x where x.ID_UTILIZADOR = b.UTZ_EXECUCAO) as UTZ_EXE, "
 						+ "(select top 1 x.NOME_UTILIZADOR from GER_UTILIZADORES x where x.ID_UTILIZADOR = b.UTZ_PREPARACAO) as UTZ_PREP, "
@@ -188,7 +188,7 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ "from PIN_MOV_PREPARACAO a left join PIN_MOV_PREPARACAO_CAB b on a.ID_PREPARACAO = b.ID_PREPARACAO "
 						+ " left join PIN_MOV_PREPARACAO_LINHA c on b.ID_PREPARACAO_CAB = c.ID_PREPARACAO_CAB "
 						+ "left join PIN_DIC_PRODUTOS e on c.ID_PRODUTO = e.ID "
-						+ "left join PIN_DIC_POTES f on b.ID_POTE = f.ID_POTE "
+						+ "left join PIN_DIC_POTES f on c.ID_POTE = f.ID_POTE "
 						+ "left join AB_DIC_LINHA g on a.ID_LINHA = g.ID_LINHA "
 						+ "left join AB_DIC_TURNO h on a.ID_TURNO = h.ID_TURNO "
 						+ "left join PIN_DIC_CABINES t on f.ID_CABINE = t.ID  " + "where " + "((not ('"
@@ -242,7 +242,7 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
 						+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
 						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF = :classif "
-						+ "and a.ID_PREPARACAO in (SELECT t.ID_PREPARACAO FROM PIN_MOV_PREPARACAO_CAB t where t.ID_POTE = :idpote and t.INATIVO != 1)"
+						+ "/*and a.ID_PREPARACAO in (SELECT t.ID_PREPARACAO FROM PIN_MOV_PREPARACAO_CAB t where t.ID_POTE = :idpote and t.INATIVO != 1)*/"
 						+ " order by B,a.ID_PREPARACAO desc");
 
 		query.setParameter("linha", linha);

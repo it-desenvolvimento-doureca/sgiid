@@ -475,7 +475,7 @@ body .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-list-item {
 }
 
 .droplinha {
-    display: -webkit-inline-box;
+    display: inline-flex;
     border-radius: 6px;
 }
 

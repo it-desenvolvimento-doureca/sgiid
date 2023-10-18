@@ -22,9 +22,9 @@ public class PIN_MOV_RECEITAS_LINHAS {
 	@JsonProperty("UNIDADE")
 	private Integer UNIDADE;
 	@JsonProperty("ID_POTE")
-	private Integer ID_POTE;
+	private String ID_POTE;
 	@JsonProperty("ID_POTE_CATALISADOR")
-	private Integer ID_POTE_CATALISADOR;
+	private String ID_POTE_CATALISADOR;
 	@JsonProperty("REFERENCIA_A")
 	private String REFERENCIA_A;
 	@JsonProperty("REFERENCIA_B")
@@ -55,6 +55,32 @@ public class PIN_MOV_RECEITAS_LINHAS {
 	private String ARMAZEM_C;
 	@JsonProperty("ARMAZEM_ADITIVO")
 	private String ARMAZEM_ADITIVO;
+	@JsonProperty("CODIGO_COR")
+    private String CODIGO_COR;
+	@JsonProperty("ID_REFERENCIA_A")
+    private Integer ID_REFERENCIA_A;
+	@JsonProperty("ID_REFERENCIA_B")
+    private Integer ID_REFERENCIA_B;
+	@JsonProperty("ID_REFERENCIA_C")
+    private Integer ID_REFERENCIA_C;
+	@JsonProperty("ESPESSURA")
+    private String ESPESSURA;
+	@JsonProperty("BRILHO")
+    private String BRILHO;
+	@JsonProperty("ID_PRE_SET")
+    private Integer ID_PRE_SET;
+	@JsonProperty("CAUDAL")
+    private String CAUDAL;
+	@JsonProperty("PRESSAO_AUTOMATICA")
+    private String PRESSAO_AUTOMATICA;
+	@JsonProperty("PRESSAO_LEQUE")
+    private String PRESSAO_LEQUE;
+	@JsonProperty("VELOCIDADE")
+    private String VELOCIDADE;
+	@JsonProperty("TAMANHO_BICO")
+    private String TAMANHO_BICO;
+	@JsonProperty("VOLTAS_PISTOLA")
+    private String VOLTAS_PISTOLA;
 
 	public Integer getID() {
 		return ID;
@@ -88,19 +114,19 @@ public class PIN_MOV_RECEITAS_LINHAS {
 		UNIDADE = uNIDADE;
 	}
 
-	public Integer getID_POTE() {
+	public String getID_POTE() {
 		return ID_POTE;
 	}
 
-	public void setID_POTE(Integer iD_POTE) {
+	public void setID_POTE(String iD_POTE) {
 		ID_POTE = iD_POTE;
 	}
 
-	public Integer getID_POTE_CATALISADOR() {
+	public String getID_POTE_CATALISADOR() {
 		return ID_POTE_CATALISADOR;
 	}
 
-	public void setID_POTE_CATALISADOR(Integer iD_POTE_CATALISADOR) {
+	public void setID_POTE_CATALISADOR(String iD_POTE_CATALISADOR) {
 		ID_POTE_CATALISADOR = iD_POTE_CATALISADOR;
 	}
 
@@ -222,6 +248,110 @@ public class PIN_MOV_RECEITAS_LINHAS {
 
 	public void setARMAZEM_ADITIVO(String aRMAZEM_ADITIVO) {
 		ARMAZEM_ADITIVO = aRMAZEM_ADITIVO;
+	}
+
+	public String getCODIGO_COR() {
+		return CODIGO_COR;
+	}
+
+	public void setCODIGO_COR(String cODIGO_COR) {
+		CODIGO_COR = cODIGO_COR;
+	}
+
+	public Integer getID_REFERENCIA_A() {
+		return ID_REFERENCIA_A;
+	}
+
+	public void setID_REFERENCIA_A(Integer iD_REFERENCIA_A) {
+		ID_REFERENCIA_A = iD_REFERENCIA_A;
+	}
+
+	public Integer getID_REFERENCIA_B() {
+		return ID_REFERENCIA_B;
+	}
+
+	public void setID_REFERENCIA_B(Integer iD_REFERENCIA_B) {
+		ID_REFERENCIA_B = iD_REFERENCIA_B;
+	}
+
+	public Integer getID_REFERENCIA_C() {
+		return ID_REFERENCIA_C;
+	}
+
+	public void setID_REFERENCIA_C(Integer iD_REFERENCIA_C) {
+		ID_REFERENCIA_C = iD_REFERENCIA_C;
+	}
+
+	public String getESPESSURA() {
+		return ESPESSURA;
+	}
+
+	public void setESPESSURA(String eSPESSURA) {
+		ESPESSURA = eSPESSURA;
+	}
+
+	public String getBRILHO() {
+		return BRILHO;
+	}
+
+	public void setBRILHO(String bRILHO) {
+		BRILHO = bRILHO;
+	}
+
+	public Integer getID_PRE_SET() {
+		return ID_PRE_SET;
+	}
+
+	public void setID_PRE_SET(Integer iD_PRE_SET) {
+		ID_PRE_SET = iD_PRE_SET;
+	}
+
+	public String getCAUDAL() {
+		return CAUDAL;
+	}
+
+	public void setCAUDAL(String cAUDAL) {
+		CAUDAL = cAUDAL;
+	}
+
+	public String getPRESSAO_AUTOMATICA() {
+		return PRESSAO_AUTOMATICA;
+	}
+
+	public void setPRESSAO_AUTOMATICA(String pRESSAO_AUTOMATICA) {
+		PRESSAO_AUTOMATICA = pRESSAO_AUTOMATICA;
+	}
+
+	public String getPRESSAO_LEQUE() {
+		return PRESSAO_LEQUE;
+	}
+
+	public void setPRESSAO_LEQUE(String pRESSAO_LEQUE) {
+		PRESSAO_LEQUE = pRESSAO_LEQUE;
+	}
+
+	public String getVELOCIDADE() {
+		return VELOCIDADE;
+	}
+
+	public void setVELOCIDADE(String vELOCIDADE) {
+		VELOCIDADE = vELOCIDADE;
+	}
+
+	public String getTAMANHO_BICO() {
+		return TAMANHO_BICO;
+	}
+
+	public void setTAMANHO_BICO(String tAMANHO_BICO) {
+		TAMANHO_BICO = tAMANHO_BICO;
+	}
+
+	public String getVOLTAS_PISTOLA() {
+		return VOLTAS_PISTOLA;
+	}
+
+	public void setVOLTAS_PISTOLA(String vOLTAS_PISTOLA) {
+		VOLTAS_PISTOLA = vOLTAS_PISTOLA;
 	}
 
 }

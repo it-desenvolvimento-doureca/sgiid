@@ -23,10 +23,9 @@ public class PIN_MOV_PREPARACAO_CAB {
 	private Integer ID_PREPARACAO_CAB;
 	@JsonProperty("ID_PREPARACAO")
 	private Integer ID_PREPARACAO;
-	@JsonProperty("ID_POTE")
-	private Integer ID_POTE;
-	@JsonProperty("ID_ENSAIO")
-	private Integer ID_ENSAIO;
+	
+	@JsonProperty("ID_RECEITA")
+	private Integer ID_RECEITA;
 	@JsonProperty("OBS_PLANEAMENTO")
 	private String OBS_PLANEAMENTO;
 	@JsonProperty("OBS_PREPARACAO")
@@ -85,21 +84,14 @@ public class PIN_MOV_PREPARACAO_CAB {
 	public void setID_PREPARACAO(Integer iD_PREPARACAO) {
 		ID_PREPARACAO = iD_PREPARACAO;
 	}
+ 
 
-	public Integer getID_POTE() {
-		return ID_POTE;
+	public Integer getID_RECEITA() {
+		return ID_RECEITA;
 	}
 
-	public void setID_POTE(Integer iD_POTE) {
-		ID_POTE = iD_POTE;
-	}
-
-	public Integer getID_ENSAIO() {
-		return ID_ENSAIO;
-	}
-
-	public void setID_ENSAIO(Integer iD_ENSAIO) {
-		ID_ENSAIO = iD_ENSAIO;
+	public void setID_RECEITA(Integer iD_RECEITA) {
+		ID_RECEITA = iD_RECEITA;
 	}
 
 	public String getOBS_PLANEAMENTO() {

@@ -23,7 +23,9 @@ public class PIN_MOV_PREPARACAO_LINHADao extends GenericDaoJpaImpl<PIN_MOV_PREPA
 				+ "(Select SUM(p.CONSUMIR) from PIN_MOV_PREPARACAO_ETIQ p where p.ID_PREPARACAO_LIN = a.ID_PREPARACAO_LIN ) as total_etiquetas, "
 				+ "(select COUNT(h.ID_MOV_PREP_ETIQUETA) from PIN_MOV_PREPARACAO_ETIQ h where h.ID_PREPARACAO_LIN = a.ID_PREPARACAO_LIN and h.CONSUMIR = 0) as vazios, "
 				+ "(select COUNT(h.ID_MOV_PREP_ETIQUETA) from PIN_MOV_PREPARACAO_ETIQ h where h.ID_PREPARACAO_LIN = a.ID_PREPARACAO_LIN) as countt "
-				+ "from PIN_MOV_PREPARACAO_LINHA a, PIN_DIC_PRODUTOS b where a.ID_PREPARACAO_CAB = :id and a.ID_PRODUTO = b.ID order by a.ID_PRODUTO");
+				+ " "
+				+ "from PIN_MOV_PREPARACAO_LINHA a, PIN_DIC_PRODUTOS b,PIN_MOV_PREPARACAO_CAB c where c.ID_PREPARACAO_CAB = a.ID_PREPARACAO_CAB and a.ID_PREPARACAO_CAB = :id and a.ID_PRODUTO = b.ID order by a.POSITION");
+		/*,(select d.ID_POTE from PIN_MOV_RECEITAS_LINHAS d where d.ID_RECEITA = c.ID_RECEITA and d.REFERENCIA_A = b.COD_REF take 1) as POTES */
 		query.setParameter("id", id);
 		List<PIN_MOV_PREPARACAO_LINHA> data = query.getResultList();
 		return data;
@@ -36,8 +38,9 @@ public class PIN_MOV_PREPARACAO_LINHADao extends GenericDaoJpaImpl<PIN_MOV_PREPA
 				+ "(Select SUM(p.CONSUMIR) from PIN_MOV_PREPARACAO_ETIQ p where p.ID_PREPARACAO_LIN = a.ID_PREPARACAO_LIN ) as total_etiquetas, "
 				+ "a.VALOR "
 				+ ",(SELECT count(*) FROM SILVER.dbo.stodet x ,PIN_MOV_PREPARACAO_ETIQ cb WHERE x.PROREF= cb.PROREF AND cb.ID_PREPARACAO_LIN = a.ID_PREPARACAO_LIN AND x.LIECOD='DPCHI' AND x.empcod='ZONQUA' AND x.EMPCOD != cb.EMPCOD AND lotqte>0  ) as  TOTAL_ZONQUA "
-				+ ",b.nome_COMPONENTE,b.COD_REF,b.NOME_REF "
-				+ "from PIN_MOV_PREPARACAO_LINHA a, AB_DIC_COMPONENTE b where a.ID_PREPARACAO_CAB = :id and a.ID_PRODUTO = b.ID_COMPONENTE order by a.ID_PRODUTO");
+				+ ",b.nome_COMPONENTE,b.COD_REF,b.NOME_REF, "
+				+ "CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select fc.NOME_CABINE from PIN_DIC_POTES f,PIN_DIC_CABINES fc where f.ID = a.ID_POTE and fc.ID = f.ID_CABINE)END CABINE "
+				+ "from PIN_MOV_PREPARACAO_LINHA a, AB_DIC_COMPONENTE b where a.ID_PREPARACAO_CAB = :id and a.ID_PRODUTO = b.ID_COMPONENTE order by a.POSITION");
 		query.setParameter("id", id);
 		List<PIN_MOV_PREPARACAO_LINHA> data = query.getResultList();
 		return data;
@@ -50,7 +53,8 @@ public class PIN_MOV_PREPARACAO_LINHADao extends GenericDaoJpaImpl<PIN_MOV_PREPA
 				+ "(Select SUM(p.CONSUMIR) from PIN_MOV_PREPARACAO_ETIQ p where p.ID_PREPARACAO_LIN = a.ID_PREPARACAO_LIN ) as total_etiquetas, "
 				+ "a.VALOR "
 				+ ",(SELECT count(*) FROM SILVER.dbo.stodet x ,PIN_MOV_PREPARACAO_ETIQ cb WHERE x.PROREF= cb.PROREF AND cb.ID_PREPARACAO_LIN = a.ID_PREPARACAO_LIN AND x.LIECOD='DPCHI' AND x.empcod='ZONQUA' AND x.EMPCOD != cb.EMPCOD AND lotqte>0  ) as  TOTAL_ZONQUA "
-				+ "from PIN_MOV_PREPARACAO_LINHA a, AB_DIC_COMPONENTE b where a.ID_PREPARACAO_CAB = :id and a.ID_PRODUTO = b.ID_COMPONENTE order by a.ID_PRODUTO");
+				+ ",CASE WHEN a.ID_POTE IS NULL THEN '' ELSE (select fc.NOME_CABINE from PIN_DIC_POTES f,PIN_DIC_CABINES fc where f.ID = a.ID_POTE and fc.ID = f.ID_CABINE)END CABINE "
+				+ "from PIN_MOV_PREPARACAO_LINHA a, AB_DIC_COMPONENTE b where a.ID_PREPARACAO_CAB = :id and a.ID_PRODUTO = b.ID_COMPONENTE order by a.POSITION");
 		query.setParameter("id", id);
 		List<PIN_MOV_PREPARACAO_LINHA> data = query.getResultList();
 		return data;

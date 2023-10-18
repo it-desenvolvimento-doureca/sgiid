@@ -1,6 +1,7 @@
 package pt.example.entity;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +28,8 @@ public class AB_DIC_LINHA {
 	private String SENHA;
 	private String DOMINIO;
 	private Boolean DESATIVA;
+	private Date DATA_INICIO;
+	private Date DATA_FIM;
 
 	@Column(name = "SECCAO")
 	public String getSECCAO() {
@@ -154,6 +157,24 @@ public class AB_DIC_LINHA {
 
 	public void setDESATIVA(Boolean dESATIVA) {
 		DESATIVA = dESATIVA;
+	}
+
+	@Column(name = "DATA_INICIO")
+	public Date getDATA_INICIO() {
+		return DATA_INICIO;
+	}
+
+	public void setDATA_INICIO(Date dATA_INICIO) {
+		DATA_INICIO = dATA_INICIO;
+	}
+
+	@Column(name = "DATA_FIM")
+	public Date getDATA_FIM() {
+		return DATA_FIM;
+	}
+
+	public void setDATA_FIM(Date dATA_FIM) {
+		DATA_FIM = dATA_FIM;
 	}
 
 }

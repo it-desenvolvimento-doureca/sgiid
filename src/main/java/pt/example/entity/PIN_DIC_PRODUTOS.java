@@ -33,7 +33,7 @@ public class PIN_DIC_PRODUTOS {
 	@JsonProperty("ID_TIPO_ACABAMENTO")
 	private Integer ID_TIPO_ACABAMENTO;
 	@JsonProperty("ID_FORNECEDOR")
-	private Integer ID_FORNECEDOR;
+	private String ID_FORNECEDOR;
 	@JsonProperty("OBS")
 	private String OBS;
 	@JsonProperty("DATA_CRIA")
@@ -60,6 +60,16 @@ public class PIN_DIC_PRODUTOS {
 	private String COD_REF_SUBSTITUTA;
 	@JsonProperty("NOME_REF_SUBSTITUTA")
 	private String NOME_REF_SUBSTITUTA;
+	@JsonProperty("TAXA_MISTURA")
+	private BigDecimal TAXA_MISTURA;
+
+	public BigDecimal getTAXA_MISTURA() {
+		return TAXA_MISTURA;
+	}
+
+	public void setTAXA_MISTURA(BigDecimal tAXA_MISTURA) {
+		TAXA_MISTURA = tAXA_MISTURA;
+	}
 
 	public Integer getID() {
 		return ID;
@@ -117,11 +127,11 @@ public class PIN_DIC_PRODUTOS {
 		ID_TIPO_ACABAMENTO = iD_TIPO_ACABAMENTO;
 	}
 
-	public Integer getID_FORNECEDOR() {
+	public String getID_FORNECEDOR() {
 		return ID_FORNECEDOR;
 	}
 
-	public void setID_FORNECEDOR(Integer iD_FORNECEDOR) {
+	public void setID_FORNECEDOR(String iD_FORNECEDOR) {
 		ID_FORNECEDOR = iD_FORNECEDOR;
 	}
 

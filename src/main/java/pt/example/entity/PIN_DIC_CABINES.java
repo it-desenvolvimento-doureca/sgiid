@@ -39,6 +39,8 @@ public class PIN_DIC_CABINES {
 	private Timestamp DATA_ANULACAO;
 	@JsonProperty("UTZ_ANULACAO")
 	private Integer UTZ_ANULACAO;
+	@JsonProperty("COR")
+	private String COR;
 
 	public Integer getID() {
 		return ID;
@@ -126,6 +128,14 @@ public class PIN_DIC_CABINES {
 
 	public void setUTZ_ANULACAO(Integer uTZ_ANULACAO) {
 		UTZ_ANULACAO = uTZ_ANULACAO;
+	}
+
+	public String getCOR() {
+		return COR;
+	}
+
+	public void setCOR(String cOR) {
+		COR = cOR;
 	}
 
 }

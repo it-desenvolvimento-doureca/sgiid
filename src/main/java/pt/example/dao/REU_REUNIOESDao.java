@@ -23,7 +23,7 @@ public class REU_REUNIOESDao extends GenericDaoJpaImpl<REU_REUNIOES, Integer>
 
 	public List<REU_REUNIOES> getall() {
 
-		Query query = entityManager.createQuery("Select a,b.DESCRICAO from REU_REUNIOES a ,REU_AMBITOS_REUNIOES b where a.ID_AMBITO = b.ID_AMBITO");
+		Query query = entityManager.createQuery("Select a,b.DESCRICAO from REU_REUNIOES a ,REU_AMBITOS_REUNIOES b where a.ID_AMBITO = b.ID_AMBITO order by a.DATA_CRIA DESC");
 		List<REU_REUNIOES> data = query.getResultList();
 		return data;
 
