@@ -50,6 +50,12 @@ public class PR_PLANEAMENTO_PRODUCAO_LINHAS {
 	private Timestamp DATA_MODIF;
 	@Column(name = "UTZ_MODIF")
 	private Integer UTZ_MODIF;
+	@Column(name = "BASE_COR")
+	private Float BASE_COR;
+	@Column(name = "ID_BASE_COR")
+	private Float ID_BASE_COR;
+	@Column(name = "DESC_BASE_COR")
+	private Float DESC_BASE_COR;
 
 	public Integer getID_PLANEAMENTO_PRODUCAO_LINHA() {
 		return ID_PLANEAMENTO_PRODUCAO_LINHA;
@@ -193,6 +199,30 @@ public class PR_PLANEAMENTO_PRODUCAO_LINHAS {
 
 	public void setUTZ_MODIF(Integer uTZ_MODIF) {
 		UTZ_MODIF = uTZ_MODIF;
+	}
+
+	public Float getBASE_COR() {
+		return BASE_COR;
+	}
+
+	public void setBASE_COR(Float bASE_COR) {
+		BASE_COR = bASE_COR;
+	}
+
+	public Float getID_BASE_COR() {
+		return ID_BASE_COR;
+	}
+
+	public void setID_BASE_COR(Float iD_BASE_COR) {
+		ID_BASE_COR = iD_BASE_COR;
+	}
+
+	public Float getDESC_BASE_COR() {
+		return DESC_BASE_COR;
+	}
+
+	public void setDESC_BASE_COR(Float dESC_BASE_COR) {
+		DESC_BASE_COR = dESC_BASE_COR;
 	}
 
 }

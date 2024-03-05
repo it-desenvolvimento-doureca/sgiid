@@ -40,10 +40,14 @@ import pt.example.dao.GER_INFO_PAGINASDao;
 import pt.example.dao.MAN_DIC_ARTIGOS_TIPOLOGIADao;
 import pt.example.dao.PIN_DIC_ARMAZEMDao;
 import pt.example.dao.PIN_DIC_CABINESDao;
+import pt.example.dao.PIN_DIC_CORESDao;
 import pt.example.dao.PIN_DIC_POTESDao;
 import pt.example.dao.PIN_DIC_PRE_SETDao;
 import pt.example.dao.PIN_DIC_PRODUTOSDao;
 import pt.example.dao.PIN_DIC_PRODUTOS_RELACIONADOSDao;
+import pt.example.dao.PIN_DIC_REGISTO_BASTIDORDao;
+import pt.example.dao.PIN_DIC_REGISTO_SALAS_MISTURADao;
+import pt.example.dao.PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIASDao;
 import pt.example.dao.PIN_DIC_TIPO_ACABAMENTODao;
 import pt.example.dao.PIN_MOV_PREPARACAODao;
 import pt.example.dao.PIN_MOV_PREPARACAO_CABDao;
@@ -51,6 +55,7 @@ import pt.example.dao.PIN_MOV_PREPARACAO_ETIQDao;
 import pt.example.dao.PIN_MOV_PREPARACAO_LINHADao;
 import pt.example.dao.PIN_MOV_RECEITASDao;
 import pt.example.dao.PIN_MOV_RECEITAS_LINHASDao;
+import pt.example.entity.COM_ACORDOS;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
 import pt.example.entity.COM_BUDGETS_LINHAS;
@@ -62,10 +67,14 @@ import pt.example.entity.GER_INFO_PAGINAS;
 import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
 import pt.example.entity.PIN_DIC_ARMAZEM;
 import pt.example.entity.PIN_DIC_CABINES;
+import pt.example.entity.PIN_DIC_CORES;
 import pt.example.entity.PIN_DIC_POTES;
 import pt.example.entity.PIN_DIC_PRE_SET;
 import pt.example.entity.PIN_DIC_PRODUTOS;
 import pt.example.entity.PIN_DIC_PRODUTOS_RELACIONADOS;
+import pt.example.entity.PIN_DIC_REGISTO_BASTIDOR;
+import pt.example.entity.PIN_DIC_REGISTO_SALAS_MISTURA;
+import pt.example.entity.PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS;
 import pt.example.entity.PIN_DIC_TIPO_ACABAMENTO;
 import pt.example.entity.PIN_MOV_PREPARACAO;
 import pt.example.entity.PIN_MOV_PREPARACAO_CAB;
@@ -122,6 +131,14 @@ public class SIRB_3 {
 	private PIN_MOV_RECEITAS_LINHASDao dao21;
 	@Inject
 	private PIN_DIC_PRE_SETDao dao22;
+	@Inject
+	private PIN_DIC_REGISTO_BASTIDORDao dao23;
+	@Inject
+	private PIN_DIC_REGISTO_SALAS_MISTURADao dao24;
+	@Inject
+	private PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIASDao dao25;
+	@Inject
+	private PIN_DIC_CORESDao dao26;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -326,6 +343,124 @@ public class SIRB_3 {
 				.createNativeQuery("EXEC MAN_RANKING_MANUTENCOES " + DATA_INICIO + ", " + DATA_FIM + ", " + AMBITO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/MAN_GET_MANUTENCOES_EM_ATRASO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> MAN_GET_MANUTENCOES_EM_ATRASO(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String AMBITO = firstMap.get("AMBITO");
+		String EQUIPA = firstMap.get("EQUIPA");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC MAN_GET_MANUTENCOES_EM_ATRASO " + DATA_INICIO + ", " + DATA_FIM + ", " + AMBITO + ", " + EQUIPA);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/MAN_GET_MANUTENCOES_ENTRE_DATAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> MAN_GET_MANUTENCOES_ENTRE_DATAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String AMBITO = firstMap.get("AMBITO");
+		String EQUIPA = firstMap.get("EQUIPA");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_MANUTENCOES_ENTRE_DATAS " + DATA_INICIO
+				+ ", " + DATA_FIM + ", " + AMBITO + ", " + EQUIPA);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/MAN_GET_MANUTENCOES_PENDENTES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> MAN_GET_MANUTENCOES_PENDENTES(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String AMBITO = firstMap.get("AMBITO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+
+		String EQUIPA = firstMap.get("EQUIPA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_MANUTENCOES_PENDENTES_2 " + DATA_INICIO
+				+ ", " + DATA_FIM + ", " + AMBITO + ", " + EQUIPA);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/MAN_GET_MANUTENCOES_GET_UTILIZADORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> MAN_GET_MANUTENCOES_GET_UTILIZADORES(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String EQUIPA = firstMap.get("EQUIPA");
+		String AMBITO = firstMap.get("AMBITO");
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC MAN_GET_MANUTENCOES_GET_UTILIZADORES " + EQUIPA + ", " + AMBITO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/MAN_UPDATE_MANUTENCOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public int MAN_UPDATE_MANUTENCOES(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String UTILIZADOR = firstMap.get("UTILIZADOR");
+		String TIPO_UTILIZADOR = firstMap.get("TIPO_UTILIZADOR");
+		String ID = firstMap.get("ID");
+
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+
+		Query query_folder = entityManager.createNativeQuery("UPDATE MAN_MOV_MANUTENCAO_CAB SET TIPO_RESPONSAVEL = '"
+				+ TIPO_UTILIZADOR + "',UTILIZADOR = " + UTILIZADOR + ", DATA_HORA_PEDIDO = case when DATA_HORA_PEDIDO is null then null else " + DATA_FIM + " end, "
+						+ "DATA_REALIZACAO = case when DATA_HORA_PEDIDO is null then " + DATA_FIM + " else DATA_REALIZACAO end WHERE ID_MANUTENCAO_CAB = " + ID);
+
+		int dados_folder = query_folder.executeUpdate();
 
 		return dados_folder;
 	}
@@ -921,6 +1056,13 @@ public class SIRB_3 {
 	}
 
 	@GET
+	@Path("/getPIN_DIC_PRODUTOS2")
+	@Produces("application/json")
+	public List<PIN_DIC_PRODUTOS> getPIN_DIC_PRODUTOS2() {
+		return dao14.getAll2();
+	}
+
+	@GET
 	@Path("/getPIN_DIC_PRODUTOSbyid/{id}")
 	@Produces("application/json")
 	public List<PIN_DIC_PRODUTOS> getPIN_DIC_PRODUTOSbyid(@PathParam("id") Integer id) {
@@ -935,10 +1077,18 @@ public class SIRB_3 {
 	}
 
 	@GET
-	@Path("/getPIN_DIC_PRODUTOSbyReceita/{id}")
+	@Path("/getPIN_DIC_PRODUTOSbyReceita/{id}/{versao}")
 	@Produces("application/json")
-	public List<PIN_DIC_PRODUTOS> getPIN_DIC_PRODUTOSbyReceita(@PathParam("id") Integer id) {
-		return dao14.getbyReceita(id);
+	public List<PIN_DIC_PRODUTOS> getPIN_DIC_PRODUTOSbyReceita(@PathParam("id") Integer id,
+			@PathParam("versao") Integer versao) {
+		return dao14.getbyReceita(id, versao);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_PRODUTOSbyIdProduto/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_PRODUTOS> getPIN_DIC_PRODUTOSbyIdProduto(@PathParam("id") Integer id) {
+		return dao14.getbyIdProduto(id);
 	}
 
 	@DELETE
@@ -2090,15 +2240,36 @@ public class SIRB_3 {
 	@Path("/createPIN_MOV_RECEITAS")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public PIN_MOV_RECEITAS insertAB_DIC_ADITIVO(final PIN_MOV_RECEITAS data) {
+	public PIN_MOV_RECEITAS insertPIN_MOV_RECEITAS(final PIN_MOV_RECEITAS data) {
+		List<Object[]> dados = entityManager
+				.createNativeQuery("select ISNULL(MAX(ID),0)+1,0 as teste FROM PIN_MOV_RECEITAS").getResultList();
+		data.setID(Integer.parseInt(dados.get(0)[0].toString()));
+		data.setVERSAO(1);
 		return dao20.create(data);
 	}
 
 	@GET
-	@Path("/getPIN_MOV_RECEITASyid/{id}")
+	@Path("/getPIN_MOV_RECEITASyid/{id}/{versao}")
 	@Produces("application/json")
-	public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASyid(@PathParam("id") Integer id) {
-		return dao20.getbyid(id, 0);
+	public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASyid(@PathParam("id") Integer id,
+			@PathParam("versao") Integer versao) {
+		return dao20.getbyid(id, 0, versao);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_RECEITAS_VERSOES/{id}/{versao}")
+	@Produces("application/json")
+	public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITAS_VERSOES(@PathParam("id") Integer id,
+			@PathParam("versao") Integer versao) {
+		return dao20.getversoes(id, versao);
+	}
+	
+	@GET
+	@Path("/getPIN_MOV_RECEITASchechExistRef/{referencia}/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASchechExistRef(@PathParam("id") Integer id,@PathParam("referencia") String referencia) {
+		String proref = java.net.URLDecoder.decode(referencia);
+		return dao20.chechExistRef(proref,id);
 	}
 
 	@GET
@@ -2116,8 +2287,8 @@ public class SIRB_3 {
 	}
 
 	@DELETE
-	@Path("/deletePIN_MOV_RECEITAS/{id}")
-	public void deletePIN_MOV_RECEITAS(@PathParam("id") Integer id) {
+	@Path("/deletePIN_MOV_RECEITAS/{id}/{versao}")
+	public void deletePIN_MOV_RECEITAS(@PathParam("id") Integer id, @PathParam("versao") Integer versao) {
 		PIN_MOV_RECEITAS PIN_MOV_RECEITAS = new PIN_MOV_RECEITAS();
 		PIN_MOV_RECEITAS.setID(id);
 		dao20.delete(PIN_MOV_RECEITAS);
@@ -2129,6 +2300,7 @@ public class SIRB_3 {
 	@Produces("application/json")
 	public PIN_MOV_RECEITAS updatePIN_MOV_RECEITAS(final PIN_MOV_RECEITAS PIN_MOV_RECEITAS) {
 		PIN_MOV_RECEITAS.setID(PIN_MOV_RECEITAS.getID());
+		PIN_MOV_RECEITAS.setVERSAO(PIN_MOV_RECEITAS.getVERSAO());
 		return dao20.update(PIN_MOV_RECEITAS);
 	}
 
@@ -2142,10 +2314,11 @@ public class SIRB_3 {
 	}
 
 	@GET
-	@Path("/getPIN_MOV_RECEITAS_LINHASyid/{id}")
+	@Path("/getPIN_MOV_RECEITAS_LINHASyid/{id}/{versao}")
 	@Produces("application/json")
-	public List<PIN_MOV_RECEITAS_LINHAS> getPIN_MOV_RECEITAS_LINHASyid(@PathParam("id") Integer id) {
-		return dao21.getbyid(id);
+	public List<PIN_MOV_RECEITAS_LINHAS> getPIN_MOV_RECEITAS_LINHASyid(@PathParam("id") Integer id,
+			@PathParam("versao") Integer versao) {
+		return dao21.getbyid(id, versao);
 	}
 
 	@GET
@@ -2217,6 +2390,184 @@ public class SIRB_3 {
 	@Produces("application/json")
 	public PIN_DIC_PRE_SET updatePIN_DIC_PRE_SET(final PIN_DIC_PRE_SET PIN_DIC_PRE_SET) {
 		PIN_DIC_PRE_SET.setID(PIN_DIC_PRE_SET.getID());
-		return dao22.update(PIN_DIC_PRE_SET);
+		PIN_DIC_PRE_SET _PIN_DIC_PRE_SET = dao22.update(PIN_DIC_PRE_SET);
+		int query_folder = entityManager.createNativeQuery("EXEC PIN_UPDATE_PIN_DIC_PRE_SET :id")
+				.setParameter("id", PIN_DIC_PRE_SET.getID()).executeUpdate();
+		return _PIN_DIC_PRE_SET;
+	}
+
+	/************************************* PIN_DIC_REGISTO_BASTIDOR */
+	@POST
+	@Path("/createPIN_DIC_REGISTO_BASTIDOR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_REGISTO_BASTIDOR insertAB_DIC_ADITIVO(final PIN_DIC_REGISTO_BASTIDOR data) {
+		return dao23.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_REGISTO_BASTIDORyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_BASTIDOR> getPIN_DIC_REGISTO_BASTIDORyid(@PathParam("id") Integer id) {
+		return dao23.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_REGISTO_BASTIDOR")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_BASTIDOR> getPIN_DIC_REGISTO_BASTIDORLINHA() {
+		return dao23.getall();
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_REGISTO_BASTIDOR/{id}")
+	public void deletePIN_DIC_REGISTO_BASTIDOR(@PathParam("id") Integer id) {
+		PIN_DIC_REGISTO_BASTIDOR PIN_DIC_REGISTO_BASTIDOR = new PIN_DIC_REGISTO_BASTIDOR();
+		PIN_DIC_REGISTO_BASTIDOR.setID(id);
+		dao23.delete(PIN_DIC_REGISTO_BASTIDOR);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_REGISTO_BASTIDOR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_REGISTO_BASTIDOR updatePIN_DIC_REGISTO_BASTIDOR(
+			final PIN_DIC_REGISTO_BASTIDOR PIN_DIC_REGISTO_BASTIDOR) {
+		PIN_DIC_REGISTO_BASTIDOR.setID(PIN_DIC_REGISTO_BASTIDOR.getID());
+		return dao23.update(PIN_DIC_REGISTO_BASTIDOR);
+	}
+
+	/************************************* PIN_DIC_REGISTO_SALAS_MISTURA */
+	@POST
+	@Path("/createPIN_DIC_REGISTO_SALAS_MISTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_REGISTO_SALAS_MISTURA insertAB_DIC_ADITIVO(final PIN_DIC_REGISTO_SALAS_MISTURA data) {
+		return dao24.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_REGISTO_SALAS_MISTURAyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getPIN_DIC_REGISTO_SALAS_MISTURAyid(@PathParam("id") Integer id) {
+		return dao24.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_REGISTO_SALAS_MISTURA")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getPIN_DIC_REGISTO_SALAS_MISTURALINHA() {
+		return dao24.getall();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_REGISTO_SALAS_MISTURA2")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getPIN_DIC_REGISTO_SALAS_MISTURALINHA2() {
+		return dao24.getall2();
+	}
+	
+	@DELETE
+	@Path("/deletePIN_DIC_REGISTO_SALAS_MISTURA/{id}")
+	public void deletePIN_DIC_REGISTO_SALAS_MISTURA(@PathParam("id") Integer id) {
+		PIN_DIC_REGISTO_SALAS_MISTURA PIN_DIC_REGISTO_SALAS_MISTURA = new PIN_DIC_REGISTO_SALAS_MISTURA();
+		PIN_DIC_REGISTO_SALAS_MISTURA.setID(id);
+		dao24.delete(PIN_DIC_REGISTO_SALAS_MISTURA);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_REGISTO_SALAS_MISTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_REGISTO_SALAS_MISTURA updatePIN_DIC_REGISTO_SALAS_MISTURA(
+			final PIN_DIC_REGISTO_SALAS_MISTURA PIN_DIC_REGISTO_SALAS_MISTURA) {
+		PIN_DIC_REGISTO_SALAS_MISTURA.setID(PIN_DIC_REGISTO_SALAS_MISTURA.getID());
+		return dao24.update(PIN_DIC_REGISTO_SALAS_MISTURA);
+	}
+
+	/*************************************
+	 * PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS
+	 */
+	@POST
+	@Path("/createPIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS insertAB_DIC_ADITIVO(
+			final PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS data) {
+		return dao25.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIASbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS> getPIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIASyid(
+			@PathParam("id") Integer id) {
+		return dao25.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS> getPIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIASLINHA() {
+		return dao25.getall();
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS/{id}")
+	public void deletePIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS(@PathParam("id") Integer id) {
+		PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS = new PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS();
+		PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS.setID(id);
+		dao25.delete(PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS updatePIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS(
+			final PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS) {
+		PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS.setID(PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS.getID());
+		return dao25.update(PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS);
+	}
+	
+	/************************************* PIN_DIC_CORES */
+	@POST
+	@Path("/createPIN_DIC_CORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_CORES insertPIN_DIC_CORES(final PIN_DIC_CORES data) {
+		return dao26.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CORESbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES> getPIN_DIC_CORESbyid_linha(@PathParam("id") Integer id) {
+		return dao26.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CORES")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES> getPIN_DIC_CORES() {
+		return dao26.getall();
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_CORES/{id}")
+	public void deletePIN_DIC_CORES(@PathParam("id") Integer id) {
+		PIN_DIC_CORES PIN_DIC_CORES = new PIN_DIC_CORES();
+		PIN_DIC_CORES.setID(id);
+		dao26.delete(PIN_DIC_CORES);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_CORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_CORES updatePIN_DIC_CORES(
+			final PIN_DIC_CORES PIN_DIC_CORES) {
+		PIN_DIC_CORES.setID(PIN_DIC_CORES.getID());
+		return dao26.update(PIN_DIC_CORES);
 	}
 }

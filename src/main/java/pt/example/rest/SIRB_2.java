@@ -703,10 +703,24 @@ public class SIRB_2 {
 		String RACK = firstMap.get("RACK");
 		String ANTECEDENCIA = firstMap.get("ANTECEDENCIA");
 		String BARRAS_CAPACIDADE = firstMap.get("BARRAS_CAPACIDADE");
+		String BASE_COR = firstMap.get("BASE_COR");
 
 		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PR_PLANEAMENTO_PRODUCAO_LINHAS_FILTRO] "
 				+ ID_PLANEAMENTO_PRODUCAO_CAB + ",'" + COD_REF + "','" + FASE + "','" + ACABAMENTO + "','" + RACK + "',"
-				+ ANTECEDENCIA + "," + BARRAS_CAPACIDADE + "");
+				+ ANTECEDENCIA + "," + BARRAS_CAPACIDADE + ", '"+BASE_COR+"'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_LINHAS_BASE_COR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> getPR_PLANEAMENTO_PRODUCAO_LINHAS_BASE_COR( ) {		 
+
+		Query query_folder = entityManager.createNativeQuery("select distinct DESC_BASE_COR,'' as txt from PR_PLANEAMENTO_PRODUCAO_LINHAS where  DESC_BASE_COR is not null ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1007,12 +1021,13 @@ public class SIRB_2 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ANO = firstMap.get("ANO");
 		String SEMANA = firstMap.get("SEMANA");
+		String TIPO = firstMap.get("TIPO");
 
-		Query query_folder = entityManager.createNativeQuery("DECLARE @SEMANA int = " + SEMANA + "; "
+		Query query_folder = entityManager.createNativeQuery("DECLARE @SEMANA int = " + SEMANA + ";DECLARE @TIPO varchar(50) = '" + TIPO + "'; "
 				+ " DECLARE @ANO int = " + ANO + "; "
 				+ "select a.ID_PLANEAMENTO_PRODUCAO_CAB,CAST(a.DATA_CRIA as date) DATA_CRIA ,a.DATA_MRP,a.N_MRP,a.ID_LINHA,a.ESTADO,a.NUMERO_SEMANAS "
 				+ "from PR_PLANEAMENTO_PRODUCAO_CAB a "
-				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1");
+				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1 AND (((@TIPO = 'Cromagem' ) AND ( a.ID_LINHA in (1,2,3))) OR ((@TIPO = 'Pintura' ) AND ( a.ID_LINHA in (4))))");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1041,6 +1056,34 @@ public class SIRB_2 {
 		String IDS = firstMap.get("IDS");
 
 		Query query_folder = entityManager.createNativeQuery("EXEC [GET_TIPO_ACABAMENTO_ANALISE] '" + IDS + "'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/GET_BASES_CORES_ANALISE")
+	@Produces("application/json")
+	public List<Object[]> GET_BASES_CORES_ANALISE(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IDS = firstMap.get("IDS");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_BASES_CORES_ANALISE] '" + IDS + "'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/GET_PLANEAMENTO_CONSUMOS_ANALISE")
+	@Produces("application/json")
+	public List<Object[]> GET_PLANEAMENTO_CONSUMOS_ANALISE(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IDS = firstMap.get("IDS");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PLANEAMENTO_CONSUMOS_ANALISE] '" + IDS + "'");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

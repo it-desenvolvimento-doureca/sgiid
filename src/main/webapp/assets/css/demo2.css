@@ -5198,13 +5198,13 @@ checkbox {
     width: 2em;
 }
 
-.p-messages {
+/*.p-messages {
     border: 1px solid;
     margin: .5em 0;
     padding: 1em 1em 1em .5em;
     display: none;
     position: relative
-}
+}*/
 
 .p-messages-icon {
     display: inline-block;

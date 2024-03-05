@@ -46,6 +46,8 @@ public class PA_MOV_CAB {
 	
 	@Column(name = "DATA_OBJETIVO")
 	private Date DATA_OBJETIVO;
+	@Column(name = "DATA_ORIGEM")
+	private Date DATA_ORIGEM;
 	@Column(name = "AMBITO")
 	private Integer AMBITO;
 	@Column(name = "ORIGEM")
@@ -216,6 +218,14 @@ public class PA_MOV_CAB {
 
 	public void setID_PLANO_ESTRATEGICO(Integer iD_PLANO_ESTRATEGICO) {
 		ID_PLANO_ESTRATEGICO = iD_PLANO_ESTRATEGICO;
+	}
+
+	public Date getDATA_ORIGEM() {
+		return DATA_ORIGEM;
+	}
+
+	public void setDATA_ORIGEM(Date dATA_ORIGEM) {
+		DATA_ORIGEM = dATA_ORIGEM;
 	}
 
 }

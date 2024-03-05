@@ -56,31 +56,51 @@ public class PIN_MOV_RECEITAS_LINHAS {
 	@JsonProperty("ARMAZEM_ADITIVO")
 	private String ARMAZEM_ADITIVO;
 	@JsonProperty("CODIGO_COR")
-    private String CODIGO_COR;
+	private String CODIGO_COR;
 	@JsonProperty("ID_REFERENCIA_A")
-    private Integer ID_REFERENCIA_A;
+	private Integer ID_REFERENCIA_A;
 	@JsonProperty("ID_REFERENCIA_B")
-    private Integer ID_REFERENCIA_B;
+	private Integer ID_REFERENCIA_B;
 	@JsonProperty("ID_REFERENCIA_C")
-    private Integer ID_REFERENCIA_C;
+	private Integer ID_REFERENCIA_C;
 	@JsonProperty("ESPESSURA")
-    private String ESPESSURA;
+	private String ESPESSURA;
 	@JsonProperty("BRILHO")
-    private String BRILHO;
+	private String BRILHO;
 	@JsonProperty("ID_PRE_SET")
-    private Integer ID_PRE_SET;
+	private Integer ID_PRE_SET;
 	@JsonProperty("CAUDAL")
-    private String CAUDAL;
+	private String CAUDAL;
 	@JsonProperty("PRESSAO_AUTOMATICA")
-    private String PRESSAO_AUTOMATICA;
+	private String PRESSAO_AUTOMATICA;
 	@JsonProperty("PRESSAO_LEQUE")
-    private String PRESSAO_LEQUE;
+	private String PRESSAO_LEQUE;
 	@JsonProperty("VELOCIDADE")
-    private String VELOCIDADE;
+	private String VELOCIDADE;
 	@JsonProperty("TAMANHO_BICO")
-    private String TAMANHO_BICO;
+	private String TAMANHO_BICO;
 	@JsonProperty("VOLTAS_PISTOLA")
-    private String VOLTAS_PISTOLA;
+	private String VOLTAS_PISTOLA;
+	@JsonProperty("VERSAO")
+	private Integer VERSAO;
+
+    @JsonProperty("CONSUMO_RACK_COR")
+    private Float CONSUMO_RACK_COR;
+    @JsonProperty("CONSUMO_RACK_DILUENTE")
+    private Float CONSUMO_RACK_DILUENTE;
+    @JsonProperty("QTD_RACK_REFERENCIA_A")
+    private Float QTD_RACK_REFERENCIA_A;
+    @JsonProperty("QTD_RACK_REFERENCIA_B")
+    private Float QTD_RACK_REFERENCIA_B;
+    @JsonProperty("QTD_RACK_REFERENCIA_C")
+    private Float QTD_RACK_REFERENCIA_C;
+    @JsonProperty("NECESSIDADES_RACK_REFERENCIA_A")
+    private Float NECESSIDADES_RACK_REFERENCIA_A;
+    @JsonProperty("NECESSIDADES_RACK_REFERENCIA_B")
+    private Float NECESSIDADES_RACK_REFERENCIA_B;
+    @JsonProperty("NECESSIDADES_RACK_REFERENCIA_C")
+    private Float NECESSIDADES_RACK_REFERENCIA_C; 
+
 
 	public Integer getID() {
 		return ID;
@@ -352,6 +372,78 @@ public class PIN_MOV_RECEITAS_LINHAS {
 
 	public void setVOLTAS_PISTOLA(String vOLTAS_PISTOLA) {
 		VOLTAS_PISTOLA = vOLTAS_PISTOLA;
+	}
+
+	public Integer getVERSAO() {
+		return VERSAO;
+	}
+
+	public void setVERSAO(Integer vERSAO) {
+		VERSAO = vERSAO;
+	}
+
+	public Float getCONSUMO_RACK_COR() {
+		return CONSUMO_RACK_COR;
+	}
+
+	public Float getCONSUMO_RACK_DILUENTE() {
+		return CONSUMO_RACK_DILUENTE;
+	}
+
+	public Float getQTD_RACK_REFERENCIA_A() {
+		return QTD_RACK_REFERENCIA_A;
+	}
+
+	public Float getQTD_RACK_REFERENCIA_B() {
+		return QTD_RACK_REFERENCIA_B;
+	}
+
+	public Float getQTD_RACK_REFERENCIA_C() {
+		return QTD_RACK_REFERENCIA_C;
+	}
+
+	public Float getNECESSIDADES_RACK_REFERENCIA_A() {
+		return NECESSIDADES_RACK_REFERENCIA_A;
+	}
+
+	public Float getNECESSIDADES_RACK_REFERENCIA_B() {
+		return NECESSIDADES_RACK_REFERENCIA_B;
+	}
+
+	public Float getNECESSIDADES_RACK_REFERENCIA_C() {
+		return NECESSIDADES_RACK_REFERENCIA_C;
+	}
+
+	public void setCONSUMO_RACK_COR(Float cONSUMO_RACK_COR) {
+		CONSUMO_RACK_COR = cONSUMO_RACK_COR;
+	}
+
+	public void setCONSUMO_RACK_DILUENTE(Float cONSUMO_RACK_DILUENTE) {
+		CONSUMO_RACK_DILUENTE = cONSUMO_RACK_DILUENTE;
+	}
+
+	public void setQTD_RACK_REFERENCIA_A(Float qTD_RACK_REFERENCIA_A) {
+		QTD_RACK_REFERENCIA_A = qTD_RACK_REFERENCIA_A;
+	}
+
+	public void setQTD_RACK_REFERENCIA_B(Float qTD_RACK_REFERENCIA_B) {
+		QTD_RACK_REFERENCIA_B = qTD_RACK_REFERENCIA_B;
+	}
+
+	public void setQTD_RACK_REFERENCIA_C(Float qTD_RACK_REFERENCIA_C) {
+		QTD_RACK_REFERENCIA_C = qTD_RACK_REFERENCIA_C;
+	}
+
+	public void setNECESSIDADES_RACK_REFERENCIA_A(Float nECESSIDADES_RACK_REFERENCIA_A) {
+		NECESSIDADES_RACK_REFERENCIA_A = nECESSIDADES_RACK_REFERENCIA_A;
+	}
+
+	public void setNECESSIDADES_RACK_REFERENCIA_B(Float nECESSIDADES_RACK_REFERENCIA_B) {
+		NECESSIDADES_RACK_REFERENCIA_B = nECESSIDADES_RACK_REFERENCIA_B;
+	}
+
+	public void setNECESSIDADES_RACK_REFERENCIA_C(Float nECESSIDADES_RACK_REFERENCIA_C) {
+		NECESSIDADES_RACK_REFERENCIA_C = nECESSIDADES_RACK_REFERENCIA_C;
 	}
 
 }

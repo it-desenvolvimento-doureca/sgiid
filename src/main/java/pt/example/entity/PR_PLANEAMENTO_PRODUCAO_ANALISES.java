@@ -43,6 +43,8 @@ public class PR_PLANEAMENTO_PRODUCAO_ANALISES {
 	private Boolean ATIVO;
 	@Column(name = "DATA_MRP")
 	private Date DATA_MRP;
+	@Column(name = "TIPO_ANALISE")
+	private String TIPO_ANALISE;
 
 	public Integer getID_PLANEAMENTO_PRODUCAO_ANALISES() {
 		return ID_PLANEAMENTO_PRODUCAO_ANALISES;
@@ -154,6 +156,14 @@ public class PR_PLANEAMENTO_PRODUCAO_ANALISES {
 
 	public void setDATA_MRP(Date dATA_MRP) {
 		DATA_MRP = dATA_MRP;
+	}
+
+	public String getTIPO_ANALISE() {
+		return TIPO_ANALISE;
+	}
+
+	public void setTIPO_ANALISE(String tIPO_ANALISE) {
+		TIPO_ANALISE = tIPO_ANALISE;
 	}
 
 }

@@ -37,7 +37,9 @@ public class PIN_DIC_TIPO_ACABAMENTO {
 	private Timestamp DATA_ANULA;
 	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
-
+	@JsonProperty("COR")
+	private String COR;
+	
 	public Integer getID() {
 		return ID;
 	}
@@ -108,6 +110,14 @@ public class PIN_DIC_TIPO_ACABAMENTO {
 
 	public void setATIVO(Boolean aTIVO) {
 		ATIVO = aTIVO;
+	}
+
+	public String getCOR() {
+		return COR;
+	}
+
+	public void setCOR(String cOR) {
+		COR = cOR;
 	}
 
 }

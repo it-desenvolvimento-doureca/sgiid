@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.enterprise.inject.spi.Bean;
 
@@ -101,7 +102,14 @@ public class ReportGenerator {
 			hm.put("HORA_INI", HORA_INI);
 			hm.put("HORA_FIM", HORA_FIM);
 			hm.put("CHECK1", CHECK1);
-		}else{
+		}else if( dados != null){
+			HashMap<String, String> firstMap = dados.get(0);	
+			if(firstMap != null && firstMap.size() > 0) {
+				for (Entry<String, String> entry : firstMap.entrySet())
+				    	 hm.put(entry.getKey(), entry.getValue()); 				
+				
+			}
+		}else{		
 			hm.put("id", ID);
 		}
 		
@@ -281,7 +289,7 @@ public class ReportGenerator {
 
 			if (!files[index].isDirectory()) {
 				long diff = new Date().getTime() - files[index].lastModified();
-				int x = 7; // se o ficheiro não for modificado à 7 dias é
+				int x = 7; // se o ficheiro nï¿½o for modificado ï¿½ 7 dias ï¿½
 							// apagado
 				if (diff > x * 24 * 60 * 60 * 1000) {
 					boolean wasDeleted = files[index].delete();

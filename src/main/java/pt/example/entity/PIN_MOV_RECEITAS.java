@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -7,17 +8,22 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
 @Entity
+@IdClass(PK_PIN_MOV_RECEITAS.class)
 @Table(name = "PIN_MOV_RECEITAS")
-public class PIN_MOV_RECEITAS {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PIN_MOV_RECEITAS implements Serializable{
+	@Id 
 	@JsonProperty("ID")
 	private Integer ID;
+	@Id
+	@JsonProperty("VERSAO")
+    private Integer VERSAO;
 	@JsonProperty("DATA_CRIA")
 	private Timestamp DATA_CRIA;
 	@JsonProperty("UTZ_CRIA")
@@ -82,6 +88,31 @@ public class PIN_MOV_RECEITAS {
 	private Integer QUANTIDADES_RACK;
 	@JsonProperty("PECAS_RACK")
 	private Integer PECAS_RACK;
+	@JsonProperty("VERSAO_ATIVA")
+	private Boolean VERSAO_ATIVA;
+	@JsonProperty("RECEITA_INATIVA")
+	private Boolean RECEITA_INATIVA;
+	@JsonProperty("ID_COR")
+	private Integer ID_COR;
+	@JsonProperty("TAXA_REJEICAO")
+	private Float TAXA_REJEICAO;
+	
+
+	public Float getTAXA_REJEICAO() {
+		return TAXA_REJEICAO;
+	}
+
+	public void setTAXA_REJEICAO(Float tAXA_REJEICAO) {
+		TAXA_REJEICAO = tAXA_REJEICAO;
+	}
+
+	public Boolean getVERSAO_ATIVA() {
+		return VERSAO_ATIVA;
+	}
+
+	public void setVERSAO_ATIVA(Boolean vERSAO_ATIVA) {
+		VERSAO_ATIVA = vERSAO_ATIVA;
+	}
 
 	public Integer getID() {
 		return ID;
@@ -345,6 +376,30 @@ public class PIN_MOV_RECEITAS {
 
 	public void setPECAS_RACK(Integer pECAS_RACK) {
 		PECAS_RACK = pECAS_RACK;
+	}
+
+	public Integer getVERSAO() {
+		return VERSAO;
+	}
+
+	public void setVERSAO(Integer vERSAO) {
+		VERSAO = vERSAO;
+	}
+
+	public Boolean getRECEITA_INATIVA() {
+		return RECEITA_INATIVA;
+	}
+
+	public void setRECEITA_INATIVA(Boolean rECEITA_INATIVA) {
+		RECEITA_INATIVA = rECEITA_INATIVA;
+	}
+
+	public Integer getID_COR() {
+		return ID_COR;
+	}
+
+	public void setID_COR(Integer iD_COR) {
+		ID_COR = iD_COR;
 	}
 
 }

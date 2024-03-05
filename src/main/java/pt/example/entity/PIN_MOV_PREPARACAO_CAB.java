@@ -23,7 +23,7 @@ public class PIN_MOV_PREPARACAO_CAB {
 	private Integer ID_PREPARACAO_CAB;
 	@JsonProperty("ID_PREPARACAO")
 	private Integer ID_PREPARACAO;
-	
+
 	@JsonProperty("ID_RECEITA")
 	private Integer ID_RECEITA;
 	@JsonProperty("OBS_PLANEAMENTO")
@@ -68,6 +68,8 @@ public class PIN_MOV_PREPARACAO_CAB {
 	private Timestamp DATA_ULT_IMPRES;
 	@JsonProperty("UTZ_ULT_IMPRES")
 	private Integer UTZ_ULT_IMPRES;
+	@JsonProperty("VERSAO")
+	private Integer VERSAO;
 
 	public Integer getID_PREPARACAO_CAB() {
 		return ID_PREPARACAO_CAB;
@@ -84,7 +86,6 @@ public class PIN_MOV_PREPARACAO_CAB {
 	public void setID_PREPARACAO(Integer iD_PREPARACAO) {
 		ID_PREPARACAO = iD_PREPARACAO;
 	}
- 
 
 	public Integer getID_RECEITA() {
 		return ID_RECEITA;
@@ -260,6 +261,14 @@ public class PIN_MOV_PREPARACAO_CAB {
 
 	public void setUTZ_ULT_IMPRES(Integer uTZ_ULT_IMPRES) {
 		UTZ_ULT_IMPRES = uTZ_ULT_IMPRES;
+	}
+
+	public Integer getVERSAO() {
+		return VERSAO;
+	}
+
+	public void setVERSAO(Integer vERSAO) {
+		VERSAO = vERSAO;
 	}
 
 }

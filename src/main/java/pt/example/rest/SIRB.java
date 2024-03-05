@@ -3156,6 +3156,18 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiqueta(getURLSILVER(), etiqueta);
 		return dados;
 	}
+	
+	@GET
+	@Path("/getDadosEtiquetaPintura/{etiqueta}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosEtiquetaPintura(@PathParam("etiqueta") String etiqueta)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiquetaPintura(getURLSILVER(), etiqueta);
+		return dados;
+	}
 
 	@GET
 	@Path("/getDadosEtiquetabyREF/{ref}")
