@@ -1089,6 +1089,21 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
+	
+	@POST
+	@Path("/GET_PLANEAMENTO_GESTAO_STOCK")
+	@Produces("application/json")
+	public List<Object[]> GET_PLANEAMENTO_GESTAO_STOCK(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IDS = firstMap.get("IDS");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PLANEAMENTO_GESTAO_STOCK] '" + IDS + "'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
 
 	@POST
 	@Path("/GET_RACKS_ANALISES")

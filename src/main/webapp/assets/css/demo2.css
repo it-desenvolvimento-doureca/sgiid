@@ -3689,7 +3689,7 @@ input[type="date"]::-webkit-input-placeholder {
     text-align: -webkit-center;
 }
 
-[id^=formReclama] .p-calendar .p-inputtext {
+[id^=formReclama] .p-calendar .p-inputtext:not(.tabelaplanos .p-inputtext){
     height: 25px;
     width: 101px;
 }

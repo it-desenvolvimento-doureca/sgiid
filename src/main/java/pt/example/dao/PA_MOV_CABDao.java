@@ -73,6 +73,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 
 	public List<PA_MOV_CAB> getallbyTIPO(String tipo, String fastresponse, String emAtraso,String user) {
 		String query_where = "";
+		String query_atraso = "";
 		if (!tipo.equals("T")) {
 			query_where = "and e.MODULO = '" + tipo + "' ";
 		}
@@ -83,6 +84,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 		}
 		if (emAtraso.equals("true")) {
 			emAtraso = "1";
+			query_atraso = "and (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )";
 		} else {
 			emAtraso = "0";
 		}
@@ -101,8 +103,8 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID "
 						+ " left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO  "
 						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
-						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
-						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
+						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse ))  " + query_atraso
+						+ " /* and ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') ))*/ "
 						+ query_where + " order by a.DATA_CRIA desc,a.ID_PLANO_CAB desc,b.DATA_ACCAO asc ");
 		List<PA_MOV_CAB> data = query.getResultList();
 		return data;
@@ -111,6 +113,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 	
 	public List<PA_MOV_CAB> getallbyTIPOSEGUIR(String tipo, String fastresponse, String emAtraso, String user) {
 		String query_where = "";
+		String query_atraso = "";
 		if (!tipo.equals("T")) {
 			query_where = "and e.MODULO = '" + tipo + "' ";
 		}
@@ -121,6 +124,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 		}
 		if (emAtraso.equals("true")) {
 			emAtraso = "1";
+			query_atraso = "and (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )";
 		} else {
 			emAtraso = "0";
 		}
@@ -139,8 +143,8 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID "
 						+ "left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO  "
 						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
-						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
-						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
+						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse ))  " + query_atraso
+						+ " /*and((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') ))*/ "
 						+ query_where + " and (select COUNT(x.ID) from PA_MOV_SEGUIR_LINHA x where  b.ID_PLANO_LINHA = x.ID_PLANO_LINHA AND x.UTILIZADOR = "+user+" ) > 0 order by a.DATA_CRIA asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
 		List<PA_MOV_CAB> data = query.getResultList();
 		return data;
@@ -150,6 +154,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 	public List<PA_MOV_CAB> getPA_MOV_CABbyTIPOASSOCIAR(String tipo, String fastresponse, String emAtraso,
 			String id_plano, String ano,String user) {
 		String query_where = "";
+		String query_atraso = "";
 		if (!tipo.equals("T")) {
 			query_where = "and e.MODULO = '" + tipo + "' ";
 		}
@@ -160,6 +165,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 		}
 		if (emAtraso.equals("true")) {
 			emAtraso = "1";
+			query_atraso = "and (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )";
 		} else {
 			emAtraso = "0";
 		}
@@ -178,8 +184,8 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID "
 						+ " left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO  "
 						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
-						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
-						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
+						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse ))  "  + query_atraso
+						+ " /*and((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') ))*/ "
 						+ query_where + " "
 						+ "AND ( (a.ESTADO = 'P' AND a.ID_PLANO_CAB in (select pa.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS pa inner join PE_MOV_CAB pb on pa.ID_PLANO_ESTRATEGICO = pb.ID  WHERE pb.ANO_PLANO !=  @ano AND pa.ID_PLANO_ESTRATEGICO != @id_plano))"
 						+ " or (select count(xa.ID_PLANO_CAB) from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_CAB = a.ID_PLANO_CAB) = 0 )"
@@ -192,6 +198,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 
 	public List<PA_MOV_CAB> getallbyTIPOaccoes(String tipo, String fastresponse, String emAtraso,String DATA_INI,String DATA_FIM) {
 		String query_where = "";
+		String query_atraso = "";
 		if (!tipo.equals("T")) {
 			query_where = "and e.MODULO = '" + tipo + "' ";
 		}
@@ -202,6 +209,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 		}
 		if (emAtraso.equals("true")) {
 			emAtraso = "1";
+			query_atraso = "and (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )";
 		} else {
 			emAtraso = "0";
 		}
@@ -230,8 +238,8 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
 						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse )) and "
 						+ " ((not "+DATA_INI+" is not null) or (b.DATA_ACCAO >= "+DATA_INI+" )) and "
-						+ " ((not "+DATA_FIM+" is not null) or (b.DATA_ACCAO <= "+DATA_FIM+" )) and "
-						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
+						+ " ((not "+DATA_FIM+" is not null) or (b.DATA_ACCAO <= "+DATA_FIM+" ))  " + query_atraso
+						+ " /*and ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) */ "
 						+ query_where + " order by a.DATA_CRIA desc,a.ID_PLANO_CAB desc ");
 		List<PA_MOV_CAB> data = query.getResultList();
 		return data;
