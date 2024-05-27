@@ -41,6 +41,8 @@ public class PR_WINROBOT_PAUSAS {
 	private Integer UTZ_ULT_MODIF;
 	@JsonProperty("DATA_ULT_MODIF")
 	private Timestamp DATA_ULT_MODIF;
+	@JsonProperty("MOMENTO")
+	private String MOMENTO;
 
 	public Integer getID() {
 		return ID;
@@ -136,6 +138,14 @@ public class PR_WINROBOT_PAUSAS {
 
 	public void setDATA_ULT_MODIF(Timestamp dATA_ULT_MODIF) {
 		DATA_ULT_MODIF = dATA_ULT_MODIF;
+	}
+
+	public String getMOMENTO() {
+		return MOMENTO;
+	}
+
+	public void setMOMENTO(String mOMENTO) {
+		MOMENTO = mOMENTO;
 	}
 
 }

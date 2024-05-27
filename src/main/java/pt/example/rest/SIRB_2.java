@@ -9,7 +9,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.lowagie.text.pdf.codec.Base64.OutputStream;
 
+import pt.example.bootstrap.ConnectProgress;
 import pt.example.bootstrap.ConnectionSQL;
 import pt.example.dao.AB_DIC_DOSIFICACAODao;
 import pt.example.dao.AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAODao;
@@ -112,7 +115,10 @@ import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_ANALISESDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_ANALISES_RECURSOS_HUMANOSDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_CABDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_LINHASDao;
+import pt.example.dao.PR_WINROBOT_CABDao;
+import pt.example.dao.PR_WINROBOT_ETIQUETASDao;
 import pt.example.dao.PR_WINROBOT_PAUSASDao;
+import pt.example.dao.PR_WINROBOT_RACKSDao;
 import pt.example.dao.QUA_DERROGACOESDao;
 import pt.example.dao.QUA_DERROGACOES_EQUIPADao;
 import pt.example.dao.QUA_DERROGACOES_FICHEIROSDao;
@@ -192,6 +198,7 @@ import pt.example.entity.PA_MOV_FICHEIROS;
 import pt.example.entity.PE_MOV_CAB;
 import pt.example.entity.PE_MOV_CAB_HISTORICO;
 import pt.example.entity.PE_MOV_FICHEIROS;
+import pt.example.entity.PIN_DIC_PROGRAMAS;
 import pt.example.entity.PR_DIC_ALERTAS_DESCARGA;
 import pt.example.entity.PR_DIC_CAPACIDADE_ACABAMENTO;
 import pt.example.entity.PR_DIC_CAPACIDADE_RACKS;
@@ -206,7 +213,10 @@ import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_ANALISES;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_ANALISES_RECURSOS_HUMANOS;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_CAB;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_LINHAS;
+import pt.example.entity.PR_WINROBOT_CAB;
+import pt.example.entity.PR_WINROBOT_ETIQUETAS;
 import pt.example.entity.PR_WINROBOT_PAUSAS;
+import pt.example.entity.PR_WINROBOT_RACKS;
 import pt.example.entity.QUA_DERROGACOES;
 import pt.example.entity.QUA_DERROGACOES_EQUIPA;
 import pt.example.entity.QUA_DERROGACOES_FICHEIROS;
@@ -411,6 +421,12 @@ public class SIRB_2 {
 	private PR_WINROBOT_PAUSASDao dao89;
 	@Inject
 	private MAN_DIC_TIPOLOGIA_AVARIADao dao90;
+	@Inject
+	private PR_WINROBOT_ETIQUETASDao dao91;
+	@Inject
+	private PR_WINROBOT_RACKSDao dao92;
+	@Inject
+	private PR_WINROBOT_CABDao dao93;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -707,20 +723,21 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PR_PLANEAMENTO_PRODUCAO_LINHAS_FILTRO] "
 				+ ID_PLANEAMENTO_PRODUCAO_CAB + ",'" + COD_REF + "','" + FASE + "','" + ACABAMENTO + "','" + RACK + "',"
-				+ ANTECEDENCIA + "," + BARRAS_CAPACIDADE + ", '"+BASE_COR+"'");
+				+ ANTECEDENCIA + "," + BARRAS_CAPACIDADE + ", '" + BASE_COR + "'");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	@GET
 	@Path("/getPR_PLANEAMENTO_PRODUCAO_LINHAS_BASE_COR")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public List<Object[]> getPR_PLANEAMENTO_PRODUCAO_LINHAS_BASE_COR( ) {		 
+	public List<Object[]> getPR_PLANEAMENTO_PRODUCAO_LINHAS_BASE_COR() {
 
-		Query query_folder = entityManager.createNativeQuery("select distinct DESC_BASE_COR,'' as txt from PR_PLANEAMENTO_PRODUCAO_LINHAS where  DESC_BASE_COR is not null ");
+		Query query_folder = entityManager.createNativeQuery(
+				"select distinct DESC_BASE_COR,'' as txt from PR_PLANEAMENTO_PRODUCAO_LINHAS where  DESC_BASE_COR is not null ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1023,8 +1040,8 @@ public class SIRB_2 {
 		String SEMANA = firstMap.get("SEMANA");
 		String TIPO = firstMap.get("TIPO");
 
-		Query query_folder = entityManager.createNativeQuery("DECLARE @SEMANA int = " + SEMANA + ";DECLARE @TIPO varchar(50) = '" + TIPO + "'; "
-				+ " DECLARE @ANO int = " + ANO + "; "
+		Query query_folder = entityManager.createNativeQuery("DECLARE @SEMANA int = " + SEMANA
+				+ ";DECLARE @TIPO varchar(50) = '" + TIPO + "'; " + " DECLARE @ANO int = " + ANO + "; "
 				+ "select a.ID_PLANEAMENTO_PRODUCAO_CAB,CAST(a.DATA_CRIA as date) DATA_CRIA ,a.DATA_MRP,a.N_MRP,a.ID_LINHA,a.ESTADO,a.NUMERO_SEMANAS "
 				+ "from PR_PLANEAMENTO_PRODUCAO_CAB a "
 				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1 AND (((@TIPO = 'Cromagem' ) AND ( a.ID_LINHA in (1,2,3))) OR ((@TIPO = 'Pintura' ) AND ( a.ID_LINHA in (4))))");
@@ -1061,7 +1078,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/GET_BASES_CORES_ANALISE")
 	@Produces("application/json")
@@ -1075,7 +1092,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/GET_PLANEAMENTO_CONSUMOS_ANALISE")
 	@Produces("application/json")
@@ -1089,7 +1106,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/GET_PLANEAMENTO_GESTAO_STOCK")
 	@Produces("application/json")
@@ -1103,7 +1120,6 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
 
 	@POST
 	@Path("/GET_RACKS_ANALISES")
@@ -1447,6 +1463,21 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
+	
+	@POST
+	@Path("/GET_RACKS_PROREF_QUANTIDADES")
+	@Produces("application/json")
+	public List<Object[]> GET_RACKS_PROREF_QUANTIDADES(final List<HashMap<String, String>> dados) {
+		// HashMap<String, String> firstMap = dados.get(0);
+		// String DATA = firstMap.get("DATA");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_RACKS_PROREF_QUANTIDADES]");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
 
 	@POST
 	@Path("/getEvolucaoDefeitoRef")
@@ -3482,10 +3513,12 @@ public class SIRB_2 {
 	}
 
 	@GET
-	@Path("/getMAN_MOV_MANUTENCAO_CAB_HISTORICO/{id}")
+	@Path("/getMAN_MOV_MANUTENCAO_CAB_HISTORICO/{id}/{tipo}/{datainicio}/{datafim}")
 	@Produces("application/json")
-	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CAB_HISTORICO(@PathParam("id") Integer id) {
-		return dao39.getHistorico(id);
+	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CAB_HISTORICO(@PathParam("id") Integer id,
+			@PathParam("tipo") String tipo, @PathParam("datainicio") String datainicio,
+			@PathParam("datafim") String datafim) {
+		return dao39.getHistorico(id, tipo, datainicio, datafim);
 	}
 
 	@DELETE
@@ -4488,6 +4521,8 @@ public class SIRB_2 {
 		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
 		String TRIMESTRE = firstMap.get("TRIMESTRE");
 		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
+		Boolean SEVESO = Boolean.valueOf(firstMap.get("SEVESO"));
+		Boolean ATEX = Boolean.valueOf(firstMap.get("ATEX"));
 
 		if (LOCALIZACAO != null)
 			LOCALIZACAO = "'" + LOCALIZACAO + "'";
@@ -4500,7 +4535,7 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_MTBF_MTTR " + ANO + "," + MES + ","
 				+ DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO + ","
-				+ EQUIPAMENTO + "," + TRIMESTRE + "," + MAQUINA_PRODUTIVA);
+				+ EQUIPAMENTO + "," + TRIMESTRE + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -4553,6 +4588,8 @@ public class SIRB_2 {
 		String AMBITO = firstMap.get("AMBITO");
 		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
 		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
+		Boolean SEVESO = Boolean.valueOf(firstMap.get("SEVESO"));
+		Boolean ATEX = Boolean.valueOf(firstMap.get("ATEX"));
 
 		if (LOCALIZACAO != null)
 			LOCALIZACAO = "'" + LOCALIZACAO + "'";
@@ -4563,9 +4600,9 @@ public class SIRB_2 {
 		if (DATA_FIM != null)
 			DATA_FIM = "'" + DATA_FIM + "'";
 
-		Query query_folder = entityManager.createNativeQuery(
-				"EXEC MAN_GET_INDICADORES " + ANO + "," + TIPO_MANUTENCAO + "," + EQUIPAMENTO + "," + DATA_INICIO + ","
-						+ DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO + "," + MAQUINA_PRODUTIVA);
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_INDICADORES " + ANO + "," + TIPO_MANUTENCAO
+				+ "," + EQUIPAMENTO + "," + DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + ","
+				+ FUNCIONARIO + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -4587,6 +4624,8 @@ public class SIRB_2 {
 		String AMBITO = firstMap.get("AMBITO");
 		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
 		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
+		Boolean SEVESO = Boolean.valueOf(firstMap.get("SEVESO"));
+		Boolean ATEX = Boolean.valueOf(firstMap.get("ATEX"));
 
 		if (LOCALIZACAO != null)
 			LOCALIZACAO = "'" + LOCALIZACAO + "'";
@@ -4599,7 +4638,42 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_ANALISE_MANUTENCAO " + ANO + ","
 				+ TIPO_MANUTENCAO + "," + DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + ","
-				+ FUNCIONARIO + "," + EQUIPAMENTO + "," + MAQUINA_PRODUTIVA);
+				+ FUNCIONARIO + "," + EQUIPAMENTO + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/MAN_GET_RANKING_EQUIPAMENTOS")
+	@Produces("application/json")
+	public List<Object[]> MAN_GET_RANKING_EQUIPAMENTOS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String TIPO_MANUTENCAO = firstMap.get("TIPO_MANUTENCAO");
+
+		String EQUIPAMENTO = firstMap.get("EQUIPAMENTO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String LOCALIZACAO = firstMap.get("LOCALIZACAO");
+		String AMBITO = firstMap.get("AMBITO");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
+		Boolean SEVESO = Boolean.valueOf(firstMap.get("SEVESO"));
+		Boolean ATEX = Boolean.valueOf(firstMap.get("ATEX"));
+
+		if (LOCALIZACAO != null)
+			LOCALIZACAO = "'" + LOCALIZACAO + "'";
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_RANKING_EQUIPAMENTOS " + TIPO_MANUTENCAO
+				+ "," + DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO + ","
+				+ EQUIPAMENTO + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -6522,8 +6596,12 @@ public class SIRB_2 {
 	public List<Object[]> DOC_GET_INFORMACAO_POSTO(final List<HashMap<String, String>> dados) {
 		HashMap<String, String> firstMap = dados.get(0);
 		String IP_POSTO = firstMap.get("IP_POSTO");
+		String USER = firstMap.get("USER");
+		if (USER != null)
+			USER = "'" + USER + "'";
 
-		Query query_folder = entityManager.createNativeQuery("EXEC DOC_GET_INFORMACAO_POSTO '" + IP_POSTO + "'");
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC DOC_GET_INFORMACAO_POSTO '" + IP_POSTO + "'," + USER);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -6910,6 +6988,664 @@ public class SIRB_2 {
 	}
 
 	@POST
+	@Path("/GET_DADOS_POSTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> GET_DADOS_POSTO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IP_POSTO = firstMap.get("IP_POSTO");
+		String USER = firstMap.get("USER");
+		String USER_NOME = firstMap.get("USER_NOME");
+
+		if (IP_POSTO != null)
+			IP_POSTO = "'" + IP_POSTO + "'";
+
+		Query query_folder = entityManager.createNativeQuery(
+				"SELECT TOP 1 ID,NOME,SECTOR,LINHA,TIPO_POSTO FROM DOC_DIC_POSTOS where IP_POSTO = " + IP_POSTO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PR_WINROBOT_CRIA_TRABALHO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PR_WINROBOT_CRIA_TRABALHO_PINTURA(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IP_POSTO = firstMap.get("IP_POSTO");
+		String USER = firstMap.get("USER");
+		String USER_NOME = firstMap.get("USER_NOME");
+		String ESTADO = firstMap.get("ESTADO");
+		String PROGRAMA = firstMap.get("PROGRAMA");
+		String TIPO_POSTO = firstMap.get("TIPO_POSTO");
+		String LINHA = firstMap.get("LINHA");
+		String ID = firstMap.get("ID");
+
+		if (IP_POSTO != null)
+			IP_POSTO = "'" + IP_POSTO + "'";
+		if (USER != null)
+			USER = "'" + USER + "'";
+		if (USER_NOME != null)
+			USER_NOME = "'" + USER_NOME + "'";
+		if (ESTADO != null)
+			ESTADO = "'" + ESTADO + "'";
+		if (TIPO_POSTO != null)
+			TIPO_POSTO = "'" + TIPO_POSTO + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PR_WINROBOT_CRIA_TRABALHO_PINTURA " + IP_POSTO + ","
+				+ USER + "," + USER_NOME + "," + ESTADO + "," + PROGRAMA + "," + TIPO_POSTO + "," + LINHA + "," + ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+		// criarFicheiroPR
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PR_WINROBOT_ALTERAR_ESTADO_TRABALHO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PR_WINROBOT_ALTERAR_ESTADO_TRABALHO_PINTURA(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		String ID_USER = firstMap.get("ID_USER");
+		String USER = firstMap.get("USER");
+		String ESTADO = firstMap.get("ESTADO");
+
+		if (USER != null)
+			USER = "'" + USER + "'";
+
+		if (ESTADO != null)
+			ESTADO = "'" + ESTADO + "'";
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC PR_WINROBOT_ALTERAR_ESTADO_TRABALHO_PINTURA " + ID + "," + ID_USER + "," + USER + "," + ESTADO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			if (content[13] != null && content[13].toString().equals("LD")) {
+				criarFicheiroLD(content);
+				/*String nome_ficheiro = "";
+				String data = new SimpleDateFormat("yyyyMMddHHmmss_").format(new java.util.Date());
+
+				Query query = entityManager.createNativeQuery(
+						"Select (select top 1 OF_NUM from AB_DIC_LINHA_OF e where ID_LINHA = a.id_linha and DATA <= GETDATE() order by e.DATA desc) as ofnum,a.SECCAO,a.SUBSECCAO,a.REF_COMPOSTO "
+								+ "from AB_DIC_LINHA a where a.ID_LINHA = " + content[12].toString() + "");
+
+				List<Object[]> dados_ = query.getResultList();
+
+				for (Object[] content_ : dados_) {
+					nome_ficheiro = data + "_ETIQUETA_PINTURA_" + content_[0].toString() + ".txt";
+
+					criarFicheiroETIQUETAS(nome_ficheiro, content_[0].toString(), content_[1].toString(),
+							content_[2].toString(), content_[3].toString(), content[14].toString(),
+							content[15].toString());
+				}*/
+
+			}
+			if (content[13] != null && content[13].toString().equals("UL"))
+				criarFicheiroUL(content);
+		}
+
+		// criarFicheiroETIQUETAS //fim carga
+		// criarFicheiroLD //fim carga
+
+		// criarFicheiroUL //fim descarga
+
+		return dados_folder;
+	}
+
+	public void criarFicheiroLD(Object[] dados) {
+		String nome_ficheiro = "LD" + dados[2].toString() + "_" + dados[11].toString();
+		String path = "";
+		String path_error = "";
+		String data = "";
+		SIRB SIRB = new SIRB();
+		String[] etiquetas = (dados[7] != null) ? dados[7].toString().split(",") : null;
+		String[] users = (dados[6] != null) ? dados[6].toString().split(",") : null;
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select top 1  PASTA_FICHEIRO_2,PASTA_ETIQUETAS,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			path = content[0] + nome_ficheiro;
+			path_error = content[3] + nome_ficheiro;
+		}
+
+		data += "ART_" + dados[0].toString() + "\r\n";
+		data += "SEC_3111\r\n";
+		data += "SSE_000;200;000\r\n";
+		data += "OPE_" + dados[1].toString() + "\r\n";
+		data += "BTC_" + dados[2].toString() + "\r\n";
+		data += "STR_" + dados[3].toString() + "\r\n";
+		data += "END_" + dados[4].toString() + "\r\n";
+		data += "QTY_" + dados[5].toString() + "\r\n";
+
+		Integer countUser = 0;
+		if (users != null) {
+			for (String name : users) {
+				countUser++;
+				data += "USR" + countUser + "_" + name + "\r\n";
+			}
+		}
+
+		data += "SHF_"+dados[10].toString()+"\r\n";
+
+		Integer countEtiquetas = 0;
+		if (etiquetas != null) {
+			for (String name : etiquetas) {
+				countEtiquetas++;
+				data += "BOX" + countEtiquetas + "_" + name + "\r\n";
+			}
+		}
+
+		if (data.length() > 0) {
+			SIRB.criar_ficheiro(data, path, path_error, false, "");
+		}
+	}
+
+	public void criarFicheiroPR(Object[] dados) {
+		String nome_ficheiro = "PR" + dados[2].toString() + "_" + dados[11].toString();
+		String path = "";
+		String path_error = "";
+		String data = "";
+		SIRB SIRB = new SIRB();
+		String[] racks = (dados[8] != null) ? dados[8].toString().split(",") : null;
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select top 1  PASTA_FICHEIRO_2,PASTA_ETIQUETAS,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			path = content[0] + nome_ficheiro;
+			path_error = content[3] + nome_ficheiro;
+		}
+
+		data += "ART_" + dados[0].toString() + "\r\n";
+		data += "OPE_" + dados[1].toString() + "\r\n";
+		data += "BTC_" + dados[2].toString() + "\r\n";
+		data += "STR_" + dados[3].toString() + "\r\n";
+		data += "END_" + dados[4].toString() + "\r\n";
+		data += "QTY_" + dados[5].toString() + "\r\n";
+		data += "SHF_"+dados[10].toString()+"\r\n";
+
+		Integer countUser = 0;
+		if (racks != null) {
+			for (String name : racks) {
+				countUser++;
+				data += "USR" + countUser + "_" + name + "\r\n";
+			}
+		}
+
+		if (data.length() > 0) {
+			SIRB.criar_ficheiro(data, path, path_error, false, "");
+		}
+	}
+
+	public void criarFicheiroUL(Object[] dados) {
+		String nome_ficheiro = "UL" + dados[2].toString() + "_" + dados[11].toString();
+		String path = "";
+		String path_error = "";
+		String data = "";
+		SIRB SIRB = new SIRB();
+		String[] defeitos = (dados[9] != null) ? dados[9].toString().split(",") : null;
+		String[] users = (dados[6] != null) ? dados[6].toString().split(",") : null;
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select top 1  PASTA_FICHEIRO_2,PASTA_ETIQUETAS,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			path = content[0] + nome_ficheiro;
+			path_error = content[3] + nome_ficheiro;
+		}
+
+		data += "ART_" + dados[0].toString() + "\r\n";
+		data += "OPE_" + dados[1].toString() + "\r\n";
+		data += "BTC_" + dados[2].toString() + "\r\n";
+		data += "STR_" + dados[3].toString() + "\r\n";
+		data += "END_" + dados[4].toString() + "\r\n";
+		data += "QTY_" + dados[16].toString() + "\r\n";
+
+		Integer countDefeitos = 0;
+		if (defeitos != null) {
+			for (String name : defeitos) {
+				countDefeitos++;
+				data += "SCR" + countDefeitos + "_" + name + "\r\n";
+			}
+		}
+
+		Integer countUser = 0;
+		if (users != null) {
+			for (String name : users) {
+				countUser++;
+				data += "USR" + countUser + "_" + name + "\r\n";
+			}
+		}
+
+		data += "SHF_"+dados[10].toString()+"\r\n";
+
+		if (data.length() > 0) {
+			SIRB.criar_ficheiro(data, path, path_error, false, "");
+		}
+	}
+
+	public void criarFicheiroETIQUETAS(String nome_ficheiro, String of, String SECCAO, String SUBSECCAO,
+			String REF_COMPOSTO, String ip_posto, String id) {
+
+		SIRB SIRB = new SIRB();
+		java.util.Date datacria = new java.util.Date();
+		SimpleDateFormat formate = new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat horaformate = new SimpleDateFormat("HHmmss");
+		String datatual = formate.format(datacria);
+		String horatual = horaformate.format(datacria);
+		String sequencia = "000000000";
+		String path = "";
+		String path2 = "";
+		String path_error = "";
+		String path_error2 = "";
+		String modelo_REPORT = "";
+		String nomeimpressora = "";
+		String ipimpressora = "";
+		String data_etiq = "";
+		/*
+		 * Query query = entityManager.createNativeQuery(
+		 * "select a.ETQNUM,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO from PIN_MOV_PREPARACAO_ETIQ a where ID_PREPARACAO_LIN = "
+		 * + id + "");
+		 */
+
+		Query query2 = entityManager.createNativeQuery(
+				" select a.ETIQUETA,a.QUANT,a.CONSUMIR,a.QUANT_FINAL,a.INDREF,a.VA1REF,a.VA2REF,a.PROREF,a.UNICOD,a.LIECOD,a.ETQORILOT1,a.ETQNUMENR,a.LOTNUMENR,a.UNISTO,a.INDNUMENR,a.EMPCOD,a.PRODES, DATCRE "
+						+ ",CONVERT(varchar(10), a.ID), a.CONSUMIR as cons, '0' as id2,a.QUANT_FINAL as qtdf,a.UNISTO as unnd, "
+						+ "CASE WHEN ( a.QUANT  - a.QUANT_FINAL) < 0 THEN '-' ELSE '+' END as sinal,a.ID "
+						+ "from PR_WINROBOT_ETIQUETAS a where  a.ID_ARTIGO = " + id);
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select top 1  PASTA_FICHEIRO_2,PASTA_ETIQUETAS,MODELO_REPORT,PASTA_DESTINO_ERRO from GER_PARAMETROS a");
+
+		Query query_impressora = entityManager.createNativeQuery(
+				"select top 1  NOME_IMPRESSORA,IP_IMPRESSORA from GER_POSTOS b where IP_POSTO ='" + ip_posto + "'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+		List<Object[]> dados_impressora = query_impressora.getResultList();
+		Boolean imprime = false;
+
+		for (Object[] content : dados_folder) {
+			path = content[0] + nome_ficheiro;
+			path2 = content[1].toString();
+			path_error = content[3] + nome_ficheiro;
+			path_error2 = content[3].toString();
+			modelo_REPORT = content[2].toString();
+		}
+
+		for (Object[] content2 : dados_impressora) {
+			nomeimpressora = content2[0].toString();
+			if (content2[1] != null) {
+				ipimpressora = content2[1].toString();
+			}
+			imprime = true;
+		}
+
+		sequencia = sequencia();
+
+		List<Object[]> dados = null;
+
+		dados = query2.getResultList();
+
+		final ConnectProgress connectionProgress = new ConnectProgress();
+		List<HashMap<String, String>> lista = null;
+		List<HashMap<String, String>> lista2 = null;
+		Boolean Orig_Composant = false;
+		ArrayList<String> values_etiqueta = new ArrayList<String>();
+		Integer count = 0;
+		String data = "";
+		String INDNUMCSE = "";
+		String NCLRANG = "";
+		Integer size_etiq = 0;
+		data_etiq += "LAB_NAME=" + modelo_REPORT + "\r\n";
+
+		if (!ipimpressora.isEmpty() && ipimpressora != null) {
+			ipimpressora = ",->" + ipimpressora;
+		}
+
+		String data_path = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+
+		path2 = path2 + "ETIQUETA_LINHA_PINTURA_IMPRE_" + data_path + ".txt";
+		path_error2 = path_error2 + "ETIQUETA_LINHA_PINTURA_IMPRE_" + data_path + ".txt";
+
+		data_etiq += "THT_NAME=" + nomeimpressora + ipimpressora + "\r\n";
+		data_etiq += "AF100;AF101;AF1;AF2;A2;AF3;A3;AF4;A4;AF5;A5;AF6;AF7;A7;AF8;AF9;AF10;AF11;AF24;AF12;AF16;A16;AF17;AF18;AF19;AF20;A20;AF21;A21;AF22;AF23;AF25;AF26;AF27;AF28;AF29;AF30;AF31;AF32;AF33;AF34;AF35;AF36;AF37;AF38;AF39;AF40;AF41;AF42;AF43;AF44;END;\r\n";
+
+		try {
+			lista2 = connectionProgress.getOrigineComposant2(getURLSILVER(), REF_COMPOSTO, of);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (lista2.size() > 0) {
+			INDNUMCSE = lista2.get(0).get("INDNUMENR");
+		}
+
+		for (Object[] content : dados) {
+			count = 0;
+			NCLRANG = "";
+			lista = null;
+
+			String cisterna = (content[20] != null) ? content[20].toString() : "false";
+			if (Float.parseFloat(content[3].toString()) != 0 && !content[3].toString().equals(content[1].toString())
+					&& !cisterna.equals("true")) {
+				// path2 = path2 + data_path + "_" + content[0].toString();
+
+				// criar ficheiro que gera etiquetas
+				data_etiq += SIRB.criaFicheiroEtiqueta(content);
+				size_etiq++;
+			}
+
+			try {
+				connectionProgress.EXEC_SINCRO(content[0].toString(), Float.parseFloat(content[3].toString()),
+						getURLSILVER());
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			try {
+				lista = connectionProgress.getOrigineComposant(getURLSILVER(), content[7].toString(), of);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (lista.size() > 0) {
+				count = Integer.parseInt(lista.get(0).get("total"));
+				NCLRANG = lista.get(0).get("NCLRANG");
+			}
+
+			// System.out.println(content[0]);
+			data += "01        ";// Soci�t�
+			data += datatual; // Date suivi
+			data += sequencia; // N� s�quence
+
+			data += "    ";// + Ligne de production
+
+			data += "1";// Type N� OF
+			data += (of + "          ").substring(0, 10); // N� OF
+
+			data += "1";// Type op�ration
+
+			// OP_NUM
+			data += ("0010").substring(0, 4);// N� Op�ration
+
+			data += "1";// Position ( S12 )
+
+			// Code section
+			data += (SECCAO + "          ").substring(0, 10);
+
+			// Code sous-section
+			data += (SUBSECCAO + "          ").substring(0, 10);
+
+			data += "  "; // N� d'�quipe
+
+			// Type de ressource
+			data += ("    ").substring(0, 4);
+
+			// Code ressource
+			data += ("          ").substring(0, 10);
+
+			data += "   C"; // N� �tablissement + Type d'�l�ment C
+
+			// Date d�but
+			data += datatual;
+			// Heure d�but
+			data += horatual.substring(0, 6);
+			// Date fin
+			data += datatual;
+			// Heure fin
+			data += horatual.substring(0, 6);
+
+			// Origine composant
+			if (count > 0 && NCLRANG != null) {
+				Orig_Composant = true;
+				data += "0";
+			} else {
+				boolean ans = values_etiqueta.contains(content[7].toString());
+				if (ans) {
+					Orig_Composant = true;
+					data += "0";
+				} else {
+					Orig_Composant = false;
+					data += "1";
+					values_etiqueta.add(content[7].toString());
+				}
+			}
+
+			// R�f�rence compos�
+			data += (REF_COMPOSTO + "                 ").substring(0, 17);
+
+			// Variante compos� (1)
+			data += ("          ").substring(0, 10);
+
+			// Variante compos� (2)
+			data += ("          ").substring(0, 10);
+
+			// Indice du compos�
+			data += ("          ").substring(0, 10);
+
+			// N� enregistrement Cs�
+			String enregistrementcse = "000000000";
+			String sizecse = enregistrementcse + INDNUMCSE;
+			enregistrementcse = (sizecse).substring(sizecse.length() - 9, sizecse.length());
+			data += enregistrementcse;
+
+			// N� de rang
+			/*
+			 * String rang = "00000"; if (Orig_Composant) { String size = rang + NCLRANG;
+			 * rang = (size).substring(size.length() - 5, size.length()); data += rang; }
+			 * else { data += rang; }
+			 */
+
+			if (Orig_Composant) {
+				data += (NCLRANG + "     ").substring(0, 5);
+			} else {
+				data += ("     ").substring(0, 5);
+			}
+
+			// R�f�rence composant
+			data += (content[7] + "                 ").substring(0, 17);
+
+			// Variante composant (1)
+			if (content[5] != null) {
+				data += (content[5] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Variante composant (2)
+			if (content[6] != null) {
+				data += (content[6] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Indice du composant
+			if (content[4] != null) {
+				data += (content[4] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// N� enregistrement Cst
+
+			String enregistrement = "000000000";
+			if (content[14] != null) {
+				String size = enregistrement + content[14];
+				enregistrement = (size).substring(size.length() - 9, size.length());
+				data += enregistrement;
+			} else {
+				data += enregistrement;
+			}
+
+			/*
+			 * if (content[14] != null) { data += (content[14] + "         ").substring(0,
+			 * 9); } else { data += ("         ").substring(0, 9); }
+			 */
+
+			// Type quantit�
+			data += "1";
+
+			// Quantit�
+			if (content[19] != null) {
+				String result = String.format("%.3f", content[19]).replace("$", ",");
+				String[] parts = result.split(",");
+				String part1 = "00000000000";
+				String part2 = "0000";
+				if (parts.length > 0) {
+					if (parts[0] != null) {
+						String size = part1 + parts[0];
+						part1 = (size).substring(size.length() - 11, size.length());
+					}
+					if (parts.length > 1) {
+						String size = parts[1] + part2;
+						part2 = (size).substring(0, 4);
+					}
+				}
+				data += (part1 + part2 + "  ").substring(0, 17);
+			} else {
+				data += "000000000000000  ";
+			}
+
+			data += content[23]; // Signe
+
+			// Unit�
+			if (content[8] != null) {
+				data += (content[8] + "    ").substring(0, 4);
+			} else {
+				data += "    ";
+			}
+
+			// Quantit� (US2)
+			data += "               ";
+
+			// Lieu origine
+			if (content[9] != null) {
+				data += (content[9] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// Emplacement origine
+			if (content[15] != null) {
+				data += (content[15] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// R�f�rence du lot
+			if (content[10] != null) {
+				data += (content[10] + "                                   ").substring(0, 35);
+			} else {
+				data += "                                   ";
+			}
+
+			// N� de lot interne
+			String lotinterne = "000000000";
+			if (content[12] != null) {
+				String size = lotinterne + content[12];
+				lotinterne = (size).substring(size.length() - 9, size.length());
+				data += lotinterne;
+			} else {
+				data += lotinterne;
+			}
+
+			// N� d'�tiquette
+			if (content[0] != null) {
+				data += (content[0] + "          ").substring(0, 10);
+			} else {
+				data += "          ";
+			}
+
+			// N� enreg. �tiquette
+			String etiquette = "000000000";
+			if (content[1] != null) {
+				String size = etiquette + content[11];
+				etiquette = (size).substring(size.length() - 9, size.length());
+				data += etiquette;
+			} else {
+				data += etiquette;
+			}
+
+			// Texte libre
+			/*
+			 * if (id != null) { data += (num_trabalho +
+			 * "                                        ").substring(0, 40); } else {
+			 */
+			data += (content[18] + "                                        ").substring(0, 40);
+			// }
+			data += "\r\n";
+
+			String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(datacria);
+			/*
+			 * entityManager.
+			 * createNativeQuery("UPDATE PIN_MOV_PREPARACAO_ETIQ SET DATA_PREP_EXEC = '" +
+			 * timeStamp + "' where ID_MOV_PREP_ETIQUETA = " + content[24] +
+			 * "").executeUpdate();
+			 */
+		}
+
+		if (data.length() > 0) {
+			SIRB.criar_ficheiro(data, path, path_error, false, "");
+		}
+
+		if (size_etiq > 0 && imprime) {
+			SIRB.criar_ficheiro(data_etiq, path2, path_error2, false, "");
+		}
+
+	}
+
+	public String sequencia() {
+		String sequencia = "000000000";
+		Query query_seq = entityManager.createNativeQuery(
+				"select top 1 NUMERO_SEQUENCIA,DATA_SEQUENCIA from GER_SEQUENCIA_FICHEIRO where DATA_SEQUENCIA = CONVERT (date, GETDATE())");
+
+		List<Object[]> dados_seq = query_seq.getResultList();
+		if (dados_seq.size() > 0) {
+			Integer val = 1;
+			for (Object[] contentseq : dados_seq) {
+				val = Integer.parseInt(contentseq[0].toString()) + 1;
+				sequencia = ("000000000" + val).substring(("000000000" + val).length() - 9,
+						("000000000" + val).length());
+			}
+			entityManager.createNativeQuery("UPDATE GER_SEQUENCIA_FICHEIRO SET NUMERO_SEQUENCIA = " + val
+					+ " where DATA_SEQUENCIA = CONVERT (date, GETDATE())").executeUpdate();
+		} else {
+			sequencia = "000000001";
+			entityManager
+					.createNativeQuery(
+							"INSERT INTO GER_SEQUENCIA_FICHEIRO (DATA_SEQUENCIA,NUMERO_SEQUENCIA) VALUES (GETDATE(),1)")
+					.executeUpdate();
+		}
+		return sequencia;
+	}
+
+	public String getURLSILVER() {
+		String url = "";
+		Query query_folder = entityManager.createNativeQuery("select top 1 * from GER_PARAMETROS a");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+			url = content[2].toString();
+		}
+
+		return url;
+	}
+
+	@POST
 	@Path("/ADD_USER_PR_WINROBOT_CAB")
 	@Consumes("*/*")
 	@Produces("application/json")
@@ -7008,7 +7744,7 @@ public class SIRB_2 {
 		String ID = firstMap.get("ID");
 
 		Query query_folder = entityManager.createNativeQuery(
-				"select ID,ID_UTZ,NOME_UTZ,DATA_HORA_INICIO,DATA_HORA_FIM,ESTADO from PR_WINROBOT_USERS WHERE ESTADO not in ('A') AND ID_CAB = "
+				"select ID,ID_UTZ,NOME_UTZ,DATA_HORA_INICIO,DATA_HORA_FIM,ESTADO from PR_WINROBOT_USERS WHERE ESTADO not in ('A','C') AND ID_CAB = "
 						+ ID);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
@@ -7029,6 +7765,42 @@ public class SIRB_2 {
 			USER = "'" + USER + "'";
 
 		Query query_folder = entityManager.createNativeQuery("EXEC GET_PR_WINROBOT_ARTICLES " + ID + "," + USER + "");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@GET
+	@Path("/GET_PR_WINROBOT_ARTICLES_PINTURA/{id}/{id_posto}/{informacao}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> GET_PR_WINROBOT_ARTICLES_PINTURA(@PathParam("id") Integer id,@PathParam("id_posto") Integer id_posto,@PathParam("informacao") Integer informacao) {
+
+		Query query_folder = entityManager.createNativeQuery("EXEC GET_PR_WINROBOT_ARTICLES_PINTURA " + id+","+id_posto+","+informacao+",null");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/GET_PR_WINROBOT_ARTICLES_PINTURAPOST")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> GET_PR_WINROBOT_ARTICLES_PINTURAPOST( final List<HashMap<String, String>> dados) {
+		
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		String ID_POSTO = firstMap.get("ID_POSTO");
+		String INFORMACAO = firstMap.get("INFORMACAO");
+		String PROREF = firstMap.get("PROREF");
+ 
+
+		if (PROREF != null)
+			PROREF = "'" + PROREF + "'";
+		
+		Query query_folder = entityManager.createNativeQuery("EXEC GET_PR_WINROBOT_ARTICLES_PINTURA " + ID+","+ID_POSTO+","+INFORMACAO+","+PROREF);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -7077,11 +7849,13 @@ public class SIRB_2 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ID = firstMap.get("ID");
 		String USER = firstMap.get("USER");
+		String ID_USER = firstMap.get("ID_USER");
 
 		if (USER != null)
 			USER = "'" + USER + "'";
 
-		Query query_folder = entityManager.createNativeQuery("EXEC PR_WINROBOT_TERMINA_TRABALHO " + ID + "," + USER);
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC PR_WINROBOT_TERMINA_TRABALHO " + ID + "," + USER + "," + ID_USER);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -7123,6 +7897,23 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager.createNativeQuery(
 				"UPDATE PR_WINROBOT_CAB SET INFORMACAO_DESCARGA = " + INFORMACAO_DESCARGA + " where ID = " + ID);
+
+		int dados_folder = query_folder.executeUpdate();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PR_WINROBOT_UPDATE_NUMERO_PECAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public int PR_WINROBOT_UPDATE_NUMERO_PECAS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		String NUMERO_PECAS = firstMap.get("NUMERO_PECAS");
+
+		Query query_folder = entityManager.createNativeQuery(
+				"UPDATE PR_WINROBOT_ARTICLES SET NUMERO_PECAS = " + NUMERO_PECAS + " where ID = " + ID);
 
 		int dados_folder = query_folder.executeUpdate();
 
@@ -7382,6 +8173,148 @@ public class SIRB_2 {
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
+	}
+
+	/************************************* PR_WINROBOT_ETIQUETAS */
+
+	@POST
+	@Path("/createPR_WINROBOT_ETIQUETAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_ETIQUETAS insertPR_WINROBOT_ETIQUETAS(final PR_WINROBOT_ETIQUETAS data) {
+
+		int query_folder = entityManager.createNativeQuery("UPDATE PR_WINROBOT_ARTICLES SET RAWCODE"
+				+ data.getINDEX_ORIGEM() + " = '" + data.getETIQUETA() + "' where ID = " + data.getID_ARTIGO())
+				.executeUpdate();
+
+		return dao91.create(data);
+	}
+
+	@PUT
+	@Path("/updatePR_WINROBOT_ETIQUETAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_ETIQUETAS updatePR_WINROBOT_ETIQUETAS(final PR_WINROBOT_ETIQUETAS PR_WINROBOT_ETIQUETAS) {
+		PR_WINROBOT_ETIQUETAS.setID(PR_WINROBOT_ETIQUETAS.getID());
+		return dao91.update(PR_WINROBOT_ETIQUETAS);
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_ETIQUETAS")
+	@Produces("application/json")
+	public List<PR_WINROBOT_ETIQUETAS> getPR_WINROBOT_ETIQUETAS() {
+		return dao91.getall();
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_ETIQUETASbyid/{id}")
+	@Produces("application/json")
+	public List<PR_WINROBOT_ETIQUETAS> getPR_WINROBOT_ETIQUETASbyid(@PathParam("id") Integer id) {
+		return dao91.getbyid(id);
+	}
+
+	/************************************* PR_WINROBOT_RACKS */
+
+	@POST
+	@Path("/createPR_WINROBOT_RACKS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_RACKS insertPR_WINROBOT_RACKS(final PR_WINROBOT_RACKS data) {
+		return dao92.create(data);
+	}
+
+	@PUT
+	@Path("/updatePR_WINROBOT_RACKS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_RACKS updatePR_WINROBOT_RACKS(final PR_WINROBOT_RACKS PR_WINROBOT_RACKS) {
+		PR_WINROBOT_RACKS.setID(PR_WINROBOT_RACKS.getID());
+		return dao92.update(PR_WINROBOT_RACKS);
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_RACKS")
+	@Produces("application/json")
+	public List<PR_WINROBOT_RACKS> getPR_WINROBOT_RACKS() {
+		return dao92.getall();
+	}
+
+	@DELETE
+	@Path("/deletePR_WINROBOT_RACKS/{id}")
+	public void deletePR_WINROBOT_RACKS(@PathParam("id") Integer id) {
+		PR_WINROBOT_RACKS PR_WINROBOT_RACKS = new PR_WINROBOT_RACKS();
+		PR_WINROBOT_RACKS.setID(id);
+		dao92.delete(PR_WINROBOT_RACKS);
+	}
+	
+	@GET
+	@Path("/getPR_WINROBOT_RACKSbyid/{id}")
+	@Produces("application/json")
+	public List<PR_WINROBOT_RACKS> getPR_WINROBOT_RACKSbyid(@PathParam("id") Integer id) {
+		return dao92.getbyid(id);
+	}
+
+	/************************************* PR_WINROBOT_CAB */
+
+	@POST
+	@Path("/createPR_WINROBOT_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_CAB insertPR_WINROBOT_CAB(final PR_WINROBOT_CAB data) {
+		return dao93.create(data);
+	}
+
+	@PUT
+	@Path("/updatePR_WINROBOT_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_CAB updatePR_WINROBOT_CAB(final PR_WINROBOT_CAB PR_WINROBOT_CAB) {
+		PR_WINROBOT_CAB.setID(PR_WINROBOT_CAB.getID());
+		return dao93.update(PR_WINROBOT_CAB);
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_CAB")
+	@Produces("application/json")
+	public List<PR_WINROBOT_CAB> getPR_WINROBOT_CAB() {
+		return dao93.getall();
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_CABbyid/{id}")
+	@Produces("application/json")
+	public List<PR_WINROBOT_CAB> getPR_WINROBOT_CABbyid(@PathParam("id") Integer id) {
+		return dao93.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_CABbyestado/{estado}")
+	@Produces("application/json")
+	public List<PR_WINROBOT_CAB> getPR_WINROBOT_CABbyestado(@PathParam("estado") String estado) {
+		return dao93.getbyestado(estado);
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_CABupdateEstado/{estado}/{id}/{user}")
+	@Produces("application/json")
+	public Integer getPR_WINROBOT_CABupdateEstado(@PathParam("estado") String estado, @PathParam("id") Integer id,
+			@PathParam("user") String user) {
+		return dao93.updateestado(estado, id, user);
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_CABupdateOrdem/{ordem}/{id}/{user}")
+	@Produces("application/json")
+	public Integer getPR_WINROBOT_CABupdateOrdem(@PathParam("ordem") Integer ordem, @PathParam("id") Integer id,
+			@PathParam("user") String user) {
+		return dao93.updateordem(ordem, id, user);
+	}
+
+	@GET
+	@Path("/getTrabalhobyRACK/{rack}")
+	@Produces("application/json")
+	public List<PR_WINROBOT_CAB> getTrabalhobyRACK(@PathParam("rack") String rack) {
+		return dao93.getTrabalhobyRACK(rack);
 	}
 
 }

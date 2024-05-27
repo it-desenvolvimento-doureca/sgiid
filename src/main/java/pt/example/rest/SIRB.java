@@ -3146,6 +3146,18 @@ public class SIRB {
 	}
 
 	@GET
+	@Path("/getDadosEtiquetaLinhaPintura/{etiqueta}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosEtiquetaLinhaPintura(@PathParam("etiqueta") String etiqueta)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiquetaLinhaPintura(getURLSILVER(), etiqueta);
+		return dados;
+	}
+
+	@GET
 	@Path("/getDadosEtiqueta/{etiqueta}")
 	@Produces("application/json")
 	public List<HashMap<String, String>> getDadosEtiqueta(@PathParam("etiqueta") String etiqueta)
@@ -3204,6 +3216,18 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getComponentes(getURLSILVER());
 		return dados;
 	}
+	
+	@GET
+	@Path("/getComponentesAll")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getComponentesAll() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesAll(getURLSILVER());
+		return dados;
+	}
+
 
 	@GET
 	@Path("/getComponentesPintura")
@@ -3645,6 +3669,18 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getEtiquetas(getURLSILVER(), PROREF);
+		return dados;
+	}
+
+	@POST
+	@Path("/getRacks")
+	@Produces("application/json")
+	public List<Object[]> getRacks(final String RACKNUM) {
+
+		Query query = entityManager.createNativeQuery(
+				"select RACK_CODE,RACK_TYPE from PIN_DIC_RACKS where RACK_CODE = '"+RACKNUM+"'");
+
+		List<Object[]> dados = query.getResultList();
 		return dados;
 	}
 

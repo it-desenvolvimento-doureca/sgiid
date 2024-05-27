@@ -82,7 +82,14 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 	private String N_SERIE;
 	@JsonProperty("MAQUINA_PRODUTIVA")
 	private Boolean MAQUINA_PRODUTIVA;
-	
+	@JsonProperty("CE")
+	private Boolean CE;
+	@JsonProperty("MANUAL")
+	private Boolean MANUAL;
+	@JsonProperty("ATEX")
+	private Boolean ATEX;
+	@JsonProperty("SEVESO")
+	private Boolean SEVESO; 
 	
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
@@ -330,6 +337,38 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 
 	public void setMAQUINA_PRODUTIVA(Boolean mAQUINA_PRODUTIVA) {
 		MAQUINA_PRODUTIVA = mAQUINA_PRODUTIVA;
+	}
+
+	public Boolean getCE() {
+		return CE;
+	}
+
+	public Boolean getMANUAL() {
+		return MANUAL;
+	}
+
+	public Boolean getATEX() {
+		return ATEX;
+	}
+
+	public Boolean getSEVESO() {
+		return SEVESO;
+	}
+
+	public void setCE(Boolean cE) {
+		CE = cE;
+	}
+
+	public void setMANUAL(Boolean mANUAL) {
+		MANUAL = mANUAL;
+	}
+
+	public void setATEX(Boolean aTEX) {
+		ATEX = aTEX;
+	}
+
+	public void setSEVESO(Boolean sEVESO) {
+		SEVESO = sEVESO;
 	}
 
 }

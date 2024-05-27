@@ -33,6 +33,10 @@ public class DOC_DIC_POSTOS {
 	private Timestamp DATA_MODIF;
 	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
+	@JsonProperty("LINHA")
+	private Integer LINHA;
+	@JsonProperty("TIPO_POSTO")
+	private String TIPO_POSTO;
 
 	public Integer getID() {
 		return ID;
@@ -96,6 +100,22 @@ public class DOC_DIC_POSTOS {
 
 	public void setUTZ_MODIF(Integer uTZ_MODIF) {
 		UTZ_MODIF = uTZ_MODIF;
+	}
+
+	public Integer getLINHA() {
+		return LINHA;
+	}
+
+	public String getTIPO_POSTO() {
+		return TIPO_POSTO;
+	}
+
+	public void setLINHA(Integer lINHA) {
+		LINHA = lINHA;
+	}
+
+	public void setTIPO_POSTO(String tIPO_POSTO) {
+		TIPO_POSTO = tIPO_POSTO;
 	}
 
 }

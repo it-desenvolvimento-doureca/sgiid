@@ -21,10 +21,21 @@ public class MAN_MOV_MANUTENCAO_CABDao extends GenericDaoJpaImpl<MAN_MOV_MANUTEN
 
 	}
 	
-	public List<MAN_MOV_MANUTENCAO_CAB> getHistorico(Integer id) {
+	public List<MAN_MOV_MANUTENCAO_CAB> getHistorico(Integer id,String tipo,String datainicio,String datafim) {
 
-		Query query = entityManager.createNativeQuery("select a.TIPO_MANUTENCAO,a.ESTADO,a.DATA_INICIO,a.DATA_FIM,a.DATA_HORA_PEDIDO,a.DATA_CRIA,a.ID_MANUTENCAO_CAB from MAN_MOV_MANUTENCAO_CAB a "
-				+ "where EQUIPAMENTO = "+id+" and ESTADO in ('P','C') and ESTADO not in ('A') order by DATA_HORA_PEDIDO desc");
+		String query_filter = "";
+		if(datainicio != null && !datainicio.equals("null")) query_filter = " and CAST(a.DATA_CRIA as DATE) >= '"+datainicio+"' ";
+		if(datafim != null && !datafim.equals("null")) query_filter = query_filter+ " and CAST(a.DATA_CRIA as DATE) >= '"+datainicio+"' ";
+		if(tipo != null && !tipo.equals("null")) query_filter = query_filter+ " and a.TIPO_MANUTENCAO = '"+tipo+"' ";
+		
+		Query query = entityManager.createNativeQuery("select a.TIPO_MANUTENCAO,a.ESTADO,a.DATA_INICIO,a.DATA_FIM,a.DATA_HORA_PEDIDO,a.DATA_CRIA,a.ID_MANUTENCAO_CAB "
+				+ ",c.DESCRICAO_PT,b.TEMPO,b.TEMPO_ESTIMADO,b.REALIZADA "
+				+ "from MAN_MOV_MANUTENCAO_CAB a "
+				+ "left join MAN_MOV_MANUTENCAO_ACCOES b on a.ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB "
+				+ "left join GT_DIC_TAREFAS c on b.ID_ACAO = c.ID "
+				+ "where EQUIPAMENTO = "+id+" and ESTADO in ('P','C') and ESTADO not in ('A') " 
+				+ query_filter
+				+ "order by ISNULL(DATA_HORA_PEDIDO,a.DATA_CRIA) desc");
 
 		List<MAN_MOV_MANUTENCAO_CAB> utz = query.getResultList();
 		return utz;

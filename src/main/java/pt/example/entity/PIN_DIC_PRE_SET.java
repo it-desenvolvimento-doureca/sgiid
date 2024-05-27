@@ -22,6 +22,8 @@ public class PIN_DIC_PRE_SET {
 	private Integer ID;
 	@JsonProperty("ID_TIPO_ACABAMENTO")
 	private Integer ID_TIPO_ACABAMENTO;
+	@JsonProperty("NOME")
+	private String NOME;
 	@JsonProperty("CODIGO")
 	private String CODIGO;
 	@JsonProperty("CAUDAL")

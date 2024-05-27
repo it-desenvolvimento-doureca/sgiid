@@ -46,6 +46,7 @@ public class GER_PARAMETROS {
 	private BigDecimal OBJETIVO_AUDITORIAS;
 	private Integer NUMERO_MANUTENCOES_INICIAR;
 	private BigDecimal PRECO_HORA_MANUTENCAO;
+	private String PASTA_FICHEIRO_2;
 
 	@Column(name = "TAXA_REJEICAO")
 	public Float getTAXA_REJEICAO() {
@@ -291,6 +292,15 @@ public class GER_PARAMETROS {
 
 	public void setPRECO_HORA_MANUTENCAO(BigDecimal pRECO_HORA_MANUTENCAO) {
 		PRECO_HORA_MANUTENCAO = pRECO_HORA_MANUTENCAO;
+	}
+
+	@Column(name = "PASTA_FICHEIRO_2")
+	public String getPASTA_FICHEIRO_2() {
+		return PASTA_FICHEIRO_2;
+	}
+
+	public void setPASTA_FICHEIRO_2(String pASTA_FICHEIRO_2) {
+		PASTA_FICHEIRO_2 = pASTA_FICHEIRO_2;
 	}
 
 }

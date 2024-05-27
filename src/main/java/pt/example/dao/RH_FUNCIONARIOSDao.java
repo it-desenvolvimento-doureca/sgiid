@@ -277,7 +277,12 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 		Query query = entityManager
 				.createNativeQuery("DECLARE @DATA date = '" + data1 + "'; " + "DECLARE @DATA2 date = '" + data2 + "';  "
-						+ "select distinct COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,quant,TempoPrep,TempoExec,CASE WHEN TempoPausas/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb) + TempoPrep + TempoExec !=  TempoTotal THEN TempoTotal + TempoPausas/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb) ELSE TempoTotal END TempoTotal,heudeb,heufin,ofnum,cadencia,TempoPausas/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)  as TempoPausas "
+						+ " select distinct COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,quant,TempoPrep,TempoExec,"
+						+ " CASE WHEN (TempoPausas = 0 or TempoPausas is null) and  TempoTotalPausa >0 THEN TempoTotal - TempoPausas + TempoTotalPausa ELSE TempoTotal END TempoTotal ,heudeb,heufin,ofnum,cadencia, "
+						+ " CASE WHEN (TempoPausas = 0 or TempoPausas is null) and  TempoTotalPausa >0 THEN TempoTotalPausa ELSE TempoPausas END TempoPausas "
+						+ " from ( select   COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,quant,TempoPrep,TempoExec,"
+						+ "	CASE WHEN TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/ + TempoPrep + TempoExec !=  TempoTotal THEN TempoTotal + TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/ ELSE TempoTotal END TempoTotal,heudeb,heufin,ofnum,cadencia,"
+						+ " TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/  as TempoPausas,TempoTotalPausa "
 						+ " from ( select COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,"
 						+ " SUM(quant) quant,SUM(TempoPrep) TempoPrep,SUM(TempoExec) TempoExec,SUM(TempoTotal)  TempoTotal,heudeb,heufin,ofnum,"
 						+ " CASE WHEN SUM(TempoTotal) < 0 and SUM(quant) > 0 THEN 0 ELSE CONVERT(DECIMAL(19,2), CASE WHEN  PecasHora ='' or (SUM(TempoExec)) = 0 or ( totalproref)=0 THEN 0 ELSE (((((SUM(quant)) * 60) / ((( SUM(TempoExec) )* totalproref)* 60)) /  PecasHora))*100  END) END cadencia "
@@ -297,7 +302,7 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 						+ "from ( "
 						+ "(SELECT d.ofdnumenr,typof,(select COUNT(tfa.ofref) AS total_ofref   from SILVER_BI.dbo.SOFA tfa where tfa.ofref = a.ofref Group by tfa.ofref) total_ofref "
 						+ ",CASE WHEN ISNUMERIC(rescod)=1 THEN t.rescod ELSE null END rescod, t.datdeb, q.proref,p.prodes1,d.opecod,d.openum,d.opedes,(total_pecas /*q.qterr+q.qterb*/) quant,t.heudeb,t.heufin,( /*t.atpse+*/ ( case when t.atpsp = 0 then 0 else t.stpsp end + t.stpse) - (t.atpse + t.atpsp)) TempoExec,(t.atpse + t.atpsp) TempoPausas,"
-						+ " CONVERT(DECIMAL(19,0),CASE WHEN (total_horas) = 0 THEN 0 ELSE ((total_pecas*(t.stpse + t.stpsp))/(total_horas)) END) total, (/*t.atpsp+*/ t.stpsp) TempoPrep, ( /*t.atpse+*/ t.stpse+ /*t.atpsp+*/ t.stpsp) TempoTotal,case when gescod in ('OFCF','OFCF2')	or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f "
+						+ " CONVERT(DECIMAL(19,0),CASE WHEN (total_horas) = 0 THEN 0 ELSE ((total_pecas*(t.stpse + t.stpsp))/(total_horas)) END) total, (/*t.atpsp+*/ t.stpsp - t.atpsp) TempoPrep, ( /*t.atpse+*/ t.stpse+ /*t.atpsp+*/ t.stpsp) TempoTotal,case when gescod in ('OFCF','OFCF2')	or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f "
 						+ "left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (total_pecas) / (CASE WHEN total_pecas > 0 THEN total_pecas ELSE 1 END)	else 1 END as totalproref ,a.ofnum    "
 						+ "FROM	"
 						+ "	( select xva.SVANUMENR as SVANUMENR2,datdeb,xva.ofdnumenr,SVANUMORI,stpsp,rescod,heudeb,heufin,stpse,restypcod,atpse,atpsp"
@@ -320,7 +325,8 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 						+ "/*,count(xa.rescod) over(partition by xa.ofdnumenr) total_operarios_linha,count(xa.rescod) over(partition by xa.svanumori,) total_operarios*/"
 						+ " ,sum(tag.qterr+tag.qterb) over(partition by tag.ofdnumenr) total_pecas_linha,tag.qterr+tag.qterb total_pecas "
 						+ ",sum(tag.stpse+ tag.stpsp) over(partition by tag.ofdnumenr) total_horas_linha, "
-						+ "sum(tag.stpse+ tag.stpsp) over(partition by tag.svanumori,tag.svanumenr/*,xasvanumenr*/)total_horas "
+						+ "/*sum(tag.stpse+ tag.stpsp) over(partition by tag.svanumori,tag.svanumenr/*,xasvanumenr*/)total_horas*/"
+						+ " sum(tag.stpse+ tag.stpsp) over(partition by tag.ofdnumenr,ISNULL(CONVERT(varchar(50),ID_OF_CAB),CONCAT(tag.svanumori,'_',tag.svanumenr)))total_horas  "
 						+ ",tag.qterr+tag.qterb qtt3,sum(tag.qterr+tag.qterb) over(partition by tag.ofdnumenr,ID_OF_CAB,rescod) total_trabalho,ID_OF_CAB from (select rescod,xa.svanumenr as xasvanumenr,datdeb,(CASE WHEN ISDATE(heudeb) = 0 THEN '00:00:00.000' ELSE heudeb END) heudeb,(CASE WHEN ISDATE(heufin) = 0 THEN '00:00:00.000' ELSE heufin END) heufin ,xq.qterr,xq.qterb,xa.stpse, xa.stpsp,xa.ofdnumenr,xa.svanumori "
 						+ ",CASE WHEN xq.svanumenr is null THEN (select top 1 svanumenr from SILVER_BI.dbo.SCPSVQ where ofdnumenr = xa.ofdnumenr and svanumenr in (select vaa.svanumenr from SILVER_BI.dbo.SCPSVA vaa where vaa.datdeb = xa.datdeb and vaa.heudeb = xa.heudeb )) ELSE xq.svanumenr END as svanumenr "
 						+ ",xfa.typof,/*xa.svanumenr*/(CASE WHEN xa.SVANUMORI=0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) as svanumenr2 from SILVER_BI.dbo.SCPSVA xa "
@@ -346,14 +352,14 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 						+ ") b where b.proref is not null  group by  COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod ,opedes ,heudeb,heufin,ofnum,PecasHora,typof,totalproref "
 						+ ") c "
 						+ "left join ( "
-						+ " SELECT  t.rescod, t.datdeb as datedeb2,x.heudeb as heudeb2,SUM(t.stpse+t.stpsp) TempoTotalPausa,SUM(CASE WHEN x.ARRCOD in ('TECH') THEN 1 ELSE 0 END ) TOTAL_P "
+						+ " SELECT  t.rescod, t.datdeb as datedeb2,t.heudeb as heudeb2,SUM(t.stpse+t.stpsp) TempoTotalPausa,SUM(CASE WHEN x.ARRCOD in ('TECH') THEN 1 ELSE 0 END ) TOTAL_P "
 						+ "FROM SILVER.dbo.SCPSVB x	"
 						+ "INNER JOIN SILVER.dbo.SCPSVA t  on t.SVANUMENR=  x.SVANUMENR "
 						+ "INNER JOIN SILVER.dbo.SPAARR p  on p.ARRCOD=  x.ARRCOD "
 						+ "WHERE x.datdeb>=@DATA and x.datdeb<=@DATA2 and t.restypcod='MO'and (t.stpse<>0 or t.stpsp<>0) "
-						+ "GROUP BY  t.rescod, t.datdeb,x.heudeb "
+						+ "GROUP BY  t.rescod, t.datdeb,t.heudeb "
 						+ " ) p on  CASE WHEN IsNumeric(REPLACE(p.rescod,'.','')) = 1 THEN  cast(REPLACE(p.rescod,'.','') as bigint) ELSE null END = c.COD_FUNCIONARIO and p.datedeb2 = c.datdeb and p.heudeb2 between c.heudeb and heufin "
-						+ "where ((TempoTotal <> 0 AND (TempoPrep+TempoExec) <> 0) OR (TempoTotal > 0 and (TempoPrep+TempoExec) = 0 and TempoTotalPausa <> 0 or (TempoTotal = 0 and TOTAL_P > 1)) ) and quant >= 0 order by datdeb desc ,heudeb desc,heufin desc");
+						+ "where ((TempoTotal <> 0 AND (TempoPrep+TempoExec) <> 0) OR (TempoTotal > 0 and (TempoPrep+TempoExec) = 0 and TempoTotalPausa <> 0 or (TempoTotal = 0 and TOTAL_P > 1)) ) and quant >= 0  and  (quant >= 0 and (TempoPrep+TempoExec) <> 0) ) c order by datdeb desc ,heudeb desc,heufin desc");
 		List<RH_FUNCIONARIOS> data = query.getResultList();
 		return data;
 

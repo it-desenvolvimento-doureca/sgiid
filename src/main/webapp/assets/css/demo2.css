@@ -4960,7 +4960,7 @@ checkbox {
 
 .p-autocomplete-multiple-container {
     display: inline-block;
-    padding: 0.3em 0.5em !important;
+    padding: 1px 0.5em !important;
 }
 
 .p-autocomplete-multiple-container.p-inputtext {
