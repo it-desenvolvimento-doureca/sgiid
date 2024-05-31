@@ -34,6 +34,7 @@ import pt.example.dao.COM_BUDGETS_ANALISESDao;
 import pt.example.dao.COM_BUDGETS_LINHASDao;
 import pt.example.dao.COM_CUSTOMERS_GROUPSDao;
 import pt.example.dao.COM_CUSTOMER_GROUPSDao;
+import pt.example.dao.FIN_DIC_FILTROSDao;
 import pt.example.dao.FIN_DIC_TIPO_MOVIMENTO_STOCKDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVER_OFDao;
@@ -66,6 +67,7 @@ import pt.example.entity.COM_BUDGETS_ANALISES;
 import pt.example.entity.COM_BUDGETS_LINHAS;
 import pt.example.entity.COM_CUSTOMERS_GROUPS;
 import pt.example.entity.COM_CUSTOMER_GROUPS;
+import pt.example.entity.FIN_DIC_FILTROS;
 import pt.example.entity.FIN_DIC_TIPO_MOVIMENTO_STOCK;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER_OF;
@@ -159,6 +161,8 @@ public class SIRB_3 {
 	private FIN_DIC_TIPO_MOVIMENTO_STOCKDao dao30;
 	@Inject
 	private PIN_MOV_RECEITAS_REFERENCIASDao dao31;
+	@Inject
+	private FIN_DIC_FILTROSDao dao32;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -2309,14 +2313,13 @@ public class SIRB_3 {
 		return dao20.getallFiltro(referencia);
 	}
 
-
 	@GET
 	@Path("/getPIN_MOV_RECEITAS2")
 	@Produces("application/json")
 	public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASLINHA() {
 		return dao20.getall(0);
 	}
-	
+
 	@DELETE
 	@Path("/deletePIN_MOV_RECEITAS/{id}/{versao}")
 	public void deletePIN_MOV_RECEITAS(@PathParam("id") Integer id, @PathParam("versao") Integer versao) {
@@ -2950,5 +2953,52 @@ public class SIRB_3 {
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
+	}
+
+	/************************************* FIN_DIC_FILTROS */
+	@POST
+	@Path("/createFIN_DIC_FILTROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public FIN_DIC_FILTROS insertFIN_DIC_FILTROS(final FIN_DIC_FILTROS data) {
+		return dao32.create(data);
+	}
+
+	@GET
+	@Path("/getFIN_DIC_FILTROSbyid/{id}")
+	@Produces("application/json")
+	public List<FIN_DIC_FILTROS> getFIN_DIC_FILTROSbyId(@PathParam("id") Integer id) {
+		return dao32.getbyId(id);
+	}
+
+	@GET
+	@Path("/getFIN_DIC_FILTROSbyTipo/{tipo}")
+	@Produces("application/json")
+	public List<FIN_DIC_FILTROS> getFIN_DIC_FILTROSbyTipo(@PathParam("tipo") Integer tipo) {
+		return dao32.getbyTipo(tipo);
+	}
+
+	@GET
+	@Path("/getFIN_DIC_FILTROS")
+	@Produces("application/json")
+	public List<FIN_DIC_FILTROS> getFIN_DIC_FILTROS() {
+		return dao32.getall();
+	}
+
+	@DELETE
+	@Path("/deleteFIN_DIC_FILTROS/{id}")
+	public void deleteFIN_DIC_FILTROS(@PathParam("id") Integer id) {
+		FIN_DIC_FILTROS FIN_DIC_FILTROS = new FIN_DIC_FILTROS();
+		FIN_DIC_FILTROS.setID(id);
+		dao32.delete(FIN_DIC_FILTROS);
+	}
+
+	@PUT
+	@Path("/updateFIN_DIC_FILTROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public FIN_DIC_FILTROS updateFIN_DIC_FILTROS(final FIN_DIC_FILTROS FIN_DIC_FILTROS) {
+		FIN_DIC_FILTROS.setID(FIN_DIC_FILTROS.getID());
+		return dao32.update(FIN_DIC_FILTROS);
 	}
 }
