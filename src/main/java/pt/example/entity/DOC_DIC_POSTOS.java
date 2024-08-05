@@ -37,6 +37,8 @@ public class DOC_DIC_POSTOS {
 	private Integer LINHA;
 	@JsonProperty("TIPO_POSTO")
 	private String TIPO_POSTO;
+	@JsonProperty("IMPRESSORA")
+	private String IMPRESSORA;
 
 	public Integer getID() {
 		return ID;
@@ -116,6 +118,14 @@ public class DOC_DIC_POSTOS {
 
 	public void setTIPO_POSTO(String tIPO_POSTO) {
 		TIPO_POSTO = tIPO_POSTO;
+	}
+
+	public String getIMPRESSORA() {
+		return IMPRESSORA;
+	}
+
+	public void setIMPRESSORA(String iMPRESSORA) {
+		IMPRESSORA = iMPRESSORA;
 	}
 
 }

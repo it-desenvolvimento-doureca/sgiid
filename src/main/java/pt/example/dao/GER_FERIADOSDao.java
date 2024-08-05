@@ -28,4 +28,13 @@ public class GER_FERIADOSDao extends GenericDaoJpaImpl<GER_FERIADOS, Integer>
 		return data;
 
 	}
+	
+	public List<GER_FERIADOS> getbyAno(Integer ano) {
+
+		Query query = entityManager.createQuery("Select a from GER_FERIADOS a where a.ANO = :ano");
+		query.setParameter("ano", ano);
+		List<GER_FERIADOS> data = query.getResultList();
+		return data;
+
+	}
 }

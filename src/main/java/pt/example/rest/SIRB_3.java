@@ -40,6 +40,7 @@ import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVER_OFDao;
 import pt.example.dao.GER_INFO_PAGINASDao;
 import pt.example.dao.MAN_DIC_ARTIGOS_TIPOLOGIADao;
+import pt.example.dao.MAN_DIC_FAMILIA_EQUIPAMENTOSDao;
 import pt.example.dao.PIN_DIC_ARMAZEMDao;
 import pt.example.dao.PIN_DIC_CABINESDao;
 import pt.example.dao.PIN_DIC_CORESDao;
@@ -61,6 +62,8 @@ import pt.example.dao.PIN_MOV_PREPARACAO_LINHADao;
 import pt.example.dao.PIN_MOV_RECEITASDao;
 import pt.example.dao.PIN_MOV_RECEITAS_LINHASDao;
 import pt.example.dao.PIN_MOV_RECEITAS_REFERENCIASDao;
+import pt.example.dao.PR_WINROBOT_USERSDao;
+import pt.example.dao.RH_CANDIDATURASDao;
 import pt.example.entity.COM_ACORDOS;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
@@ -73,6 +76,8 @@ import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER_OF;
 import pt.example.entity.GER_INFO_PAGINAS;
 import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
+import pt.example.entity.MAN_DIC_FAMILIA_EQUIPAMENTOS;
+import pt.example.entity.MAN_MOV_MANUTENCAO_OPERARIOS;
 import pt.example.entity.PIN_DIC_ARMAZEM;
 import pt.example.entity.PIN_DIC_CABINES;
 import pt.example.entity.PIN_DIC_CORES;
@@ -94,6 +99,8 @@ import pt.example.entity.PIN_MOV_PREPARACAO_LINHA;
 import pt.example.entity.PIN_MOV_RECEITAS;
 import pt.example.entity.PIN_MOV_RECEITAS_LINHAS;
 import pt.example.entity.PIN_MOV_RECEITAS_REFERENCIAS;
+import pt.example.entity.PR_WINROBOT_USERS;
+import pt.example.entity.RH_CANDIDATURAS;
 
 @Stateless
 @Path("/sirb")
@@ -163,6 +170,12 @@ public class SIRB_3 {
 	private PIN_MOV_RECEITAS_REFERENCIASDao dao31;
 	@Inject
 	private FIN_DIC_FILTROSDao dao32;
+	@Inject
+	private RH_CANDIDATURASDao dao33;
+	@Inject
+	private MAN_DIC_FAMILIA_EQUIPAMENTOSDao dao34;
+	@Inject
+	private PR_WINROBOT_USERSDao dao35;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -1176,6 +1189,25 @@ public class SIRB_3 {
 		return dao15.update(PIN_DIC_PRODUTOS_RELACIONADOS);
 	}
 
+	@GET
+	@Path("/PIN_UPDATE_PIN_DIC_PRODUTOS_PERC_DILUICAO/{id}")
+	@Produces("application/json")
+	public int PIN_UPDATE_PIN_DIC_PRODUTOS_PERC_DILUICAO(@PathParam("id") Integer id) {
+
+		int query_folder = entityManager.createNativeQuery("EXEC PIN_UPDATE_PIN_DIC_PRODUTOS_PERC_DILUICAO :id")
+				.setParameter("id", id).executeUpdate();
+
+		return query_folder;
+
+	}
+
+	@GET
+	@Path("/getPIN_DIC_PRODUTOS_RELACIONADOSPERC_DILUICAO")
+	@Produces("application/json")
+	public List<PIN_DIC_PRODUTOS_RELACIONADOS> getPIN_DIC_PRODUTOS_RELACIONADOSPERC_DILUICAO() {
+		return dao15.getbyPERC_DILUICAO();
+	}
+
 	/************************************* PIN_MOV_PREPARACAO */
 	@POST
 	@Path("/createPIN_MOV_PREPARACAO")
@@ -1190,8 +1222,9 @@ public class SIRB_3 {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public List<PIN_MOV_PREPARACAO> getPIN_MOV_PREPARACAO(@PathParam("linha") Integer linha,
-			@PathParam("classif") String classif, final ArrayList<String> query,
+			@PathParam("classif") String classif, List<HashMap<String, String>> query,
 			@PathParam("classif2") String classif2) {
+
 		return dao16.getall(linha, query, classif, classif2);
 	}
 
@@ -2299,6 +2332,17 @@ public class SIRB_3 {
 		return dao20.chechExistRef(proref, id);
 	}
 
+	@POST
+	@Path("/getPIN_MOV_RECEITASchechExistRefs/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASchechExistRefs(@PathParam("id") Integer id,
+			final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String REFERENCIAS = firstMap.get("REFERENCIAS");
+
+		return dao20.chechExistRefs(REFERENCIAS, id);
+	}
+
 	@GET
 	@Path("/getPIN_MOV_RECEITAS")
 	@Produces("application/json")
@@ -2317,7 +2361,14 @@ public class SIRB_3 {
 	@Path("/getPIN_MOV_RECEITAS2")
 	@Produces("application/json")
 	public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASLINHA() {
-		return dao20.getall(0);
+		return dao20.getall();
+	}
+
+	@GET
+	@Path("/getPIN_MOV_RECEITAS3")
+	@Produces("application/json")
+	public List<PIN_MOV_RECEITAS> getPIN_MOV_RECEITASLINHA3() {
+		return dao20.getall2();
 	}
 
 	@DELETE
@@ -2473,9 +2524,38 @@ public class SIRB_3 {
 	@Produces("application/json")
 	public PIN_DIC_PRE_SET updatePIN_DIC_PRE_SET(final PIN_DIC_PRE_SET PIN_DIC_PRE_SET) {
 		PIN_DIC_PRE_SET.setID(PIN_DIC_PRE_SET.getID());
+
+		PIN_DIC_PRE_SET OLD_PIN_DIC_PRE_SET = dao22.getbyid(PIN_DIC_PRE_SET.getID()).get(0);
+		Boolean atualiza = false;
+
+		if ((OLD_PIN_DIC_PRE_SET.getCAUDAL() != null ? OLD_PIN_DIC_PRE_SET.getCAUDAL() : "null")
+				.equals(PIN_DIC_PRE_SET.getCAUDAL())) {
+			atualiza = true;
+		}
+		if ((OLD_PIN_DIC_PRE_SET.getPRESSAO_ATOMIZACAO() != null ? OLD_PIN_DIC_PRE_SET.getPRESSAO_ATOMIZACAO() : "null")
+				.equals(PIN_DIC_PRE_SET.getPRESSAO_ATOMIZACAO())) {
+			atualiza = true;
+		}
+		if ((OLD_PIN_DIC_PRE_SET.getPRESSAO_LEQUE() != null ? OLD_PIN_DIC_PRE_SET.getPRESSAO_LEQUE() : "null")
+				.equals(PIN_DIC_PRE_SET.getPRESSAO_LEQUE())) {
+			atualiza = true;
+		}
+		if ((OLD_PIN_DIC_PRE_SET.getTAMANHO_BICO() != null ? OLD_PIN_DIC_PRE_SET.getTAMANHO_BICO() : "null")
+				.equals(PIN_DIC_PRE_SET.getTAMANHO_BICO())) {
+			atualiza = true;
+		}
+		if ((OLD_PIN_DIC_PRE_SET.getVOLTAS_PISTOLA() != null ? OLD_PIN_DIC_PRE_SET.getVOLTAS_PISTOLA() : "null")
+				.equals(PIN_DIC_PRE_SET.getVOLTAS_PISTOLA())) {
+			atualiza = true;
+		}
+
 		PIN_DIC_PRE_SET _PIN_DIC_PRE_SET = dao22.update(PIN_DIC_PRE_SET);
-		int query_folder = entityManager.createNativeQuery("EXEC PIN_UPDATE_PIN_DIC_PRE_SET :id")
-				.setParameter("id", PIN_DIC_PRE_SET.getID()).executeUpdate();
+
+		if (atualiza) {
+			int query_folder = entityManager.createNativeQuery("EXEC PIN_UPDATE_PIN_DIC_PRE_SET :id")
+					.setParameter("id", PIN_DIC_PRE_SET.getID()).executeUpdate();
+		}
+
 		return _PIN_DIC_PRE_SET;
 	}
 
@@ -2676,6 +2756,13 @@ public class SIRB_3 {
 		return dao27.getbyid2(id);
 	}
 
+	@GET
+	@Path("/getPIN_DIC_PROGRAMASbyid3/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_PROGRAMAS> getPIN_DIC_PROGRAMASbyid_linha3(@PathParam("id") Integer id) {
+		return dao27.getbyid3(id);
+	}
+
 	@POST
 	@Path("/getPIN_DIC_PROGRAMASvalidaseexisterepetidos")
 	@Consumes("*/*")
@@ -2688,7 +2775,8 @@ public class SIRB_3 {
 
 		Query query_folder = entityManager.createNativeQuery("select distinct a.ID,a.CODIGO from PIN_DIC_PROGRAMAS a "
 				+ "LEFT JOIN PIN_DIC_PROGRAMAS_REFERENCIAS b on a.ID = b.ID_PROGRAMA " + "where a.ID not in (" + ID
-				+ ") and b.REFERENCIA in (select value from string_split( '" + REFERENCIAS + "',',')) AND ATIVO = 1");
+				+ ") and b.REFERENCIA in (select value from string_split( '" + REFERENCIAS
+				+ "',',')) AND ATIVO = 1 AND ISNULL(ANULADO,0) = 0 ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -3001,4 +3089,250 @@ public class SIRB_3 {
 		FIN_DIC_FILTROS.setID(FIN_DIC_FILTROS.getID());
 		return dao32.update(FIN_DIC_FILTROS);
 	}
+
+	@POST
+	@Path("/GET_PAINEL_CONTROLO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> GET_PAINEL_CONTROLO(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String SEC_NUM = firstMap.get("SEC_NUM");
+		String DATE1 = firstMap.get("DATE1");
+		String DATE2 = firstMap.get("DATE2");
+		String DATE3 = firstMap.get("DATE3");
+		String DATE4 = firstMap.get("DATE4");
+		String TIME1 = firstMap.get("TIME1");
+		String TIME2 = firstMap.get("TIME2");
+		String TIME3 = firstMap.get("TIME3");
+		String TIME4 = firstMap.get("TIME4");
+		String ESTADO = firstMap.get("ESTADO");
+		String TEMPO_PROD_MENOR = firstMap.get("TEMPO_PROD_MENOR");
+		String TEMPO_PROD_MAIOR = firstMap.get("TEMPO_PROD_MAIOR");
+		String FUNC = firstMap.get("FUNC");
+		String NUMERO_OF = firstMap.get("NUMERO_OF");
+		String OPERACAO = firstMap.get("OPERACAO");
+		String MAQUINA = firstMap.get("MAQUINA");
+		String DESIGN_REF = firstMap.get("DESIGN_REF");
+		String REF = firstMap.get("REF");
+		String ETIQUETA = firstMap.get("ETIQUETA");
+		String QTT = firstMap.get("QTT");
+		String QTTMENOR = firstMap.get("QTTMENOR");
+		String START = firstMap.get("START");
+		String RACKS = firstMap.get("RACKS");
+		String LOTE = firstMap.get("LOTE");
+		String TIPO = firstMap.get("TIPO");
+		String CARRO = firstMap.get("CARRO");
+
+		/*
+		 * if (SEC_NUM != null) SEC_NUM = "'" + SEC_NUM + "'"; if (DATE1 != null) DATE1
+		 * = "'" + DATE1 + "'"; if (DATE2 != null) DATE2 = "'" + DATE2 + "'"; if (DATE3
+		 * != null) DATE3 = "'" + DATE3 + "'"; if (DATE4 != null) DATE4 = "'" + DATE4 +
+		 * "'"; if (TIME1 != null) TIME1 = "'" + TIME1 + "'"; if (TIME2 != null) TIME2 =
+		 * "'" + TIME2 + "'"; if (TIME3 != null) TIME3 = "'" + TIME3 + "'"; if (TIME4 !=
+		 * null) TIME4 = "'" + TIME4 + "'"; if (ESTADO != null) ESTADO = "'" + ESTADO +
+		 * "'"; if (TEMPO_PROD_MENOR != null) TEMPO_PROD_MENOR = "'" + TEMPO_PROD_MENOR
+		 * + "'"; if (TEMPO_PROD_MAIOR != null) TEMPO_PROD_MAIOR = "'" +
+		 * TEMPO_PROD_MAIOR + "'"; if (FUNC != null) FUNC = "'" + FUNC + "'"; if
+		 * (NUMERO_OF != null) NUMERO_OF = "'" + NUMERO_OF + "'"; if (OPERACAO != null)
+		 * OPERACAO = "'" + OPERACAO + "'"; if (MAQUINA != null) MAQUINA = "'" + MAQUINA
+		 * + "'"; if (DESIGN_REF != null) DESIGN_REF = "'" + DESIGN_REF + "'"; if (REF
+		 * != null) REF = "'" + REF + "'"; if (ETIQUETA != null) ETIQUETA = "'" +
+		 * ETIQUETA + "'"; if (QTT != null) QTT = "'" + QTT + "'"; if (QTTMENOR != null)
+		 * QTTMENOR = "'" + QTTMENOR + "'"; if (START != null) START = "'" + START +
+		 * "'"; if (RACKS != null) RACKS = "'" + RACKS + "'"; if (LOTE != null) LOTE =
+		 * "'" + LOTE + "'"; if (TIPO != null) TIPO = "'" + TIPO + "'";
+		 */
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC GET_PAINEL_CONTROLO :SEC_NUM ,:DATE1,:DATE2,:DATE3,:DATE4,:TIME1 ,:TIME2 ,:TIME3 ,:TIME4 ,:ESTADO ,:TEMPO_PROD_MENOR ,:TEMPO_PROD_MAIOR ,:FUNC ,:NUMERO_OF ,:OPERACAO ,:MAQUINA ,:DESIGN_REF ,:REF ,:ETIQUETA ,:QTT ,:QTTMENOR ,:START,:RACKS ,:LOTE,:TIPO,:CARRO ")
+				.setParameter("SEC_NUM", SEC_NUM).setParameter("DATE1", DATE1).setParameter("DATE2", DATE2)
+				.setParameter("DATE3", DATE3).setParameter("DATE4", DATE4).setParameter("TIME1", TIME1)
+				.setParameter("TIME2", TIME2).setParameter("TIME3", TIME3).setParameter("TIME4", TIME4)
+				.setParameter("ESTADO", ESTADO).setParameter("TEMPO_PROD_MENOR", TEMPO_PROD_MENOR)
+				.setParameter("TEMPO_PROD_MAIOR", TEMPO_PROD_MAIOR).setParameter("FUNC", FUNC)
+				.setParameter("NUMERO_OF", NUMERO_OF).setParameter("OPERACAO", OPERACAO)
+				.setParameter("MAQUINA", MAQUINA).setParameter("DESIGN_REF", DESIGN_REF).setParameter("REF", REF)
+				.setParameter("ETIQUETA", ETIQUETA).setParameter("QTT", QTT).setParameter("QTTMENOR", QTTMENOR)
+				.setParameter("START", START).setParameter("RACKS", RACKS).setParameter("LOTE", LOTE)
+				.setParameter("TIPO", TIPO).setParameter("CARRO", CARRO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/************************************* RH_CANDIDATURAS */
+	@POST
+	@Path("/createRH_CANDIDATURAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_CANDIDATURAS insertRH_CANDIDATURASA(final RH_CANDIDATURAS data) {
+		RH_CANDIDATURAS result = dao33.create(data);
+		return result;
+	}
+
+	@GET
+	@Path("/getRH_CANDIDATURASSINCRO")
+	@Produces("application/json")
+	public int getRH_CANDIDATURASSINCRO() {
+		Query query_folder = entityManager.createNativeQuery("EXEC ATUALIZAR_RH_CANDIDATURAS ");
+		return query_folder.executeUpdate();
+	}
+
+	@GET
+	@Path("/getRH_CANDIDATURAS")
+	@Produces("application/json")
+	public List<RH_CANDIDATURAS> getRH_CANDIDATURAS() {
+		return dao33.getall();
+	}
+
+	@GET
+	@Path("/getRH_CANDIDATURAS2")
+	@Produces("application/json")
+	public List<RH_CANDIDATURAS> getRH_CANDIDATURAS2() {
+		return dao33.getall2();
+	}
+
+	@GET
+	@Path("/getRH_CANDIDATURASbyid/{id}")
+	@Produces("application/json")
+	public List<RH_CANDIDATURAS> getRH_CANDIDATURAS(@PathParam("id") Integer id) {
+		return dao33.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRH_CANDIDATURAS/{id}")
+	public void deleteRH_CANDIDATURAS(@PathParam("id") Integer id) {
+		RH_CANDIDATURAS RH_CANDIDATURAS = new RH_CANDIDATURAS();
+		RH_CANDIDATURAS.setID(id);
+		dao33.delete(RH_CANDIDATURAS);
+	}
+
+	@PUT
+	@Path("/updateRH_CANDIDATURAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_CANDIDATURAS updateRH_CANDIDATURAS(final RH_CANDIDATURAS RH_CANDIDATURAS) {
+		RH_CANDIDATURAS.setID(RH_CANDIDATURAS.getID());
+		return dao33.update(RH_CANDIDATURAS);
+	}
+
+	/************************************* MAN_DIC_FAMILIA_EQUIPAMENTOS */
+	@POST
+	@Path("/createMAN_DIC_FAMILIA_EQUIPAMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_FAMILIA_EQUIPAMENTOS insertMAN_DIC_FAMILIA_EQUIPAMENTOSA(final MAN_DIC_FAMILIA_EQUIPAMENTOS data) {
+		return dao34.create(data);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_FAMILIA_EQUIPAMENTOS")
+	@Produces("application/json")
+	public List<MAN_DIC_FAMILIA_EQUIPAMENTOS> getMAN_DIC_FAMILIA_EQUIPAMENTOS() {
+		return dao34.getall();
+	}
+
+	@DELETE
+	@Path("/deleteMAN_DIC_FAMILIA_EQUIPAMENTOS/{id}")
+	public void deleteMAN_DIC_FAMILIA_EQUIPAMENTOS(@PathParam("id") Integer id) {
+		MAN_DIC_FAMILIA_EQUIPAMENTOS MAN_DIC_FAMILIA_EQUIPAMENTOS = new MAN_DIC_FAMILIA_EQUIPAMENTOS();
+		MAN_DIC_FAMILIA_EQUIPAMENTOS.setID(id);
+		dao34.delete(MAN_DIC_FAMILIA_EQUIPAMENTOS);
+	}
+
+	@PUT
+	@Path("/updateMAN_DIC_FAMILIA_EQUIPAMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_FAMILIA_EQUIPAMENTOS updateMAN_DIC_FAMILIA_EQUIPAMENTOS(
+			final MAN_DIC_FAMILIA_EQUIPAMENTOS MAN_DIC_FAMILIA_EQUIPAMENTOS) {
+		MAN_DIC_FAMILIA_EQUIPAMENTOS.setID(MAN_DIC_FAMILIA_EQUIPAMENTOS.getID());
+		return dao34.update(MAN_DIC_FAMILIA_EQUIPAMENTOS);
+
+	}
+
+	@POST
+	@Path("/GET_DADOS_CARTELAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> GET_DADOS_CARTELAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String LOTE = firstMap.get("LOTE");
+
+		if (LOTE != null)
+			LOTE = "'" + LOTE + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PR_GET_DADOS_CARTELAS " + LOTE + "");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/************************************* PR_WINROBOT_USERS */
+	@POST
+	@Path("/createPR_WINROBOT_USERS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_USERS insertPR_WINROBOT_USERSA(final PR_WINROBOT_USERS data) {
+		return dao35.create(data);
+	}
+
+	@GET
+	@Path("/getPR_WINROBOT_USERS")
+	@Produces("application/json")
+	public List<PR_WINROBOT_USERS> getPR_WINROBOT_USERS() {
+		return dao35.getall();
+	}
+
+	@DELETE
+	@Path("/deletePR_WINROBOT_USERS/{id}")
+	public void deletePR_WINROBOT_USERS(@PathParam("id") Integer id) {
+		PR_WINROBOT_USERS PR_WINROBOT_USERS = new PR_WINROBOT_USERS();
+		PR_WINROBOT_USERS.setID(id);
+		dao35.delete(PR_WINROBOT_USERS);
+	}
+
+	@PUT
+	@Path("/updatePR_WINROBOT_USERS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_USERS updatePR_WINROBOT_USERS(final PR_WINROBOT_USERS PR_WINROBOT_USERS) {
+		PR_WINROBOT_USERS.setID(PR_WINROBOT_USERS.getID());
+		return dao35.update(PR_WINROBOT_USERS);
+
+	}
+
+	@PUT
+	@Path("/updateDADOSPR_WINROBOT_USERS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_WINROBOT_USERS updateDADOSPR_WINROBOT_USERS(final PR_WINROBOT_USERS PR_WINROBOT_USERS) {
+
+		PR_WINROBOT_USERS result = PR_WINROBOT_USERS;
+
+		String DATA_HORA_INICIO = (result.getDATA_HORA_INICIO() == null) ? null
+				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_HORA_INICIO())+"'";
+		String DATA_HORA_FIM = (result.getDATA_HORA_FIM() == null) ? null
+				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_HORA_FIM())+"'";
+		String DATA_INICIO_PREP = (result.getDATA_INICIO_PREP() == null) ? null
+				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_INICIO_PREP())+"'";
+		String DATA_FIM_PREP = (result.getDATA_FIM_PREP() == null) ? null
+				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_FIM_PREP())+"'";
+		String DATA_INICIO_EXEC = (result.getDATA_INICIO_EXEC() == null) ? null
+				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_INICIO_EXEC())+"'";
+		String DATA_FIM_EXEC = (result.getDATA_FIM_EXEC() == null) ? null
+				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_FIM_EXEC())+"'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PR_ATUALIZA_USER " + result.getID() + ","
+				+ DATA_HORA_INICIO + "," + DATA_HORA_FIM + "," + DATA_INICIO_PREP + "," + DATA_FIM_PREP + ","
+				+ DATA_INICIO_EXEC + "," + DATA_FIM_EXEC + "," + result.getUTZ_MODIF());
+		query_folder.executeUpdate();
+
+		return result;
+	}
+
 }

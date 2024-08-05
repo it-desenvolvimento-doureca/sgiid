@@ -3168,7 +3168,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getDadosEtiqueta(getURLSILVER(), etiqueta);
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getDadosEtiquetaPintura/{etiqueta}")
 	@Produces("application/json")
@@ -3216,7 +3216,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getComponentes(getURLSILVER());
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getComponentesAll")
 	@Produces("application/json")
@@ -3227,7 +3227,6 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getComponentesAll(getURLSILVER());
 		return dados;
 	}
-
 
 	@GET
 	@Path("/getComponentesPintura")
@@ -3675,10 +3674,29 @@ public class SIRB {
 	@POST
 	@Path("/getRacks")
 	@Produces("application/json")
-	public List<Object[]> getRacks(final String RACKNUM) {
+	public List<Object[]> getRacks(final List<HashMap<String, String>> datas) {
 
-		Query query = entityManager.createNativeQuery(
-				"select RACK_CODE,RACK_TYPE from PIN_DIC_RACKS where RACK_CODE = '"+RACKNUM+"'");
+		HashMap<String, String> firstMap = datas.get(0);
+		String RACKNUM = firstMap.get("RACKNUM");
+		String RACK_TYPE = firstMap.get("RACK_TYPE");
+		Query query = entityManager
+				.createNativeQuery("select RACK_CODE,RACK_TYPE from PIN_DIC_RACKS where RACK_CODE = '" + RACKNUM
+						+ "' and RACK_TYPE = '" + RACK_TYPE + "'");
+
+		List<Object[]> dados = query.getResultList();
+		return dados;
+	}
+	
+	@POST
+	@Path("/getRacks2")
+	@Produces("application/json")
+	public List<Object[]> getRacks2(final List<HashMap<String, String>> datas) {
+
+		HashMap<String, String> firstMap = datas.get(0);
+		String RACKNUM = firstMap.get("RACKNUM");
+		String RACK_TYPE = firstMap.get("RACK_TYPE");
+		Query query = entityManager
+				.createNativeQuery("EXEC PR_GET_RACK '" + RACKNUM + "' , '" + RACK_TYPE + "'");
 
 		List<Object[]> dados = query.getResultList();
 		return dados;
@@ -3860,6 +3878,13 @@ public class SIRB {
 	@Produces("application/json")
 	public List<GER_FERIADOS> getGER_FERIADOS() {
 		return dao81.getall();
+	}
+
+	@GET
+	@Path("/getGER_FERIADOSbyAno/{ano}")
+	@Produces("application/json")
+	public List<GER_FERIADOS> getGER_FERIADOSbyAno(@PathParam("ano") Integer ano) {
+		return dao81.getbyAno(ano);
 	}
 
 	@DELETE
@@ -7225,6 +7250,22 @@ public class SIRB {
 	public List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> getRC_MOV_RECLAMACAO_FICHEIROS_FORNECEDORbyidRECLAMACAO(
 			@PathParam("id") Integer id) {
 		return dao90.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FICHEIROS_FORNECEDORbyidRECLAMACAO2/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> getRC_MOV_RECLAMACAO_FICHEIROS_FORNECEDORbyidRECLAMACAO2(
+			@PathParam("id") Integer id) {
+		return dao90.getbyid3(id);
+	}
+
+	@GET
+	@Path("/getRC_MOV_RECLAMACAO_FICHEIROS_FORNECEDORbyidRECLAMACAOFICHEIRO/{id}")
+	@Produces("application/json")
+	public List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> getRC_MOV_RECLAMACAO_FICHEIROS_FORNECEDORbyidRECLAMACAOFICHEIRO(
+			@PathParam("id") Integer id) {
+		return dao90.getbyidFICHEIRO(id);
 	}
 
 	@DELETE

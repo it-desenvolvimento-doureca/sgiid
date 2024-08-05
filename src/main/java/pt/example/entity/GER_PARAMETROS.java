@@ -48,6 +48,8 @@ public class GER_PARAMETROS {
 	private BigDecimal PRECO_HORA_MANUTENCAO;
 	private String PASTA_FICHEIRO_2;
 
+	private String  CAMINHO_FICHEIRO_PINTURA;
+	
 	@Column(name = "TAXA_REJEICAO")
 	public Float getTAXA_REJEICAO() {
 		return TAXA_REJEICAO;
@@ -301,6 +303,15 @@ public class GER_PARAMETROS {
 
 	public void setPASTA_FICHEIRO_2(String pASTA_FICHEIRO_2) {
 		PASTA_FICHEIRO_2 = pASTA_FICHEIRO_2;
+	}
+
+	@Column(name = "CAMINHO_FICHEIRO_PINTURA")
+	public String getCAMINHO_FICHEIRO_PINTURA() {
+		return CAMINHO_FICHEIRO_PINTURA;
+	}
+
+	public void setCAMINHO_FICHEIRO_PINTURA(String cAMINHO_FICHEIRO_PINTURA) {
+		CAMINHO_FICHEIRO_PINTURA = cAMINHO_FICHEIRO_PINTURA;
 	}
 
 }

@@ -26,10 +26,17 @@ public class PIN_MOV_RECEITASDao extends GenericDaoJpaImpl<PIN_MOV_RECEITAS, Int
 
 	}
 
-	public List<PIN_MOV_RECEITAS> getall(Integer linha) {
+	public List<PIN_MOV_RECEITAS> getall() {
 		Query query = entityManager.createQuery(
-				"Select a,b from PIN_MOV_RECEITAS a,AB_DIC_LINHA b where  a.LINHA = b.ID_LINHA and a.INATIVO != 1 and a.VERSAO_ATIVA = 1 and ((not :linha != 0) or (a.LINHA = :linha))");
-		query.setParameter("linha", linha);
+				"Select a,b from PIN_MOV_RECEITAS a,AB_DIC_LINHA b where  a.LINHA = b.ID_LINHA and a.INATIVO != 1 and a.VERSAO_ATIVA = 1 ");
+		List<PIN_MOV_RECEITAS> data = query.getResultList();
+		return data;
+
+	}
+	
+	public List<PIN_MOV_RECEITAS> getall2() {
+		Query query = entityManager.createQuery(
+				"Select a from PIN_MOV_RECEITAS a where a.VERSAO_ATIVA = 1 ");
 		List<PIN_MOV_RECEITAS> data = query.getResultList();
 		return data;
 
@@ -43,7 +50,7 @@ public class PIN_MOV_RECEITASDao extends GenericDaoJpaImpl<PIN_MOV_RECEITAS, Int
 		}
 
 		Query query = entityManager
-				.createNativeQuery(" Select ID,a.VERSAO,NOME_PROJETO,nome_LINHA,b.COR,id_LINHA,RECEITA_INATIVA "
+				.createNativeQuery(" Select distinct ID,a.VERSAO,NOME_PROJETO,nome_LINHA,b.COR,id_LINHA,RECEITA_INATIVA "
 						+ " from PIN_MOV_RECEITAS a " + query_
 						+ " left join AB_DIC_LINHA b on a.LINHA = b.ID_LINHA and a.INATIVO != 1"
 						+ " where a.VERSAO_ATIVA = 1 and a.INATIVO != 1  ");
@@ -62,6 +69,20 @@ public class PIN_MOV_RECEITASDao extends GenericDaoJpaImpl<PIN_MOV_RECEITAS, Int
 
 	}
 
+	public List<PIN_MOV_RECEITAS> chechExistRefs(String referencias, Integer id) {
+		Query query = entityManager.createNativeQuery(
+				" Select b.* from PIN_MOV_RECEITAS_REFERENCIAS a "
+				+ " inner join PIN_MOV_RECEITAS b on a.ID_RECEITA = b.ID and a.VERSAO = b.VERSAO "
+				+ " where  b.INATIVO != 1 and b.VERSAO_ATIVA = 1 and RECEITA_INATIVA != 1  "
+				+ " and  a.REFERENCIA_PINTURA in (select value from string_split(:referencias,',')) "
+				+ " AND b.ID != :id ",PIN_MOV_RECEITAS.class);
+		query.setParameter("id", id);
+		query.setParameter("referencias", referencias);
+		List<PIN_MOV_RECEITAS> data = query.getResultList();
+		return data;
+
+	}
+	
 	public List<PIN_MOV_RECEITAS> getversoes(Integer id, Integer versao) {
 
 		Query query = entityManager

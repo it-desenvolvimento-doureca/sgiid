@@ -16,14 +16,26 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 		super(PIN_MOV_PREPARACAO.class);
 	}
 
-	public List<PIN_MOV_PREPARACAO> getall(Integer linha, ArrayList<String> query2, String classif, String classif2) {
+	public List<PIN_MOV_PREPARACAO> getall(Integer linha, List<HashMap<String, String>> dados, String classif,
+			String classif2) {
 		// System.out.println(query2);
+		HashMap<String, String> firstMap = dados.get(0);
+		String query_data = firstMap.get("query");
+		String receitas = firstMap.get("receitas");
+		ArrayList<String> query2 = null;
+
 		Integer varquery = 1;
-		String Squery = ""; 
+		String Squery = "";
+		String Squery2 = null;
 		if (query2 == null) {
 			varquery = 0;
+		} else {
+			query2 = new ArrayList<String>(Arrays.asList(query_data.split(",")));
 		}
-	
+
+		if (receitas != null) {
+			Squery2 = "'rece'";
+		}
 		
 		Query query = entityManager.createNativeQuery(
 				"Select a.ID_PREPARACAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
@@ -37,9 +49,11 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ "from PIN_MOV_PREPARACAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
 						+ " left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
 						+ "left join (select ID_PREPARACAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from PIN_MOV_PREPARACAO_CAB x where   INATIVO != 1 GROUP BY ID_PREPARACAO) cc on cc.ID_PREPARACAO = a.ID_PREPARACAO "
-						+ "where  a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
-						+ varquery + " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in ('" + classif + "','"
-						+ classif2 + "')  order by B,a.ID_PREPARACAO desc");
+						+ "where " + "a.ID_PREPARACAO in (select ax.ID_PREPARACAO from PIN_MOV_PREPARACAO ax left join PIN_MOV_PREPARACAO_CAB g on g.ID_PREPARACAO = ax.ID_PREPARACAO "
+						+ " where (( " + Squery2 + " is null) or (g.ID_RECEITA in (" + receitas + "))) ) and " + " a.INATIVO != 1"
+						+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
+						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in ('" + classif + "','" + classif2
+						+ "')  order by B,a.ID_PREPARACAO desc");
 
 		query.setParameter("linha", linha);
 		query.setParameter("query2", query2);
@@ -59,32 +73,31 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 		String querybanho = "";
 		Integer varquery = 1;
 
-		/*if (firstMap.get("querybanho") != null) {
-			querybanho = " and a.ID_PREPARACAO in (SELECT t.ID_PREPARACAO FROM PIN_MOV_PREPARACAO_CAB t where t.ID_POTE = "
-					+ firstMap.get("querybanho") + " and t.INATIVO != 1 )";
-		}*/
+		/*
+		 * if (firstMap.get("querybanho") != null) { querybanho =
+		 * " and a.ID_PREPARACAO in (SELECT t.ID_PREPARACAO FROM PIN_MOV_PREPARACAO_CAB t where t.ID_POTE = "
+		 * + firstMap.get("querybanho") + " and t.INATIVO != 1 )"; }
+		 */
 
 		if (query2 == null) {
 			varquery = 0;
 		}
-		
 
-		Query query = entityManager.createNativeQuery(
-				"Select a.ID_PREPARACAO, "
-						+ "a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
-						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
-						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
-						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF "
-						+ " ,CASE WHEN a.CLASSIF = 'D' THEN  a.DATA_PLANEAMENTO ELSE cast(cc.data as date) END as dt_prev "
-						+ ",CASE WHEN a.CLASSIF = 'D' THEN  a.HORA_PLANEAMENTO ELSE cast(cc.data as time) END as h_prev "
-						+ ",(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla,"
-						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,null as cortipo,a.ID_LINHA  "
-						+ "from PIN_MOV_PREPARACAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
-						+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
-						+ "left join (select ID_PREPARACAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from PIN_MOV_PREPARACAO_CAB x where   INATIVO != 1 GROUP BY ID_PREPARACAO) cc on cc.ID_PREPARACAO = a.ID_PREPARACAO "
-						+ "where a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
-						+ varquery + " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in (" + classif + ") "
-						+ querybanho + " order by B,a.ID_PREPARACAO desc");
+		Query query = entityManager.createNativeQuery("Select a.ID_PREPARACAO, "
+				+ "a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
+				+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
+				+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
+				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF "
+				+ " ,CASE WHEN a.CLASSIF = 'D' THEN  a.DATA_PLANEAMENTO ELSE cast(cc.data as date) END as dt_prev "
+				+ ",CASE WHEN a.CLASSIF = 'D' THEN  a.HORA_PLANEAMENTO ELSE cast(cc.data as time) END as h_prev "
+				+ ",(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla,"
+				+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,null as cortipo,a.ID_LINHA  "
+				+ "from PIN_MOV_PREPARACAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
+				+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
+				+ "left join (select ID_PREPARACAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from PIN_MOV_PREPARACAO_CAB x where   INATIVO != 1 GROUP BY ID_PREPARACAO) cc on cc.ID_PREPARACAO = a.ID_PREPARACAO "
+				+ "where a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
+				+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in (" + classif + ") " + querybanho
+				+ " order by B,a.ID_PREPARACAO desc");
 
 		query.setParameter("linha", linha);
 		query.setParameter("query2", query2);
@@ -128,14 +141,13 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ "left join PIN_DIC_POTES f on c.ID_POTE = f.ID "
 						+ "left join AB_DIC_LINHA g on a.ID_LINHA = g.ID_LINHA "
 						+ "left join AB_DIC_TURNO h on a.ID_TURNO = h.ID_TURNO "
-						+ "left join PIN_DIC_CABINES t on f.ID_CABINE = t.ID " + "where "						
-						+ "((not ('" + firstMap.get("DATA_PLANEAMENTO") + "' != 'null' and '"
-						+ firstMap.get("DATA_PLANEAMENTO") + "' != '')) or (b.DATA_PREPARACAO <= '"
-						+ firstMap.get("DATA_PLANEAMENTO") + "')) " + "and ((not ('" + firstMap.get("DATA_PLANEAMENTO2")
-						+ "' != 'null' and '" + firstMap.get("DATA_PLANEAMENTO2")
-						+ "' != '')) or (b.DATA_PREPARACAO >= '" + firstMap.get("DATA_PLANEAMENTO2") + "')) "
-						+ "and ((not ('" + firstMap.get("DATA_PREVISTA") + "' != 'null' and '"
-						+ firstMap.get("DATA_PREVISTA") + "' != '')) or (b.DATA_PREVISTA <= '"
+						+ "left join PIN_DIC_CABINES t on f.ID_CABINE = t.ID " + "where " + "((not ('"
+						+ firstMap.get("DATA_PLANEAMENTO") + "' != 'null' and '" + firstMap.get("DATA_PLANEAMENTO")
+						+ "' != '')) or (b.DATA_PREPARACAO <= '" + firstMap.get("DATA_PLANEAMENTO") + "')) "
+						+ "and ((not ('" + firstMap.get("DATA_PLANEAMENTO2") + "' != 'null' and '"
+						+ firstMap.get("DATA_PLANEAMENTO2") + "' != '')) or (b.DATA_PREPARACAO >= '"
+						+ firstMap.get("DATA_PLANEAMENTO2") + "')) " + "and ((not ('" + firstMap.get("DATA_PREVISTA")
+						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA") + "' != '')) or (b.DATA_PREVISTA <= '"
 						+ firstMap.get("DATA_PREVISTA") + "')) " + "and ((not ('" + firstMap.get("DATA_PREVISTA2")
 						+ "' != 'null' and '" + firstMap.get("DATA_PREVISTA2") + "' != '')) or (b.DATA_PREVISTA >= '"
 						+ firstMap.get("DATA_PREVISTA2") + "')) " + "and ((not (" + ESTADO2 + " != 'null' and "
@@ -143,12 +155,11 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ " != 'null' and " + NUMEROSEMANA2 + " != '')) or (DATEPART( wk,b.DATA_PREPARACAO) in ("
 						+ NUMEROSEMANA + "))) " + "and ((not ('" + firstMap.get("CLASSIF") + "' != 'null' and '"
 						+ firstMap.get("CLASSIF") + "' != '')) or (a.CLASSIF = '" + firstMap.get("CLASSIF") + "')) "
-						+ "and ( ((not ('" + firstMap.get("NOME_REF")
-						+ "' != 'null' and '" + firstMap.get("NOME_REF") + "' != '')) or (e.NOME_REF like '%"
-						+ firstMap.get("NOME_REF") + "%')) " + "and ((not ('" + firstMap.get("COD_REF")
-						+ "' != 'null' and '" + firstMap.get("COD_REF") + "' != '')) or (e.COD_REF like '%"
-						+ firstMap.get("COD_REF") + "%')) " + "and ((not ('" + firstMap.get("NOME_COMPONENTE")
-						+ "' != 'null' and '" + firstMap.get("NOME_COMPONENTE")
+						+ "and ( ((not ('" + firstMap.get("NOME_REF") + "' != 'null' and '" + firstMap.get("NOME_REF")
+						+ "' != '')) or (e.NOME_REF like '%" + firstMap.get("NOME_REF") + "%')) " + "and ((not ('"
+						+ firstMap.get("COD_REF") + "' != 'null' and '" + firstMap.get("COD_REF")
+						+ "' != '')) or (e.COD_REF like '%" + firstMap.get("COD_REF") + "%')) " + "and ((not ('"
+						+ firstMap.get("NOME_COMPONENTE") + "' != 'null' and '" + firstMap.get("NOME_COMPONENTE")
 						+ "' != '')) or (e.NOME_COMPONENTE like '%" + firstMap.get("NOME_COMPONENTE") + "%')) ) "
 						+ "and a.INATIVO != 1 and b.INATIVO != 1 "
 						+ "order by a.DATA_PLANEAMENTO desc, a.HORA_PLANEAMENTO desc");
@@ -205,12 +216,11 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ " != 'null' and " + NUMEROSEMANA2 + " != '')) or (DATEPART( wk,b.DATA_PREPARACAO) in ("
 						+ NUMEROSEMANA + "))) " + "and ((not ('" + firstMap.get("CLASSIF") + "' != 'null' and '"
 						+ firstMap.get("CLASSIF") + "' != '')) or (a.CLASSIF = '" + firstMap.get("CLASSIF") + "')) "
-						+ "and ( ((not ('" + firstMap.get("NOME_REF")
-						+ "' != 'null' and '" + firstMap.get("NOME_REF") + "' != '')) or (e.NOME_REF like '%"
-						+ firstMap.get("NOME_REF") + "%')) " + "and ((not ('" + firstMap.get("COD_REF")
-						+ "' != 'null' and '" + firstMap.get("COD_REF") + "' != '')) or (e.COD_REF like '%"
-						+ firstMap.get("COD_REF") + "%')) " + "and ((not ('" + firstMap.get("NOME_COMPONENTE")
-						+ "' != 'null' and '" + firstMap.get("NOME_COMPONENTE")
+						+ "and ( ((not ('" + firstMap.get("NOME_REF") + "' != 'null' and '" + firstMap.get("NOME_REF")
+						+ "' != '')) or (e.NOME_REF like '%" + firstMap.get("NOME_REF") + "%')) " + "and ((not ('"
+						+ firstMap.get("COD_REF") + "' != 'null' and '" + firstMap.get("COD_REF")
+						+ "' != '')) or (e.COD_REF like '%" + firstMap.get("COD_REF") + "%')) " + "and ((not ('"
+						+ firstMap.get("NOME_COMPONENTE") + "' != 'null' and '" + firstMap.get("NOME_COMPONENTE")
 						+ "' != '')) or (e.NOME_COMPONENTE like '%" + firstMap.get("NOME_COMPONENTE") + "%')) ) "
 						+ "and a.INATIVO != 1 and b.INATIVO != 1 "
 						+ "order by a.DATA_PLANEAMENTO desc, a.HORA_PLANEAMENTO desc");
@@ -228,7 +238,7 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 		if (query2 == null) {
 			varquery = 0;
 		}
-		
+
 		Query query = entityManager.createNativeQuery(
 				"Select a.ID_PREPARACAO,null as NOME_TIPO_PREPARACAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
 						+ "WHEN a.ESTADO = 'Planeado' THEN '3' " + "WHEN a.ESTADO = 'Preparado' THEN '5' "
@@ -255,15 +265,14 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 
 	}
 
-	public List<PIN_MOV_PREPARACAO> getallsortid(Integer linha, ArrayList<String> query2, String classif, String classif2) {
+	public List<PIN_MOV_PREPARACAO> getallsortid(Integer linha, ArrayList<String> query2, String classif,
+			String classif2) {
 		// System.out.println(query2);
 		Integer varquery = 1;
 		String Squery = "";
 		if (query2 == null) {
 			varquery = 0;
 		}
-
-	
 
 		Query query = entityManager.createNativeQuery(
 				"Select a.ID_PREPARACAO,null as NOME_TIPO_PREPARACAO,a.DATA_PLANEAMENTO,a.HORA_PLANEAMENTO,b.COR,b.NOME_LINHA,d.NOME_TURNO,a.ESTADO, CASE WHEN a.ESTADO = 'Em Execução' THEN '1' "
@@ -277,13 +286,12 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
 						+ "left join (select ID_PREPARACAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from PIN_MOV_PREPARACAO_CAB x where   INATIVO != 1 GROUP BY ID_PREPARACAO) cc on cc.ID_PREPARACAO = a.ID_PREPARACAO "
 						+ "where   a.INATIVO != 1" + "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not "
-						+ varquery
-						+ " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in ('" + classif + "','"
+						+ varquery + " != 0) or (a.ESTADO not in (:query2))) and a.CLASSIF in ('" + classif + "','"
 						+ classif2 + "')   order by a.ID_PREPARACAO");
 
 		query.setParameter("linha", linha);
 		query.setParameter("query2", query2);
-		//query.setParameter("classif", classif);
+		// query.setParameter("classif", classif);
 
 		List<PIN_MOV_PREPARACAO> data = query.getResultList();
 		return data;

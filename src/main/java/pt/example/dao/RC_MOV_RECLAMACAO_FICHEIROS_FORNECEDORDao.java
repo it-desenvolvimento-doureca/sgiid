@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import pt.example.entity.RC_MOV_RECLAMACAO_FICHEIROS;
 import pt.example.entity.RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR;
 
 public class RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDORDao extends GenericDaoJpaImpl<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR, Integer>
@@ -35,6 +36,27 @@ public class RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDORDao extends GenericDaoJpaImpl
 	public List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> getall() {
 
 		Query query = entityManager.createQuery("Select a from RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR a ");
+		List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> data = query.getResultList();
+		return data;
+
+	}
+	
+	public List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> getbyid3(Integer id) {
+
+		Query query = entityManager.createNativeQuery("select a.data_CRIA,a.id,a.id_ficheiro,b.NOME_UTILIZADOR,"
+				+ "NOME,caminho,tipo,DATATYPE,TAMANHO,DESCRICAO,ORDEM from RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR a left join  GER_UTILIZADORES b on a.UTZ_CRIA = b.ID_UTILIZADOR "
+				+ "where  a.ID_RECLAMACAO = :id order by a.ORDEM");
+		query.setParameter("id", id);
+		List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> data = query.getResultList();
+		return data;
+
+	}
+	
+	public List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> getbyidFICHEIRO(Integer id) {
+
+		Query query = entityManager.createNativeQuery("select a.FICHEIRO_1,a.FICHEIRO_2,a.DATA_CRIA from RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR a "
+				+ "where ID = :id order by a.DATA_CRIA");
+		query.setParameter("id", id);
 		List<RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR> data = query.getResultList();
 		return data;
 

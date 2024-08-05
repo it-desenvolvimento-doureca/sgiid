@@ -64,6 +64,16 @@ public class PR_WINROBOT_ETIQUETAS {
 	private String INDNUMENR;
 	@JsonProperty("DATCRE")
 	private String DATCRE;
+	@JsonProperty("INATIVO")
+	private Boolean INATIVO;
+
+	public Boolean getINATIVO() {
+		return INATIVO;
+	}
+
+	public void setINATIVO(Boolean iNATIVO) {
+		INATIVO = iNATIVO;
+	}
 
 	public Integer getID() {
 		return ID;

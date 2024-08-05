@@ -14,7 +14,8 @@ public class PR_WINROBOT_CABDao extends GenericDaoJpaImpl<PR_WINROBOT_CAB, Integ
 
 	public List<PR_WINROBOT_CAB> getbyid(Integer id) {
 
-		Query query = entityManager.createQuery("Select a from PR_WINROBOT_CAB a where a.ID_AMOSTRA = :id ");
+		Query query = entityManager.createNativeQuery("Select a.*,''as referencias,'' as racks  from PR_WINROBOT_CAB a where a.ID = :id ",
+				PR_WINROBOT_CAB.class);
 		query.setParameter("id", id);
 		List<PR_WINROBOT_CAB> data = query.getResultList();
 		return data;
@@ -23,9 +24,10 @@ public class PR_WINROBOT_CABDao extends GenericDaoJpaImpl<PR_WINROBOT_CAB, Integ
 
 	public List<PR_WINROBOT_CAB> getbyestado(String estado) {
 
-		Query query = entityManager.createNativeQuery("Select a.* ,b.REFERENCIA as referencias from PR_WINROBOT_CAB a "
+		Query query = entityManager.createNativeQuery("Select a.* ,b.REFERENCIA as referencias ,C.RACKS as racks from PR_WINROBOT_CAB a "
 				+ " left join (select STRING_AGG(CONCAT(x.COD_REF,' - ',x.DESIGN_REF),',') REFERENCIA,x.ID_CAB from PR_WINROBOT_ARTICLES x group by x.ID_CAB) b on a.ID = b.ID_CAB "
-				+ " where a.ESTADO_POLL = :estado order by CASE WHEN ORDEM_POLL is null THEN 999999 ELSE ORDEM_POLL END,DATA_HORA_FIM",
+				+ " left join (select STRING_AGG(CONCAT(x.RACK_CODE,''),',') RACKS,x.ID_CAB from PR_WINROBOT_RACKS x group by x.ID_CAB) c on a.ID = c.ID_CAB    "
+				+ " where a.ESTADO_POLL = :estado and a.ESTADO in ('C') order by CASE WHEN ORDEM_POLL is null THEN 999999 ELSE ORDEM_POLL END,DATA_HORA_FIM",
 				PR_WINROBOT_CAB.class);
 		query.setParameter("estado", estado);
 		List<PR_WINROBOT_CAB> data = query.getResultList();
@@ -35,9 +37,21 @@ public class PR_WINROBOT_CABDao extends GenericDaoJpaImpl<PR_WINROBOT_CAB, Integ
 
 	public List<PR_WINROBOT_CAB> getTrabalhobyRACK(String rack) {
 
-		Query query = entityManager.createNativeQuery("select top 1 *,''as referencias  from PR_WINROBOT_CAB a "
+		Query query = entityManager.createNativeQuery("select top 1 *,''as referencias,'' as racks  from PR_WINROBOT_CAB a "
 				+ "where a.ID in (select b.ID_CAB FROM PR_WINROBOT_RACKS b WHERE b.RACK_CODE = :rack) "
 				+ "AND a.ESTADO_POLL = 'E' order by CASE WHEN ORDEM_POLL is null THEN 999999 ELSE ORDEM_POLL END ",
+				PR_WINROBOT_CAB.class);
+		query.setParameter("rack", rack);
+		List<PR_WINROBOT_CAB> data = query.getResultList();
+		return data;
+
+	}
+	
+	public List<PR_WINROBOT_CAB> getTrabalhobyRACKPendente(String rack) {
+
+		Query query = entityManager.createNativeQuery("select top 1 *,''as referencias,'' as racks  from PR_WINROBOT_CAB a "
+				+ "where a.ID in (select b.ID_CAB FROM PR_WINROBOT_RACKS b WHERE b.RACK_CODE = :rack) "
+				+ "AND a.ESTADO_POLL = 'P'AND ESTADO NOT IN('CANC') order by CASE WHEN ORDEM_POLL is null THEN 999999 ELSE ORDEM_POLL END ",
 				PR_WINROBOT_CAB.class);
 		query.setParameter("rack", rack);
 		List<PR_WINROBOT_CAB> data = query.getResultList();
@@ -48,9 +62,11 @@ public class PR_WINROBOT_CABDao extends GenericDaoJpaImpl<PR_WINROBOT_CAB, Integ
 	public Integer updateestado(String estado, Integer id,String user) {
 
 		Query query = entityManager
-				.createNativeQuery("UPDATE PR_WINROBOT_CAB set ESTADO_POLL = :estado  where ID = :id "
+				.createNativeQuery("UPDATE PR_WINROBOT_CAB set ESTADO_POLL = :estado, NUM_CARRO = CASE WHEN :estado = 'P' THEN null  ELSE NUM_CARRO END "
+						+ " , ORDEM_POLL = null "
+						+ " where ID = :id "
 						+ "INSERT INTO [dbo].[PR_WINROBOT_HISTORICO] ([DESCRICAO] ,[DATA_CRIA],ID_CAB) "
-						+ "select (select top 1 NOME_UTZ from PR_WINROBOT_USERS where ID_UTZ  = :user  and ID_CAB = :id) + ' ALTEROU ESTADO NA LISTA PARA ' + :estado,GETDATE(), :id ");
+						+ "select (select top 1 NOME from RH_FUNCIONARIOS where COD_FUNC_ORIGEM  = :user) + ' ALTEROU ESTADO NA LISTA PARA ' + :estado,GETDATE(), :id ");
 		query.setParameter("estado", estado);
 		query.setParameter("id", id);
 		query.setParameter("user", user);
@@ -60,6 +76,30 @@ public class PR_WINROBOT_CABDao extends GenericDaoJpaImpl<PR_WINROBOT_CAB, Integ
 
 	}
 
+	
+	public Integer updateestado2(String estado, Integer id,String user) {
+
+		Query query = entityManager
+				.createNativeQuery("UPDATE PR_WINROBOT_CAB set ESTADO_POLL = :estado, NUM_CARRO = CASE WHEN :estado = 'P' THEN null  ELSE NUM_CARRO END "
+						+ " , ORDEM_POLL = null "
+						+ " where ID = :id "
+						+ "INSERT INTO [dbo].[PR_WINROBOT_HISTORICO] ([DESCRICAO] ,[DATA_CRIA],ID_CAB) "
+						+ "select (select top 1 NOME from RH_FUNCIONARIOS where COD_FUNC_ORIGEM  = :user) + ' ALTEROU ESTADO NA LISTA PARA ' + :estado,GETDATE(), :id ");
+		query.setParameter("estado", estado);
+		query.setParameter("id", id);
+		query.setParameter("user", user);
+
+		if(estado.equals("P")) {
+			Query query2 = entityManager
+					.createNativeQuery("DELETE [PR_WINROBOT_CARROS] where ID_CAB = :id ");
+ 			query2.setParameter("id", id).executeUpdate(); 
+		} 
+		
+		Integer data = query.executeUpdate();
+		return data;
+
+	}
+	
 	public Integer updateordem(Integer ordem, Integer id,String user) {
 
 		Query query = entityManager

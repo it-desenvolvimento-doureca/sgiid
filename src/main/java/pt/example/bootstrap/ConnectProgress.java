@@ -447,7 +447,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getMaquinasSilver(String url) throws SQLException {
 
 		String query = "select a.ssecod,a.SSEDES from SPASSE a  ";
@@ -513,31 +513,32 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
-	public List<HashMap<String, String>> getStockPintura(List<HashMap<String, String>> data, String url) throws SQLException {
+
+	public List<HashMap<String, String>> getStockPintura(List<HashMap<String, String>> data, String url)
+			throws SQLException {
 
 		HashMap<String, String> firstMap = data.get(0);
 		String proref = firstMap.get("proref");
 		if (proref == null)
 			proref = "";
-		/*String query = "select (select SUM(xa.STOQTE) from STOLIE  xa LEFT JOIN SDTPRA  xb ON xa.proref = xb.proref  "
-				+ "where (((xa.proref) = a.proref)) ) as STOQTE,b.UNIUTI,a.LIECOD,ISNULL(STRING_AGG(nullif(EMPCOD,'') ,';')  WITHIN GROUP (ORDER BY EMPCOD),'s/ localização') EMPCOD  from STOLIE  a LEFT JOIN STODET c on a.LIECOD = c.liecod  and a.PROREF = c.proref LEFT JOIN SDTPRA  b ON a.proref = b.proref "
-				+ "where a.LIECOD in (select COD_ARMAZEM from SGIID.dbo.PIN_DIC_ARMAZEM) GROUP BY b.UNIUTI, a.proref,a.liecod HAVING (((a.proref)='"
-				+ proref + "')) order by STOQTE desc";*/
-		
+		/*
+		 * String query =
+		 * "select (select SUM(xa.STOQTE) from STOLIE  xa LEFT JOIN SDTPRA  xb ON xa.proref = xb.proref  "
+		 * +
+		 * "where (((xa.proref) = a.proref)) ) as STOQTE,b.UNIUTI,a.LIECOD,ISNULL(STRING_AGG(nullif(EMPCOD,'') ,';')  WITHIN GROUP (ORDER BY EMPCOD),'s/ localização') EMPCOD  from STOLIE  a LEFT JOIN STODET c on a.LIECOD = c.liecod  and a.PROREF = c.proref LEFT JOIN SDTPRA  b ON a.proref = b.proref "
+		 * +
+		 * "where a.LIECOD in (select COD_ARMAZEM from SGIID.dbo.PIN_DIC_ARMAZEM) GROUP BY b.UNIUTI, a.proref,a.liecod HAVING (((a.proref)='"
+		 * + proref + "')) order by STOQTE desc";
+		 */
+
 		String query = "SELECT SUM(STOQTE) as STOQTE,UNIUTI,LIECOD "
 				+ ",ISNULL(STRING_AGG(nullif(EMPCOD,'') ,';')  WITHIN GROUP (ORDER BY EMPCOD),'s/ localização') EMPCOD "
-				+ "FROM ( "
-				+ "select "
-				+ "b.UNIUTI, a.proref,a.liecod ,EMPCOD,SUM(c.lotqte ) as STOQTE "
-				+ "from STOLIE  a "
-				+ "LEFT JOIN STODET c on a.LIECOD = c.liecod  and a.PROREF = c.proref "
+				+ "FROM ( " + "select " + "b.UNIUTI, a.proref,a.liecod ,EMPCOD,SUM(c.lotqte ) as STOQTE "
+				+ "from STOLIE  a " + "LEFT JOIN STODET c on a.LIECOD = c.liecod  and a.PROREF = c.proref "
 				+ "LEFT JOIN SDTPRA  b ON a.proref = b.proref "
-				+ "where a.LIECOD in (select COD_ARMAZEM from SGIID.dbo.PIN_DIC_ARMAZEM) "
-				+ "AND a.proref='"+proref+"' AND c.lotqte > 0 "
-				+ "GROUP BY b.UNIUTI, a.proref,a.liecod ,EMPCOD) a "
-				+ "GROUP BY UNIUTI, proref,liecod "
-				+ "order by STOQTE desc";
+				+ "where a.LIECOD in (select COD_ARMAZEM from SGIID.dbo.PIN_DIC_ARMAZEM) " + "AND a.proref='" + proref
+				+ "' AND c.lotqte > 0 " + "GROUP BY b.UNIUTI, a.proref,a.liecod ,EMPCOD) a "
+				+ "GROUP BY UNIUTI, proref,liecod " + "order by STOQTE desc";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -565,7 +566,8 @@ public class ConnectProgress {
 		return list;
 	}
 
-	public List<HashMap<String, String>> getArmazemStockPintura(List<HashMap<String, String>> data, String url) throws SQLException {
+	public List<HashMap<String, String>> getArmazemStockPintura(List<HashMap<String, String>> data, String url)
+			throws SQLException {
 
 		HashMap<String, String> firstMap = data.get(0);
 		String proref = firstMap.get("proref");
@@ -573,16 +575,12 @@ public class ConnectProgress {
 			proref = "";
 		String query = "select a.proref, (select SUM(xa.STOQTE) from STOLIE  xa where (((xa.proref) = a.proref)) ) as STOQTE,a.UNIUTI,a.LIECOD, "
 				+ "ISNULL(STRING_AGG(nullif(EMPCOD,'') ,';')  WITHIN GROUP (ORDER BY EMPCOD),'s/ localização') EMPCOD "
-				+ "FROM ( "
-				+ "SELECT a.proref,EMPCOD,UNIUTI,a.LIECOD from STOLIE  a "
+				+ "FROM ( " + "SELECT a.proref,EMPCOD,UNIUTI,a.LIECOD from STOLIE  a "
 				+ "LEFT JOIN STODET c on a.LIECOD = c.liecod  and a.PROREF = c.proref "
 				+ "LEFT JOIN SDTPRA  b ON a.proref = b.proref "
 				+ "where a.LIECOD in (select COD_ARMAZEM from SGIID.dbo.PIN_DIC_ARMAZEM) "
-				+ " and lotqte <> 0 and a.proref ='"+proref+"' "
-				+ "GROUP BY b.UNIUTI, a.proref,a.liecod,EMPCOD "
-				+ ")a "
-				+ "GROUP BY a.UNIUTI, a.proref,a.liecod "
-				+ "order by STOQTE desc";
+				+ " and lotqte <> 0 and a.proref ='" + proref + "' " + "GROUP BY b.UNIUTI, a.proref,a.liecod,EMPCOD "
+				+ ")a " + "GROUP BY a.UNIUTI, a.proref,a.liecod " + "order by STOQTE desc";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -609,7 +607,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getComponentes(String url) throws SQLException {
 
 		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where ACHFAMCOD='C001' AND ACHFASCOD IN ('CM04','CM05','CM06')";
@@ -639,7 +637,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getComponentesAll(String url) throws SQLException {
 
 		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA ";
@@ -669,7 +667,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getComponentesPintura3(String url) throws SQLException {
 
 		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where  Protypcod='PSOP' and Gescod='OFPP' and Datann is null";
@@ -699,8 +697,6 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
-	
 
 	public List<HashMap<String, String>> getComponentesPintura(String url) throws SQLException {
 
@@ -731,15 +727,18 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
-	public List<HashMap<String, String>> getTiposAcabamento(String url,String tipo) throws SQLException {
 
-		String query = "select k.zpavallib TipoAcabamento,zpaval  "
-				+ "	from SILVER_BI.dbo.SDTZPA t "
-				+ "	LEFT JOIN SILVER_BI.dbo.SPAZPL k ON t.zpacod = k.zpacod AND t.zpaval = k.zpavalcod  "
-				+ "	WHERE t.zpacod='ACAB' AND zpavallib IS NOT NULL and zpaval like '"+tipo+"%' "
-				+ "	GROUP BY zpavallib,zpaval "
-				+ "	ORDER BY zpavallib";
+	public List<HashMap<String, String>> getTiposAcabamento(String url, String tipo) throws SQLException {
+
+		/*
+		 * String query = "select k.zpavallib TipoAcabamento,zpaval  " +
+		 * "	from SILVER_BI.dbo.SDTZPA t " +
+		 * "	LEFT JOIN SILVER_BI.dbo.SPAZPL k ON t.zpacod = k.zpacod AND t.zpaval = k.zpavalcod  "
+		 * + "	WHERE t.zpacod='ACAB' AND zpavallib IS NOT NULL and zpaval like '"
+		 * +tipo+"%' " + "	GROUP BY zpavallib,zpaval " + "	ORDER BY zpavallib";
+		 */
+		String query = "select t.zpavallib TipoAcabamento,zpavalcod zpaval from SILVER_BI.dbo.SPAZPL t  "
+				+ "WHERE t.zpacod='ACAB' AND t.zpavalcod like '" + tipo + "%' ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -769,11 +768,8 @@ public class ConnectProgress {
 
 		String query = "select PROREF,PRODES1,PRODES2,UNISTO,LIECOD,STRING_AGG(CASE WHEN EMPCOD = '' THEN 's/ localização' ELSE EMPCOD END ,';')  WITHIN GROUP (ORDER BY EMPCOD) EMPCOD from ("
 				+ "select distinct a.PROREF,PRODES1,PRODES2,UNISTO,LIECOD,EMPCOD  from SDTPRA  a "
-				+ "LEFT JOIN STODET b on a.PROREF = b.PROREF "
-				+ "where  a.gescod='OFPP' "
-				+ ") tab "
-				+ "GROUP BY PROREF,PRODES1,PRODES2,UNISTO,LIECOD "
-				+ "ORDER BY PROREF";
+				+ "LEFT JOIN STODET b on a.PROREF = b.PROREF " + "where  a.gescod='OFPP' " + ") tab "
+				+ "GROUP BY PROREF,PRODES1,PRODES2,UNISTO,LIECOD " + "ORDER BY PROREF";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -802,7 +798,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getFamilias(String url) throws SQLException {
 
 		String query = "select DISTINCT LEFT(QUACOD,2) as fam,(SELECT q.OPEDES FROM sdtopp q WHERE q.opecod=(LEFT(quacod,2)) ) as QUALIB from SPAQUA";
@@ -865,7 +861,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getComponentesDOSGIID(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where ACHFAMCOD='C001' AND ACHFASCOD IN ('CM04','CM05','CM06') AND PROREF in (select COD_REF from SGIID.dbo.AB_DIC_COMPONENTE WHERE COD_REF is not null and COD_REF != '' )";
+		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where /*ACHFAMCOD='C001' AND*/ ACHFASCOD IN ('CM04','CM05','CM06','CM22') AND PROREF in (select COD_REF from SGIID.dbo.AB_DIC_COMPONENTE WHERE COD_REF is not null and COD_REF != '' )";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -893,7 +889,6 @@ public class ConnectProgress {
 		return list;
 	}
 
-	
 	public List<HashMap<String, String>> getReferenciasBudget(String url) throws SQLException {
 
 		String query = "select PROREF,PRODES1 from SDTPRA po where po.protypcod IN ('PF','PCF','PFI') ORDER BY PROREF";
@@ -907,7 +902,7 @@ public class ConnectProgress {
 			while (rs.next()) {
 				HashMap<String, String> x = new HashMap<>();
 				x.put("PROREF", rs.getString("PROREF"));
-				x.put("PRODES1", rs.getString("PRODES1")); 
+				x.put("PRODES1", rs.getString("PRODES1"));
 				list.add(x);
 			}
 			stmt.close();
@@ -922,7 +917,6 @@ public class ConnectProgress {
 		return list;
 	}
 
-	
 	public List<HashMap<String, String>> getReferencias(String url) throws SQLException {
 
 		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP') ORDER BY PROREF";
@@ -956,7 +950,8 @@ public class ConnectProgress {
 
 		String query = "select a.PROREF,a.PRODES1,a.PRODES2,a.UNISTO,p.prpprx from SDTPRA a LEFT JOIN SILVER_BI.dbo.SDTPRC x   on x.proref = a.PROREF "
 				+ "LEFT JOIN SILVER_BI.dbo.SDTPRP p ON x.indnumenr = p.indnumenr and p.prptyp=7 "
-				+ "	and p.prpdatvld=(SELECT top 1 p1.prpdatvld  FROM SILVER_BI.dbo.SDTPRP p1 WHERE p1.indnumenr = x.indnumenr AND p1.prpdatvld<= GETDATE() ORDER BY p1.prpdatvld desc) where a.PROREF = '" + PROREF + "'";
+				+ "	and p.prpdatvld=(SELECT top 1 p1.prpdatvld  FROM SILVER_BI.dbo.SDTPRP p1 WHERE p1.indnumenr = x.indnumenr AND p1.prpdatvld<= GETDATE() ORDER BY p1.prpdatvld desc) where a.PROREF = '"
+				+ PROREF + "'";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -1207,7 +1202,6 @@ public class ConnectProgress {
 		return list;
 	}
 
-	
 	public List<HashMap<String, String>> getRacks(String url, String RACKNUM) throws SQLException {
 
 		String query = "SELECT a.etqnum, a.liecod,a.etqembqte,a.unicod,a.etqsitsto,a.etqetat,a.etqorilot1,a.datcre ,a.PROREF,b.PRODES1,a.EMPCOD "
@@ -1246,7 +1240,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getDadosEtiqueta(String url, String etiqueta) throws SQLException {
 
 		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
@@ -1293,7 +1287,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getDadosEtiquetaLinhaPintura(String url, String etiqueta) throws SQLException {
 
 		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
@@ -1340,7 +1334,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getDadosEtiquetaPintura(String url, String etiqueta) throws SQLException {
 
 		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
@@ -1549,8 +1543,8 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getMoradas(String url, String ID) throws SQLException {
 
-		String query = "Select CLICOD,ETSNUM,ADRLIB2,ADRLIB3,ADRLIB1,ADRBDI,ADRNOM,adrcdp+' - '+adrbdi as LOCATION from SDTCLE where CLICOD = '" + ID
-				+ "' and ETSNUM like 'E%'";
+		String query = "Select CLICOD,ETSNUM,ADRLIB2,ADRLIB3,ADRLIB1,ADRBDI,ADRNOM,adrcdp+' - '+adrbdi as LOCATION from SDTCLE where CLICOD = '"
+				+ ID + "' and ETSNUM like 'E%'";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -1583,7 +1577,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getMoradasTodas(String url) throws SQLException {
 
 		String query = "Select CLICOD,ETSNUM,ADRLIB2,ADRLIB3,ADRLIB1,ADRBDI,ADRNOM,adrcdp+' - '+adrbdi as LOCATION from SDTCLE where ETSNUM like 'E%'";

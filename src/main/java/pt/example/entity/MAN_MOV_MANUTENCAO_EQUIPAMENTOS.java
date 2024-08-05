@@ -91,6 +91,23 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 	@JsonProperty("SEVESO")
 	private Boolean SEVESO; 
 	
+	@JsonProperty("ID_FAMILIA")
+	private Integer ID_FAMILIA; 
+	@JsonProperty("RESPONSAVEL")
+	private Integer RESPONSAVEL; 
+	@JsonProperty("DEPARTAMENTO")
+	private Integer DEPARTAMENTO; 
+	@JsonProperty("VERSAO_FIRMWARE")
+	private String VERSAO_FIRMWARE;
+	@JsonProperty("LICENCA")
+	private String LICENCA;
+	@JsonProperty("IP")
+	private String IP;
+	@JsonProperty("HOSTNAME")
+	private String HOSTNAME;
+	@JsonProperty("MACADDRESS")
+	private String MACADDRESS;
+	
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
 	}
@@ -369,6 +386,70 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
 
 	public void setSEVESO(Boolean sEVESO) {
 		SEVESO = sEVESO;
+	}
+
+	public Integer getID_FAMILIA() {
+		return ID_FAMILIA;
+	}
+
+	public Integer getRESPONSAVEL() {
+		return RESPONSAVEL;
+	}
+
+	public Integer getDEPARTAMENTO() {
+		return DEPARTAMENTO;
+	}
+
+	public String getVERSAO_FIRMWARE() {
+		return VERSAO_FIRMWARE;
+	}
+
+	public String getLICENCA() {
+		return LICENCA;
+	}
+
+	public String getIP() {
+		return IP;
+	}
+
+	public String getHOSTNAME() {
+		return HOSTNAME;
+	}
+
+	public String getMACADDRESS() {
+		return MACADDRESS;
+	}
+
+	public void setID_FAMILIA(Integer iD_FAMILIA) {
+		ID_FAMILIA = iD_FAMILIA;
+	}
+
+	public void setRESPONSAVEL(Integer rESPONSAVEL) {
+		RESPONSAVEL = rESPONSAVEL;
+	}
+
+	public void setDEPARTAMENTO(Integer dEPARTAMENTO) {
+		DEPARTAMENTO = dEPARTAMENTO;
+	}
+
+	public void setVERSAO_FIRMWARE(String vERSAO_FIRMWARE) {
+		VERSAO_FIRMWARE = vERSAO_FIRMWARE;
+	}
+
+	public void setLICENCA(String lICENCA) {
+		LICENCA = lICENCA;
+	}
+
+	public void setIP(String iP) {
+		IP = iP;
+	}
+
+	public void setHOSTNAME(String hOSTNAME) {
+		HOSTNAME = hOSTNAME;
+	}
+
+	public void setMACADDRESS(String mACADDRESS) {
+		MACADDRESS = mACADDRESS;
 	}
 
 }

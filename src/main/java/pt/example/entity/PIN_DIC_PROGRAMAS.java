@@ -44,6 +44,12 @@ public class PIN_DIC_PROGRAMAS {
 	private String RACK;
 	@JsonProperty("QTD_RACK")
 	private Integer QTD_RACK;
+	@JsonProperty("DATA_INATIVA")
+	private Timestamp DATA_INATIVA;
+	@JsonProperty("UTZ_INATIVA")
+	private Integer UTZ_INATIVA;
+	@JsonProperty("ANULADO")
+	private Boolean ANULADO;
 
 	public Integer getID() {
 		return ID;
@@ -147,6 +153,30 @@ public class PIN_DIC_PROGRAMAS {
 
 	public void setCODIGO(String cODIGO) {
 		CODIGO = cODIGO;
+	}
+
+	public Timestamp getDATA_INATIVA() {
+		return DATA_INATIVA;
+	}
+
+	public Integer getUTZ_INATIVA() {
+		return UTZ_INATIVA;
+	}
+
+	public Boolean getANULADO() {
+		return ANULADO;
+	}
+
+	public void setDATA_INATIVA(Timestamp dATA_INATIVA) {
+		DATA_INATIVA = dATA_INATIVA;
+	}
+
+	public void setUTZ_INATIVA(Integer uTZ_INATIVA) {
+		UTZ_INATIVA = uTZ_INATIVA;
+	}
+
+	public void setANULADO(Boolean aNULADO) {
+		ANULADO = aNULADO;
 	}
 
 }

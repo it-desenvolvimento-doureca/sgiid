@@ -100,6 +100,20 @@ public class RC_MOV_RECLAMACAO_FORNECEDOR {
 	@Column(name = "UTZ_FECHA")
 	private Integer UTZ_FECHA;
 
+	@Column(name = "DATA_OBJETIVO1")
+	private Date DATA_OBJETIVO1;
+	@Column(name = "DATA_OBJETIVO2")
+	private Date DATA_OBJETIVO2;
+	@Column(name = "DATA_OBJETIVO3")
+	private Date DATA_OBJETIVO3;
+
+	@Column(name = "DATA_REAL1")
+	private Date DATA_REAL1;
+	@Column(name = "DATA_REAL2")
+	private Date DATA_REAL2;
+	@Column(name = "DATA_REAL3")
+	private Date DATA_REAL3;
+
 	public Integer getID_RECLAMACAO() {
 		return ID_RECLAMACAO;
 	}
@@ -434,6 +448,54 @@ public class RC_MOV_RECLAMACAO_FORNECEDOR {
 
 	public void setUTZ_FECHA(Integer uTZ_FECHA) {
 		UTZ_FECHA = uTZ_FECHA;
+	}
+
+	public Date getDATA_OBJETIVO1() {
+		return DATA_OBJETIVO1;
+	}
+
+	public Date getDATA_OBJETIVO2() {
+		return DATA_OBJETIVO2;
+	}
+
+	public Date getDATA_OBJETIVO3() {
+		return DATA_OBJETIVO3;
+	}
+
+	public void setDATA_OBJETIVO1(Date dATA_OBJETIVO1) {
+		DATA_OBJETIVO1 = dATA_OBJETIVO1;
+	}
+
+	public void setDATA_OBJETIVO2(Date dATA_OBJETIVO2) {
+		DATA_OBJETIVO2 = dATA_OBJETIVO2;
+	}
+
+	public void setDATA_OBJETIVO3(Date dATA_OBJETIVO3) {
+		DATA_OBJETIVO3 = dATA_OBJETIVO3;
+	}
+
+	public Date getDATA_REAL1() {
+		return DATA_REAL1;
+	}
+
+	public Date getDATA_REAL2() {
+		return DATA_REAL2;
+	}
+
+	public Date getDATA_REAL3() {
+		return DATA_REAL3;
+	}
+
+	public void setDATA_REAL1(Date dATA_REAL1) {
+		DATA_REAL1 = dATA_REAL1;
+	}
+
+	public void setDATA_REAL2(Date dATA_REAL2) {
+		DATA_REAL2 = dATA_REAL2;
+	}
+
+	public void setDATA_REAL3(Date dATA_REAL3) {
+		DATA_REAL3 = dATA_REAL3;
 	}
 
 }
