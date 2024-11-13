@@ -31,6 +31,14 @@ public class PIN_MOV_RECEITAS_LINHAS {
 	private String REFERENCIA_B;
 	@JsonProperty("REFERENCIA_C")
 	private String REFERENCIA_C;
+	@JsonProperty("REFERENCIA2_C")
+	private String REFERENCIA2_C;
+	@JsonProperty("REFERENCIA3_C")
+	private String REFERENCIA3_C;
+	@JsonProperty("REFERENCIA4_C")
+	private String REFERENCIA4_C;
+	@JsonProperty("REFERENCIA5_C")
+	private String REFERENCIA5_C;
 	@JsonProperty("VALVULA_POTE")
 	private String VALVULA_POTE;
 	@JsonProperty("VALVULA_CATALISADOR")
@@ -39,6 +47,15 @@ public class PIN_MOV_RECEITAS_LINHAS {
 	private String COR_A;
 	@JsonProperty("DILUENTE_C")
 	private String DILUENTE_C;
+	@JsonProperty("DILUENTE2_C")
+	private String DILUENTE2_C;
+	@JsonProperty("DILUENTE3_C")
+	private String DILUENTE3_C;
+	@JsonProperty("DILUENTE4_C")
+	private String DILUENTE4_C;
+	@JsonProperty("DILUENTE5_C")
+	private String DILUENTE5_C;
+	
 	@JsonProperty("ADITIVO")
 	private String ADITIVO;
 	@JsonProperty("TAXA_MISTURA")
@@ -63,6 +80,14 @@ public class PIN_MOV_RECEITAS_LINHAS {
 	private Integer ID_REFERENCIA_B;
 	@JsonProperty("ID_REFERENCIA_C")
 	private Integer ID_REFERENCIA_C;
+	@JsonProperty("ID_REFERENCIA2_C")
+	private Integer ID_REFERENCIA2_C;
+	@JsonProperty("ID_REFERENCIA3_C")
+	private Integer ID_REFERENCIA3_C;
+	@JsonProperty("ID_REFERENCIA4_C")
+	private Integer ID_REFERENCIA4_C;
+	@JsonProperty("ID_REFERENCIA5_C")
+	private Integer ID_REFERENCIA5_C;
 	@JsonProperty("ESPESSURA")
 	private String ESPESSURA;
 	@JsonProperty("BRILHO")
@@ -94,12 +119,29 @@ public class PIN_MOV_RECEITAS_LINHAS {
     private Float QTD_RACK_REFERENCIA_B;
     @JsonProperty("QTD_RACK_REFERENCIA_C")
     private Float QTD_RACK_REFERENCIA_C;
+    @JsonProperty("QTD_RACK_REFERENCIA2_C")
+    private Float QTD_RACK_REFERENCIA2_C;
+    @JsonProperty("QTD_RACK_REFERENCIA3_C")
+    private Float QTD_RACK_REFERENCIA3_C;
+    @JsonProperty("QTD_RACK_REFERENCIA4_C")
+    private Float QTD_RACK_REFERENCIA4_C;
+    @JsonProperty("QTD_RACK_REFERENCIA5_C")
+    private Float QTD_RACK_REFERENCIA5_C;
+    
     @JsonProperty("NECESSIDADES_RACK_REFERENCIA_A")
     private Float NECESSIDADES_RACK_REFERENCIA_A;
     @JsonProperty("NECESSIDADES_RACK_REFERENCIA_B")
     private Float NECESSIDADES_RACK_REFERENCIA_B;
     @JsonProperty("NECESSIDADES_RACK_REFERENCIA_C")
     private Float NECESSIDADES_RACK_REFERENCIA_C; 
+    @JsonProperty("NECESSIDADES_RACK_REFERENCIA2_C")
+    private Float NECESSIDADES_RACK_REFERENCIA2_C; 
+    @JsonProperty("NECESSIDADES_RACK_REFERENCIA3_C")
+    private Float NECESSIDADES_RACK_REFERENCIA3_C; 
+    @JsonProperty("NECESSIDADES_RACK_REFERENCIA4_C")
+    private Float NECESSIDADES_RACK_REFERENCIA4_C; 
+    @JsonProperty("NECESSIDADES_RACK_REFERENCIA5_C")
+    private Float NECESSIDADES_RACK_REFERENCIA5_C; 
 
 
 	public Integer getID() {
@@ -444,6 +486,70 @@ public class PIN_MOV_RECEITAS_LINHAS {
 
 	public void setNECESSIDADES_RACK_REFERENCIA_C(Float nECESSIDADES_RACK_REFERENCIA_C) {
 		NECESSIDADES_RACK_REFERENCIA_C = nECESSIDADES_RACK_REFERENCIA_C;
+	}
+
+	public String getREFERENCIA2_C() {
+		return REFERENCIA2_C;
+	}
+
+	public String getREFERENCIA3_C() {
+		return REFERENCIA3_C;
+	}
+
+	public String getREFERENCIA4_C() {
+		return REFERENCIA4_C;
+	}
+
+	public String getREFERENCIA5_C() {
+		return REFERENCIA5_C;
+	}
+
+	public Integer getID_REFERENCIA2_C() {
+		return ID_REFERENCIA2_C;
+	}
+
+	public Integer getID_REFERENCIA3_C() {
+		return ID_REFERENCIA3_C;
+	}
+
+	public Integer getID_REFERENCIA4_C() {
+		return ID_REFERENCIA4_C;
+	}
+
+	public Integer getID_REFERENCIA5_C() {
+		return ID_REFERENCIA5_C;
+	}
+
+	public void setREFERENCIA2_C(String rEFERENCIA2_C) {
+		REFERENCIA2_C = rEFERENCIA2_C;
+	}
+
+	public void setREFERENCIA3_C(String rEFERENCIA3_C) {
+		REFERENCIA3_C = rEFERENCIA3_C;
+	}
+
+	public void setREFERENCIA4_C(String rEFERENCIA4_C) {
+		REFERENCIA4_C = rEFERENCIA4_C;
+	}
+
+	public void setREFERENCIA5_C(String rEFERENCIA5_C) {
+		REFERENCIA5_C = rEFERENCIA5_C;
+	}
+
+	public void setID_REFERENCIA2_C(Integer iD_REFERENCIA2_C) {
+		ID_REFERENCIA2_C = iD_REFERENCIA2_C;
+	}
+
+	public void setID_REFERENCIA3_C(Integer iD_REFERENCIA3_C) {
+		ID_REFERENCIA3_C = iD_REFERENCIA3_C;
+	}
+
+	public void setID_REFERENCIA4_C(Integer iD_REFERENCIA4_C) {
+		ID_REFERENCIA4_C = iD_REFERENCIA4_C;
+	}
+
+	public void setID_REFERENCIA5_C(Integer iD_REFERENCIA5_C) {
+		ID_REFERENCIA5_C = iD_REFERENCIA5_C;
 	}
 
 }

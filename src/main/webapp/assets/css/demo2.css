@@ -1794,6 +1794,7 @@ body .p-picklist .p-picklist-list .p-picklist-item.p-state-highlight {
     color: #ffffff;
 }
 
+/* 
 .p-orderlist {
     display: table
 }
@@ -1897,7 +1898,7 @@ body .p-picklist .p-picklist-list .p-picklist-item.p-state-highlight {
 
 .p-orderlist .p-button-text {
     display: none;
-}
+} */
 
 .p-widget-content:not(.p-dialog-footer):not(.p-dialog-content):not(.p-multiselect-items):not(.p-state-highlight) {
     border: 1px solid #D5D5D5;
@@ -1909,7 +1910,7 @@ body .p-picklist .p-picklist-list .p-picklist-item.p-state-highlight {
     z-index: 2000 !important;
 }
 
-@media (max-width:40em) {
+/* @media (max-width:40em) {
     .p-orderlist.p-orderlist-responsive .p-orderlist-controls {
         text-align: center;
         width: 100%;
@@ -1926,7 +1927,7 @@ body .p-picklist .p-picklist-list .p-picklist-item.p-state-highlight {
     .p-orderlist.p-orderlist-responsive .p-orderlist-list-container {
         width: 100%
     }
-}
+} */
 
 /*
 body .p-orderlist .p-orderlist-controls button {
@@ -3689,7 +3690,7 @@ input[type="date"]::-webkit-input-placeholder {
     text-align: -webkit-center;
 }
 
-[id^=formReclama] .p-calendar .p-inputtext:not(.tabelaplanos .p-inputtext){
+[id^=formReclama] .p-calendar .p-inputtext:not(.tabelaplanos .p-inputtext) {
     height: 25px;
     width: 101px;
 }
@@ -6342,4 +6343,9 @@ label {
 
 .formManutencoes p-panel p-header {
     width: 100%;
+}
+
+.Doc .p-multiselect-token {
+    color: black !important;
+    background: transparent !important;
 }

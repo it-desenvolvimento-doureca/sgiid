@@ -670,7 +670,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getComponentesPintura3(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where  Protypcod='PSOP' and Gescod='OFPP' and Datann is null";
+		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where  Protypcod in ('PSOP','PFPP') and Gescod='OFPP' and Datann is null";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -919,7 +919,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getReferencias(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP') ORDER BY PROREF";
+		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP') ORDER BY PROREF";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -945,6 +945,37 @@ public class ConnectProgress {
 		}
 		return list;
 	}
+	
+	public List<HashMap<String, String>> getReferenciaSearch(String url,String query_) throws SQLException {
+
+		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP')"
+				+ "and (PROREF like  REPLACE('%"+query_+"%',' ','%') or PRODES1 like REPLACE('%"+query_+"%',' ','%')) ORDER BY PROREF";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("FAMCOD", rs.getString("PRDFAMCOD"));
+				list.add(x);
+			}
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
+
 
 	public List<HashMap<String, String>> getReferencia(String PROREF, String url) throws SQLException {
 
@@ -1338,9 +1369,9 @@ public class ConnectProgress {
 	public List<HashMap<String, String>> getDadosEtiquetaPintura(String url, String etiqueta) throws SQLException {
 
 		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
-				+ " ,(SELECT count(*) FROM stodet x WHERE x.proref= a.PROREF AND x.LIECOD='DPCHI' AND x.empcod='ZONQUA' AND x.EMPCOD != b.EMPCOD AND lotqte>0 ) TOTAL_ZONQUA "
+				+ " ,(SELECT count(*) FROM stodet x WHERE x.proref= a.PROREF AND x.LIECOD='DPCHI' AND x.empcod='ZONQUA' AND x.EMPCOD != b.EMPCOD AND lotqte>0 ) TOTAL_ZONQUA ,c.LOTDATCRE  "
 				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
-				+ "inner join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
+				+ "left join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
 				+ "where b.ETQNUM = '" + etiqueta + "' and b.ETQETAT = 1 and b.ETQSITSTO=2 ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
@@ -1368,6 +1399,19 @@ public class ConnectProgress {
 				x.put("DATCRE", rs.getString("DATCRE"));
 				x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
 				x.put("TOTAL_ZONQUA", rs.getString("TOTAL_ZONQUA"));
+				
+				
+				ArrayList<String>  result =  getDadosEtiquetaPinturaTotal(url, etiqueta,rs.getString("PROREF"), rs.getString("LOTDATCRE"));
+				
+				if(result != null) {
+					x.put("EXISTE_ETIQUETAS", result.get(0));
+					x.put("ETIQUETAS", result.get(1));
+				}else {
+					x.put("EXISTE_ETIQUETAS","0");
+					x.put("ETIQUETAS","");
+				}
+				 
+				
 				list.add(x);
 			}
 			stmt.close();
@@ -1382,6 +1426,44 @@ public class ConnectProgress {
 		return list;
 	}
 
+	
+	public ArrayList<String> getDadosEtiquetaPinturaTotal(String url, String etiqueta,String PROREF,String LOTDATCRE) throws SQLException {
+
+		
+		if(etiqueta == null || PROREF == null || LOTDATCRE == null) {
+			return null;
+		}
+		
+		String query = "select count(*) AS TOTAL,STRING_AGG(cast(ETQNUM as nvarchar(max)),',') ETQNUM from  SETQDE b  "
+				+ "left join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
+				+ "where 1=1 and b.ETQETAT = 1 and b.ETQSITSTO=2  and ETQEMBQTE > 0 "
+				+ "and  LOTDATCRE < '"+LOTDATCRE+"' and ETQNUM <> '"+etiqueta+"' AND b.PROREF = '"+PROREF+"' ";
+
+		ArrayList<String> result = null;
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {	
+				result = new ArrayList<>();
+				result.add(0,rs.getString("TOTAL"));
+				result.add(1,rs.getString("ETQNUM"));				 
+			}
+			
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return result;
+	}
+
+	
 	public List<HashMap<String, String>> getDadosEtiquetabyREF(String url, String PROREF) throws SQLException {
 
 		String query = "select  b.ETQNUM,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "

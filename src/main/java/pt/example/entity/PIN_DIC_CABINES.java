@@ -41,6 +41,8 @@ public class PIN_DIC_CABINES {
 	private Integer UTZ_ANULACAO;
 	@JsonProperty("COR")
 	private String COR;
+	@JsonProperty("TIPO")
+	private String TIPO;
 
 	public Integer getID() {
 		return ID;
@@ -136,6 +138,14 @@ public class PIN_DIC_CABINES {
 
 	public void setCOR(String cOR) {
 		COR = cOR;
+	}
+
+	public String getTIPO() {
+		return TIPO;
+	}
+
+	public void setTIPO(String tIPO) {
+		TIPO = tIPO;
 	}
 
 }

@@ -72,10 +72,10 @@ public class PR_WINROBOT_CAB {
 	@JsonProperty("NUM_CARRO")
 	private String NUM_CARRO;
 
-	@Transient
+	@Column(insertable = false, updatable = false)
 	private String referencias;
 
-	@Transient
+	@Column(insertable = false, updatable = false)
 	private String racks;
 
 	public Integer getID() {

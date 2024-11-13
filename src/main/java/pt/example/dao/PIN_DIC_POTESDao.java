@@ -31,5 +31,26 @@ public class PIN_DIC_POTESDao extends GenericDaoJpaImpl<PIN_DIC_POTES,Integer> i
 
 	}
 
+	public List<PIN_DIC_POTES> getall2() {
+		Query query = entityManager.createQuery("Select a,c, "
+				+ "CASE WHEN a.ID_TIPO_ACABAMENTO IS NULL THEN '' ELSE (select d.NOME from PIN_DIC_TIPO_ACABAMENTO d where a.ID_TIPO_ACABAMENTO = d.ID )END as nome_tipo "
+				+ "from PIN_DIC_POTES a,PIN_DIC_CABINES c where a.ID_CABINE = c.ID and a.INATIVO !=1  order by ISNULL(ORDEM,999)");
+
+		List<PIN_DIC_POTES> data = query.getResultList();
+		return data;
+
+	}
+	
+	public Integer updateordem(Integer ordem, Integer id) {
+
+		Query query = entityManager
+				.createNativeQuery("UPDATE PIN_DIC_POTES set ORDEM = :ordem  where ID = :id ");
+		query.setParameter("ordem", ordem);
+		query.setParameter("id", id);
+
+		Integer data = query.executeUpdate();
+		return data;
+
+	}
 
 }

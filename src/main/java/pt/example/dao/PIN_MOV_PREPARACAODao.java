@@ -44,8 +44,8 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 						+ "  ,CASE WHEN a.CLASSIF = 'D' THEN  a.DATA_PLANEAMENTO ELSE cast(cc.data as date) END as dt_prev "
 						+ " ,CASE WHEN a.CLASSIF = 'D' THEN  a.HORA_PLANEAMENTO ELSE cast(cc.data as time) END as h_prev, "
-						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
-						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,null as cortipo,a.CLASSIF,a.ID_LINHA  "
+						+ "(select top 1 TEMPO_PLANEADAS_PINTURA from GER_PARAMETROS) as temp_pla, "
+						+ "(select top 1 TEMPO_MAX_PLANEADAS_PINTURA from GER_PARAMETROS) as temp_max_pla,null as cortipo,a.CLASSIF,a.ID_LINHA  "
 						+ "from PIN_MOV_PREPARACAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
 						+ " left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
 						+ "left join (select ID_PREPARACAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from PIN_MOV_PREPARACAO_CAB x where   INATIVO != 1 GROUP BY ID_PREPARACAO) cc on cc.ID_PREPARACAO = a.ID_PREPARACAO "
@@ -90,8 +90,8 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 				+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B, a.CLASSIF "
 				+ " ,CASE WHEN a.CLASSIF = 'D' THEN  a.DATA_PLANEAMENTO ELSE cast(cc.data as date) END as dt_prev "
 				+ ",CASE WHEN a.CLASSIF = 'D' THEN  a.HORA_PLANEAMENTO ELSE cast(cc.data as time) END as h_prev "
-				+ ",(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla,"
-				+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,null as cortipo,a.ID_LINHA  "
+				+ ",(select top 1 TEMPO_PLANEADAS_PINTURA from GER_PARAMETROS) as temp_pla,"
+				+ "(select top 1 TEMPO_MAX_PLANEADAS_PINTURA from GER_PARAMETROS) as temp_max_pla,null as cortipo,a.ID_LINHA  "
 				+ "from PIN_MOV_PREPARACAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
 				+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
 				+ "left join (select ID_PREPARACAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from PIN_MOV_PREPARACAO_CAB x where   INATIVO != 1 GROUP BY ID_PREPARACAO) cc on cc.ID_PREPARACAO = a.ID_PREPARACAO "
@@ -246,8 +246,8 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 						+ " ,(select top 1 DATA_PREVISTA from PIN_MOV_PREPARACAO_CAB x where  x.ID_PREPARACAO = a.ID_PREPARACAO  and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as dt_prev,"
 						+ " (select top 1 HORA_PREVISTA from PIN_MOV_PREPARACAO_CAB x where  x.ID_PREPARACAO = a.ID_PREPARACAO and INATIVO != 1 order by x.DATA_PREVISTA asc, HORA_PREVISTA asc) as h_prev, "
-						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
-						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla, null as cortipo "
+						+ "(select top 1 TEMPO_PLANEADAS_PINTURA from GER_PARAMETROS) as temp_pla, "
+						+ "(select top 1 TEMPO_MAX_PLANEADAS_PINTURA from GER_PARAMETROS) as temp_max_pla, null as cortipo "
 						+ " from PIN_MOV_PREPARACAO a,AB_DIC_LINHA b,AB_DIC_TURNO d "
 						+ "where  a.ID_LINHA = b.ID_LINHA and a.ID_TURNO = d.ID_TURNO and a.INATIVO != 1"
 						+ "and ((not :linha != 0) or (a.ID_LINHA = :linha)) and ((not " + varquery
@@ -280,8 +280,8 @@ public class PIN_MOV_PREPARACAODao extends GenericDaoJpaImpl<PIN_MOV_PREPARACAO,
 						+ "WHEN a.ESTADO = 'Em Preparação' THEN '4' " + "WHEN a.ESTADO = 'Em Planeamento' THEN '2' "
 						+ "WHEN a.ESTADO = 'Executado' THEN '6' END AS B " + Squery
 						+ " ,cast(cc.data as date) as dt_prev," + "cast(cc.data as time) as h_prev, "
-						+ "(select top 1 TEMPO_PLANEADAS from GER_PARAMETROS) as temp_pla, "
-						+ "(select top 1 TEMPO_MAX_PLANEADAS from GER_PARAMETROS) as temp_max_pla,null as cortipo  "
+						+ "(select top 1 TEMPO_PLANEADAS_PINTURA from GER_PARAMETROS) as temp_pla, "
+						+ "(select top 1 TEMPO_MAX_PLANEADAS_PINTURA from GER_PARAMETROS) as temp_max_pla,null as cortipo  "
 						+ " from PIN_MOV_PREPARACAO a " + "left join AB_DIC_LINHA b on b.ID_LINHA = a.ID_LINHA "
 						+ "left join AB_DIC_TURNO d on  a.ID_TURNO = d.ID_TURNO "
 						+ "left join (select ID_PREPARACAO,MIN(cast(x.DATA_PREVISTA as datetime) + cast(x.HORA_PREVISTA as datetime)) as data from PIN_MOV_PREPARACAO_CAB x where   INATIVO != 1 GROUP BY ID_PREPARACAO) cc on cc.ID_PREPARACAO = a.ID_PREPARACAO "

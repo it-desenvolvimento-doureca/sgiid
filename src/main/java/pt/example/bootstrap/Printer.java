@@ -159,7 +159,7 @@ public class Printer {
 		JEditorPane text = new JEditorPane("",conteudo);
 
 		content.close();
-		Font font = new Font("Consolas", Font.PLAIN, 6);
+		Font font = new Font("Consolas", Font.PLAIN, 5);
 
 		text.setFont(font);
 		text.getDocument().putProperty("IgnoreCharsetDirective", true);

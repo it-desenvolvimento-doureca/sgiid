@@ -48,7 +48,11 @@ public class PIN_DIC_POTES {
 	private Timestamp DATA_ANULACAO;
 	@JsonProperty("UTZ_ANULACAO")
 	private Integer UTZ_ANULACAO;
-
+	@JsonProperty("REGISTO_TINTAS")
+	private Boolean REGISTO_TINTAS;
+	@JsonProperty("ORDEM")
+	private Integer ORDEM;
+	
 	public Integer getID() {
 		return ID;
 	}
@@ -167,6 +171,22 @@ public class PIN_DIC_POTES {
 
 	public void setUTZ_ANULACAO(Integer uTZ_ANULACAO) {
 		UTZ_ANULACAO = uTZ_ANULACAO;
+	}
+
+	public Boolean getREGISTO_TINTAS() {
+		return REGISTO_TINTAS;
+	}
+
+	public void setREGISTO_TINTAS(Boolean rEGISTO_TINTAS) {
+		REGISTO_TINTAS = rEGISTO_TINTAS;
+	}
+
+	public Integer getORDEM() {
+		return ORDEM;
+	}
+
+	public void setORDEM(Integer oRDEM) {
+		ORDEM = oRDEM;
 	}
 
 }

@@ -36,6 +36,7 @@ public class AB_DIC_BANHO {
 	private String DOSE3;
 	private String DOSE4;
 	private String DOSE5;
+	private String DOSE6;
 
 	@Column(name = "DATA_ANULACAO")
 	public Timestamp getDATA_ANULACAO() {
@@ -244,6 +245,15 @@ public class AB_DIC_BANHO {
 
 	public void setDOSE5(String dOSE5) {
 		DOSE5 = dOSE5;
+	}
+
+	@Column(name = "DOSE6")
+	public String getDOSE6() {
+		return DOSE6;
+	}
+
+	public void setDOSE6(String dOSE6) {
+		DOSE6 = dOSE6;
 	}
 
 }

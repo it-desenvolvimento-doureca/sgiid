@@ -34,6 +34,7 @@ import pt.example.dao.COM_BUDGETS_ANALISESDao;
 import pt.example.dao.COM_BUDGETS_LINHASDao;
 import pt.example.dao.COM_CUSTOMERS_GROUPSDao;
 import pt.example.dao.COM_CUSTOMER_GROUPSDao;
+import pt.example.dao.DOC_DOCUMENTOSDao;
 import pt.example.dao.FIN_DIC_FILTROSDao;
 import pt.example.dao.FIN_DIC_TIPO_MOVIMENTO_STOCKDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
@@ -44,6 +45,7 @@ import pt.example.dao.MAN_DIC_FAMILIA_EQUIPAMENTOSDao;
 import pt.example.dao.PIN_DIC_ARMAZEMDao;
 import pt.example.dao.PIN_DIC_CABINESDao;
 import pt.example.dao.PIN_DIC_CORESDao;
+import pt.example.dao.PIN_DIC_CORES_ACABAMENTOSDao;
 import pt.example.dao.PIN_DIC_POTESDao;
 import pt.example.dao.PIN_DIC_PRE_SETDao;
 import pt.example.dao.PIN_DIC_PRODUTOSDao;
@@ -62,6 +64,10 @@ import pt.example.dao.PIN_MOV_PREPARACAO_LINHADao;
 import pt.example.dao.PIN_MOV_RECEITASDao;
 import pt.example.dao.PIN_MOV_RECEITAS_LINHASDao;
 import pt.example.dao.PIN_MOV_RECEITAS_REFERENCIASDao;
+import pt.example.dao.PIN_MOV_UV_RADIATIONDao;
+import pt.example.dao.PIN_PLANEAMENTO_PINTURADao;
+import pt.example.dao.PIN_PLANEAMENTO_PINTURA_LINHASDao;
+import pt.example.dao.PR_REGISTO_PINTURADao;
 import pt.example.dao.PR_WINROBOT_USERSDao;
 import pt.example.dao.RH_CANDIDATURASDao;
 import pt.example.entity.COM_ACORDOS;
@@ -70,6 +76,7 @@ import pt.example.entity.COM_BUDGETS_ANALISES;
 import pt.example.entity.COM_BUDGETS_LINHAS;
 import pt.example.entity.COM_CUSTOMERS_GROUPS;
 import pt.example.entity.COM_CUSTOMER_GROUPS;
+import pt.example.entity.DOC_DOCUMENTOS;
 import pt.example.entity.FIN_DIC_FILTROS;
 import pt.example.entity.FIN_DIC_TIPO_MOVIMENTO_STOCK;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
@@ -81,6 +88,7 @@ import pt.example.entity.MAN_MOV_MANUTENCAO_OPERARIOS;
 import pt.example.entity.PIN_DIC_ARMAZEM;
 import pt.example.entity.PIN_DIC_CABINES;
 import pt.example.entity.PIN_DIC_CORES;
+import pt.example.entity.PIN_DIC_CORES_ACABAMENTOS;
 import pt.example.entity.PIN_DIC_POTES;
 import pt.example.entity.PIN_DIC_PRE_SET;
 import pt.example.entity.PIN_DIC_PRODUTOS;
@@ -99,6 +107,11 @@ import pt.example.entity.PIN_MOV_PREPARACAO_LINHA;
 import pt.example.entity.PIN_MOV_RECEITAS;
 import pt.example.entity.PIN_MOV_RECEITAS_LINHAS;
 import pt.example.entity.PIN_MOV_RECEITAS_REFERENCIAS;
+import pt.example.entity.PIN_MOV_UV_RADIATION;
+import pt.example.entity.PIN_PLANEAMENTO_PINTURA;
+import pt.example.entity.PIN_PLANEAMENTO_PINTURA_LINHAS;
+import pt.example.entity.PR_REGISTO_PINTURA;
+import pt.example.entity.PR_WINROBOT_CAB;
 import pt.example.entity.PR_WINROBOT_USERS;
 import pt.example.entity.RH_CANDIDATURAS;
 
@@ -176,6 +189,18 @@ public class SIRB_3 {
 	private MAN_DIC_FAMILIA_EQUIPAMENTOSDao dao34;
 	@Inject
 	private PR_WINROBOT_USERSDao dao35;
+	@Inject
+	private PIN_DIC_CORES_ACABAMENTOSDao dao36;
+	@Inject
+	private PR_REGISTO_PINTURADao dao37;
+	@Inject
+	private PIN_MOV_UV_RADIATIONDao dao38;
+	@Inject
+	private PIN_PLANEAMENTO_PINTURADao dao39;
+	@Inject
+	private PIN_PLANEAMENTO_PINTURA_LINHASDao dao40;
+	@Inject
+	private DOC_DOCUMENTOSDao dao41;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -1055,10 +1080,24 @@ public class SIRB_3 {
 	}
 
 	@GET
+	@Path("/getallPIN_DIC_POTES2")
+	@Produces("application/json")
+	public List<PIN_DIC_POTES> getallPIN_DIC_POTES() {
+		return dao13.getall2();
+	}
+
+	@GET
 	@Path("/getPIN_DIC_POTESbyid/{id}")
 	@Produces("application/json")
 	public List<PIN_DIC_POTES> getPIN_DIC_POTESvbyid_tina(@PathParam("id") Integer id) {
 		return dao13.getbyid(id, 0);
+	}
+
+	@GET
+	@Path("/updateOrdemPIN_DIC_POTES/{id}/{ordem}")
+	@Produces("application/json")
+	public Integer updateOrdemPIN_DIC_POTES(@PathParam("ordem") Integer ordem, @PathParam("id") Integer id) {
+		return dao13.updateordem(ordem, id);
 	}
 
 	@DELETE
@@ -3123,6 +3162,7 @@ public class SIRB_3 {
 		String LOTE = firstMap.get("LOTE");
 		String TIPO = firstMap.get("TIPO");
 		String CARRO = firstMap.get("CARRO");
+		String LINHA = firstMap.get("LINHA");
 
 		/*
 		 * if (SEC_NUM != null) SEC_NUM = "'" + SEC_NUM + "'"; if (DATE1 != null) DATE1
@@ -3145,7 +3185,7 @@ public class SIRB_3 {
 		 */
 
 		Query query_folder = entityManager.createNativeQuery(
-				"EXEC GET_PAINEL_CONTROLO :SEC_NUM ,:DATE1,:DATE2,:DATE3,:DATE4,:TIME1 ,:TIME2 ,:TIME3 ,:TIME4 ,:ESTADO ,:TEMPO_PROD_MENOR ,:TEMPO_PROD_MAIOR ,:FUNC ,:NUMERO_OF ,:OPERACAO ,:MAQUINA ,:DESIGN_REF ,:REF ,:ETIQUETA ,:QTT ,:QTTMENOR ,:START,:RACKS ,:LOTE,:TIPO,:CARRO ")
+				"EXEC GET_PAINEL_CONTROLO :SEC_NUM ,:DATE1,:DATE2,:DATE3,:DATE4,:TIME1 ,:TIME2 ,:TIME3 ,:TIME4 ,:ESTADO ,:TEMPO_PROD_MENOR ,:TEMPO_PROD_MAIOR ,:FUNC ,:NUMERO_OF ,:OPERACAO ,:MAQUINA ,:DESIGN_REF ,:REF ,:ETIQUETA ,:QTT ,:QTTMENOR ,:START,:RACKS ,:LOTE,:TIPO,:CARRO,:LINHA ")
 				.setParameter("SEC_NUM", SEC_NUM).setParameter("DATE1", DATE1).setParameter("DATE2", DATE2)
 				.setParameter("DATE3", DATE3).setParameter("DATE4", DATE4).setParameter("TIME1", TIME1)
 				.setParameter("TIME2", TIME2).setParameter("TIME3", TIME3).setParameter("TIME4", TIME4)
@@ -3155,7 +3195,7 @@ public class SIRB_3 {
 				.setParameter("MAQUINA", MAQUINA).setParameter("DESIGN_REF", DESIGN_REF).setParameter("REF", REF)
 				.setParameter("ETIQUETA", ETIQUETA).setParameter("QTT", QTT).setParameter("QTTMENOR", QTTMENOR)
 				.setParameter("START", START).setParameter("RACKS", RACKS).setParameter("LOTE", LOTE)
-				.setParameter("TIPO", TIPO).setParameter("CARRO", CARRO);
+				.setParameter("TIPO", TIPO).setParameter("CARRO", CARRO).setParameter("LINHA", LINHA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -3261,11 +3301,12 @@ public class SIRB_3 {
 
 		HashMap<String, String> firstMap = dados.get(0);
 		String LOTE = firstMap.get("LOTE");
+		String ID = firstMap.get("ID");
 
 		if (LOTE != null)
 			LOTE = "'" + LOTE + "'";
 
-		Query query_folder = entityManager.createNativeQuery("EXEC PR_GET_DADOS_CARTELAS " + LOTE + "");
+		Query query_folder = entityManager.createNativeQuery("EXEC PR_GET_DADOS_CARTELAS " + LOTE + "," + ID);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -3315,24 +3356,529 @@ public class SIRB_3 {
 		PR_WINROBOT_USERS result = PR_WINROBOT_USERS;
 
 		String DATA_HORA_INICIO = (result.getDATA_HORA_INICIO() == null) ? null
-				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_HORA_INICIO())+"'";
+				: "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_HORA_INICIO()) + "'";
 		String DATA_HORA_FIM = (result.getDATA_HORA_FIM() == null) ? null
-				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_HORA_FIM())+"'";
+				: "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_HORA_FIM()) + "'";
 		String DATA_INICIO_PREP = (result.getDATA_INICIO_PREP() == null) ? null
-				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_INICIO_PREP())+"'";
+				: "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_INICIO_PREP()) + "'";
 		String DATA_FIM_PREP = (result.getDATA_FIM_PREP() == null) ? null
-				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_FIM_PREP())+"'";
+				: "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_FIM_PREP()) + "'";
 		String DATA_INICIO_EXEC = (result.getDATA_INICIO_EXEC() == null) ? null
-				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_INICIO_EXEC())+"'";
+				: "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_INICIO_EXEC()) + "'";
 		String DATA_FIM_EXEC = (result.getDATA_FIM_EXEC() == null) ? null
-				: "'"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_FIM_EXEC())+"'";
+				: "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result.getDATA_FIM_EXEC()) + "'";
 
-		Query query_folder = entityManager.createNativeQuery("EXEC PR_ATUALIZA_USER " + result.getID() + ","
-				+ DATA_HORA_INICIO + "," + DATA_HORA_FIM + "," + DATA_INICIO_PREP + "," + DATA_FIM_PREP + ","
-				+ DATA_INICIO_EXEC + "," + DATA_FIM_EXEC + "," + result.getUTZ_MODIF());
+		String NOME_UTZ = (result.getNOME_UTZ() == null) ? null : "'" + result.getNOME_UTZ() + "'";
+		String ID_UTZ = (result.getID_UTZ() == null) ? null : "'" + result.getID_UTZ() + "'";
+		String ID_CAB = (result.getID_CAB() == null) ? null : "'" + result.getID_CAB() + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC PR_ATUALIZA_USER " + result.getID() + "," + DATA_HORA_INICIO + ","
+						+ DATA_HORA_FIM + "," + DATA_INICIO_PREP + "," + DATA_FIM_PREP + "," + DATA_INICIO_EXEC + ","
+						+ DATA_FIM_EXEC + "," + result.getUTZ_MODIF() + "," + NOME_UTZ + "," + ID_UTZ + "," + ID_CAB);
 		query_folder.executeUpdate();
 
 		return result;
 	}
 
+	@POST
+	@Path("/INSERT_PIN_WINROBOT_PROGRAM")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> INSERT_PIN_WINROBOT_PROGRAM(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String SUP_PROGRAM = firstMap.get("SUP_PROGRAM");
+		String ID = firstMap.get("ID");
+
+		if (SUP_PROGRAM != null)
+			SUP_PROGRAM = "'" + SUP_PROGRAM + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC INSERT_PIN_WINROBOT_PROGRAM " + SUP_PROGRAM + "," + ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/INSERT_PIN_WINROBOT_RACKS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> INSERT_PIN_WINROBOT_RACKS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String RACK_CODE = firstMap.get("RACK_CODE");
+		String ID = firstMap.get("ID");
+		String USER = firstMap.get("USER");
+
+		if (RACK_CODE != null)
+			RACK_CODE = "'" + RACK_CODE + "'";
+
+		if (USER != null)
+			USER = "'" + USER + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC INSERT_PIN_WINROBOT_RACKS " + RACK_CODE + "," + ID + "," + USER);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/PR_WINROBOT_ATUALIZA_ETIQUETAS_LINHA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public int PR_WINROBOT_ATUALIZA_ETIQUETAS_LINHA(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC PR_WINROBOT_ATUALIZA_ETIQUETAS_LINHA "+ID);
+
+		int dados_folder = query_folder.executeUpdate();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/REMOVE_PIN_WINROBOT_RACKS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> REMOVE_PIN_WINROBOT_RACKS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String RACK_CODE = firstMap.get("RACK_CODE");
+		String ID = firstMap.get("ID");
+		String USER = firstMap.get("USER");
+
+		if (RACK_CODE != null)
+			RACK_CODE = "'" + RACK_CODE + "'";
+
+		if (USER != null)
+			USER = "'" + USER + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC REMOVE_PIN_WINROBOT_RACKS  " + RACK_CODE + "," + ID + "," + USER);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/REMOVE_PIN_WINROBOT_ETIQUETA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> REMOVE_PIN_WINROBOT_ETIQUETA(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		String ETIQUETA = firstMap.get("ETIQUETA");
+		String INDEX_ARTICLE = firstMap.get("INDEX_ARTICLE");
+		String INDEX_ETIQUETA = firstMap.get("INDEX_ETIQUETA");
+		if (ETIQUETA != null)
+			ETIQUETA = "'" + ETIQUETA + "'";
+		
+
+		Query query_folder = entityManager.createNativeQuery("EXEC REMOVE_PIN_WINROBOT_ETIQUETA  " + ID + ","
+				+ INDEX_ARTICLE + "," + INDEX_ETIQUETA + "," + ETIQUETA);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/INSERT_PIN_WINROBOT_ETIQUETA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> INSERT_PIN_WINROBOT_ETIQUETA(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ETIQUETA = firstMap.get("ETIQUETA");
+		String ID = firstMap.get("ID");
+		String INDEX_ARTICLE = firstMap.get("INDEX_ARTICLE");
+		String INDEX_ETIQUETA = firstMap.get("INDEX_ETIQUETA");
+
+		if (ETIQUETA != null)
+			ETIQUETA = "'" + ETIQUETA + "'";
+		
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC INSERT_PIN_WINROBOT_ETIQUETA " + ID + "," + INDEX_ARTICLE + "," + INDEX_ETIQUETA + "," + ETIQUETA);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/************************************* PIN_DIC_CORES_ACABAMENTOS */
+	@POST
+	@Path("/createPIN_DIC_CORES_ACABAMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_CORES_ACABAMENTOS insertPIN_DIC_CORES_ACABAMENTOS(final PIN_DIC_CORES_ACABAMENTOS data) {
+		return dao36.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CORES_ACABAMENTOSbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES_ACABAMENTOS> getPIN_DIC_CORES_ACABAMENTOSbyid(@PathParam("id") Integer id) {
+		return dao36.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CORES_ACABAMENTOSbytipo/{tipo}")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES_ACABAMENTOS> getPIN_DIC_CORES_ACABAMENTOSbytipo(@PathParam("id") String tipo) {
+		return dao36.getbytipo(tipo);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CORES_ACABAMENTOSbytipoAll")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES_ACABAMENTOS> getPIN_DIC_CORES_ACABAMENTOSbytipoAll() {
+		return dao36.getbytipoAll();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CORES_ACABAMENTOSbytipoAll2")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES_ACABAMENTOS> getPIN_DIC_CORES_ACABAMENTOSbytipoAll2() {
+		return dao36.getbytipoAll2();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CORES_ACABAMENTOS")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES_ACABAMENTOS> getPIN_DIC_CORES_ACABAMENTOS() {
+		return dao36.getall();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_CORES_ACABAMENTOS2")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES_ACABAMENTOS> getPIN_DIC_CORES_ACABAMENTOS2() {
+		return dao36.getall2();
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_CORES_ACABAMENTOS/{id}")
+	public void deletePIN_DIC_CORES_ACABAMENTOS(@PathParam("id") Integer id) {
+		PIN_DIC_CORES_ACABAMENTOS PIN_DIC_CORES_ACABAMENTOS = new PIN_DIC_CORES_ACABAMENTOS();
+		PIN_DIC_CORES_ACABAMENTOS.setID(id);
+		dao36.delete(PIN_DIC_CORES_ACABAMENTOS);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_CORES_ACABAMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_CORES_ACABAMENTOS updatePIN_DIC_CORES_ACABAMENTOS(
+			final PIN_DIC_CORES_ACABAMENTOS PIN_DIC_CORES_ACABAMENTOS) {
+		PIN_DIC_CORES_ACABAMENTOS.setID(PIN_DIC_CORES_ACABAMENTOS.getID());
+
+		PIN_DIC_CORES_ACABAMENTOS _PIN_DIC_CORES_ACABAMENTOS = dao36.update(PIN_DIC_CORES_ACABAMENTOS);
+
+		int query_folder = entityManager.createNativeQuery("EXEC PIN_ATUALIZA_RECEITAS_CORES_ACABAMENTOS :id")
+				.setParameter("id", PIN_DIC_CORES_ACABAMENTOS.getID()).executeUpdate();
+
+		return _PIN_DIC_CORES_ACABAMENTOS;
+	}
+
+	/************************************* PR_REGISTO_PINTURA */
+	@POST
+	@Path("/createPR_REGISTO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_REGISTO_PINTURA insertPR_REGISTO_PINTURA(final PR_REGISTO_PINTURA data) {
+		return dao37.create(data);
+	}
+
+	@GET
+	@Path("/getPR_REGISTO_PINTURAbyid/{id}")
+	@Produces("application/json")
+	public List<PR_REGISTO_PINTURA> getPR_REGISTO_PINTURAbyid(@PathParam("id") Integer id) {
+		return dao37.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPR_REGISTO_PINTURA")
+	@Produces("application/json")
+	public List<PR_REGISTO_PINTURA> getPR_REGISTO_PINTURA() {
+		return dao37.getall();
+	}
+
+	@DELETE
+	@Path("/deletePR_REGISTO_PINTURA/{id}")
+	public void deletePR_REGISTO_PINTURA(@PathParam("id") Integer id) {
+		PR_REGISTO_PINTURA PR_REGISTO_PINTURA = new PR_REGISTO_PINTURA();
+		PR_REGISTO_PINTURA.setID(id);
+		dao37.delete(PR_REGISTO_PINTURA);
+	}
+
+	@PUT
+	@Path("/updatePR_REGISTO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_REGISTO_PINTURA updatePR_REGISTO_PINTURA(final PR_REGISTO_PINTURA PR_REGISTO_PINTURA) {
+		PR_REGISTO_PINTURA.setID(PR_REGISTO_PINTURA.getID());
+		return dao37.update(PR_REGISTO_PINTURA);
+	}
+
+	@GET
+	@Path("/getPIN_UPDATE_PLANEAMENTO/{id}")
+	@Produces("application/json")
+	public int getPIN_UPDATE_PLANEAMENTO(@PathParam("id") Integer id) {
+
+		Query query_folder = entityManager
+				.createNativeQuery(
+						"UPDATE PIN_PLANEAMENTO_PINTURA set ESTADO = 'C',DATA_CONCLUSAO = GETDATE() where ID = :id")
+				.setParameter("id", id);
+
+		int dados_folder = query_folder.executeUpdate();
+
+		return dados_folder;
+	}
+
+	@GET
+	@Path("/getPIN_GET_PLANEAMENTO")
+	@Produces("application/json")
+	public List<Object[]> getPIN_GET_PLANEAMENTO() {
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PIN_GET_PLANEAMENTO");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@GET
+	@Path("/getPIN_GET_VALVULAS")
+	@Produces("application/json")
+	public List<Object[]> getPIN_GET_VALVULAS() {
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PIN_GET_VALVULAS");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/getPIN_GET_VALVULAS_POTE")
+	@Produces("application/json")
+	public List<Object[]> getPIN_GET_VALVULAS_POTE(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String QUERY = firstMap.get("QUERY");
+		String ID_POTE = firstMap.get("ID_POTE");
+
+		Query query_folder = entityManager.createNativeQuery(
+				" select  a.CODIGO,a.NOME,b.NOME as NOME_POTEa,a.ID from PIN_DIC_CORES_ACABAMENTOS a "
+						+ " left join PIN_DIC_POTES b on  b.ID in (select value from string_split(a.ID_POTE,','))  "
+						+ " where a.ATIVO = 1 and CODIGO like :codigo and b.ID = :id")
+				.setParameter("codigo", "%" + QUERY + "%").setParameter("id", ID_POTE);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/************************************* PIN_MOV_UV_RADIATION */
+	@POST
+	@Path("/createPIN_MOV_UV_RADIATION")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_UV_RADIATION insertAB_DIC_ADITIVO(final PIN_MOV_UV_RADIATION data) {
+		return dao38.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_UV_RADIATIONyid/{id}/{versao}")
+	@Produces("application/json")
+	public List<PIN_MOV_UV_RADIATION> getPIN_MOV_UV_RADIATIONyid(@PathParam("id") Integer id,
+			@PathParam("versao") Integer versao) {
+		return dao38.getbyid(id, versao);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_UV_RADIATION")
+	@Produces("application/json")
+	public List<PIN_MOV_UV_RADIATION> getPIN_MOV_UV_RADIATION() {
+		return dao38.allEntries();
+	}
+
+	@GET
+	@Path("/getPIN_MOV_UV_RADIATION2")
+	@Produces("application/json")
+	public List<PIN_MOV_UV_RADIATION> getPIN_MOV_UV_RADIATIONLINHA() {
+		return dao38.getall();
+	}
+
+	@DELETE
+	@Path("/deletePIN_MOV_UV_RADIATION/{id}")
+	public void deletePIN_MOV_UV_RADIATION(@PathParam("id") Integer id) {
+		PIN_MOV_UV_RADIATION PIN_MOV_UV_RADIATION = new PIN_MOV_UV_RADIATION();
+		PIN_MOV_UV_RADIATION.setID(id);
+		dao38.delete(PIN_MOV_UV_RADIATION);
+	}
+
+	@PUT
+	@Path("/updatePIN_MOV_UV_RADIATION")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_UV_RADIATION updatePIN_MOV_UV_RADIATION(final PIN_MOV_UV_RADIATION PIN_MOV_UV_RADIATION) {
+		PIN_MOV_UV_RADIATION.setID(PIN_MOV_UV_RADIATION.getID());
+		return dao38.update(PIN_MOV_UV_RADIATION);
+	}
+
+	/************************************* PIN_PLANEAMENTO_PINTURA */
+	@POST
+	@Path("/createPIN_PLANEAMENTO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_PLANEAMENTO_PINTURA insertAB_DIC_ADITIVO(final PIN_PLANEAMENTO_PINTURA data) {
+		return dao39.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_PLANEAMENTO_PINTURAyid/{id}")
+	@Produces("application/json")
+	public List<PIN_PLANEAMENTO_PINTURA> getPIN_PLANEAMENTO_PINTURAyid(@PathParam("id") Integer id) {
+		return dao39.getbyid(id);
+	}
+
+	/*
+	 * @GET
+	 * 
+	 * @Path("/getPIN_PLANEAMENTO_PINTURA")
+	 * 
+	 * @Produces("application/json") public List<PIN_PLANEAMENTO_PINTURA>
+	 * getPIN_PLANEAMENTO_PINTURA() { return dao39.allEntries(); }
+	 */
+
+	@GET
+	@Path("/getPIN_PLANEAMENTO_PINTURA")
+	@Produces("application/json")
+	public List<PIN_PLANEAMENTO_PINTURA> getPIN_PLANEAMENTO_PINTURA() {
+		return dao39.getall();
+	}
+
+	@DELETE
+	@Path("/deletePIN_PLANEAMENTO_PINTURA/{id}")
+	public void deletePIN_PLANEAMENTO_PINTURA(@PathParam("id") Integer id) {
+		PIN_PLANEAMENTO_PINTURA PIN_PLANEAMENTO_PINTURA = new PIN_PLANEAMENTO_PINTURA();
+		PIN_PLANEAMENTO_PINTURA.setID(id);
+		dao39.delete(PIN_PLANEAMENTO_PINTURA);
+	}
+
+	@PUT
+	@Path("/updatePIN_PLANEAMENTO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_PLANEAMENTO_PINTURA updatePIN_PLANEAMENTO_PINTURA(
+			final PIN_PLANEAMENTO_PINTURA PIN_PLANEAMENTO_PINTURA) {
+		PIN_PLANEAMENTO_PINTURA.setID(PIN_PLANEAMENTO_PINTURA.getID());
+		return dao39.update(PIN_PLANEAMENTO_PINTURA);
+	}
+
+	/************************************* PIN_PLANEAMENTO_PINTURA_LINHAS */
+	@POST
+	@Path("/createPIN_PLANEAMENTO_PINTURA_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_PLANEAMENTO_PINTURA_LINHAS insertAB_DIC_ADITIVO(final PIN_PLANEAMENTO_PINTURA_LINHAS data) {
+		return dao40.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_PLANEAMENTO_PINTURA_LINHASyid/{id}")
+	@Produces("application/json")
+	public List<PIN_PLANEAMENTO_PINTURA_LINHAS> getPIN_PLANEAMENTO_PINTURA_LINHASyid(@PathParam("id") Integer id) {
+		return dao40.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_PLANEAMENTO_PINTURA_LINHAS")
+	@Produces("application/json")
+	public List<PIN_PLANEAMENTO_PINTURA_LINHAS> getPIN_PLANEAMENTO_PINTURA_LINHAS() {
+		return dao40.allEntries();
+	}
+
+	@GET
+	@Path("/getPIN_PLANEAMENTO_PINTURA_LINHAS2")
+	@Produces("application/json")
+	public List<PIN_PLANEAMENTO_PINTURA_LINHAS> getPIN_PLANEAMENTO_PINTURA_LINHASLINHA() {
+		return dao40.getall();
+	}
+
+	@DELETE
+	@Path("/deletePIN_PLANEAMENTO_PINTURA_LINHAS/{id}")
+	public void deletePIN_PLANEAMENTO_PINTURA_LINHAS(@PathParam("id") Integer id) {
+		PIN_PLANEAMENTO_PINTURA_LINHAS PIN_PLANEAMENTO_PINTURA_LINHAS = new PIN_PLANEAMENTO_PINTURA_LINHAS();
+		PIN_PLANEAMENTO_PINTURA_LINHAS.setID(id);
+		dao40.delete(PIN_PLANEAMENTO_PINTURA_LINHAS);
+	}
+
+	@PUT
+	@Path("/updatePIN_PLANEAMENTO_PINTURA_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_PLANEAMENTO_PINTURA_LINHAS updatePIN_PLANEAMENTO_PINTURA_LINHAS(
+			final PIN_PLANEAMENTO_PINTURA_LINHAS PIN_PLANEAMENTO_PINTURA_LINHAS) {
+		PIN_PLANEAMENTO_PINTURA_LINHAS.setID(PIN_PLANEAMENTO_PINTURA_LINHAS.getID());
+		return dao40.update(PIN_PLANEAMENTO_PINTURA_LINHAS);
+	}
+
+	/************************************ DOC_DOCUMENTOS */
+
+	@POST
+	@Path("/createDOC_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DOCUMENTOS insertDOC_DOCUMENTOS(final DOC_DOCUMENTOS data) {
+		return dao41.create(data);
+	}
+
+	@GET
+	@Path("/getDOC_DOCUMENTOS")
+	@Produces("application/json")
+	public List<DOC_DOCUMENTOS> getDOC_DOCUMENTOS() {
+		return dao41.getall();
+	}
+
+	@GET
+	@Path("/getDOC_DOCUMENTOSbyid/{id}")
+	@Produces("application/json")
+	public List<DOC_DOCUMENTOS> getDOC_DOCUMENTOSbyid(@PathParam("id") Integer id) {
+		return dao41.getbyid(id);
+	}
+
+	@GET
+	@Path("/getDOC_DOCUMENTOSbyLocalizacao/{id}")
+	@Produces("application/json")
+	public List<DOC_DOCUMENTOS> getDOC_DOCUMENTOSbyLocalizacao(@PathParam("id") Integer id) {
+		return dao41.getbylocalizacao(id);
+	}
+
+	@PUT
+	@Path("/updateDOC_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DOCUMENTOS updateDOC_DOCUMENTOS(final DOC_DOCUMENTOS DOC_DOCUMENTOS) {
+		DOC_DOCUMENTOS.setID(DOC_DOCUMENTOS.getID());
+		return dao41.update(DOC_DOCUMENTOS);
+	}
+
+	@DELETE
+	@Path("/deleteDOC_DOCUMENTOS/{id}")
+	public void deleteDOC_DOCUMENTOS(@PathParam("id") Integer id) {
+		DOC_DOCUMENTOS DOC_DOCUMENTOS = new DOC_DOCUMENTOS();
+		DOC_DOCUMENTOS.setID(id);
+		dao41.delete(DOC_DOCUMENTOS);
+	}
 }

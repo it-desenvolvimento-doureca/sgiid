@@ -6556,6 +6556,13 @@ public class SIRB_2 {
 	}
 
 	@GET
+	@Path("/getDOC_FICHA_DOCUMENTOSbyid2/{id}")
+	@Produces("application/json")
+	public List<DOC_FICHA_DOCUMENTOS> getDOC_FICHA_DOCUMENTOSbyid2(@PathParam("id") Integer id) {
+		return dao83.getbyid2(id);
+	}
+
+	@GET
 	@Path("/getDOC_FICHA_DOCUMENTOSbyLocalizacao/{id}")
 	@Produces("application/json")
 	public List<DOC_FICHA_DOCUMENTOS> getDOC_FICHA_DOCUMENTOSbyLocalizacao(@PathParam("id") Integer id) {
@@ -6582,17 +6589,25 @@ public class SIRB_2 {
 		String REFERENCIA = firstMap.get("REFERENCIA");
 		String CODIGO = firstMap.get("CODIGO");
 
-		Query query_folder = entityManager.createNativeQuery(
-				"SELECT CASE WHEN EXISTS( SELECT d.ID, d.SECTOR,d.COD_MAQUINA " + "FROM DOC_FICHA_DOCUMENTOS d "
-						+ "WHERE d.COD_DOCUMENTO = '" + CODIGO + "' " + "AND ('" + SECTOR
-						+ "'  = 'null' OR NOT EXISTS(select value from string_split(d.SECTOR,',') EXCEPT (select value from string_split('"
-						+ SECTOR + "',',')) UNION select value from string_split('" + SECTOR
-						+ "',',') EXCEPT (select value from string_split(d.SECTOR,','))  )  ) " + "AND ('" + SECTOR
-						+ "'  = 'null' OR NOT EXISTS(select value from string_split('" + SECTOR
-						+ "',',') EXCEPT (select value from string_split(d.SECTOR,',')) UNION select value from string_split(d.SECTOR,',') EXCEPT (select value from string_split('"
-						+ SECTOR + "',','))  )  ) " + "AND ISNULL(d.COD_MAQUINA,'null') = '" + MAQUINA + "' "
-						+ "AND  ISNULL(d.REFERENCIA,'null') = '" + REFERENCIA + "' " + "AND (" + ID
-						+ " IS NULL OR d.ID != " + ID + ")) THEN 1 ELSE 0 END Valor , '' txt ");
+		/*
+		 * Query query_folder = entityManager.createNativeQuery(
+		 * "SELECT CASE WHEN EXISTS( SELECT d.ID, d.SECTOR,d.COD_MAQUINA " +
+		 * "FROM DOC_FICHA_DOCUMENTOS d left join DOC_DOCUMENTOS e on d.ID_FICHEIRO = e.ID "
+		 * + "WHERE e.COD_DOCUMENTO = '" + CODIGO + "' " + "AND ('" + SECTOR +
+		 * "'  = 'null' OR NOT EXISTS(select value from string_split(d.SECTOR,',') EXCEPT (select value from string_split('"
+		 * + SECTOR + "',',')) UNION select value from string_split('" + SECTOR +
+		 * "',',') EXCEPT (select value from string_split(d.SECTOR,','))  )  ) " +
+		 * "AND ('" + SECTOR +
+		 * "'  = 'null' OR NOT EXISTS(select value from string_split('" + SECTOR +
+		 * "',',') EXCEPT (select value from string_split(d.SECTOR,',')) UNION select value from string_split(d.SECTOR,',') EXCEPT (select value from string_split('"
+		 * + SECTOR + "',','))  )  ) " + "AND ISNULL(d.COD_MAQUINA,'null') = '" +
+		 * MAQUINA + "' " + "AND  ISNULL(d.REFERENCIA,'null') = '" + REFERENCIA + "' " +
+		 * "AND (" + ID + " IS NULL OR d.ID != " + ID +
+		 * ")) THEN 1 ELSE 0 END Valor , '' txt ");
+		 */
+
+		Query query_folder = entityManager.createNativeQuery("EXEC DOC_checkIfCodeExist " + ID + ",'" + REFERENCIA
+				+ "','" + SECTOR + "','" + CODIGO + "','" + MAQUINA + "' ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -6609,19 +6624,27 @@ public class SIRB_2 {
 		String ID = firstMap.get("ID");
 		String REFERENCIA = firstMap.get("REFERENCIA");
 
-		Query query_folder = entityManager
-				.createNativeQuery("select COUNT(documento.ID) as total FROM DOC_FICHA_DOCUMENTOS documento "
-						+ "left join DOC_DIC_TIPOS_DOCUMENTO tipoDocumento ON documento.TIPO_DOCUMENTO = tipoDocumento.ID "
-						+ "WHERE  ('" + SECTOR
-						+ "'  = 'null' OR ( NOT EXISTS(select value from string_split(documento.SECTOR,',') EXCEPT (select value from string_split('"
-						+ SECTOR + "',',')) UNION select value from string_split('" + SECTOR
-						+ "',',') EXCEPT (select value from string_split(documento.SECTOR,','))  ) AND "
-						+ "NOT EXISTS( select value from string_split('" + SECTOR
-						+ "',',') EXCEPT (select value from string_split(documento.SECTOR,',')) UNION  "
-						+ "select value from string_split(documento.SECTOR,',') EXCEPT (select value from string_split('"
-						+ SECTOR + "',','))) )) " + " AND ISNULL(documento.COD_MAQUINA,'null') = '" + MAQUINA + "' AND "
-						+ " ISNULL(documento.REFERENCIA,'null') = '" + REFERENCIA + "'  AND "
-						+ " tipoDocumento.DOCUMENTO_PREDEFINIDO = 1 AND documento.ID != " + ID + "");
+		/*
+		 * Query query_folder = entityManager
+		 * .createNativeQuery("select COUNT(documento.ID) as total FROM DOC_FICHA_DOCUMENTOS documento "
+		 * +
+		 * "left join DOC_DIC_TIPOS_DOCUMENTO tipoDocumento ON documento.TIPO_DOCUMENTO = tipoDocumento.ID "
+		 * + "WHERE  ('" + SECTOR +
+		 * "'  = 'null' OR ( NOT EXISTS(select value from string_split(documento.SECTOR,',') EXCEPT (select value from string_split('"
+		 * + SECTOR + "',',')) UNION select value from string_split('" + SECTOR +
+		 * "',',') EXCEPT (select value from string_split(documento.SECTOR,','))  ) AND "
+		 * + "NOT EXISTS( select value from string_split('" + SECTOR +
+		 * "',',') EXCEPT (select value from string_split(documento.SECTOR,',')) UNION  "
+		 * +
+		 * "select value from string_split(documento.SECTOR,',') EXCEPT (select value from string_split('"
+		 * + SECTOR + "',','))) )) " + " AND ISNULL(documento.COD_MAQUINA,'null') = '" +
+		 * MAQUINA + "' AND " + " ISNULL(documento.REFERENCIA,'null') = '" + REFERENCIA
+		 * + "'  AND " + " tipoDocumento.DOCUMENTO_PREDEFINIDO = 1 AND documento.ID != "
+		 * + ID + "");
+		 */
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC DOC_getTotalPredefinidos " + ID + ",'" + REFERENCIA + "','" + SECTOR + "','" + MAQUINA + "' ");
 
 		List<Integer> dados_folder = query_folder.getResultList();
 
@@ -6705,7 +6728,12 @@ public class SIRB_2 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String LOTE = firstMap.get("LOTE");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC DOC_GET_DETALHES_REJEICAO '" + LOTE + "' ");
+		String IP_POSTO = firstMap.get("IP_POSTO");
+		if (IP_POSTO != null)
+			IP_POSTO = "'" + IP_POSTO + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC DOC_GET_DETALHES_REJEICAO '" + LOTE + "'," + IP_POSTO + " ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -7242,13 +7270,10 @@ public class SIRB_2 {
 		data += "QTY_" + dados[5].toString() + "\r\n";
 		data += "SHF_" + dados[10].toString() + "\r\n";
 
-		Integer countUser = 0;
-		if (racks != null) {
-			for (String name : racks) {
-				countUser++;
-				data += "USR" + countUser + "_" + name + "\r\n";
-			}
-		}
+		/*
+		 * Integer countUser = 0; if (racks != null) { for (String name : racks) {
+		 * countUser++; data += "USR" + countUser + "_" + name + "\r\n"; } }
+		 */
 
 		if (data.length() > 0) {
 			SIRB.criar_ficheiro(data, path, path_error, false, "");
@@ -7788,6 +7813,31 @@ public class SIRB_2 {
 	}
 
 	@POST
+	@Path("/PR_WINROBOT_TERMINA_TRABALHO_USER")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PR_WINROBOT_TERMINA_TRABALHO_USER(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		String ID_USER = firstMap.get("ID_USER");
+		String USER = firstMap.get("USER");
+
+		if (ID != null)
+			ID = "'" + ID + "'";
+		if (USER != null)
+			USER = "'" + USER + "'";
+		if (ID_USER != null)
+			ID_USER = "'" + ID_USER + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC [PR_WINROBOT_TERMINA_TRABALHO_USER] " + ID + "," + ID_USER + "," + USER);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
 	@Path("/ATUALIZA_ARTICLES_PR_WINROBOT_CAB")
 	@Consumes("*/*")
 	@Produces("application/json")
@@ -7926,7 +7976,11 @@ public class SIRB_2 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String NUM_BAR = firstMap.get("NUM_BAR");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC GET_DADOS_RACKS " + NUM_BAR);
+		String IP_POSTO = firstMap.get("IP_POSTO");
+		if (IP_POSTO != null)
+			IP_POSTO = "'" + IP_POSTO + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC GET_DADOS_RACKS " + NUM_BAR + "," + IP_POSTO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -7967,6 +8021,27 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager
 				.createNativeQuery("EXEC PR_WINROBOT_TERMINA_TRABALHO " + ID + "," + USER + "," + ID_USER);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PR_WINROBOT_CANCELAR_TRABALHO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PR_WINROBOT_CANCELAR_TRABALHO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		String USER = firstMap.get("USER");
+		String ID_USER = firstMap.get("ID_USER");
+
+		if (USER != null)
+			USER = "'" + USER + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC PR_WINROBOT_CANCELAR_TRABALHO " + ID + "," + USER + "," + ID_USER);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -8077,6 +8152,21 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager
 				.createNativeQuery("EXEC PR_WINROBOT_TOTAIS " + ID_REFERENCIA + "," + BOAS + ", " + DEFEITOS + "");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PR_WINROBOT_ATUALIZA_TOTAIS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PR_WINROBOT_ATUALIZA_TOTAIS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID_CAB = firstMap.get("ID_CAB");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PR_WINROBOT_ATUALIZA_TOTAIS " + ID_CAB);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -8305,22 +8395,22 @@ public class SIRB_2 {
 
 	@DELETE
 	@Path("/deletePR_WINROBOT_ETIQUETAS/{id}/{INDEX_ORIGEM}/{ID_ARTIGO}")
-	public void deletePR_WINROBOT_ETIQUETAS(@PathParam("id") Integer id,@PathParam("INDEX_ORIGEM") Integer INDEX_ORIGEM,@PathParam("ID_ARTIGO") Integer ID_ARTIGO) {
+	public void deletePR_WINROBOT_ETIQUETAS(@PathParam("id") Integer id,
+			@PathParam("INDEX_ORIGEM") Integer INDEX_ORIGEM, @PathParam("ID_ARTIGO") Integer ID_ARTIGO) {
 		PR_WINROBOT_ETIQUETAS PR_WINROBOT_ETIQUETAS = new PR_WINROBOT_ETIQUETAS();
 		PR_WINROBOT_ETIQUETAS.setID(id);
-		//dao91.delete(PR_WINROBOT_ETIQUETAS);
-		
+		// dao91.delete(PR_WINROBOT_ETIQUETAS);
 
-		int query_folder = entityManager.createNativeQuery("UPDATE PR_WINROBOT_ARTICLES SET RAWCODE"
-				+ INDEX_ORIGEM + " = null where ID = " + ID_ARTIGO)
+		int query_folder = entityManager
+				.createNativeQuery(
+						"UPDATE PR_WINROBOT_ARTICLES SET RAWCODE" + INDEX_ORIGEM + " = null where ID = " + ID_ARTIGO)
 				.executeUpdate();
-		
-		int query_folder2 = entityManager.createNativeQuery("UPDATE PR_WINROBOT_ETIQUETAS SET INATIVO = 1 where ID = " + id)
-				.executeUpdate();
+
+		int query_folder2 = entityManager
+				.createNativeQuery("UPDATE PR_WINROBOT_ETIQUETAS SET INATIVO = 1 where ID = " + id).executeUpdate();
 
 	}
 
-	
 	@POST
 	@Path("/createPR_WINROBOT_ETIQUETAS")
 	@Consumes("*/*")
@@ -8414,7 +8504,7 @@ public class SIRB_2 {
 	@Produces("application/json")
 	public PR_WINROBOT_CAB updatePR_WINROBOT_CAB(final PR_WINROBOT_CAB PR_WINROBOT_CAB) {
 		PR_WINROBOT_CAB.setID(PR_WINROBOT_CAB.getID());
-		return dao93.update(PR_WINROBOT_CAB);
+		return dao93.update_(PR_WINROBOT_CAB);
 	}
 
 	@GET
@@ -8540,8 +8630,6 @@ public class SIRB_2 {
 				+ " UPDATE a SET NUM_CARRO = (select string_agg(b.NUM_CARRO,', ') from PR_WINROBOT_CARROS b where b.ID_CAB = a.ID GROUP BY b.ID_CAB ) FROM PR_WINROBOT_CAB a"
 				+ "	where a.ID = :id ").setParameter("ID_CARRO", ID_CARRO).setParameter("id", ID);
 
-	 
-
 		int dados_folder = query_folder.executeUpdate();
 
 		return dados_folder;
@@ -8554,7 +8642,9 @@ public class SIRB_2 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ID = firstMap.get("ID");
 
-		Query query_folder = entityManager.createNativeQuery("SELECT ID,NUM_CARRO,ID_CAB,UTZ_CRIA,DATA_CRIA,UTZ_MODIF,DATA_MODIF FROM PR_WINROBOT_CARROS WHERE ID_CAB = :id").setParameter("id", ID);
+		Query query_folder = entityManager.createNativeQuery(
+				"SELECT ID,NUM_CARRO,ID_CAB,UTZ_CRIA,DATA_CRIA,UTZ_MODIF,DATA_MODIF FROM PR_WINROBOT_CARROS WHERE ID_CAB = :id")
+				.setParameter("id", ID);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

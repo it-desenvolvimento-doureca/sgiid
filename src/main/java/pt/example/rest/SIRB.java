@@ -1367,6 +1367,9 @@ public class SIRB {
 
 		String objetivos_gerais = firstMap.get("objetivos_gerais");
 
+		if (LINHA != null)
+			LINHA = "'" + LINHA + "'";
+		
 		Query query_folder = entityManager.createNativeQuery("EXEC SILVER_BI.dbo.QUERY_REJEICOES_REF " + LINHA + ",'"
 				+ DATA_INI + "','" + DATA_FIM + "','" + REF + "'," + objetivos_gerais + "," + FAM + "," + LOTE + ","
 				+ AREA_PECA + " ,'" + HORA_INI + "','" + HORA_FIM + "'");
@@ -1465,6 +1468,8 @@ public class SIRB {
 
 		String HORA_INI = firstMap.get("HORA_INI");
 		String HORA_FIM = firstMap.get("HORA_FIM");
+		if (LINHA != null)
+			LINHA = "'" + LINHA + "'";
 
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC SILVER_BI.dbo.QUERY_ANALISE_DEFEITOS " + LINHA + ",'" + DATA_INI + "','" + DATA_FIM + "','" + REF
@@ -1494,6 +1499,9 @@ public class SIRB {
 		if (FASE != null)
 			FASE = "'" + FASE + "'";
 
+		if (LINHA != null)
+			LINHA = "'" + LINHA + "'";
+		
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC SILVER_BI.dbo.QUERY_REJEICOES_FAM_DEFEITOS " + LINHA + ",'" + DATA_INI + "','" + DATA_FIM + "','"
 						+ PROREF + "'," + FAM + "," + AREA_PECA + " ,'" + HORA_INI + "','" + HORA_FIM + "'," + FASE);
@@ -1521,6 +1529,9 @@ public class SIRB {
 
 		if (FASE != null)
 			FASE = "'" + FASE + "'";
+		
+		if (LINHA != null)
+			LINHA = "'" + LINHA + "'";
 
 		Query query_folder = entityManager.createNativeQuery("EXEC SILVER_BI.dbo.QUERY_REJEICOES_FAM_DEFEITOS_LOTE "
 				+ LINHA + ",'" + DATA_INI + "','" + DATA_FIM + "','" + PROREF + "'," + DEFEITO + "," + AREA_PECA + " ,'"
@@ -1549,6 +1560,9 @@ public class SIRB {
 
 		if (FASE != null)
 			FASE = "'" + FASE + "'";
+		
+		if (LINHA != null)
+			LINHA = "'" + LINHA + "'";
 
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC SILVER_BI.dbo.QUERY_REJEICOES_DEFEITOS " + LINHA + ",'" + DATA_INI + "','" + DATA_FIM + "','"
@@ -3358,6 +3372,17 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getReferencias(getURLSILVER());
+		return dados;
+	}
+	
+	@GET
+	@Path("/getReferenciaSearch/{query}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getReferenciaSearch(@PathParam("query") String query) throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+		String query_ = java.net.URLDecoder.decode(query);
+		List<HashMap<String, String>> dados = connectionProgress.getReferenciaSearch(getURLSILVER(),query_);
 		return dados;
 	}
 

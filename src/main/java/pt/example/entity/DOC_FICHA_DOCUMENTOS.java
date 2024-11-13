@@ -29,10 +29,6 @@ public class DOC_FICHA_DOCUMENTOS {
 	private String REFERENCIA;
 	@JsonProperty("DESC_REFERENCIA")
 	private String DESC_REFERENCIA;
-	@JsonProperty("COD_DOCUMENTO")
-	private String COD_DOCUMENTO;
-	@JsonProperty("NOME_DOCUMENTO")
-	private String NOME_DOCUMENTO;
 	@JsonProperty("NOME_ABA")
 	private String NOME_ABA;
 	@JsonProperty("TIPO_DOCUMENTO")
@@ -56,18 +52,7 @@ public class DOC_FICHA_DOCUMENTOS {
 	@JsonProperty("INATIVO")
 	private Boolean INATIVO;
 	@JsonProperty("ID_FICHEIRO")
-	private String ID_FICHEIRO;
-	@JsonProperty("ID_PASTA")
-	private String ID_PASTA;
-	@JsonProperty("CAMINHO")
-	private String CAMINHO;
-	@JsonProperty("NOME_FICHEIRO")
-	private String NOME_FICHEIRO;
-	@JsonProperty("TIPO_FICHEIRO")
-	private String TIPO_FICHEIRO;
-	@JsonProperty("ID_CAMINHO")
-	private Integer ID_CAMINHO;
-	
+	private Integer ID_FICHEIRO;
 
 	public Integer getID() {
 		return ID;
@@ -91,14 +76,6 @@ public class DOC_FICHA_DOCUMENTOS {
 
 	public String getDESC_REFERENCIA() {
 		return DESC_REFERENCIA;
-	}
-
-	public String getCOD_DOCUMENTO() {
-		return COD_DOCUMENTO;
-	}
-
-	public String getNOME_DOCUMENTO() {
-		return NOME_DOCUMENTO;
 	}
 
 	public String getNOME_ABA() {
@@ -169,14 +146,6 @@ public class DOC_FICHA_DOCUMENTOS {
 		DESC_REFERENCIA = dESC_REFERENCIA;
 	}
 
-	public void setCOD_DOCUMENTO(String cOD_DOCUMENTO) {
-		COD_DOCUMENTO = cOD_DOCUMENTO;
-	}
-
-	public void setNOME_DOCUMENTO(String nOME_DOCUMENTO) {
-		NOME_DOCUMENTO = nOME_DOCUMENTO;
-	}
-
 	public void setNOME_ABA(String nOME_ABA) {
 		NOME_ABA = nOME_ABA;
 	}
@@ -221,52 +190,12 @@ public class DOC_FICHA_DOCUMENTOS {
 		INATIVO = iNATIVO;
 	}
 
-	public String getID_FICHEIRO() {
+	public Integer getID_FICHEIRO() {
 		return ID_FICHEIRO;
 	}
 
-	public String getID_PASTA() {
-		return ID_PASTA;
-	}
-
-	public String getCAMINHO() {
-		return CAMINHO;
-	}
-
-	public String getNOME_FICHEIRO() {
-		return NOME_FICHEIRO;
-	}
-
-	public void setID_FICHEIRO(String iD_FICHEIRO) {
+	public void setID_FICHEIRO(Integer iD_FICHEIRO) {
 		ID_FICHEIRO = iD_FICHEIRO;
-	}
-
-	public void setID_PASTA(String iD_PASTA) {
-		ID_PASTA = iD_PASTA;
-	}
-
-	public void setCAMINHO(String cAMINHO) {
-		CAMINHO = cAMINHO;
-	}
-
-	public void setNOME_FICHEIRO(String nOME_FICHEIRO) {
-		NOME_FICHEIRO = nOME_FICHEIRO;
-	}
-
-	public String getTIPO_FICHEIRO() {
-		return TIPO_FICHEIRO;
-	}
-
-	public void setTIPO_FICHEIRO(String tIPO_FICHEIRO) {
-		TIPO_FICHEIRO = tIPO_FICHEIRO;
-	}
-
-	public Integer getID_CAMINHO() {
-		return ID_CAMINHO;
-	}
-
-	public void setID_CAMINHO(Integer iD_CAMINHO) {
-		ID_CAMINHO = iD_CAMINHO;
 	}
 
 }

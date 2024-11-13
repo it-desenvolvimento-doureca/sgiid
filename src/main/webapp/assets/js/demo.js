@@ -730,10 +730,14 @@ function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
     };
 }
 
-// Usage
+// Usage 
+delete_cookie('IP_CLIENT_RTC');
+function delete_cookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 
 getUserIP(function (ip) {
-    document.cookie = "IP_CLIENT=" + ip;
+    document.cookie = "IP_CLIENT_RTC=" + ip;
 });
 
 $(document).ready(function () {

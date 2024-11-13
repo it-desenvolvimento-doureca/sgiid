@@ -13,17 +13,16 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 @Entity
 @IdClass(PK_PIN_MOV_RECEITAS.class)
 @Table(name = "PIN_MOV_RECEITAS")
-public class PIN_MOV_RECEITAS implements Serializable{
-	@Id 
+public class PIN_MOV_RECEITAS implements Serializable {
+	@Id
 	@JsonProperty("ID")
 	private Integer ID;
 	@Id
 	@JsonProperty("VERSAO")
-    private Integer VERSAO;
+	private Integer VERSAO;
 	@JsonProperty("DATA_CRIA")
 	private Timestamp DATA_CRIA;
 	@JsonProperty("UTZ_CRIA")
@@ -71,11 +70,11 @@ public class PIN_MOV_RECEITAS implements Serializable{
 	@JsonProperty("ACABAMENTOS")
 	private String ACABAMENTOS;
 	@JsonProperty("PRIMARIO")
-	private String PRIMARIO;
+	private Integer PRIMARIO;
 	@JsonProperty("BASE")
-	private String BASE;
+	private Integer BASE;
 	@JsonProperty("VERNIZ")
-	private String VERNIZ;
+	private Integer VERNIZ;
 	@JsonProperty("CARTELA")
 	private String CARTELA;
 	@JsonProperty("RACK")
@@ -96,7 +95,20 @@ public class PIN_MOV_RECEITAS implements Serializable{
 	private Integer ID_COR;
 	@JsonProperty("TAXA_REJEICAO")
 	private Float TAXA_REJEICAO;
-	
+
+	@JsonProperty("TEMPERATURA_MIN")
+	private Float TEMPERATURA_MIN;
+	@JsonProperty("TEMPERATURA_MAX")
+	private Float TEMPERATURA_MAX;
+	@JsonProperty("TEMPO_FLASHOFF")
+	private String TEMPO_FLASHOFF;
+
+	@JsonProperty("CICLO_PRIMARIO")
+	private Integer CICLO_PRIMARIO;
+	@JsonProperty("CICLO_BASE")
+	private Integer CICLO_BASE;
+	@JsonProperty("CICLO_VERNIZ")
+	private Integer CICLO_VERNIZ;
 
 	public Float getTAXA_REJEICAO() {
 		return TAXA_REJEICAO;
@@ -306,27 +318,27 @@ public class PIN_MOV_RECEITAS implements Serializable{
 		ACABAMENTOS = aCABAMENTOS;
 	}
 
-	public String getPRIMARIO() {
+	public Integer getPRIMARIO() {
 		return PRIMARIO;
 	}
 
-	public void setPRIMARIO(String pRIMARIO) {
+	public void setPRIMARIO(Integer pRIMARIO) {
 		PRIMARIO = pRIMARIO;
 	}
 
-	public String getBASE() {
+	public Integer getBASE() {
 		return BASE;
 	}
 
-	public void setBASE(String bASE) {
+	public void setBASE(Integer bASE) {
 		BASE = bASE;
 	}
 
-	public String getVERNIZ() {
+	public Integer getVERNIZ() {
 		return VERNIZ;
 	}
 
-	public void setVERNIZ(String vERNIZ) {
+	public void setVERNIZ(Integer vERNIZ) {
 		VERNIZ = vERNIZ;
 	}
 
@@ -400,6 +412,54 @@ public class PIN_MOV_RECEITAS implements Serializable{
 
 	public void setID_COR(Integer iD_COR) {
 		ID_COR = iD_COR;
+	}
+
+	public Float getTEMPERATURA_MIN() {
+		return TEMPERATURA_MIN;
+	}
+
+	public Float getTEMPERATURA_MAX() {
+		return TEMPERATURA_MAX;
+	}
+
+	public String getTEMPO_FLASHOFF() {
+		return TEMPO_FLASHOFF;
+	}
+
+	public void setTEMPERATURA_MIN(Float tEMPERATURA_MIN) {
+		TEMPERATURA_MIN = tEMPERATURA_MIN;
+	}
+
+	public void setTEMPERATURA_MAX(Float tEMPERATURA_MAX) {
+		TEMPERATURA_MAX = tEMPERATURA_MAX;
+	}
+
+	public void setTEMPO_FLASHOFF(String tEMPO_FLASHOFF) {
+		TEMPO_FLASHOFF = tEMPO_FLASHOFF;
+	}
+
+	public Integer getCICLO_PRIMARIO() {
+		return CICLO_PRIMARIO;
+	}
+
+	public Integer getCICLO_BASE() {
+		return CICLO_BASE;
+	}
+
+	public Integer getCICLO_VERNIZ() {
+		return CICLO_VERNIZ;
+	}
+
+	public void setCICLO_PRIMARIO(Integer cICLO_PRIMARIO) {
+		CICLO_PRIMARIO = cICLO_PRIMARIO;
+	}
+
+	public void setCICLO_BASE(Integer cICLO_BASE) {
+		CICLO_BASE = cICLO_BASE;
+	}
+
+	public void setCICLO_VERNIZ(Integer cICLO_VERNIZ) {
+		CICLO_VERNIZ = cICLO_VERNIZ;
 	}
 
 }

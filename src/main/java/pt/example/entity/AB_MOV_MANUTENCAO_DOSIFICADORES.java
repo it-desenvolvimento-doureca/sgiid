@@ -53,6 +53,16 @@ public class AB_MOV_MANUTENCAO_DOSIFICADORES {
 	private Integer UTZ_ULT_MODIF;
 	@JsonProperty("DATA_ULT_MODIF")
 	private Timestamp DATA_ULT_MODIF;
+	
+	@JsonProperty("DOSEADOR_3_NIVEL")
+	private BigDecimal DOSEADOR_3_NIVEL;
+	@JsonProperty("DOSEADOR_3_REPOSICAO")
+	private BigDecimal DOSEADOR_3_REPOSICAO;
+	
+	@JsonProperty("DOSEADOR_4_NIVEL")
+	private BigDecimal DOSEADOR_4_NIVEL;
+	@JsonProperty("DOSEADOR_4_REPOSICAO")
+	private BigDecimal DOSEADOR_4_REPOSICAO;
 
 	public Integer getID() {
 		return ID;
@@ -188,6 +198,38 @@ public class AB_MOV_MANUTENCAO_DOSIFICADORES {
 
 	public void setDATA_ULT_MODIF(Timestamp dATA_ULT_MODIF) {
 		DATA_ULT_MODIF = dATA_ULT_MODIF;
+	}
+
+	public BigDecimal getDOSEADOR_3_NIVEL() {
+		return DOSEADOR_3_NIVEL;
+	}
+
+	public BigDecimal getDOSEADOR_3_REPOSICAO() {
+		return DOSEADOR_3_REPOSICAO;
+	}
+
+	public BigDecimal getDOSEADOR_4_NIVEL() {
+		return DOSEADOR_4_NIVEL;
+	}
+
+	public BigDecimal getDOSEADOR_4_REPOSICAO() {
+		return DOSEADOR_4_REPOSICAO;
+	}
+
+	public void setDOSEADOR_3_NIVEL(BigDecimal dOSEADOR_3_NIVEL) {
+		DOSEADOR_3_NIVEL = dOSEADOR_3_NIVEL;
+	}
+
+	public void setDOSEADOR_3_REPOSICAO(BigDecimal dOSEADOR_3_REPOSICAO) {
+		DOSEADOR_3_REPOSICAO = dOSEADOR_3_REPOSICAO;
+	}
+
+	public void setDOSEADOR_4_NIVEL(BigDecimal dOSEADOR_4_NIVEL) {
+		DOSEADOR_4_NIVEL = dOSEADOR_4_NIVEL;
+	}
+
+	public void setDOSEADOR_4_REPOSICAO(BigDecimal dOSEADOR_4_REPOSICAO) {
+		DOSEADOR_4_REPOSICAO = dOSEADOR_4_REPOSICAO;
 	}
 
 }
