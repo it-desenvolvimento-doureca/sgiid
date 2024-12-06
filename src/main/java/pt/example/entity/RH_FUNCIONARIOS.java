@@ -33,6 +33,9 @@ public class RH_FUNCIONARIOS {
 	private Timestamp DATA_ULT_MODIF;
 	private Integer UTZ_ULT_MODIF;
 	private Boolean REGISTA_PONTO;
+	private Boolean EXPOSTO_RISCOS;
+	private String PERIOCIDADE;
+	
 
 	@Id
 	@Column(name = "COD_FUNCIONARIO")
@@ -196,6 +199,24 @@ public class RH_FUNCIONARIOS {
 
 	public void setREGISTA_PONTO(Boolean rEGISTA_PONTO) {
 		REGISTA_PONTO = rEGISTA_PONTO;
+	}
+
+	@Column(name = "EXPOSTO_RISCOS")
+	public Boolean getEXPOSTO_RISCOS() {
+		return EXPOSTO_RISCOS;
+	}
+
+	@Column(name = "PERIOCIDADE")
+	public String getPERIOCIDADE() {
+		return PERIOCIDADE;
+	}
+
+	public void setEXPOSTO_RISCOS(Boolean eXPOSTO_RISCOS) {
+		EXPOSTO_RISCOS = eXPOSTO_RISCOS;
+	}
+
+	public void setPERIOCIDADE(String pERIOCIDADE) {
+		PERIOCIDADE = pERIOCIDADE;
 	}
 
 }

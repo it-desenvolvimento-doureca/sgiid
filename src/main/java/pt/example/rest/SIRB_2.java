@@ -2,9 +2,6 @@ package pt.example.rest;
 
 import java.awt.print.PrinterException;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,10 +37,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import com.lowagie.text.pdf.codec.Base64.OutputStream;
-
 import pt.example.bootstrap.ConnectProgress;
-import pt.example.bootstrap.ConnectionSQL;
 import pt.example.bootstrap.Printer;
 import pt.example.dao.AB_DIC_DOSIFICACAODao;
 import pt.example.dao.AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAODao;
@@ -164,7 +158,6 @@ import pt.example.entity.DOC_DIC_TIPOS_DOCUMENTO;
 import pt.example.entity.DOC_FICHA_DOCUMENTOS;
 import pt.example.entity.DOC_GESTAO_PASTAS;
 import pt.example.entity.FIN_DIC_PARAMETROS_SEGUIMENTO;
-import pt.example.entity.FIN_REGISTO_ACOES;
 import pt.example.entity.GER_FAVORITOS;
 import pt.example.entity.GER_REFERENCIAS_FASTRESPONSE_REJEICOES;
 import pt.example.entity.GER_UTILIZADORES;
@@ -195,12 +188,9 @@ import pt.example.entity.MAN_MOV_MANUTENCAO_PLANOS;
 import pt.example.entity.MAN_MOV_MAQUINAS_PARADAS;
 import pt.example.entity.MAN_MOV_PEDIDOS;
 import pt.example.entity.MAN_MOV_PEDIDOS_DOCUMENTOS;
-import pt.example.entity.PA_MOV_CAB;
-import pt.example.entity.PA_MOV_FICHEIROS;
 import pt.example.entity.PE_MOV_CAB;
 import pt.example.entity.PE_MOV_CAB_HISTORICO;
 import pt.example.entity.PE_MOV_FICHEIROS;
-import pt.example.entity.PIN_DIC_PROGRAMAS;
 import pt.example.entity.PR_DIC_ALERTAS_DESCARGA;
 import pt.example.entity.PR_DIC_CAPACIDADE_ACABAMENTO;
 import pt.example.entity.PR_DIC_CAPACIDADE_RACKS;
@@ -6542,6 +6532,13 @@ public class SIRB_2 {
 	}
 
 	@GET
+	@Path("/getDOC_FICHA_DOCUMENTOSTipo/{id}")
+	@Produces("application/json")
+	public List<DOC_FICHA_DOCUMENTOS> getDOC_FICHA_DOCUMENTOSTipo(@PathParam("id") Integer id) {
+		return dao83.getallTipo(id);
+	}
+
+	@GET
 	@Path("/getDOC_FICHA_DOCUMENTOS2")
 	@Produces("application/json")
 	public List<DOC_FICHA_DOCUMENTOS> getDOC_FICHA_DOCUMENTOS2() {
@@ -6647,6 +6644,21 @@ public class SIRB_2 {
 				"EXEC DOC_getTotalPredefinidos " + ID + ",'" + REFERENCIA + "','" + SECTOR + "','" + MAQUINA + "' ");
 
 		List<Integer> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/DOC_LISTA_VERIFICACAO")
+	@Produces("application/json")
+	public List<Object[]> DOC_LISTA_VERIFICACAO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+
+		String ID = firstMap.get("ID");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC DOC_LISTA_VERIFICACAO " + ID + "");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
@@ -6804,6 +6816,9 @@ public class SIRB_2 {
 		String REFERENCIA = firstMap.get("REFERENCIA");
 		String MAQUINA = firstMap.get("MAQUINA");
 		String SECTOR = firstMap.get("SECTOR");
+		String ID_CAB = firstMap.get("ID_CAB");
+		String ID_UTZ = firstMap.get("ID_UTZ");
+		String TIPO = firstMap.get("TIPO");
 
 		if (REFERENCIA != null)
 			REFERENCIA = "'" + REFERENCIA + "'";
@@ -6812,10 +6827,46 @@ public class SIRB_2 {
 		if (SECTOR != null)
 			SECTOR = "'" + SECTOR + "'";
 
-		Query query_folder = entityManager
-				.createNativeQuery("EXEC DOC_GET_FILES " + REFERENCIA + "," + MAQUINA + "," + SECTOR + "");
+		if (ID_UTZ != null)
+			ID_UTZ = "'" + ID_UTZ + "'";
+
+		if (TIPO != null) {
+			TIPO = "'" + TIPO + "'";
+		} else {
+			TIPO = "'APP_DOCUMENTOS'";
+		}
+
+		Query query_folder = entityManager.createNativeQuery("EXEC DOC_GET_FILES " + REFERENCIA + "," + MAQUINA + ","
+				+ SECTOR + "," + ID_CAB + "," + ID_UTZ + "," + TIPO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/ATUALIZA_DOC_DOCUMENTOS_LIDOS")
+	@Produces("application/json")
+	public int ATUALIZA_DOC_DOCUMENTOS_LIDOS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID_UTZ = firstMap.get("ID_UTZ");
+		String ID_CAB = firstMap.get("ID_CAB");
+		String ID_FICHEIRO = firstMap.get("ID_FICHEIRO");
+		String TIPO = firstMap.get("TIPO");
+
+		if (ID_UTZ != null)
+			ID_UTZ = "'" + ID_UTZ + "'";
+
+		if (TIPO != null) {
+			TIPO = "'" + TIPO + "'";
+		} else {
+			TIPO = "'APP_DOCUMENTOS'";
+		}
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC ATUALIZA_DOC_DOCUMENTOS_LIDOS " + ID_UTZ + "," + ID_CAB + "," + ID_FICHEIRO + "," + TIPO);
+
+		int dados_folder = query_folder.executeUpdate();
 
 		return dados_folder;
 	}
@@ -6835,6 +6886,13 @@ public class SIRB_2 {
 	@Produces("application/json")
 	public List<DOC_DIC_TIPOS_DOCUMENTO> getDOC_DIC_TIPOS_DOCUMENTO() {
 		return dao84.getall();
+	}
+
+	@GET
+	@Path("/getDOC_DIC_TIPOS_DOCUMENTOUser/{id}")
+	@Produces("application/json")
+	public List<DOC_DIC_TIPOS_DOCUMENTO> getDOC_DIC_TIPOS_DOCUMENTOUser(@PathParam("id") Integer id) {
+		return dao84.getallUser(id);
 	}
 
 	@GET
@@ -8021,6 +8079,27 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager
 				.createNativeQuery("EXEC PR_WINROBOT_TERMINA_TRABALHO " + ID + "," + USER + "," + ID_USER);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PR_WINROBOT_TERMINA_TRABALHO2")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PR_WINROBOT_TERMINA_TRABALHO2(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		String USER = firstMap.get("USER");
+		String ID_USER = firstMap.get("ID_USER");
+
+		if (USER != null)
+			USER = "'" + USER + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC PR_WINROBOT_TERMINA_TRABALHO2 " + ID + "," + USER + "," + ID_USER);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

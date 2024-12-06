@@ -14,6 +14,7 @@ public class GER_PERFIL_LIN {
 	private Integer ID_PERFIL_LIN;
 	private Integer ID_PERFIL_CAB;
 	private String ID_CAMPO;
+	private Boolean PARTIALSELECTED;
 
 	@Id
 	@Column(name = "ID_PERFIL_LIN")
@@ -42,6 +43,15 @@ public class GER_PERFIL_LIN {
 
 	public void setID_CAMPO(String iD_CAMPO) {
 		ID_CAMPO = iD_CAMPO;
+	}
+
+	@Column(name = "PARTIALSELECTED")
+	public Boolean getPARTIALSELECTED() {
+		return PARTIALSELECTED;
+	}
+
+	public void setPARTIALSELECTED(Boolean pARTIALSELECTED) {
+		PARTIALSELECTED = pARTIALSELECTED;
 	}
 
 }

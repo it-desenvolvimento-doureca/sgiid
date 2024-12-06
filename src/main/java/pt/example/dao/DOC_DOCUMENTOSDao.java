@@ -20,7 +20,7 @@ public class DOC_DOCUMENTOSDao extends GenericDaoJpaImpl<DOC_DOCUMENTOS, Integer
 		return data;
 
 	}
-	
+
 	public List<DOC_DOCUMENTOS> getbylocalizacao(Integer id) {
 
 		Query query = entityManager.createQuery("Select a from DOC_DOCUMENTOS a where a.ID_CAMINHO = :id ");
@@ -37,5 +37,15 @@ public class DOC_DOCUMENTOSDao extends GenericDaoJpaImpl<DOC_DOCUMENTOS, Integer
 		return data;
 
 	}
-	
+
+	public List<DOC_DOCUMENTOS> getallTipo(Integer id) {
+
+		Query query = entityManager
+				.createQuery("Select a from DOC_DOCUMENTOS a where a.INATIVO != 1  and TIPO_DOCUMENTO = :id");
+		query.setParameter("id", id);
+		List<DOC_DOCUMENTOS> data = query.getResultList();
+		return data;
+
+	}
+
 }

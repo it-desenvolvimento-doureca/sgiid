@@ -51,7 +51,9 @@ public class DOC_DOCUMENTOS {
 	private String VERSAO;
 	@JsonProperty("ID_CAMINHO")
 	private Integer ID_CAMINHO;
-
+	@JsonProperty("TIPO_DOCUMENTO")
+	private Integer TIPO_DOCUMENTO;
+	
 	public Integer getID() {
 		return ID;
 	}
@@ -194,6 +196,14 @@ public class DOC_DOCUMENTOS {
 
 	public void setID_CAMINHO(Integer iD_CAMINHO) {
 		ID_CAMINHO = iD_CAMINHO;
+	}
+
+	public Integer getTIPO_DOCUMENTO() {
+		return TIPO_DOCUMENTO;
+	}
+
+	public void setTIPO_DOCUMENTO(Integer tIPO_DOCUMENTO) {
+		TIPO_DOCUMENTO = tIPO_DOCUMENTO;
 	}
 
 }

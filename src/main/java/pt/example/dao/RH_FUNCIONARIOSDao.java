@@ -97,8 +97,8 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 		 * );
 		 */
 		Query query = entityManager.createNativeQuery("DECLARE @DATA date = '" + datageral + "'; "
-				+ "Declare @TABELATEMP  TABLE (NFuncionario int,CheckDate date,Time_In datetime,Time_Out datetime) "
-				+ "Insert @TABELATEMP Exec   [dbo].[QUERY_GERAL] @DATA "
+				+ "/*Declare @TABELATEMP  TABLE (NFuncionario int,CheckDate date,Time_In datetime,Time_Out datetime) "
+				+ "Insert @TABELATEMP Exec   [dbo].[QUERY_GERAL] @DATA */"
 				+ "select a.COD_FUNCIONARIO,a.NOME as nome_func,a.EMPRESA,a.DATA_ADMISSAO,a.DATA_DEMISSAO,a.ATIVO,a.LOCAL,a.RESPONSAVEL,b.DES_SECTOR,c.DES_TURNO,d.NOME,(select top 1 CODIGO from RH_DIC_CACIFOS where ID = a.NUM_CACIFO),a.DATA_INICIO,a.DATA_FIM,e.DESIGNACAO,a.DATA_PREV_RET,	"
 				+ " f.Time_In hora_entra, (CASE WHEN f.Time_In = f.Time_Out or DATEDIFF(MINUTE, f.Time_In, f.Time_Out ) < 5 THEN null ELSE f.Time_Out  END) hora_saida, "
 				+ " a.COD_SECTOR,b.COD_TURNO from RH_FUNCIONARIOS a "
@@ -106,7 +106,9 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ "left join RH_TURNOS c on b.COD_TURNO = c.COD_TURNO "
 				+ "left join RH_FUNCIONARIOS d on b.CHEFE1 = d.COD_FUNCIONARIO "
 				+ "left join RH_ESTADOS_FUNC e on a.ESTADO = e.COD_ESTADO "
-				+ "left join  @TABELATEMP f on f.NFuncionario = a.COD_FUNC_ORIGEM " + "where (a.COD_SECTOR in ("
+				+ "left join  RH_DIC_PONTO f on f.NFuncionario = a.COD_FUNC_ORIGEM and CheckDate = @DATA "
+				//+ "left join  @TABELATEMP f on f.NFuncionario = a.COD_FUNC_ORIGEM " 
+				+ "where (a.COD_SECTOR in ("
 				+ SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + Operario
 				+ " is not null) or (a.COD_FUNCIONARIO  = " + Operario + " )) " + querywhere
 				+ " order by CASE WHEN a.COD_FUNCIONARIO > 0 THEN a.COD_FUNCIONARIO ELSE a.COD_FUNCIONARIO * -1 END");

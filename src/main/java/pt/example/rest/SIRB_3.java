@@ -34,7 +34,9 @@ import pt.example.dao.COM_BUDGETS_ANALISESDao;
 import pt.example.dao.COM_BUDGETS_LINHASDao;
 import pt.example.dao.COM_CUSTOMERS_GROUPSDao;
 import pt.example.dao.COM_CUSTOMER_GROUPSDao;
+import pt.example.dao.DOC_DIC_TIPOS_DOCUMENTO_UTZDao;
 import pt.example.dao.DOC_DOCUMENTOSDao;
+import pt.example.dao.DOC_DOCUMENTOS_VERSOESDao;
 import pt.example.dao.FIN_DIC_FILTROSDao;
 import pt.example.dao.FIN_DIC_TIPO_MOVIMENTO_STOCKDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
@@ -70,18 +72,34 @@ import pt.example.dao.PIN_PLANEAMENTO_PINTURA_LINHASDao;
 import pt.example.dao.PR_REGISTO_PINTURADao;
 import pt.example.dao.PR_WINROBOT_USERSDao;
 import pt.example.dao.RH_CANDIDATURASDao;
+import pt.example.dao.RH_DIC_AREA_FORMACAODao;
+import pt.example.dao.RH_DIC_CRITERIOS_AVALIACAODao;
+import pt.example.dao.RH_DIC_ENTIDADE_FORMADORADao;
+import pt.example.dao.RH_DIC_ENTIDADE_MEDICADao;
+import pt.example.dao.RH_DIC_ENTIDADE_MEDICA_LOCAISDao;
+import pt.example.dao.RH_DIC_EXAMESDao;
+import pt.example.dao.RH_DIC_PERIOCIDADE_ALERTASDao;
+import pt.example.dao.RH_FORMACAODao;
+import pt.example.dao.RH_FORMACAO_DOCUMENTOSDao;
+import pt.example.dao.RH_FORMACAO_PARTICIPANTESDao;
+import pt.example.dao.RH_MEDICINA_TRABALHODao;
+import pt.example.dao.RH_MEDICINA_TRABALHO_DOCUMENTOSDao;
+import pt.example.dao.RH_REGISTO_ACOESDao;
 import pt.example.entity.COM_ACORDOS;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
 import pt.example.entity.COM_BUDGETS_LINHAS;
 import pt.example.entity.COM_CUSTOMERS_GROUPS;
 import pt.example.entity.COM_CUSTOMER_GROUPS;
+import pt.example.entity.DOC_DIC_TIPOS_DOCUMENTO_UTZ;
 import pt.example.entity.DOC_DOCUMENTOS;
+import pt.example.entity.DOC_DOCUMENTOS_VERSOES;
 import pt.example.entity.FIN_DIC_FILTROS;
 import pt.example.entity.FIN_DIC_TIPO_MOVIMENTO_STOCK;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER_OF;
 import pt.example.entity.GER_INFO_PAGINAS;
+import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
 import pt.example.entity.MAN_DIC_FAMILIA_EQUIPAMENTOS;
 import pt.example.entity.MAN_MOV_MANUTENCAO_OPERARIOS;
@@ -114,6 +132,19 @@ import pt.example.entity.PR_REGISTO_PINTURA;
 import pt.example.entity.PR_WINROBOT_CAB;
 import pt.example.entity.PR_WINROBOT_USERS;
 import pt.example.entity.RH_CANDIDATURAS;
+import pt.example.entity.RH_DIC_AREA_FORMACAO;
+import pt.example.entity.RH_DIC_CRITERIOS_AVALIACAO;
+import pt.example.entity.RH_DIC_ENTIDADE_FORMADORA;
+import pt.example.entity.RH_DIC_ENTIDADE_MEDICA;
+import pt.example.entity.RH_DIC_ENTIDADE_MEDICA_LOCAIS;
+import pt.example.entity.RH_DIC_EXAMES;
+import pt.example.entity.RH_DIC_PERIOCIDADE_ALERTAS;
+import pt.example.entity.RH_FORMACAO;
+import pt.example.entity.RH_FORMACAO_DOCUMENTOS;
+import pt.example.entity.RH_FORMACAO_PARTICIPANTES;
+import pt.example.entity.RH_MEDICINA_TRABALHO;
+import pt.example.entity.RH_MEDICINA_TRABALHO_DOCUMENTOS;
+import pt.example.entity.RH_REGISTO_ACOES;
 
 @Stateless
 @Path("/sirb")
@@ -201,6 +232,36 @@ public class SIRB_3 {
 	private PIN_PLANEAMENTO_PINTURA_LINHASDao dao40;
 	@Inject
 	private DOC_DOCUMENTOSDao dao41;
+	@Inject
+	private DOC_DIC_TIPOS_DOCUMENTO_UTZDao dao42;
+	@Inject
+	private DOC_DOCUMENTOS_VERSOESDao dao43;
+	@Inject
+	private RH_REGISTO_ACOESDao dao44;
+	@Inject
+	private RH_DIC_AREA_FORMACAODao dao45;
+	@Inject
+	private RH_DIC_CRITERIOS_AVALIACAODao dao46;
+	@Inject
+	private RH_DIC_ENTIDADE_FORMADORADao dao47;
+	@Inject
+	private RH_FORMACAO_DOCUMENTOSDao dao48;
+	@Inject
+	private RH_FORMACAODao dao49;
+	@Inject
+	private RH_FORMACAO_PARTICIPANTESDao dao50;
+	@Inject
+	private RH_MEDICINA_TRABALHO_DOCUMENTOSDao dao51;
+	@Inject
+	private RH_MEDICINA_TRABALHODao dao52;
+	@Inject
+	private RH_DIC_EXAMESDao dao53;
+	@Inject
+	private RH_DIC_ENTIDADE_MEDICADao dao54;
+	@Inject
+	private RH_DIC_ENTIDADE_MEDICA_LOCAISDao dao55;
+	@Inject
+	private RH_DIC_PERIOCIDADE_ALERTASDao dao56;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -3426,7 +3487,7 @@ public class SIRB_3 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/PR_WINROBOT_ATUALIZA_ETIQUETAS_LINHA")
 	@Consumes("*/*")
@@ -3434,9 +3495,8 @@ public class SIRB_3 {
 	public int PR_WINROBOT_ATUALIZA_ETIQUETAS_LINHA(final List<HashMap<String, String>> dados) {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ID = firstMap.get("ID");
-		
-		Query query_folder = entityManager
-				.createNativeQuery("EXEC PR_WINROBOT_ATUALIZA_ETIQUETAS_LINHA "+ID);
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PR_WINROBOT_ATUALIZA_ETIQUETAS_LINHA " + ID);
 
 		int dados_folder = query_folder.executeUpdate();
 
@@ -3481,7 +3541,6 @@ public class SIRB_3 {
 		String INDEX_ETIQUETA = firstMap.get("INDEX_ETIQUETA");
 		if (ETIQUETA != null)
 			ETIQUETA = "'" + ETIQUETA + "'";
-		
 
 		Query query_folder = entityManager.createNativeQuery("EXEC REMOVE_PIN_WINROBOT_ETIQUETA  " + ID + ","
 				+ INDEX_ARTICLE + "," + INDEX_ETIQUETA + "," + ETIQUETA);
@@ -3505,9 +3564,9 @@ public class SIRB_3 {
 
 		if (ETIQUETA != null)
 			ETIQUETA = "'" + ETIQUETA + "'";
-		
-		Query query_folder = entityManager.createNativeQuery(
-				"EXEC INSERT_PIN_WINROBOT_ETIQUETA " + ID + "," + INDEX_ARTICLE + "," + INDEX_ETIQUETA + "," + ETIQUETA);
+
+		Query query_folder = entityManager.createNativeQuery("EXEC INSERT_PIN_WINROBOT_ETIQUETA " + ID + ","
+				+ INDEX_ARTICLE + "," + INDEX_ETIQUETA + "," + ETIQUETA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -3852,6 +3911,13 @@ public class SIRB_3 {
 	}
 
 	@GET
+	@Path("/getDOC_DOCUMENTOSTipo/{id}")
+	@Produces("application/json")
+	public List<DOC_DOCUMENTOS> getDOC_DOCUMENTOSTipo(@PathParam("id") Integer id) {
+		return dao41.getallTipo(id);
+	}
+
+	@GET
 	@Path("/getDOC_DOCUMENTOSbyid/{id}")
 	@Produces("application/json")
 	public List<DOC_DOCUMENTOS> getDOC_DOCUMENTOSbyid(@PathParam("id") Integer id) {
@@ -3880,5 +3946,949 @@ public class SIRB_3 {
 		DOC_DOCUMENTOS DOC_DOCUMENTOS = new DOC_DOCUMENTOS();
 		DOC_DOCUMENTOS.setID(id);
 		dao41.delete(DOC_DOCUMENTOS);
+	}
+
+	/************************************* DOC_DIC_TIPOS_DOCUMENTO_UTZ */
+	@POST
+	@Path("/createDOC_DIC_TIPOS_DOCUMENTO_UTZ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DIC_TIPOS_DOCUMENTO_UTZ insertDOC_DIC_TIPOS_DOCUMENTO_UTZA(final DOC_DIC_TIPOS_DOCUMENTO_UTZ data) {
+		return dao42.create(data);
+	}
+
+	@GET
+	@Path("/getDOC_DIC_TIPOS_DOCUMENTO_UTZ")
+	@Produces("application/json")
+	public List<DOC_DIC_TIPOS_DOCUMENTO_UTZ> getDOC_DIC_TIPOS_DOCUMENTO_UTZ() {
+		return dao42.getall();
+	}
+
+	@GET
+	@Path("/getDOC_DIC_TIPOS_DOCUMENTO_UTZbyUtilizadores/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getDOC_DIC_TIPOS_DOCUMENTO_UTZbyUtilizadores(@PathParam("id") Integer id) {
+		return dao42.getUtilizadores(id);
+	}
+
+	@GET
+	@Path("/getDOC_DIC_TIPOS_DOCUMENTO_UTZbyidgrupo/{id}")
+	@Produces("application/json")
+	public List<DOC_DIC_TIPOS_DOCUMENTO_UTZ> getDOC_DIC_TIPOS_DOCUMENTO_UTZbyidgrupo(@PathParam("id") Integer id) {
+		return dao42.getbyidgrupo(id);
+	}
+
+	@GET
+	@Path("/getDOC_DIC_TIPOS_DOCUMENTO_UTZbyid/{id}")
+	@Produces("application/json")
+	public List<DOC_DIC_TIPOS_DOCUMENTO_UTZ> getDOC_DIC_TIPOS_DOCUMENTO_UTZbyid(@PathParam("id") Integer id) {
+		return dao42.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteDOC_DIC_TIPOS_DOCUMENTO_UTZ/{id}")
+	public void deleteDOC_DIC_TIPOS_DOCUMENTO_UTZ(@PathParam("id") Integer id) {
+		DOC_DIC_TIPOS_DOCUMENTO_UTZ DOC_DIC_TIPOS_DOCUMENTO_UTZ = new DOC_DIC_TIPOS_DOCUMENTO_UTZ();
+		DOC_DIC_TIPOS_DOCUMENTO_UTZ.setID(id);
+		dao42.delete(DOC_DIC_TIPOS_DOCUMENTO_UTZ);
+	}
+
+	@PUT
+	@Path("/updateDOC_DIC_TIPOS_DOCUMENTO_UTZ")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DIC_TIPOS_DOCUMENTO_UTZ updateDOC_DIC_TIPOS_DOCUMENTO_UTZ(
+			final DOC_DIC_TIPOS_DOCUMENTO_UTZ DOC_DIC_TIPOS_DOCUMENTO_UTZ) {
+		DOC_DIC_TIPOS_DOCUMENTO_UTZ.setID(DOC_DIC_TIPOS_DOCUMENTO_UTZ.getID());
+		return dao42.update(DOC_DIC_TIPOS_DOCUMENTO_UTZ);
+	}
+
+	/************************************ DOC_DOCUMENTOS_VERSOES */
+
+	@POST
+	@Path("/createDOC_DOCUMENTOS_VERSOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DOCUMENTOS_VERSOES insertDOC_DOCUMENTOS_VERSOES(final DOC_DOCUMENTOS_VERSOES data) {
+		return dao43.create(data);
+	}
+
+	@GET
+	@Path("/getDOC_DOCUMENTOS_VERSOES")
+	@Produces("application/json")
+	public List<DOC_DOCUMENTOS_VERSOES> getDOC_DOCUMENTOS_VERSOES() {
+		return dao43.getall();
+	}
+
+	@GET
+	@Path("/getDOC_DOCUMENTOS_VERSOESbyid/{id}")
+	@Produces("application/json")
+	public List<DOC_DOCUMENTOS_VERSOES> getDOC_DOCUMENTOS_VERSOESbyid(@PathParam("id") Integer id) {
+		return dao43.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateDOC_DOCUMENTOS_VERSOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public DOC_DOCUMENTOS_VERSOES updateDOC_DOCUMENTOS_VERSOES(final DOC_DOCUMENTOS_VERSOES DOC_DOCUMENTOS_VERSOES) {
+		DOC_DOCUMENTOS_VERSOES.setID(DOC_DOCUMENTOS_VERSOES.getID());
+		return dao43.update(DOC_DOCUMENTOS_VERSOES);
+	}
+
+	@DELETE
+	@Path("/deleteDOC_DOCUMENTOS_VERSOES/{id}")
+	public void deleteDOC_DOCUMENTOS_VERSOES(@PathParam("id") Integer id) {
+		DOC_DOCUMENTOS_VERSOES DOC_DOCUMENTOS_VERSOES = new DOC_DOCUMENTOS_VERSOES();
+		DOC_DOCUMENTOS_VERSOES.setID(id);
+		dao43.delete(DOC_DOCUMENTOS_VERSOES);
+	}
+
+	@POST
+	@Path("/RH_DADOS_CADASTRO_FUNCIONARIO")
+	@Produces("application/json")
+	public List<Object[]> RH_DADOS_CADASTRO_FUNCIONARIO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID_FUNCIONARIO = firstMap.get("ID_FUNCIONARIO");
+
+		if (ID_FUNCIONARIO != null)
+			ID_FUNCIONARIO = "'" + ID_FUNCIONARIO + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC RH_DADOS_CADASTRO_FUNCIONARIO " + ID_FUNCIONARIO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/************************************* RH_REGISTO_ACOES */
+
+	@POST
+	@Path("/createRH_REGISTO_ACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_REGISTO_ACOES insertRH_REGISTO_ACOESA(final RH_REGISTO_ACOES data) {
+		return dao44.create(data);
+	}
+
+	@GET
+	@Path("/getRH_REGISTO_ACOES")
+	@Produces("application/json")
+	public List<RH_REGISTO_ACOES> getRH_REGISTO_ACOES() {
+		return dao44.getall();
+	}
+
+	@GET
+	@Path("/getRH_REGISTO_ACOESbyid/{id}")
+	@Produces("application/json")
+	public List<RH_REGISTO_ACOES> getRH_REGISTO_ACOESbyip(@PathParam("id") String id) {
+		return dao44.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_REGISTO_ACOESbyidFICHEIRO/{id}")
+	@Produces("application/json")
+	public List<RH_REGISTO_ACOES> getRH_REGISTO_ACOESbyidFICHEIRO(@PathParam("id") String id) {
+		return dao44.getbyidFicheiro(id);
+	}
+
+	@DELETE
+	@Path("/deleteRH_REGISTO_ACOES/{id}")
+	public void deleteRH_REGISTO_ACOES(@PathParam("id") Integer id) {
+		RH_REGISTO_ACOES RH_REGISTO_ACOES = new RH_REGISTO_ACOES();
+		RH_REGISTO_ACOES.setID_ACAO(id);
+		dao44.delete(RH_REGISTO_ACOES);
+	}
+
+	@PUT
+	@Path("/updateRH_REGISTO_ACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_REGISTO_ACOES updateRH_REGISTO_ACOES(final RH_REGISTO_ACOES RH_REGISTO_ACOES) {
+		RH_REGISTO_ACOES.setID_ACAO(RH_REGISTO_ACOES.getID_ACAO());
+		return dao44.update(RH_REGISTO_ACOES);
+	}
+
+	/*******************************************
+	 * RH_DIC_AREA_FORMACAO
+	 *******************/
+	@POST
+	@Path("/createRH_DIC_AREA_FORMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_AREA_FORMACAO insertARH_DIC_AREA_FORMACAO(final RH_DIC_AREA_FORMACAO data) {
+		return dao45.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_AREA_FORMACAObyid/{id}")
+	@Produces("application/json")
+	public List<RH_DIC_AREA_FORMACAO> getRH_DIC_AREA_FORMACAObyid(@PathParam("id") Integer id) {
+		return dao45.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_DIC_AREA_FORMACAO")
+	@Produces("application/json")
+	public List<RH_DIC_AREA_FORMACAO> getRH_DIC_AREA_FORMACAO() {
+		return dao45.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_AREA_FORMACAO/{id}")
+	public void deleteRH_DIC_AREA_FORMACAO(@PathParam("id") Integer id) {
+		RH_DIC_AREA_FORMACAO RH_DIC_AREA_FORMACAO = new RH_DIC_AREA_FORMACAO();
+		RH_DIC_AREA_FORMACAO.setID(id);
+		dao45.delete(RH_DIC_AREA_FORMACAO);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_AREA_FORMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_AREA_FORMACAO updateRH_DIC_AREA_FORMACAO(final RH_DIC_AREA_FORMACAO RH_DIC_AREA_FORMACAO) {
+		RH_DIC_AREA_FORMACAO.setID(RH_DIC_AREA_FORMACAO.getID());
+		return dao45.update(RH_DIC_AREA_FORMACAO);
+	}
+
+	/*******************************************
+	 * RH_DIC_CRITERIOS_AVALIACAO
+	 *******************/
+	@POST
+	@Path("/createRH_DIC_CRITERIOS_AVALIACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_CRITERIOS_AVALIACAO insertARH_DIC_CRITERIOS_AVALIACAO(final RH_DIC_CRITERIOS_AVALIACAO data) {
+		return dao46.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_CRITERIOS_AVALIACAObyid/{id}")
+	@Produces("application/json")
+	public List<RH_DIC_CRITERIOS_AVALIACAO> getRH_DIC_CRITERIOS_AVALIACAObyid(@PathParam("id") Integer id) {
+		return dao46.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_DIC_CRITERIOS_AVALIACAO")
+	@Produces("application/json")
+	public List<RH_DIC_CRITERIOS_AVALIACAO> getRH_DIC_CRITERIOS_AVALIACAO() {
+		return dao46.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_CRITERIOS_AVALIACAO/{id}")
+	public void deleteRH_DIC_CRITERIOS_AVALIACAO(@PathParam("id") Integer id) {
+		RH_DIC_CRITERIOS_AVALIACAO RH_DIC_CRITERIOS_AVALIACAO = new RH_DIC_CRITERIOS_AVALIACAO();
+		RH_DIC_CRITERIOS_AVALIACAO.setID(id);
+		dao46.delete(RH_DIC_CRITERIOS_AVALIACAO);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_CRITERIOS_AVALIACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_CRITERIOS_AVALIACAO updateRH_DIC_CRITERIOS_AVALIACAO(
+			final RH_DIC_CRITERIOS_AVALIACAO RH_DIC_CRITERIOS_AVALIACAO) {
+		RH_DIC_CRITERIOS_AVALIACAO.setID(RH_DIC_CRITERIOS_AVALIACAO.getID());
+		return dao46.update(RH_DIC_CRITERIOS_AVALIACAO);
+	}
+
+	/*******************************************
+	 * RH_DIC_ENTIDADE_FORMADORA
+	 *******************/
+	@POST
+	@Path("/createRH_DIC_ENTIDADE_FORMADORA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_ENTIDADE_FORMADORA insertARH_DIC_ENTIDADE_FORMADORA(final RH_DIC_ENTIDADE_FORMADORA data) {
+		return dao47.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_ENTIDADE_FORMADORAbyid/{id}")
+	@Produces("application/json")
+	public List<RH_DIC_ENTIDADE_FORMADORA> getRH_DIC_ENTIDADE_FORMADORAbyid(@PathParam("id") Integer id) {
+		return dao47.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_DIC_ENTIDADE_FORMADORA")
+	@Produces("application/json")
+	public List<RH_DIC_ENTIDADE_FORMADORA> getRH_DIC_ENTIDADE_FORMADORA() {
+		return dao47.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_ENTIDADE_FORMADORA/{id}")
+	public void deleteRH_DIC_ENTIDADE_FORMADORA(@PathParam("id") Integer id) {
+		RH_DIC_ENTIDADE_FORMADORA RH_DIC_ENTIDADE_FORMADORA = new RH_DIC_ENTIDADE_FORMADORA();
+		RH_DIC_ENTIDADE_FORMADORA.setID(id);
+		dao47.delete(RH_DIC_ENTIDADE_FORMADORA);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_ENTIDADE_FORMADORA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_ENTIDADE_FORMADORA updateRH_DIC_ENTIDADE_FORMADORA(
+			final RH_DIC_ENTIDADE_FORMADORA RH_DIC_ENTIDADE_FORMADORA) {
+		RH_DIC_ENTIDADE_FORMADORA.setID(RH_DIC_ENTIDADE_FORMADORA.getID());
+		return dao47.update(RH_DIC_ENTIDADE_FORMADORA);
+	}
+
+	/************************************ RH_FORMACAO_DOCUMENTOS */
+
+	@POST
+	@Path("/createRH_FORMACAO_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_FORMACAO_DOCUMENTOS insertRH_FORMACAO_DOCUMENTOS(final RH_FORMACAO_DOCUMENTOS data) {
+		return dao48.create(data);
+	}
+
+	@GET
+	@Path("/getRH_FORMACAO_DOCUMENTOS")
+	@Produces("application/json")
+	public List<RH_FORMACAO_DOCUMENTOS> getRH_FORMACAO_DOCUMENTOS() {
+		return dao48.getall();
+	}
+
+	@GET
+	@Path("/getRH_FORMACAO_DOCUMENTOSbyid/{id}")
+	@Produces("application/json")
+	public List<RH_FORMACAO_DOCUMENTOS> getRH_FORMACAO_DOCUMENTOSbyid(@PathParam("id") Integer id) {
+		return dao48.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateRH_FORMACAO_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_FORMACAO_DOCUMENTOS updateRH_FORMACAO_DOCUMENTOS(final RH_FORMACAO_DOCUMENTOS RH_FORMACAO_DOCUMENTOS) {
+		RH_FORMACAO_DOCUMENTOS.setID(RH_FORMACAO_DOCUMENTOS.getID());
+		return dao48.update(RH_FORMACAO_DOCUMENTOS);
+	}
+
+	@GET
+	@Path("/getRH_FORMACAO_DOCUMENTOSbyidEquipamento/{id}")
+	@Produces("application/json")
+	public List<RH_FORMACAO_DOCUMENTOS> getRH_FORMACAO_DOCUMENTOSbyidEquipamento(@PathParam("id") Integer id) {
+		return dao48.getbyidEquipamento(id);
+	}
+
+	@GET
+	@Path("/getRH_FORMACAO_DOCUMENTOSbyidEquipamento2/{id}")
+	@Produces("application/json")
+	public List<RH_FORMACAO_DOCUMENTOS> getRH_FORMACAO_DOCUMENTOSbyidEquipamento2(@PathParam("id") Integer id) {
+		return dao48.getbyidEquipamento2(id);
+	}
+
+	@DELETE
+	@Path("/deleteRH_FORMACAO_DOCUMENTOS/{id}")
+	public void deleteRH_FORMACAO_DOCUMENTOS(@PathParam("id") Integer id) {
+		RH_FORMACAO_DOCUMENTOS RH_FORMACAO_DOCUMENTOS = new RH_FORMACAO_DOCUMENTOS();
+		RH_FORMACAO_DOCUMENTOS.setID(id);
+		dao48.delete(RH_FORMACAO_DOCUMENTOS);
+	}
+
+	/******************************************* RH_FORMACAO *******************/
+	@POST
+	@Path("/createRH_FORMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_FORMACAO insertARH_FORMACAO(final RH_FORMACAO data) {
+		return dao49.create(data);
+	}
+
+	@GET
+	@Path("/getRH_FORMACAObyid/{id}")
+	@Produces("application/json")
+	public List<RH_FORMACAO> getRH_FORMACAObyid(@PathParam("id") Integer id) {
+		return dao49.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_FORMACAO")
+	@Produces("application/json")
+	public List<RH_FORMACAO> getRH_FORMACAO() {
+		return dao49.getall();
+	}
+
+	@GET
+	@Path("/getRH_FORMACAO2/{id}")
+	@Produces("application/json")
+	public List<RH_FORMACAO> getRH_FORMACAO2(@PathParam("id") String id) {
+		return dao49.getall2(id);
+	}
+
+	@DELETE
+	@Path("/deleteRH_FORMACAO/{id}")
+	public void deleteRH_FORMACAO(@PathParam("id") Integer id) {
+		RH_FORMACAO RH_FORMACAO = new RH_FORMACAO();
+		RH_FORMACAO.setID(id);
+		dao49.delete(RH_FORMACAO);
+	}
+
+	@PUT
+	@Path("/updateRH_FORMACAO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_FORMACAO updateRH_FORMACAO(final RH_FORMACAO RH_FORMACAO) {
+		RH_FORMACAO.setID(RH_FORMACAO.getID());
+		return dao49.update(RH_FORMACAO);
+	}
+
+	@POST
+	@Path("/RH_GET_FORMACOES_TOTAIS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_FORMACOES_TOTAIS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao49.RH_GET_FORMACOES_TOTAIS(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/RH_GET_FORMACOES_TERMINADAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_FORMACOES_TERMINADAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao49.RH_GET_FORMACOES_TERMINADAS(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/RH_GET_FORMACOES_EM_PROGRESSO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_FORMACOES_EM_PROGRESSO(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao49.RH_GET_FORMACOES_EM_PROGRESSO(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/RH_GET_FORMACOES_POR_INICIAR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_FORMACOES_POR_INICIAR(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao49.RH_GET_FORMACOES_POR_INICIAR(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/RH_GET_PROXIMAS_FORMACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_PROXIMAS_FORMACOES(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao49.RH_GET_PROXIMAS_FORMACOES(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/RH_GET_FORMACOES_EXPIRADAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_FORMACOES_EXPIRADAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao49.RH_GET_FORMACOES_EXPIRADAS(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+
+	/*******************************************
+	 * RH_FORMACAO_PARTICIPANTES
+	 *******************/
+	@POST
+	@Path("/createRH_FORMACAO_PARTICIPANTES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_FORMACAO_PARTICIPANTES insertARH_FORMACAO_PARTICIPANTES(final RH_FORMACAO_PARTICIPANTES data) {
+		return dao50.create(data);
+	}
+
+	@GET
+	@Path("/getRH_FORMACAO_PARTICIPANTESbyid/{id}")
+	@Produces("application/json")
+	public List<RH_FORMACAO_PARTICIPANTES> getRH_FORMACAO_PARTICIPANTESbyid(@PathParam("id") Integer id) {
+		return dao50.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_FORMACAO_PARTICIPANTES")
+	@Produces("application/json")
+	public List<RH_FORMACAO_PARTICIPANTES> getRH_FORMACAO_PARTICIPANTES() {
+		return dao50.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_FORMACAO_PARTICIPANTES/{id}")
+	public void deleteRH_FORMACAO_PARTICIPANTES(@PathParam("id") Integer id) {
+		RH_FORMACAO_PARTICIPANTES RH_FORMACAO_PARTICIPANTES = new RH_FORMACAO_PARTICIPANTES();
+		RH_FORMACAO_PARTICIPANTES.setID(id);
+		dao50.delete(RH_FORMACAO_PARTICIPANTES);
+	}
+
+	@PUT
+	@Path("/updateRH_FORMACAO_PARTICIPANTES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_FORMACAO_PARTICIPANTES updateRH_FORMACAO_PARTICIPANTES(
+			final RH_FORMACAO_PARTICIPANTES RH_FORMACAO_PARTICIPANTES) {
+		RH_FORMACAO_PARTICIPANTES.setID(RH_FORMACAO_PARTICIPANTES.getID());
+		return dao50.update(RH_FORMACAO_PARTICIPANTES);
+	}
+
+	/************************************ RH_MEDICINA_TRABALHO_DOCUMENTOS */
+
+	@POST
+	@Path("/createRH_MEDICINA_TRABALHO_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_MEDICINA_TRABALHO_DOCUMENTOS insertRH_MEDICINA_TRABALHO_DOCUMENTOS(
+			final RH_MEDICINA_TRABALHO_DOCUMENTOS data) {
+		return dao51.create(data);
+	}
+
+	@GET
+	@Path("/getRH_MEDICINA_TRABALHO_DOCUMENTOS")
+	@Produces("application/json")
+	public List<RH_MEDICINA_TRABALHO_DOCUMENTOS> getRH_MEDICINA_TRABALHO_DOCUMENTOS() {
+		return dao51.getall();
+	}
+
+	@GET
+	@Path("/getRH_MEDICINA_TRABALHO_DOCUMENTOSbyid/{id}")
+	@Produces("application/json")
+	public List<RH_MEDICINA_TRABALHO_DOCUMENTOS> getRH_MEDICINA_TRABALHO_DOCUMENTOSbyid(@PathParam("id") Integer id) {
+		return dao51.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateRH_MEDICINA_TRABALHO_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_MEDICINA_TRABALHO_DOCUMENTOS updateRH_MEDICINA_TRABALHO_DOCUMENTOS(
+			final RH_MEDICINA_TRABALHO_DOCUMENTOS RH_MEDICINA_TRABALHO_DOCUMENTOS) {
+		RH_MEDICINA_TRABALHO_DOCUMENTOS.setID(RH_MEDICINA_TRABALHO_DOCUMENTOS.getID());
+		return dao51.update(RH_MEDICINA_TRABALHO_DOCUMENTOS);
+	}
+
+	@GET
+	@Path("/getRH_MEDICINA_TRABALHO_DOCUMENTOSbyidEquipamento/{id}")
+	@Produces("application/json")
+	public List<RH_MEDICINA_TRABALHO_DOCUMENTOS> getRH_MEDICINA_TRABALHO_DOCUMENTOSbyidEquipamento(
+			@PathParam("id") Integer id) {
+		return dao51.getbyidEquipamento(id);
+	}
+
+	@GET
+	@Path("/getRH_MEDICINA_TRABALHO_DOCUMENTOSbyidEquipamento2/{id}")
+	@Produces("application/json")
+	public List<RH_MEDICINA_TRABALHO_DOCUMENTOS> getRH_MEDICINA_TRABALHO_DOCUMENTOSbyidEquipamento2(
+			@PathParam("id") Integer id) {
+		return dao51.getbyidEquipamento2(id);
+	}
+
+	@DELETE
+	@Path("/deleteRH_MEDICINA_TRABALHO_DOCUMENTOS/{id}")
+	public void deleteRH_MEDICINA_TRABALHO_DOCUMENTOS(@PathParam("id") Integer id) {
+		RH_MEDICINA_TRABALHO_DOCUMENTOS RH_MEDICINA_TRABALHO_DOCUMENTOS = new RH_MEDICINA_TRABALHO_DOCUMENTOS();
+		RH_MEDICINA_TRABALHO_DOCUMENTOS.setID(id);
+		dao51.delete(RH_MEDICINA_TRABALHO_DOCUMENTOS);
+	}
+
+	/******************************************** RH_MEDICINA_TRABALHO **/
+	@POST
+	@Path("/createRH_MEDICINA_TRABALHO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_MEDICINA_TRABALHO insertARH_MEDICINA_TRABALHO(final RH_MEDICINA_TRABALHO data) {
+		return dao52.create(data);
+	}
+
+	@GET
+	@Path("/getRH_MEDICINA_TRABALHObyid/{id}")
+	@Produces("application/json")
+	public List<RH_MEDICINA_TRABALHO> getRH_MEDICINA_TRABALHObyid(@PathParam("id") Integer id) {
+		return dao52.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_MEDICINA_TRABALHO")
+	@Produces("application/json")
+	public List<RH_MEDICINA_TRABALHO> getRH_MEDICINA_TRABALHO() {
+		return dao52.getall();
+	}
+
+	@GET
+	@Path("/getRH_MEDICINA_TRABALHO2/{id}")
+	@Produces("application/json")
+	public List<RH_MEDICINA_TRABALHO> getRH_MEDICINA_TRABALHO2(@PathParam("id") String id) {
+		return dao52.getall2(id);
+	}
+
+	@DELETE
+	@Path("/deleteRH_MEDICINA_TRABALHO/{id}")
+	public void deleteRH_MEDICINA_TRABALHO(@PathParam("id") Integer id) {
+		RH_MEDICINA_TRABALHO RH_MEDICINA_TRABALHO = new RH_MEDICINA_TRABALHO();
+		RH_MEDICINA_TRABALHO.setID(id);
+		dao52.delete(RH_MEDICINA_TRABALHO);
+	}
+
+	@PUT
+	@Path("/updateRH_MEDICINA_TRABALHO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_MEDICINA_TRABALHO updateRH_MEDICINA_TRABALHO(final RH_MEDICINA_TRABALHO RH_MEDICINA_TRABALHO) {
+		RH_MEDICINA_TRABALHO.setID(RH_MEDICINA_TRABALHO.getID());
+		return dao52.update(RH_MEDICINA_TRABALHO);
+	}
+	
+	@POST
+	@Path("/RH_GET_MEDICINA_TOTAIS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_MEDICINA_TOTAIS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao52.RH_GET_MEDICINA_TOTAIS(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/RH_GET_MEDICINA_PROXIMAS_CONSULTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_MEDICINA_PROXIMAS_CONSULTAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao52.RH_GET_MEDICINA_PROXIMAS_CONSULTAS(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/RH_GET_MEDICINA_REALIZADAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_MEDICINA_REALIZADAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao52.RH_GET_MEDICINA_REALIZADAS(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+	
+	
+	@POST
+	@Path("/RH_GET_MEDICINA_EXPIRADAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_MEDICINA_EXPIRADAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao52.RH_GET_MEDICINA_EXPIRADAS(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+
+	/******************************************** RH_DIC_EXAMES **/
+	@POST
+	@Path("/createRH_DIC_EXAMES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_EXAMES insertARH_DIC_EXAMES(final RH_DIC_EXAMES data) {
+		return dao53.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_EXAMESbyid/{id}")
+	@Produces("application/json")
+	public List<RH_DIC_EXAMES> getRH_DIC_EXAMESbyid(@PathParam("id") Integer id) {
+		return dao53.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_DIC_EXAMES")
+	@Produces("application/json")
+	public List<RH_DIC_EXAMES> getRH_DIC_EXAMES() {
+		return dao53.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_EXAMES/{id}")
+	public void deleteRH_DIC_EXAMES(@PathParam("id") Integer id) {
+		RH_DIC_EXAMES RH_DIC_EXAMES = new RH_DIC_EXAMES();
+		RH_DIC_EXAMES.setID(id);
+		dao53.delete(RH_DIC_EXAMES);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_EXAMES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_EXAMES updateRH_DIC_EXAMES(final RH_DIC_EXAMES RH_DIC_EXAMES) {
+		RH_DIC_EXAMES.setID(RH_DIC_EXAMES.getID());
+		return dao53.update(RH_DIC_EXAMES);
+	}
+
+	/******************************************** RH_DIC_ENTIDADE_MEDICA **/
+	@POST
+	@Path("/createRH_DIC_ENTIDADE_MEDICA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_ENTIDADE_MEDICA insertARH_DIC_ENTIDADE_MEDICA(final RH_DIC_ENTIDADE_MEDICA data) {
+		return dao54.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_ENTIDADE_MEDICAbyid/{id}")
+	@Produces("application/json")
+	public List<RH_DIC_ENTIDADE_MEDICA> getRH_DIC_ENTIDADE_MEDICAbyid(@PathParam("id") Integer id) {
+		return dao54.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_DIC_ENTIDADE_MEDICA")
+	@Produces("application/json")
+	public List<RH_DIC_ENTIDADE_MEDICA> getRH_DIC_ENTIDADE_MEDICA() {
+		return dao54.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_ENTIDADE_MEDICA/{id}")
+	public void deleteRH_DIC_ENTIDADE_MEDICA(@PathParam("id") Integer id) {
+		RH_DIC_ENTIDADE_MEDICA RH_DIC_ENTIDADE_MEDICA = new RH_DIC_ENTIDADE_MEDICA();
+		RH_DIC_ENTIDADE_MEDICA.setID(id);
+		dao54.delete(RH_DIC_ENTIDADE_MEDICA);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_ENTIDADE_MEDICA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_ENTIDADE_MEDICA updateRH_DIC_ENTIDADE_MEDICA(final RH_DIC_ENTIDADE_MEDICA RH_DIC_ENTIDADE_MEDICA) {
+		RH_DIC_ENTIDADE_MEDICA.setID(RH_DIC_ENTIDADE_MEDICA.getID());
+		return dao54.update(RH_DIC_ENTIDADE_MEDICA);
+	}
+
+	/******************************************** RH_DIC_ENTIDADE_MEDICA_LOCAIS **/
+	@POST
+	@Path("/createRH_DIC_ENTIDADE_MEDICA_LOCAIS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_ENTIDADE_MEDICA_LOCAIS insertARH_DIC_ENTIDADE_MEDICA_LOCAIS(
+			final RH_DIC_ENTIDADE_MEDICA_LOCAIS data) {
+		return dao55.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_ENTIDADE_MEDICA_LOCAISbyid/{id}")
+	@Produces("application/json")
+	public List<RH_DIC_ENTIDADE_MEDICA_LOCAIS> getRH_DIC_ENTIDADE_MEDICA_LOCAISbyid(@PathParam("id") Integer id) {
+		return dao55.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_DIC_ENTIDADE_MEDICA_LOCAIS")
+	@Produces("application/json")
+	public List<RH_DIC_ENTIDADE_MEDICA_LOCAIS> getRH_DIC_ENTIDADE_MEDICA_LOCAIS() {
+		return dao55.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_ENTIDADE_MEDICA_LOCAIS/{id}")
+	public void deleteRH_DIC_ENTIDADE_MEDICA_LOCAIS(@PathParam("id") Integer id) {
+		RH_DIC_ENTIDADE_MEDICA_LOCAIS RH_DIC_ENTIDADE_MEDICA_LOCAIS = new RH_DIC_ENTIDADE_MEDICA_LOCAIS();
+		RH_DIC_ENTIDADE_MEDICA_LOCAIS.setID(id);
+		dao55.delete(RH_DIC_ENTIDADE_MEDICA_LOCAIS);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_ENTIDADE_MEDICA_LOCAIS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_ENTIDADE_MEDICA_LOCAIS updateRH_DIC_ENTIDADE_MEDICA_LOCAIS(
+			final RH_DIC_ENTIDADE_MEDICA_LOCAIS RH_DIC_ENTIDADE_MEDICA_LOCAIS) {
+		RH_DIC_ENTIDADE_MEDICA_LOCAIS.setID(RH_DIC_ENTIDADE_MEDICA_LOCAIS.getID());
+		return dao55.update(RH_DIC_ENTIDADE_MEDICA_LOCAIS);
+	}
+
+	/******************************************** RH_DIC_PERIOCIDADE_ALERTAS **/
+	@POST
+	@Path("/createRH_DIC_PERIOCIDADE_ALERTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_PERIOCIDADE_ALERTAS insertARH_DIC_PERIOCIDADE_ALERTAS(final RH_DIC_PERIOCIDADE_ALERTAS data) {
+		return dao56.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_PERIOCIDADE_ALERTASbyid/{id}")
+	@Produces("application/json")
+	public List<RH_DIC_PERIOCIDADE_ALERTAS> getRH_DIC_PERIOCIDADE_ALERTASbyid(@PathParam("id") Integer id) {
+		return dao56.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_DIC_PERIOCIDADE_ALERTAS")
+	@Produces("application/json")
+	public List<RH_DIC_PERIOCIDADE_ALERTAS> getRH_DIC_PERIOCIDADE_ALERTAS() {
+		return dao56.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_PERIOCIDADE_ALERTAS/{id}")
+	public void deleteRH_DIC_PERIOCIDADE_ALERTAS(@PathParam("id") Integer id) {
+		RH_DIC_PERIOCIDADE_ALERTAS RH_DIC_PERIOCIDADE_ALERTAS = new RH_DIC_PERIOCIDADE_ALERTAS();
+		RH_DIC_PERIOCIDADE_ALERTAS.setID(id);
+		dao56.delete(RH_DIC_PERIOCIDADE_ALERTAS);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_PERIOCIDADE_ALERTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_PERIOCIDADE_ALERTAS updateRH_DIC_PERIOCIDADE_ALERTAS(
+			final RH_DIC_PERIOCIDADE_ALERTAS RH_DIC_PERIOCIDADE_ALERTAS) {
+		RH_DIC_PERIOCIDADE_ALERTAS.setID(RH_DIC_PERIOCIDADE_ALERTAS.getID());
+		return dao56.update(RH_DIC_PERIOCIDADE_ALERTAS);
 	}
 }
