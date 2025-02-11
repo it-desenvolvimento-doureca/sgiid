@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -40,7 +41,7 @@ public class RH_FORMACAO {
 	@JsonProperty("DATA_FIM")
 	private Date DATA_FIM;
 	@JsonProperty("DURACAO")
-	private String DURACAO;
+	private BigDecimal DURACAO;
 	@JsonProperty("HORARIO")
 	private String HORARIO;
 	@JsonProperty("VALIDADE")
@@ -65,6 +66,8 @@ public class RH_FORMACAO {
 	private Integer UTZ_ANULA;
 	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
+	@JsonProperty("AVALIACAO_SATISFACAO")
+	private Boolean AVALIACAO_SATISFACAO;
 
 	public Integer getID() {
 		return ID;
@@ -110,7 +113,7 @@ public class RH_FORMACAO {
 		return DATA_FIM;
 	}
 
-	public String getDURACAO() {
+	public BigDecimal getDURACAO() {
 		return DURACAO;
 	}
 
@@ -206,7 +209,7 @@ public class RH_FORMACAO {
 		DATA_FIM = dATA_FIM;
 	}
 
-	public void setDURACAO(String dURACAO) {
+	public void setDURACAO(BigDecimal dURACAO) {
 		DURACAO = dURACAO;
 	}
 
@@ -258,4 +261,13 @@ public class RH_FORMACAO {
 		ATIVO = aTIVO;
 	}
 
+	public Boolean getAVALIACAO_SATISFACAO() {
+		return AVALIACAO_SATISFACAO;
+	}
+
+	public void setAVALIACAO_SATISFACAO(Boolean aVALIACAO_SATISFACAO) {
+		AVALIACAO_SATISFACAO = aVALIACAO_SATISFACAO;
+	}
+
+	
 }

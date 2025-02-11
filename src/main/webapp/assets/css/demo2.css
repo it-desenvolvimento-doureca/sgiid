@@ -3693,6 +3693,7 @@ input[type="date"]::-webkit-input-placeholder {
 [id^=formReclama] .p-calendar .p-inputtext:not(.tabelaplanos .p-inputtext) {
     height: 25px;
     width: 101px;
+    padding-right: 0;
 }
 
 [id^=formReclama] table .p-multiselect-label {

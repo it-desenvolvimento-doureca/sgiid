@@ -41,6 +41,7 @@ import pt.example.dao.FIN_DIC_FILTROSDao;
 import pt.example.dao.FIN_DIC_TIPO_MOVIMENTO_STOCKDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVERDao;
 import pt.example.dao.GER_CONF_CONSUMOS_SILVER_OFDao;
+import pt.example.dao.GER_EVENTOS_DESTINATARIOSDao;
 import pt.example.dao.GER_INFO_PAGINASDao;
 import pt.example.dao.MAN_DIC_ARTIGOS_TIPOLOGIADao;
 import pt.example.dao.MAN_DIC_FAMILIA_EQUIPAMENTOSDao;
@@ -69,9 +70,12 @@ import pt.example.dao.PIN_MOV_RECEITAS_REFERENCIASDao;
 import pt.example.dao.PIN_MOV_UV_RADIATIONDao;
 import pt.example.dao.PIN_PLANEAMENTO_PINTURADao;
 import pt.example.dao.PIN_PLANEAMENTO_PINTURA_LINHASDao;
+import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_SECCOES_CABDao;
+import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHASDao;
 import pt.example.dao.PR_REGISTO_PINTURADao;
 import pt.example.dao.PR_WINROBOT_USERSDao;
 import pt.example.dao.RH_CANDIDATURASDao;
+import pt.example.dao.RH_DADOS_FUNCIONARIODao;
 import pt.example.dao.RH_DIC_AREA_FORMACAODao;
 import pt.example.dao.RH_DIC_CRITERIOS_AVALIACAODao;
 import pt.example.dao.RH_DIC_ENTIDADE_FORMADORADao;
@@ -85,6 +89,9 @@ import pt.example.dao.RH_FORMACAO_PARTICIPANTESDao;
 import pt.example.dao.RH_MEDICINA_TRABALHODao;
 import pt.example.dao.RH_MEDICINA_TRABALHO_DOCUMENTOSDao;
 import pt.example.dao.RH_REGISTO_ACOESDao;
+import pt.example.dao.RH_SUGESTOESDao;
+import pt.example.dao.RH_SUGESTOES_ATIVIDADEDao;
+import pt.example.dao.RH_SUGESTOES_DOCUMENTOSDao;
 import pt.example.entity.COM_ACORDOS;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
@@ -98,6 +105,7 @@ import pt.example.entity.FIN_DIC_FILTROS;
 import pt.example.entity.FIN_DIC_TIPO_MOVIMENTO_STOCK;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER;
 import pt.example.entity.GER_CONF_CONSUMOS_SILVER_OF;
+import pt.example.entity.GER_EVENTOS_DESTINATARIOS;
 import pt.example.entity.GER_INFO_PAGINAS;
 import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
@@ -128,10 +136,13 @@ import pt.example.entity.PIN_MOV_RECEITAS_REFERENCIAS;
 import pt.example.entity.PIN_MOV_UV_RADIATION;
 import pt.example.entity.PIN_PLANEAMENTO_PINTURA;
 import pt.example.entity.PIN_PLANEAMENTO_PINTURA_LINHAS;
+import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB;
+import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS;
 import pt.example.entity.PR_REGISTO_PINTURA;
 import pt.example.entity.PR_WINROBOT_CAB;
 import pt.example.entity.PR_WINROBOT_USERS;
 import pt.example.entity.RH_CANDIDATURAS;
+import pt.example.entity.RH_DADOS_FUNCIONARIO;
 import pt.example.entity.RH_DIC_AREA_FORMACAO;
 import pt.example.entity.RH_DIC_CRITERIOS_AVALIACAO;
 import pt.example.entity.RH_DIC_ENTIDADE_FORMADORA;
@@ -145,6 +156,9 @@ import pt.example.entity.RH_FORMACAO_PARTICIPANTES;
 import pt.example.entity.RH_MEDICINA_TRABALHO;
 import pt.example.entity.RH_MEDICINA_TRABALHO_DOCUMENTOS;
 import pt.example.entity.RH_REGISTO_ACOES;
+import pt.example.entity.RH_SUGESTOES;
+import pt.example.entity.RH_SUGESTOES_ATIVIDADE;
+import pt.example.entity.RH_SUGESTOES_DOCUMENTOS;
 
 @Stateless
 @Path("/sirb")
@@ -262,6 +276,20 @@ public class SIRB_3 {
 	private RH_DIC_ENTIDADE_MEDICA_LOCAISDao dao55;
 	@Inject
 	private RH_DIC_PERIOCIDADE_ALERTASDao dao56;
+	@Inject
+	private GER_EVENTOS_DESTINATARIOSDao dao57;
+	@Inject
+	private PR_PLANEAMENTO_PRODUCAO_SECCOES_CABDao dao58;
+	@Inject
+	private PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHASDao dao59;
+	@Inject
+	private RH_SUGESTOESDao dao60;
+	@Inject
+	private RH_SUGESTOES_ATIVIDADEDao dao61;
+	@Inject
+	private RH_DADOS_FUNCIONARIODao dao62;
+	@Inject
+	private RH_SUGESTOES_DOCUMENTOSDao dao63;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -2300,7 +2328,7 @@ public class SIRB_3 {
 						+ "(select NOME_UTILIZADOR from GER_UTILIZADORES h where ID_UTILIZADOR = d.UTZ_ULT_MODIF) as utilizador, "
 						+ "(select NOME_LINHA from AB_DIC_LINHA h where ID_LINHA = d.ID_LINHA) as linha, "
 						+ "CASE WHEN ( c.QUANT  - c.QUANT_FINAL) < 0 THEN 0 ELSE ( c.QUANT  - c.QUANT_FINAL) END as qtt , c.UNICOD,c.QUANT, t.FACTOR_CONVERSAO,t.NOME_REF,t.COD_REF,c.QUANT_FINAL, "
-						+ "a.DATA_PREPARACAO,a.HORA_PREPARACAO,a.DATA_EXECUCAO,a.HORA_EXECUCAO,(select f.NOME_PROJETO from PIN_MOV_RECEITAS f  where f.ID = a.ID_RECEITA) as receita "
+						+ "a.DATA_PREPARACAO,a.HORA_PREPARACAO,a.DATA_EXECUCAO,a.HORA_EXECUCAO,(select f.NOME_PROJETO from PIN_MOV_RECEITAS f  where f.ID = a.ID_RECEITA and f.VERSAO = a.VERSAO) as receita "
 						+ "from PIN_MOV_PREPARACAO_CAB a "
 						+ "inner join PIN_MOV_PREPARACAO_LINHA b on a.ID_PREPARACAO_CAB = b.ID_PREPARACAO_CAB "
 						+ "left join PIN_MOV_PREPARACAO_ETIQ c on b.ID_PREPARACAO_LIN = c.ID_PREPARACAO_LIN "
@@ -3464,6 +3492,27 @@ public class SIRB_3 {
 	}
 
 	@POST
+	@Path("/REMOVER_PIN_WINROBOT_PROGRAM")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> REMOVER_PIN_WINROBOT_PROGRAM(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String SUP_PROGRAM = firstMap.get("SUP_PROGRAM");
+		String ID = firstMap.get("ID");
+
+		if (SUP_PROGRAM != null)
+			SUP_PROGRAM = "'" + SUP_PROGRAM + "'";
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC REMOVER_PIN_WINROBOT_PROGRAM " + SUP_PROGRAM + "," + ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
 	@Path("/INSERT_PIN_WINROBOT_RACKS")
 	@Consumes("*/*")
 	@Produces("application/json")
@@ -4460,6 +4509,30 @@ public class SIRB_3 {
 	}
 
 	@POST
+	@Path("/RH_GET_AVALIACAO_EFICACIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_AVALIACAO_EFICACIA(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao49.RH_GET_AVALIACAO_EFICACIA(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}
+
+	@POST
 	@Path("/RH_GET_FORMACOES_EXPIRADAS")
 	@Consumes("*/*")
 	@Produces("application/json")
@@ -4600,6 +4673,14 @@ public class SIRB_3 {
 	public List<RH_MEDICINA_TRABALHO> getRH_MEDICINA_TRABALHObyid(@PathParam("id") Integer id) {
 		return dao52.getbyid(id);
 	}
+	
+
+	@GET
+	@Path("/getRH_FUNCIONARIO_DT_NASCIMENTO/{id}")
+	@Produces("application/json")
+	public List<Object> getRH_FUNCIONARIO_DT_NASCIMENTO(@PathParam("id") String id) {
+		return dao52.getDataNascimento(id);
+	}
 
 	@GET
 	@Path("/getRH_MEDICINA_TRABALHO")
@@ -4631,7 +4712,7 @@ public class SIRB_3 {
 		RH_MEDICINA_TRABALHO.setID(RH_MEDICINA_TRABALHO.getID());
 		return dao52.update(RH_MEDICINA_TRABALHO);
 	}
-	
+
 	@POST
 	@Path("/RH_GET_MEDICINA_TOTAIS")
 	@Consumes("*/*")
@@ -4655,7 +4736,7 @@ public class SIRB_3 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/RH_GET_MEDICINA_PROXIMAS_CONSULTAS")
 	@Consumes("*/*")
@@ -4679,7 +4760,7 @@ public class SIRB_3 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/RH_GET_MEDICINA_REALIZADAS")
 	@Consumes("*/*")
@@ -4703,8 +4784,7 @@ public class SIRB_3 {
 
 		return dados_folder;
 	}
-	
-	
+
 	@POST
 	@Path("/RH_GET_MEDICINA_EXPIRADAS")
 	@Consumes("*/*")
@@ -4891,4 +4971,448 @@ public class SIRB_3 {
 		RH_DIC_PERIOCIDADE_ALERTAS.setID(RH_DIC_PERIOCIDADE_ALERTAS.getID());
 		return dao56.update(RH_DIC_PERIOCIDADE_ALERTAS);
 	}
+
+	/******************************************** GER_EVENTOS_DESTINATARIOS **/
+	@POST
+	@Path("/createGER_EVENTOS_DESTINATARIOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_EVENTOS_DESTINATARIOS insertAGER_EVENTOS_DESTINATARIOS(final GER_EVENTOS_DESTINATARIOS data) {
+		return dao57.create(data);
+	}
+
+	@GET
+	@Path("/getGER_EVENTOS_DESTINATARIOSbyid/{id}")
+	@Produces("application/json")
+	public List<GER_EVENTOS_DESTINATARIOS> getGER_EVENTOS_DESTINATARIOSbyid(@PathParam("id") Integer id) {
+		return dao57.getbyId(id);
+	}
+
+	@DELETE
+	@Path("/deleteGER_EVENTOS_DESTINATARIOS/{id}")
+	public void deleteGER_EVENTOS_DESTINATARIOS(@PathParam("id") Integer id) {
+		GER_EVENTOS_DESTINATARIOS GER_EVENTOS_DESTINATARIOS = new GER_EVENTOS_DESTINATARIOS();
+		GER_EVENTOS_DESTINATARIOS.setID(id);
+		dao57.delete(GER_EVENTOS_DESTINATARIOS);
+	}
+
+	@PUT
+	@Path("/updateGER_EVENTOS_DESTINATARIOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_EVENTOS_DESTINATARIOS updateGER_EVENTOS_DESTINATARIOS(
+			final GER_EVENTOS_DESTINATARIOS GER_EVENTOS_DESTINATARIOS) {
+		GER_EVENTOS_DESTINATARIOS.setID(GER_EVENTOS_DESTINATARIOS.getID());
+		return dao57.update(GER_EVENTOS_DESTINATARIOS);
+	}
+
+	/************************************* PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB */
+
+	@POST
+	@Path("/createPR_PLANEAMENTO_PRODUCAO_SECCOES_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB insertPR_PLANEAMENTO_PRODUCAO_SECCOES_CABA(
+			final PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB data) {
+		return dao58.create(data);
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_SECCOES_CAB")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB> getPR_PLANEAMENTO_PRODUCAO_SECCOES_CAB() {
+		return dao58.getall();
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_SECCOES_CAB2")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB> getPR_PLANEAMENTO_PRODUCAO_SECCOES_CAB2() {
+		return dao58.getall2();
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_SECCOES_CABbyid/{id}")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB> getPR_PLANEAMENTO_PRODUCAO_SECCOES_CABbyip(
+			@PathParam("id") Integer id) {
+		return dao58.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePR_PLANEAMENTO_PRODUCAO_SECCOES_CAB/{id}")
+	public void deletePR_PLANEAMENTO_PRODUCAO_SECCOES_CAB(@PathParam("id") Integer id) {
+		PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB = new PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB();
+		PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB.setID_PLANEAMENTO_PRODUCAO_CAB(id);
+		dao58.delete(PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB);
+	}
+
+	@PUT
+	@Path("/updatePR_PLANEAMENTO_PRODUCAO_SECCOES_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB updatePR_PLANEAMENTO_PRODUCAO_SECCOES_CAB(
+			final PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB) {
+		PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB
+				.setID_PLANEAMENTO_PRODUCAO_CAB(PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB.getID_PLANEAMENTO_PRODUCAO_CAB());
+		return dao58.update(PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB);
+	}
+
+	/************************************* PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS */
+
+	@POST
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS_FILTRO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> getPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS_FILTRO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID_PLANEAMENTO_PRODUCAO_CAB = firstMap.get("ID_PLANEAMENTO_PRODUCAO_CAB");
+		String FASE = firstMap.get("FASE");
+		String COD_REF = firstMap.get("COD_REF");
+		String MOLDE = firstMap.get("MOLDE");
+		String MAQUINA = firstMap.get("MAQUINA");
+		String ANTECEDENCIA = firstMap.get("ANTECEDENCIA");
+		String CAIXA_CAPACIDADE = firstMap.get("CAIXA_CAPACIDADE");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS_FILTRO] "
+				+ ID_PLANEAMENTO_PRODUCAO_CAB + ",'" + COD_REF + "','" + FASE + "','" + MOLDE + "','" + MAQUINA + "',"
+				+ ANTECEDENCIA + "," + CAIXA_CAPACIDADE);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS_BASE_COR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> getPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS_BASE_COR() {
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select distinct DESC_BASE_COR,'' as txt from PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS where  DESC_BASE_COR is not null ");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/createPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS insertPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHASA(
+			final PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS data) {
+		return dao59.create(data);
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS> getPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS() {
+		return dao59.getall();
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHASbyid/{id}")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS> getPR_PLANEAMENTO_PRODUCAO_SECCOES_LINHASbyip(
+			@PathParam("id") Integer id) {
+		return dao59.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS/{id}")
+	public void deletePR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS(@PathParam("id") Integer id) {
+		PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS = new PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS();
+		PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.setID_PLANEAMENTO_PRODUCAO_LINHA(id);
+		dao59.delete(PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS);
+	}
+
+	@PUT
+	@Path("/updatePR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS updatePR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS(
+			final PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS) {
+		PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.setID_PLANEAMENTO_PRODUCAO_LINHA(
+				PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.getID_PLANEAMENTO_PRODUCAO_LINHA());
+		return dao59.update(PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS);
+	}
+
+	@PUT
+	@Path("/updatePR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS_CAMPOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public boolean updatePR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS_CAMPOS(
+			final PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS) {
+
+		entityManager.createNativeQuery("UPDATE PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS SET UTZ_MODIF= "
+				+ PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.getUTZ_MODIF() + ", DATA_MODIF = GETDATE(),NUM_CAIXAS_PLANO = "
+				+ PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.getNUM_CAIXAS_PLANO()
+				+ " WHERE ID_PLANEAMENTO_PRODUCAO_LINHA = "
+				+ PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.getID_PLANEAMENTO_PRODUCAO_LINHA() + "").executeUpdate();
+		return true;
+	}
+
+	@POST
+	@Path("/INSERT_PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS")
+	@Produces("application/json")
+	public List<Object[]> INSERT_PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC [INSERT_PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS] " + ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/******************************************** RH_SUGESTOES **/
+	@POST
+	@Path("/createRH_SUGESTOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_SUGESTOES insertARH_SUGESTOES(final RH_SUGESTOES data) {
+		return dao60.create(data);
+	}
+
+	@GET
+	@Path("/getRH_SUGESTOESbyid/{id}")
+	@Produces("application/json")
+	public List<RH_SUGESTOES> getRH_SUGESTOESbyid(@PathParam("id") Integer id) {
+		return dao60.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_SUGESTOES")
+	@Produces("application/json")
+	public List<RH_SUGESTOES> getRH_SUGESTOES() {
+		return dao60.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_SUGESTOES/{id}")
+	public void deleteRH_SUGESTOES(@PathParam("id") Integer id) {
+		RH_SUGESTOES RH_SUGESTOES = new RH_SUGESTOES();
+		RH_SUGESTOES.setID(id);
+		dao60.delete(RH_SUGESTOES);
+	}
+
+	@PUT
+	@Path("/updateRH_SUGESTOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_SUGESTOES updateRH_SUGESTOES(final RH_SUGESTOES RH_SUGESTOES) {
+		RH_SUGESTOES.setID(RH_SUGESTOES.getID());
+		return dao60.update(RH_SUGESTOES);
+	}
+
+	@POST
+	@Path("/RH_SUGESTOES_DASHBOARD")
+	@Produces("application/json")
+	public List<Object[]> RH_SUGESTOES_DASHBOARD(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String MES = firstMap.get("MES");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [RH_SUGESTOES_DASHBOARD] " + ANO + "," + MES);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/******************************************** RH_SUGESTOES_ATIVIDADE **/
+	@POST
+	@Path("/createRH_SUGESTOES_ATIVIDADE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_SUGESTOES_ATIVIDADE insertARH_SUGESTOES_ATIVIDADE(final RH_SUGESTOES_ATIVIDADE data) {
+		return dao61.create(data);
+	}
+
+	@GET
+	@Path("/getRH_SUGESTOES_ATIVIDADEbyid/{id}")
+	@Produces("application/json")
+	public List<RH_SUGESTOES_ATIVIDADE> getRH_SUGESTOES_ATIVIDADEbyid(@PathParam("id") Integer id) {
+		return dao61.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteRH_SUGESTOES_ATIVIDADE/{id}")
+	public void deleteRH_SUGESTOES_ATIVIDADE(@PathParam("id") Integer id) {
+		RH_SUGESTOES_ATIVIDADE RH_SUGESTOES_ATIVIDADE = new RH_SUGESTOES_ATIVIDADE();
+		RH_SUGESTOES_ATIVIDADE.setID(id);
+		dao61.delete(RH_SUGESTOES_ATIVIDADE);
+	}
+
+	@PUT
+	@Path("/updateRH_SUGESTOES_ATIVIDADE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_SUGESTOES_ATIVIDADE updateRH_SUGESTOES_ATIVIDADE(final RH_SUGESTOES_ATIVIDADE RH_SUGESTOES_ATIVIDADE) {
+		RH_SUGESTOES_ATIVIDADE.setID(RH_SUGESTOES_ATIVIDADE.getID());
+		return dao61.update(RH_SUGESTOES_ATIVIDADE);
+	}
+
+	/******************************************** RH_DADOS_FUNCIONARIO **/
+	@POST
+	@Path("/createRH_DADOS_FUNCIONARIO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DADOS_FUNCIONARIO insertARH_DADOS_FUNCIONARIO(final RH_DADOS_FUNCIONARIO data) {
+		return dao62.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DADOS_FUNCIONARIObyid/{id}")
+	@Produces("application/json")
+	public List<RH_DADOS_FUNCIONARIO> getRH_DADOS_FUNCIONARIObyid(@PathParam("id") String id) {
+		return dao62.getbyid(id);
+	}
+
+	@GET
+	@Path("/getRH_DADOS_FUNCIONARIOProximasConsultas/{id}")
+	@Produces("application/json")
+	public List<RH_DADOS_FUNCIONARIO> getRH_DADOS_FUNCIONARIOProximasConsultas(@PathParam("id") Integer id) {
+		return dao62.getProximasConsultas(id);
+	}
+
+	@GET
+	@Path("/getRH_DADOS_FUNCIONARIO")
+	@Produces("application/json")
+	public List<RH_DADOS_FUNCIONARIO> getRH_DADOS_FUNCIONARIO() {
+		return dao62.getall();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DADOS_FUNCIONARIO/{id}")
+	public void deleteRH_DADOS_FUNCIONARIO(@PathParam("id") Integer id) {
+		RH_DADOS_FUNCIONARIO RH_DADOS_FUNCIONARIO = new RH_DADOS_FUNCIONARIO();
+		RH_DADOS_FUNCIONARIO.setID(id);
+		dao62.delete(RH_DADOS_FUNCIONARIO);
+	}
+
+	@PUT
+	@Path("/updateRH_DADOS_FUNCIONARIO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DADOS_FUNCIONARIO updateRH_DADOS_FUNCIONARIO(final RH_DADOS_FUNCIONARIO RH_DADOS_FUNCIONARIO) {
+		RH_DADOS_FUNCIONARIO.setID(RH_DADOS_FUNCIONARIO.getID());
+		return dao62.update(RH_DADOS_FUNCIONARIO);
+	}
+
+	@POST
+	@Path("/RH_GET_DADOS_ESIGEMP")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_DADOS_ESIGEMP(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String TABLE = firstMap.get("TABLE");
+		String SEARCH = firstMap.get("SEARCH");
+
+		if (SEARCH != null)
+			SEARCH = "'" + SEARCH + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [RH_GET_DADOS_ESIGEMP] '" + TABLE + "'," + SEARCH);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	/************************************ RH_SUGESTOES_DOCUMENTOS */
+
+	@POST
+	@Path("/createRH_SUGESTOES_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_SUGESTOES_DOCUMENTOS insertRH_SUGESTOES_DOCUMENTOS(final RH_SUGESTOES_DOCUMENTOS data) {
+		return dao63.create(data);
+	}
+
+	@GET
+	@Path("/getRH_SUGESTOES_DOCUMENTOS")
+	@Produces("application/json")
+	public List<RH_SUGESTOES_DOCUMENTOS> getRH_SUGESTOES_DOCUMENTOS() {
+		return dao63.getall();
+	}
+
+	@GET
+	@Path("/getRH_SUGESTOES_DOCUMENTOSbyid/{id}")
+	@Produces("application/json")
+	public List<RH_SUGESTOES_DOCUMENTOS> getRH_SUGESTOES_DOCUMENTOSbyid(@PathParam("id") Integer id) {
+		return dao63.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateRH_SUGESTOES_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_SUGESTOES_DOCUMENTOS updateRH_SUGESTOES_DOCUMENTOS(
+			final RH_SUGESTOES_DOCUMENTOS RH_SUGESTOES_DOCUMENTOS) {
+		RH_SUGESTOES_DOCUMENTOS.setID(RH_SUGESTOES_DOCUMENTOS.getID());
+		return dao63.update(RH_SUGESTOES_DOCUMENTOS);
+	}
+
+	@GET
+	@Path("/getRH_SUGESTOES_DOCUMENTOSbyidFicheiro/{id}")
+	@Produces("application/json")
+	public List<RH_SUGESTOES_DOCUMENTOS> getRH_SUGESTOES_DOCUMENTOSbyidFicheiro(@PathParam("id") Integer id) {
+		return dao63.getbyidFicheiro(id);
+	}
+
+	@GET
+	@Path("/getRH_SUGESTOES_DOCUMENTOSbyidFicheiro2/{id}")
+	@Produces("application/json")
+	public List<RH_SUGESTOES_DOCUMENTOS> getRH_SUGESTOES_DOCUMENTOSbyidFicheiro2(@PathParam("id") Integer id) {
+		return dao63.getbyidFicheiro2(id);
+	}
+
+	@DELETE
+	@Path("/deleteRH_SUGESTOES_DOCUMENTOS/{id}")
+	public void deleteRH_SUGESTOES_DOCUMENTOS(@PathParam("id") Integer id) {
+		RH_SUGESTOES_DOCUMENTOS RH_SUGESTOES_DOCUMENTOS = new RH_SUGESTOES_DOCUMENTOS();
+		RH_SUGESTOES_DOCUMENTOS.setID(id);
+		dao63.delete(RH_SUGESTOES_DOCUMENTOS);
+	}
+	
+	
+	
+	@POST
+	@Path("/COMU_GET_DOCUMENTOS")
+	@Produces("application/json")
+	public List<Object[]> COMU_GET_DOCUMENTOS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IP = firstMap.get("IP_POSTO"); 
+
+		if (IP != null)
+			IP = "'" + IP + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [COMU_GET_DOCUMENTOS]  " + IP);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/COMU_GET_TICKERS")
+	@Produces("application/json")
+	public List<Object[]> COMU_GET_TICKERS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IP = firstMap.get("IP_POSTO"); 
+
+		if (IP != null)
+			IP = "'" + IP + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [COMU_GET_TICKERS]  " + IP);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
 }

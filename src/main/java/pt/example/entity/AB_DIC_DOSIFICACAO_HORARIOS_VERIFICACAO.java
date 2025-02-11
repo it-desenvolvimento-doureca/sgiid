@@ -21,6 +21,8 @@ public class AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAO {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty("ID")
 	private Integer ID;
+	@JsonProperty("ID_DOSIFICACAO")
+	private Integer ID_DOSIFICACAO;
 	@JsonProperty("HORA")
 	private Time HORA;
 	@JsonProperty("UTZ_CRIA")
@@ -78,6 +80,14 @@ public class AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAO {
 
 	public void setDATA_ULT_MODIF(Timestamp dATA_ULT_MODIF) {
 		DATA_ULT_MODIF = dATA_ULT_MODIF;
+	}
+
+	public Integer getID_DOSIFICACAO() {
+		return ID_DOSIFICACAO;
+	}
+
+	public void setID_DOSIFICACAO(Integer iD_DOSIFICACAO) {
+		ID_DOSIFICACAO = iD_DOSIFICACAO;
 	}
 
 }

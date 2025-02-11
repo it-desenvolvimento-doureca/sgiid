@@ -29,6 +29,10 @@ public class AB_DIC_DOSIFICACAO {
 	private Integer UTZ_ULT_MODIF;
 	@JsonProperty("DATA_ULT_MODIF")
 	private Timestamp DATA_ULT_MODIF;
+	@JsonProperty("ID_LINHA")
+	private Integer ID_LINHA;
+	@JsonProperty("ATIVO")
+	private Boolean ATIVO;
 
 	public Integer getID() {
 		return ID;
@@ -68,6 +72,22 @@ public class AB_DIC_DOSIFICACAO {
 
 	public void setDATA_ULT_MODIF(Timestamp dATA_ULT_MODIF) {
 		DATA_ULT_MODIF = dATA_ULT_MODIF;
+	}
+
+	public Integer getID_LINHA() {
+		return ID_LINHA;
+	}
+
+	public Boolean getATIVO() {
+		return ATIVO;
+	}
+
+	public void setID_LINHA(Integer iD_LINHA) {
+		ID_LINHA = iD_LINHA;
+	}
+
+	public void setATIVO(Boolean aTIVO) {
+		ATIVO = aTIVO;
 	}
 
 }

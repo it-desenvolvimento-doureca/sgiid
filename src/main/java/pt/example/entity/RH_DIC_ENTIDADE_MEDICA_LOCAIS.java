@@ -25,8 +25,8 @@ public class RH_DIC_ENTIDADE_MEDICA_LOCAIS {
 	private String LOCALIDADE;
 	@JsonProperty("CODIGO_POSTAL")
 	private String CODIGO_POSTAL;
-	@JsonProperty("ID_ENTIDADE_MEDIA")
-	private Integer ID_ENTIDADE_MEDIA;
+	@JsonProperty("ID_ENTIDADE_MEDICA")
+	private Integer ID_ENTIDADE_MEDICA;
 
 	public Integer getID() {
 		return ID;
@@ -48,8 +48,8 @@ public class RH_DIC_ENTIDADE_MEDICA_LOCAIS {
 		return CODIGO_POSTAL;
 	}
 
-	public Integer getID_ENTIDADE_MEDIA() {
-		return ID_ENTIDADE_MEDIA;
+	public Integer getID_ENTIDADE_MEDICA() {
+		return ID_ENTIDADE_MEDICA;
 	}
 
 	public void setID(Integer iD) {
@@ -72,8 +72,8 @@ public class RH_DIC_ENTIDADE_MEDICA_LOCAIS {
 		CODIGO_POSTAL = cODIGO_POSTAL;
 	}
 
-	public void setID_ENTIDADE_MEDIA(Integer iD_ENTIDADE_MEDIA) {
-		ID_ENTIDADE_MEDIA = iD_ENTIDADE_MEDIA;
+	public void setID_ENTIDADE_MEDICA(Integer iD_ENTIDADE_MEDICA) {
+		ID_ENTIDADE_MEDICA = iD_ENTIDADE_MEDICA;
 	}
 
 }

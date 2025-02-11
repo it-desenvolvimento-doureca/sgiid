@@ -919,7 +919,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getReferencias(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP') ORDER BY PROREF";
+		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP','PSOI') ORDER BY PROREF";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -1591,6 +1591,36 @@ public class ConnectProgress {
 		}
 		return list;
 	}
+	
+	public List<HashMap<String, String>> getTypof(String url) throws SQLException {
+
+		String query = "select distinct TYPOF,OFTYPLIB from SPAOFT where TYPOF <> '' ";
+
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		// Usa sempre assim que fecha os resources automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				// parser das opera��es
+				HashMap<String, String> x = new HashMap<>();
+				x.put("TYPOF", rs.getString("TYPOF"));
+				x.put("OFTYPLIB", rs.getString("OFTYPLIB"));
+				list.add(x);
+			}
+
+			stmt.close();
+			rs.close();
+			connection.close();
+			globalconnection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			globalconnection.close();
+		}
+		return list;
+	}
 
 	public List<HashMap<String, String>> getClientes(String url) throws SQLException {
 
@@ -2171,7 +2201,7 @@ public class ConnectProgress {
 				+ "inner join SDTCLP b on a.PROREF = b.PROREF "
 				+ "inner join SDTCLE c on b.CLICOD = c.CLICOD and b.ETSNUM = c.ETSNUM "
 				+ "left join SDTPRA d on a.PROREF = d.PROREF " + "where c.CLICOD = '" + CLICOD + "' and c.ETSNUM = '"
-				+ ETSNUM + "' and d.protypcod in ('PF','COM','PSO','PCF','PSOF','PFI')";
+				+ ETSNUM + "' and d.protypcod in ('PF','COM','PSO','PCF','PSOF','PFI','COMS')";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 

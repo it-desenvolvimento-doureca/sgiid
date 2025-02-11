@@ -14,7 +14,7 @@ public class AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAODao extends GenericDaoJpaImp
 	
 	public List<AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAO> getbyid(Integer id) {
 
-		Query query = entityManager.createQuery("Select a from AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAO a where a.ID = :id ");
+		Query query = entityManager.createQuery("Select a from AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAO a where a.ID_DOSIFICACAO = :id ");
 		query.setParameter("id", id);
 		List<AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAO> data = query.getResultList();
 		return data;

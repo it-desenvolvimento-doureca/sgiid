@@ -3441,6 +3441,18 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getClientes(getURLSILVER());
 		return dados;
 	}
+	
+
+	@GET
+	@Path("/getTypof")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getTypof() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getTypof(getURLSILVER());
+		return dados;
+	}
 
 	@GET
 	@Path("/getMaquinas")
@@ -10635,7 +10647,7 @@ public class SIRB {
 						+ "and  (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id
 						+ " and DATA_EXECUCAO is not null and INATIVO != 1) = 0 "
 						+ "and (select ESTADO from AB_MOV_MANUTENCAO where ID_MANUTENCAO = " + id
-						+ "  and INATIVO != 1 ) ='Em Preparação' and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = "
+						+ "  and INATIVO != 1 ) in ('Em Preparação','Planeado') and (select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = "
 						+ id + "  and INATIVO != 1 ) > 0 "
 						+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO = " + id + " and "
 						+ "(select count(*) from AB_MOV_MANUTENCAO_CAB where ID_MANUTENCAO = " + id

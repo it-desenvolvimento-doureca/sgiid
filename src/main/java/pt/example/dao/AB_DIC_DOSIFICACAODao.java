@@ -21,6 +21,15 @@ public class AB_DIC_DOSIFICACAODao extends GenericDaoJpaImpl<AB_DIC_DOSIFICACAO,
 
 	}
 	
+	public List<AB_DIC_DOSIFICACAO> getbyLinha(Integer linha) {
+
+		Query query = entityManager.createQuery("Select a from AB_DIC_DOSIFICACAO a where a.ID_LINHA = :linha ");
+		query.setParameter("linha", linha);
+		List<AB_DIC_DOSIFICACAO> data = query.getResultList();
+		return data;
+
+	}
+	
 	public List<AB_DIC_DOSIFICACAO> getall() {
 
 		Query query = entityManager.createQuery("Select a from AB_DIC_DOSIFICACAO a ");

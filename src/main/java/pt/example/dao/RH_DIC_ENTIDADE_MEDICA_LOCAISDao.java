@@ -14,7 +14,7 @@ public class RH_DIC_ENTIDADE_MEDICA_LOCAISDao extends GenericDaoJpaImpl<RH_DIC_E
 
 	public List<RH_DIC_ENTIDADE_MEDICA_LOCAIS> getbyid(Integer id) {
 
-		Query query = entityManager.createQuery("Select a from RH_DIC_ENTIDADE_MEDICA_LOCAIS a where a.ID_ENTIDADE_MEDIA = :id ");
+		Query query = entityManager.createQuery("Select a from RH_DIC_ENTIDADE_MEDICA_LOCAIS a where a.ID_ENTIDADE_MEDICA = :id ");
 		query.setParameter("id", id);
 		List<RH_DIC_ENTIDADE_MEDICA_LOCAIS> data = query.getResultList();
 		return data;

@@ -39,6 +39,10 @@ public class PR_DIC_PRODUCAO_SEMANA {
 	private Boolean ATIVO;
 	@Column(name = "ID_LINHA")
 	private Integer ID_LINHA;
+	@Column(name = "TIPO")
+	private String TIPO;
+	@Column(name = "SECCAO")
+	private String SECCAO;
 
 	public Integer getID_PRODUCAO_SEMANA() {
 		return ID_PRODUCAO_SEMANA;
@@ -135,4 +139,22 @@ public class PR_DIC_PRODUCAO_SEMANA {
 	public void setID_LINHA(Integer iD_LINHA) {
 		ID_LINHA = iD_LINHA;
 	}
+
+	public String getTIPO() {
+		return TIPO;
+	}
+
+	public String getSECCAO() {
+		return SECCAO;
+	}
+
+	public void setTIPO(String tIPO) {
+		TIPO = tIPO;
+	}
+
+	public void setSECCAO(String sECCAO) {
+		SECCAO = sECCAO;
+	}
+	
+	
 }

@@ -603,6 +603,19 @@ public class SIRB_2 {
 	}
 
 	@GET
+	@Path("/getSeccoes")
+	@Produces("application/json")
+	public List<Object[]> getSeccoes() {
+
+		Query query_folder = entityManager
+				.createNativeQuery("select gescod,geslib from SILVER_BI.dbo.spages where gescod like 'OF%'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@GET
 	@Path("/GET_TIPO_ACABAMENTO")
 	@Produces("application/json")
 	public List<Object[]> GET_TIPO_ACABAMENTO() {
@@ -1415,6 +1428,24 @@ public class SIRB_2 {
 	}
 
 	@POST
+	@Path("/GET_SEMANAS_PLANEAMENTO_SECCAO")
+	@Produces("application/json")
+	public List<Object[]> GET_SEMANAS_PLANEAMENTO_SECCAO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA = firstMap.get("DATA");
+		String NUMERO_SEMANAS = firstMap.get("NUMERO_SEMANAS");
+		String NOVO = firstMap.get("NOVO");
+		String ID = firstMap.get("ID");
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC [GET_SEMANAS_PLANEAMENTO_SECCAO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
 	@Path("/GET_FASES")
 	@Produces("application/json")
 	public List<Object[]> GET_FASES(final List<HashMap<String, String>> dados) {
@@ -1422,6 +1453,28 @@ public class SIRB_2 {
 		// String DATA = firstMap.get("DATA");
 
 		Query query_folder = entityManager.createNativeQuery("EXEC [GET_FASES]");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/GET_OPERACOES")
+	@Produces("application/json")
+	public List<Object[]> GET_OPERACOES(final List<HashMap<String, String>> dados) {
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_OPERACOES]");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/GET_MOLDES")
+	@Produces("application/json")
+	public List<Object[]> GET_MOLDES(final List<HashMap<String, String>> dados) {
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_MOLDES]");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -5793,6 +5846,13 @@ public class SIRB_2 {
 	}
 
 	@GET
+	@Path("/getAB_DIC_DOSIFICACAObyLinha/{id}")
+	@Produces("application/json")
+	public List<AB_DIC_DOSIFICACAO> getAB_DIC_DOSIFICACAObyLinha(@PathParam("id") Integer id) {
+		return dao72.getbyLinha(id);
+	}
+
+	@GET
 	@Path("/getAB_DIC_DOSIFICACAO")
 	@Produces("application/json")
 	public List<AB_DIC_DOSIFICACAO> getAB_DIC_DOSIFICACAO() {
@@ -7020,6 +7080,10 @@ public class SIRB_2 {
 			select = "CONCAT(a.FICHEIRO_1,a.FICHEIRO_2) as FICHEIRO";
 		}
 
+		if (tabela.equals("PA_MOV_FICHEIROS")) {
+			select = "CONCAT(a.FICHEIRO_1,a.FICHEIRO_2) as FICHEIRO";
+		}
+
 		Query query_folder = entityManager
 				.createNativeQuery("select " + select + " ,NOME from " + tabela + " a where " + campo + " = " + id);
 
@@ -7815,6 +7879,46 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager
 				.createNativeQuery("EXEC ADD_USER_PR_WINROBOT_CAB " + ID + "," + USER + "," + USER_NOME + "");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/VALIDA_USER")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> VALIDA_USER(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		String USER = firstMap.get("USER");
+
+		if (ID != null)
+			ID = "'" + ID + "'";
+		if (USER != null)
+			USER = "'" + USER + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC VALIDA_USER " + ID + "," + USER);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/VALIDA_POSTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> VALIDA_POSTO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String IP_POSTO = firstMap.get("IP_POSTO");
+
+		if (IP_POSTO != null)
+			IP_POSTO = "'" + IP_POSTO + "'";
+		
+
+		Query query_folder = entityManager.createNativeQuery("EXEC VALIDA_POSTO " + IP_POSTO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
