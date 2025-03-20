@@ -23,7 +23,7 @@ public class RH_SUGESTOESDao extends GenericDaoJpaImpl<RH_SUGESTOES, Integer>
 
 	public List<RH_SUGESTOES> getall() {
 
-		Query query = entityManager.createQuery("Select a from RH_SUGESTOES a where a.ATIVO = 1");
+		Query query = entityManager.createQuery("Select a from RH_SUGESTOES a where a.ATIVO = 1 order by a.DATA_CRIA desc");
 		List<RH_SUGESTOES> data = query.getResultList();
 		return data;
 

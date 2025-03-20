@@ -29,6 +29,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import pt.example.bootstrap.ConnectProgress;
+import pt.example.dao.COMU_DIC_CATEGORIASDao;
+import pt.example.dao.COMU_FICHEIROSDao;
+import pt.example.dao.COMU_TICKERSDao;
 import pt.example.dao.COM_BUDGETSDao;
 import pt.example.dao.COM_BUDGETS_ANALISESDao;
 import pt.example.dao.COM_BUDGETS_LINHASDao;
@@ -70,6 +73,8 @@ import pt.example.dao.PIN_MOV_RECEITAS_REFERENCIASDao;
 import pt.example.dao.PIN_MOV_UV_RADIATIONDao;
 import pt.example.dao.PIN_PLANEAMENTO_PINTURADao;
 import pt.example.dao.PIN_PLANEAMENTO_PINTURA_LINHASDao;
+import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_OPERACOES_CABDao;
+import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHASDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_SECCOES_CABDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHASDao;
 import pt.example.dao.PR_REGISTO_PINTURADao;
@@ -92,6 +97,9 @@ import pt.example.dao.RH_REGISTO_ACOESDao;
 import pt.example.dao.RH_SUGESTOESDao;
 import pt.example.dao.RH_SUGESTOES_ATIVIDADEDao;
 import pt.example.dao.RH_SUGESTOES_DOCUMENTOSDao;
+import pt.example.entity.COMU_DIC_CATEGORIAS;
+import pt.example.entity.COMU_FICHEIROS;
+import pt.example.entity.COMU_TICKERS;
 import pt.example.entity.COM_ACORDOS;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
@@ -136,6 +144,8 @@ import pt.example.entity.PIN_MOV_RECEITAS_REFERENCIAS;
 import pt.example.entity.PIN_MOV_UV_RADIATION;
 import pt.example.entity.PIN_PLANEAMENTO_PINTURA;
 import pt.example.entity.PIN_PLANEAMENTO_PINTURA_LINHAS;
+import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB;
+import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS;
 import pt.example.entity.PR_REGISTO_PINTURA;
@@ -290,6 +300,16 @@ public class SIRB_3 {
 	private RH_DADOS_FUNCIONARIODao dao62;
 	@Inject
 	private RH_SUGESTOES_DOCUMENTOSDao dao63;
+	@Inject
+	private PR_PLANEAMENTO_PRODUCAO_OPERACOES_CABDao dao64;
+	@Inject
+	private PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHASDao dao65;
+	@Inject
+	private COMU_FICHEIROSDao dao66;
+	@Inject
+	private COMU_TICKERSDao dao67;
+	@Inject
+	private COMU_DIC_CATEGORIASDao dao68;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -4531,6 +4551,30 @@ public class SIRB_3 {
 
 		return dados_folder;
 	}
+	
+	@POST
+	@Path("/RH_GET_MAIS_35_HORAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> RH_GET_MAIS_35_HORAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+		if (FUNCIONARIO != null)
+			FUNCIONARIO = "'" + FUNCIONARIO + "'";
+
+		List<Object[]> dados_folder = dao49.RH_GET_MAIS_35_HORAS(ANO, FUNCIONARIO, DATA_INICIO, DATA_FIM);
+
+		return dados_folder;
+	}	
 
 	@POST
 	@Path("/RH_GET_FORMACOES_EXPIRADAS")
@@ -5069,14 +5113,11 @@ public class SIRB_3 {
 		String ID_PLANEAMENTO_PRODUCAO_CAB = firstMap.get("ID_PLANEAMENTO_PRODUCAO_CAB");
 		String FASE = firstMap.get("FASE");
 		String COD_REF = firstMap.get("COD_REF");
-		String MOLDE = firstMap.get("MOLDE");
-		String MAQUINA = firstMap.get("MAQUINA");
 		String ANTECEDENCIA = firstMap.get("ANTECEDENCIA");
 		String CAIXA_CAPACIDADE = firstMap.get("CAIXA_CAPACIDADE");
 
 		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS_FILTRO] "
-				+ ID_PLANEAMENTO_PRODUCAO_CAB + ",'" + COD_REF + "','" + FASE + "','" + MOLDE + "','" + MAQUINA + "',"
-				+ ANTECEDENCIA + "," + CAIXA_CAPACIDADE);
+				+ ID_PLANEAMENTO_PRODUCAO_CAB + ",'" + COD_REF + "','" + FASE + "'," + ANTECEDENCIA + "," + CAIXA_CAPACIDADE);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -5414,5 +5455,303 @@ public class SIRB_3 {
 
 		return dados_folder;
 	}
+	/************************************* PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB */
 
+	@POST
+	@Path("/createPR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB insertPR_PLANEAMENTO_PRODUCAO_OPERACOES_CABA(
+			final PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB data) {
+		return dao64.create(data);
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB> getPR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB() {
+		return dao64.getall();
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB2")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB> getPR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB2() {
+		return dao64.getall2();
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_OPERACOES_CABbyid/{id}")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB> getPR_PLANEAMENTO_PRODUCAO_OPERACOES_CABbyip(
+			@PathParam("id") Integer id) {
+		return dao64.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB/{id}")
+	public void deletePR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB(@PathParam("id") Integer id) {
+		PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB = new PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB();
+		PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB.setID_PLANEAMENTO_PRODUCAO_CAB(id);
+		dao64.delete(PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB);
+	}
+
+	@PUT
+	@Path("/updatePR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB updatePR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB(
+			final PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB) {
+		PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB
+				.setID_PLANEAMENTO_PRODUCAO_CAB(PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB.getID_PLANEAMENTO_PRODUCAO_CAB());
+		return dao64.update(PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB);
+	}
+
+	/************************************* PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS */
+
+	@POST
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS_FILTRO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> getPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS_FILTRO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID_PLANEAMENTO_PRODUCAO_CAB = firstMap.get("ID_PLANEAMENTO_PRODUCAO_CAB");
+		String FASE = firstMap.get("FASE");
+		String COD_REF = firstMap.get("COD_REF");
+		String MOLDE = firstMap.get("MOLDE");
+		String MAQUINA = firstMap.get("MAQUINA");
+		String ANTECEDENCIA = firstMap.get("ANTECEDENCIA");
+		String CAIXA_CAPACIDADE = firstMap.get("CAIXA_CAPACIDADE");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS_FILTRO] "
+				+ ID_PLANEAMENTO_PRODUCAO_CAB + ",'" + COD_REF + "','" + FASE + "','" + MOLDE + "','" + MAQUINA + "',"
+				+ ANTECEDENCIA + "," + CAIXA_CAPACIDADE);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS_BASE_COR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> getPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS_BASE_COR() {
+
+		Query query_folder = entityManager.createNativeQuery(
+				"select distinct DESC_BASE_COR,'' as txt from PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS where  DESC_BASE_COR is not null ");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/createPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS insertPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHASA(
+			final PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS data) {
+		return dao65.create(data);
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS> getPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS() {
+		return dao65.getall();
+	}
+
+	@GET
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHASbyid/{id}")
+	@Produces("application/json")
+	public List<PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS> getPR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHASbyip(
+			@PathParam("id") Integer id) {
+		return dao65.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS/{id}")
+	public void deletePR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS(@PathParam("id") Integer id) {
+		PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS = new PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS();
+		PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.setID_PLANEAMENTO_PRODUCAO_LINHA(id);
+		dao65.delete(PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS);
+	}
+
+	@PUT
+	@Path("/updatePR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS updatePR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS(
+			final PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS) {
+		PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.setID_PLANEAMENTO_PRODUCAO_LINHA(
+				PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.getID_PLANEAMENTO_PRODUCAO_LINHA());
+		return dao65.update(PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS);
+	}
+
+	@PUT
+	@Path("/updatePR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS_CAMPOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public boolean updatePR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS_CAMPOS(
+			final PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS) {
+
+		entityManager.createNativeQuery("UPDATE PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS SET UTZ_MODIF= "
+				+ PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.getUTZ_MODIF() + ", DATA_MODIF = GETDATE(),NUM_CAIXAS_PLANO = "
+				+ PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.getNUM_CAIXAS_PLANO()
+				+ " WHERE ID_PLANEAMENTO_PRODUCAO_LINHA = "
+				+ PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.getID_PLANEAMENTO_PRODUCAO_LINHA() + "").executeUpdate();
+		return true;
+	}
+
+	@POST
+	@Path("/INSERT_PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS")
+	@Produces("application/json")
+	public List<Object[]> INSERT_PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC [INSERT_PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS] " + ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	
+	/************************************* COMU_FICHEIROS */
+
+	@POST
+	@Path("/createCOMU_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public COMU_FICHEIROS insertCOMU_FICHEIROSA(
+			final COMU_FICHEIROS data) {
+		return dao66.create(data);
+	}
+
+	@GET
+	@Path("/getCOMU_FICHEIROS")
+	@Produces("application/json")
+	public List<COMU_FICHEIROS> getCOMU_FICHEIROS() {
+		return dao66.getall();
+	}
+ 
+	@GET
+	@Path("/getCOMU_FICHEIROSbyid/{id}")
+	@Produces("application/json")
+	public List<COMU_FICHEIROS> getCOMU_FICHEIROSbyip(
+			@PathParam("id") Integer id) {
+		return dao66.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteCOMU_FICHEIROS/{id}")
+	public void deleteCOMU_FICHEIROS(@PathParam("id") Integer id) {
+		COMU_FICHEIROS COMU_FICHEIROS = new COMU_FICHEIROS();
+		COMU_FICHEIROS.setID(id);
+		dao66.delete(COMU_FICHEIROS);
+	}
+
+	@PUT
+	@Path("/updateCOMU_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public COMU_FICHEIROS updateCOMU_FICHEIROS(
+			final COMU_FICHEIROS COMU_FICHEIROS) {
+		COMU_FICHEIROS
+				.setID(COMU_FICHEIROS.getID());
+		return dao66.update(COMU_FICHEIROS);
+	}
+	
+	/************************************* COMU_TICKERS */
+
+	@POST
+	@Path("/createCOMU_TICKERS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public COMU_TICKERS insertCOMU_TICKERSA(
+			final COMU_TICKERS data) {
+		return dao67.create(data);
+	}
+
+	@GET
+	@Path("/getCOMU_TICKERS")
+	@Produces("application/json")
+	public List<COMU_TICKERS> getCOMU_TICKERS() {
+		return dao67.getall();
+	}
+ 
+	@GET
+	@Path("/getCOMU_TICKERSbyid/{id}")
+	@Produces("application/json")
+	public List<COMU_TICKERS> getCOMU_TICKERSbyip(
+			@PathParam("id") Integer id) {
+		return dao67.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteCOMU_TICKERS/{id}")
+	public void deleteCOMU_TICKERS(@PathParam("id") Integer id) {
+		COMU_TICKERS COMU_TICKERS = new COMU_TICKERS();
+		COMU_TICKERS.setID(id);
+		dao67.delete(COMU_TICKERS);
+	}
+
+	@PUT
+	@Path("/updateCOMU_TICKERS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public COMU_TICKERS updateCOMU_TICKERS(
+			final COMU_TICKERS COMU_TICKERS) {
+		COMU_TICKERS
+				.setID(COMU_TICKERS.getID());
+		return dao67.update(COMU_TICKERS);
+	}
+	
+	/************************************* COMU_DIC_CATEGORIAS */
+
+	@POST
+	@Path("/createCOMU_DIC_CATEGORIAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public COMU_DIC_CATEGORIAS insertCOMU_DIC_CATEGORIASA(
+			final COMU_DIC_CATEGORIAS data) {
+		return dao68.create(data);
+	}
+
+	@GET
+	@Path("/getCOMU_DIC_CATEGORIAS")
+	@Produces("application/json")
+	public List<COMU_DIC_CATEGORIAS> getCOMU_DIC_CATEGORIAS() {
+		return dao68.getall();
+	}
+ 
+	@GET
+	@Path("/getCOMU_DIC_CATEGORIASbyid/{id}")
+	@Produces("application/json")
+	public List<COMU_DIC_CATEGORIAS> getCOMU_DIC_CATEGORIASbyip(
+			@PathParam("id") Integer id) {
+		return dao68.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteCOMU_DIC_CATEGORIAS/{id}")
+	public void deleteCOMU_DIC_CATEGORIAS(@PathParam("id") Integer id) {
+		COMU_DIC_CATEGORIAS COMU_DIC_CATEGORIAS = new COMU_DIC_CATEGORIAS();
+		COMU_DIC_CATEGORIAS.setID(id);
+		dao68.delete(COMU_DIC_CATEGORIAS);
+	}
+
+	@PUT
+	@Path("/updateCOMU_DIC_CATEGORIAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public COMU_DIC_CATEGORIAS updateCOMU_DIC_CATEGORIAS(
+			final COMU_DIC_CATEGORIAS COMU_DIC_CATEGORIAS) {
+		COMU_DIC_CATEGORIAS
+				.setID(COMU_DIC_CATEGORIAS.getID());
+		return dao68.update(COMU_DIC_CATEGORIAS);
+	}
 }

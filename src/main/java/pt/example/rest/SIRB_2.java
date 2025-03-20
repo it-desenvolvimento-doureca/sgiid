@@ -1427,6 +1427,25 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
+	
+	@POST
+	@Path("/GET_SEMANAS_PLANEAMENTO_OPERACAO")
+	@Produces("application/json")
+	public List<Object[]> GET_SEMANAS_PLANEAMENTO_OPERACAO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String DATA = firstMap.get("DATA");
+		String NUMERO_SEMANAS = firstMap.get("NUMERO_SEMANAS");
+		String NOVO = firstMap.get("NOVO");
+		String ID = firstMap.get("ID");
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC [GET_SEMANAS_PLANEAMENTO_OPERACAO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
 	@POST
 	@Path("/GET_SEMANAS_PLANEAMENTO_SECCAO")
 	@Produces("application/json")
@@ -8827,6 +8846,22 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager.createNativeQuery(
 				"SELECT ID,NUM_CARRO,ID_CAB,UTZ_CRIA,DATA_CRIA,UTZ_MODIF,DATA_MODIF FROM PR_WINROBOT_CARROS WHERE ID_CAB = :id")
+				.setParameter("id", ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/GET_REGISTO_ATIVIDADE")
+	@Produces("application/json")
+	public List<Object[]> GET_REGISTO_ATIVIDADE(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+
+		Query query_folder = entityManager.createNativeQuery(
+				"SELECT ID,DESCRICAO,DATA_CRIA,ID_CAB FROM PR_WINROBOT_HISTORICO WHERE ID_CAB = :id order by DATA_CRIA")
 				.setParameter("id", ID);
 
 		List<Object[]> dados_folder = query_folder.getResultList();

@@ -34,7 +34,7 @@ public class SendEmail {
 	private String password;
 
 	public void enviarEmail(String de, String para, String assunto, String mensagem, String nome_ficheiro,
-			String[] files, String nomepasta, String ficheiro) {
+			String[] files, String nomepasta, String ficheiro, String bcc) {
 
 		String host = null, port = null;
 
@@ -76,10 +76,12 @@ public class SendEmail {
 				message.setFrom(new InternetAddress(de));
 			}
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(para));
-			message.setSubject(assunto);
+			if (bcc != null)
+				message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
 
 			MimeBodyPart messageBodyPart = new MimeBodyPart();
 			messageBodyPart.setContent(mensagem, "text/html");
+			message.setSubject(assunto);
 
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(messageBodyPart);
@@ -101,7 +103,7 @@ public class SendEmail {
 			}
 
 			if (ficheiro != null && !ficheiro.isEmpty()) {
-				
+
 				MimeBodyPart attachPart2 = new MimeBodyPart();
 				Path p = Paths.get(ficheiro);
 				String file = p.getFileName().toString();
@@ -113,7 +115,6 @@ public class SendEmail {
 			}
 
 			if (files != null && files.length > 0) {
-				
 
 				for (String pair : files) {
 					// System.out.println(pair);

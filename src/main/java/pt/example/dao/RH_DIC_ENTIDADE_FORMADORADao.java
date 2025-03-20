@@ -23,7 +23,7 @@ public class RH_DIC_ENTIDADE_FORMADORADao extends GenericDaoJpaImpl<RH_DIC_ENTID
 
 	public List<RH_DIC_ENTIDADE_FORMADORA> getall() {
 
-		Query query = entityManager.createQuery("Select a from RH_DIC_ENTIDADE_FORMADORA a ");
+		Query query = entityManager.createQuery("Select a from RH_DIC_ENTIDADE_FORMADORA a where a.ATIVO = 1");
 		List<RH_DIC_ENTIDADE_FORMADORA> data = query.getResultList();
 		return data;
 

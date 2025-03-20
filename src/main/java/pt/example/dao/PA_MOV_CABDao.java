@@ -52,7 +52,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ "left join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB left join GT_DIC_TAREFAS c on b.ID_ACCAO = c.ID "
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID  left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO "
 						+ "  left join GT_MOV_TAREFAS g on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null  where  "
-						+ query2 + " order by a.DATA_OBJETIVO asc,b.DATA_ACCAO asc ");
+						+ query2 + " order by a.ID_PLANO_CAB,a.DATA_OBJETIVO asc,b.DATA_ACCAO asc ");
 		//query.setParameter("id", id);
 		List<PA_MOV_CAB> data = query.getResultList();
 		return data;
@@ -225,10 +225,11 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ ",b.DATA_ACCAO,(select NOME_UTILIZADOR from GER_UTILIZADORES y where y.ID_UTILIZADOR = b.RESPONSAVEL) as RESPONSAVEL, c.DESCRICAO_PT,b.DESCRICAO as descricao_acao,d.DESCRICAO as DESCRICAO_PRIORIDADE "
 						+ ",b.ESTADO as ESTADO_ACAO,b.fastresponse ,(select sd.DESCRICAO from PA_DIC_AMBITOS sd where sd.ID_AMBITO = a.AMBITO) as AMBITO_DESC, f.DESCRICAO as TIPO_ACAO_DESC,g.ID_TAREFA,g.ESTADO ESTADO_TAREFA,(select i.DESCRICAO from GER_UTILIZADORES t inner join RH_FUNCIONARIOS y on t.COD_UTZ = y.COD_FUNC_ORIGEM inner join GER_DEPARTAMENTOS_SECTORES u on y.COD_SECTOR = u.COD_SECTOR inner join  "
 						+ "GER_DEPARTAMENTO i on u.ID_DEPARTAMENTO = i.ID where t.ID_UTILIZADOR = b.RESPONSAVEL),(select x.NOME_LINHA from AB_DIC_LINHA x where a.ID_LINHA = x.ID_LINHA) as LINHA "
-						+ ",CASE WHEN a.UNIDADE = 1 THEN 'Formariz' WHEN   a.UNIDADE = 1 THEN 'S�o Bento' ELSE '' END as UNIDADES "
+						+ ",CASE WHEN a.UNIDADE = 1 THEN 'Formariz' WHEN   a.UNIDADE = 1 THEN 'São Bento' ELSE '' END as UNIDADES "
 						+ ",CASE WHEN b.REFERENCIA is not null then b.REFERENCIA + ' - '+ b.DESIGN_REFERENCIA ELSE null END REFERENCIA "
 						+ ",b.ITEM,b.CAUSA,g.DATA_CONCLUSAO,ISNULL(g.PERCENTAGEM_CONCLUSAO,0) PERCENTAGEM_CONCLUSAO "
 						+ " ,(select count(*) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = g.ID_TAREFA ) subtarefas,b.DATA_ACCAO_ORIGINAL,b.JUSTIFICACAO,cast(b.DATA_ACCAO as datetime) + cast(b.HORA_ACCAO as datetime) as datahoraaccao,b.DATA_CRIA datacriaccao ,a.DATA_ORIGEM " 
+						+ "  ,(select c.NOME_UTILIZADOR from GER_UTILIZADORES c where c.ID_UTILIZADOR =  g.UTZ_ENCAMINHADO)  as UTZ_ENCAMINHADO "
 						+ "from PA_MOV_CAB a "
 						+ "inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
 						+ "left join GT_DIC_TAREFAS c on b.ID_ACCAO = c.ID "

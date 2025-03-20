@@ -4,6 +4,7 @@ public class EMAIL {
 
 	private String DE;
 	private String PARA;
+	private String BCC;
 	private String ASSUNTO;
 	private String MENSAGEM;
 	private String NOME_FICHEIRO;
@@ -46,6 +47,14 @@ public class EMAIL {
 
 	public void setNOME_FICHEIRO(String nOME_FICHEIRO) {
 		NOME_FICHEIRO = nOME_FICHEIRO;
+	}
+
+	public String getBCC() {
+		return BCC;
+	}
+
+	public void setBCC(String bCC) {
+		BCC = bCC;
 	}
 
 }

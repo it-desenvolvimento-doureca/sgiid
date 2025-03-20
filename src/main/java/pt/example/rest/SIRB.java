@@ -9051,7 +9051,7 @@ public class SIRB {
 		// System.out.println(data.getPARA());
 		SendEmail send = new SendEmail();
 		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO(),
-				fic, getFILEPATH(), ficheiro);
+				fic, getFILEPATH(), ficheiro,data.getBCC());
 		return data;
 
 	}

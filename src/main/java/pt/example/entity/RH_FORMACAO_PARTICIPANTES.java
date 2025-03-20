@@ -26,6 +26,16 @@ public class RH_FORMACAO_PARTICIPANTES {
 	private String AVALIACAO_FINAL;
 	@JsonProperty("OBSERVACOES")
 	private String OBSERVACOES;
+	@JsonProperty("EMAIL")
+	private String EMAIL;
+
+	public String getEMAIL() {
+		return EMAIL;
+	}
+
+	public void setEMAIL(String eMAIL) {
+		EMAIL = eMAIL;
+	}
 
 	public Integer getID() {
 		return ID;

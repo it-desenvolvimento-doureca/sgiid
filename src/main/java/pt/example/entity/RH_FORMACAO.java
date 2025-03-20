@@ -68,6 +68,8 @@ public class RH_FORMACAO {
 	private Boolean ATIVO;
 	@JsonProperty("AVALIACAO_SATISFACAO")
 	private Boolean AVALIACAO_SATISFACAO;
+	@JsonProperty("LINK_FORMULARIO")
+	private String LINK_FORMULARIO;
 
 	public Integer getID() {
 		return ID;

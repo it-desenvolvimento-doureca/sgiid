@@ -25,8 +25,6 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 	private Integer SEMANA;
 	@JsonProperty("ANO")
 	private Integer ANO;
-	@JsonProperty("CADENCIA")
-	private Integer CADENCIA;
 	@JsonProperty("FASE")
 	private String FASE;
 	@JsonProperty("COD_REF")
@@ -35,16 +33,14 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 	private String DESIGN_REF;
 	@JsonProperty("QUANT_PECAS")
 	private Integer QUANT_PECAS;
-	@JsonProperty("MAQUINA")
-	private String MAQUINA;
 	@JsonProperty("NUM_CAIXAS")
 	private Integer NUM_CAIXAS;
-	@JsonProperty("MOLDE")
-	private String MOLDE;
 	@JsonProperty("ANTECEDENCIA")
 	private Integer ANTECEDENCIA;
 	@JsonProperty("QUANT_MRP")
 	private Integer QUANT_MRP;
+	@JsonProperty("QUANT_OF")
+	private Integer QUANT_OF;
 	@JsonProperty("NUM_CAIXAS_MRP")
 	private Integer NUM_CAIXAS_MRP;
 	@JsonProperty("QUANT_PLANO")
@@ -61,10 +57,9 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 	private String SECCAO;
 	@JsonProperty("NOME_SECCAO")
 	private String NOME_SECCAO;
-	@JsonProperty("OPERACAO")
-	private String OPERACAO;
-	@JsonProperty("NOME_MAQUINA")
-	private String NOME_MAQUINA;
+	@JsonProperty("PROTYPCOD")
+	private String PROTYPCOD;
+
 
 	public Integer getID_PLANEAMENTO_PRODUCAO_LINHA() {
 		return ID_PLANEAMENTO_PRODUCAO_LINHA;
@@ -80,10 +75,6 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 
 	public Integer getANO() {
 		return ANO;
-	}
-
-	public Integer getCADENCIA() {
-		return CADENCIA;
 	}
 
 	public String getFASE() {
@@ -102,17 +93,12 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 		return QUANT_PECAS;
 	}
 
-	public String getMAQUINA() {
-		return MAQUINA;
-	}
 
 	public Integer getNUM_CAIXAS() {
 		return NUM_CAIXAS;
 	}
 
-	public String getMOLDE() {
-		return MOLDE;
-	}
+
 
 	public Integer getANTECEDENCIA() {
 		return ANTECEDENCIA;
@@ -154,13 +140,6 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 		return NOME_SECCAO;
 	}
 
-	public String getOPERACAO() {
-		return OPERACAO;
-	}
-
-	public String getNOME_MAQUINA() {
-		return NOME_MAQUINA;
-	}
 
 	public void setID_PLANEAMENTO_PRODUCAO_LINHA(Integer iD_PLANEAMENTO_PRODUCAO_LINHA) {
 		ID_PLANEAMENTO_PRODUCAO_LINHA = iD_PLANEAMENTO_PRODUCAO_LINHA;
@@ -178,10 +157,7 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 		ANO = aNO;
 	}
 
-	public void setCADENCIA(Integer cADENCIA) {
-		CADENCIA = cADENCIA;
-	}
-
+	
 	public void setFASE(String fASE) {
 		FASE = fASE;
 	}
@@ -198,18 +174,13 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 		QUANT_PECAS = qUANT_PECAS;
 	}
 
-	public void setMAQUINA(String mAQUINA) {
-		MAQUINA = mAQUINA;
-	}
+	
 
 	public void setNUM_CAIXAS(Integer nUM_CAIXAS) {
 		NUM_CAIXAS = nUM_CAIXAS;
 	}
 
-	public void setMOLDE(String mOLDE) {
-		MOLDE = mOLDE;
-	}
-
+	
 	public void setANTECEDENCIA(Integer aNTECEDENCIA) {
 		ANTECEDENCIA = aNTECEDENCIA;
 	}
@@ -250,12 +221,22 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
 		NOME_SECCAO = nOME_SECCAO;
 	}
 
-	public void setOPERACAO(String oPERACAO) {
-		OPERACAO = oPERACAO;
+	public Integer getQUANT_OF() {
+		return QUANT_OF;
 	}
 
-	public void setNOME_MAQUINA(String nOME_MAQUINA) {
-		NOME_MAQUINA = nOME_MAQUINA;
+	public String getPROTYPCOD() {
+		return PROTYPCOD;
 	}
+
+	public void setQUANT_OF(Integer qUANT_OF) {
+		QUANT_OF = qUANT_OF;
+	}
+
+	public void setPROTYPCOD(String pROTYPCOD) {
+		PROTYPCOD = pROTYPCOD;
+	}
+
+ 
 
 }

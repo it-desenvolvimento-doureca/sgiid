@@ -51,8 +51,8 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB {
 	private String SEMANAS;
 	@JsonProperty("NUMERO_SEMANAS")
 	private Integer NUMERO_SEMANAS;
-	@JsonProperty("OPERACAO")
-	private String OPERACAO;
+	@JsonProperty("PROTYPCOD")
+	private String PROTYPCOD;
 
 	public Integer getID_PLANEAMENTO_PRODUCAO_CAB() {
 		return ID_PLANEAMENTO_PRODUCAO_CAB;
@@ -190,12 +190,11 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB {
 		NUMERO_SEMANAS = nUMERO_SEMANAS;
 	}
 
-	public String getOPERACAO() {
-		return OPERACAO;
+	public String getPROTYPCOD() {
+		return PROTYPCOD;
 	}
 
-	public void setOPERACAO(String oPERACAO) {
-		OPERACAO = oPERACAO;
+	public void setPROTYPCOD(String pROTYPCOD) {
+		PROTYPCOD = pROTYPCOD;
 	}
-
 }

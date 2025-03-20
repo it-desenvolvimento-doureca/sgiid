@@ -87,6 +87,26 @@ public class RH_CANDIDATURAS {
     private Integer UTZ_CRIA;
 	@JsonProperty("UTZ_MODIF")
     private Integer UTZ_MODIF;
+	
+	@JsonProperty("ESTADO")
+    private String ESTADO;
+	
+	@JsonProperty("UTZ_EM_ANALISE")
+    private Integer UTZ_EM_ANALISE;
+	@JsonProperty("UTZ_REJEITA")
+    private Integer UTZ_REJEITA;
+	@JsonProperty("UTZ_APROVA")
+    private Integer UTZ_APROVA;
+	
+	@JsonProperty("DATA_EM_ANALISE")
+    private Timestamp DATA_EM_ANALISE;
+	@JsonProperty("DATA_REJEITA")
+    private Timestamp DATA_REJEITA;
+	@JsonProperty("DATA_APROVA")
+    private Timestamp DATA_APROVA;
+	
+	
+	
 	public Integer getID() {
 		return ID;
 	}
@@ -296,6 +316,48 @@ public class RH_CANDIDATURAS {
 	}
 	public void setUTZ_MODIF(Integer uTZ_MODIF) {
 		UTZ_MODIF = uTZ_MODIF;
+	}
+	public String getESTADO() {
+		return ESTADO;
+	}
+	public Integer getUTZ_EM_ANALISE() {
+		return UTZ_EM_ANALISE;
+	}
+	public Integer getUTZ_REJEITA() {
+		return UTZ_REJEITA;
+	}
+	public Integer getUTZ_APROVA() {
+		return UTZ_APROVA;
+	}
+	public Timestamp getDATA_EM_ANALISE() {
+		return DATA_EM_ANALISE;
+	}
+	public Timestamp getDATA_REJEITA() {
+		return DATA_REJEITA;
+	}
+	public Timestamp getDATA_APROVA() {
+		return DATA_APROVA;
+	}
+	public void setESTADO(String eSTADO) {
+		ESTADO = eSTADO;
+	}
+	public void setUTZ_EM_ANALISE(Integer uTZ_EM_ANALISE) {
+		UTZ_EM_ANALISE = uTZ_EM_ANALISE;
+	}
+	public void setUTZ_REJEITA(Integer uTZ_REJEITA) {
+		UTZ_REJEITA = uTZ_REJEITA;
+	}
+	public void setUTZ_APROVA(Integer uTZ_APROVA) {
+		UTZ_APROVA = uTZ_APROVA;
+	}
+	public void setDATA_EM_ANALISE(Timestamp dATA_EM_ANALISE) {
+		DATA_EM_ANALISE = dATA_EM_ANALISE;
+	}
+	public void setDATA_REJEITA(Timestamp dATA_REJEITA) {
+		DATA_REJEITA = dATA_REJEITA;
+	}
+	public void setDATA_APROVA(Timestamp dATA_APROVA) {
+		DATA_APROVA = dATA_APROVA;
 	}
 	
 	

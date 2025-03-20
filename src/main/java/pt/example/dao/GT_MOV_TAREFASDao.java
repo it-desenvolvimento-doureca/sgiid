@@ -266,6 +266,7 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 						+ "on a.ID_CAMPO = b.ID and b.MODULO = a.ID_MODULO and b.SUB_MODULO = a.SUB_MODULO "
 						+ "left join PA_DIC_AMBITOS c on b.ID_AMBITO = c.ID_AMBITO and a.ID_MODULO = 13 "
 						+ "left join REU_AMBITOS_REUNIOES d on b.ID_AMBITO = d.ID_AMBITO and a.ID_MODULO = 19 "
+						+ "LEFT JOIN  (SELECT Count(*) total,ID_PLANO_CAB FROM pe_planos_associados x group by x.ID_PLANO_CAB) x on x.ID_PLANO_CAB = b.id_reclamacao " 
 						+ "where ((not " + varquery + " != 0) or (a.ESTADO in (" + estado + ")))  "
 						+ query_utilizador + "  AND a.INATIVO != 1 " + "and ((not " + varquery2
 						+ " != 0) or (a.DATA_CRIA <= ('" + datacria2 + " 23:59:59'))) and ((not " + varquery1
@@ -278,8 +279,8 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 						+ " != 0) or (a.ID_TAREFA_PAI = " + idsubtarefa + ")) "
 						+ " and ((not " + varquery7 + " != 0) or (a.ID_MODULO = "+modulo+")) "
 						+ " and ((not " + varquery8 + " != 0) or (a.SUB_MODULO = '"+submodulo+"'))"
-						+ " and (( (" + varquery10 + " != 1 )) or (a.ID_MODULO = 13 and (select count(*) from PE_PLANOS_ASSOCIADOS x where x.ID_PLANO_CAB = b.ID_RECLAMACAO) > 0))"
-						+ " and (( (" + varquery10 + " != 2 )) or (a.ID_MODULO = 13 and (select count(*) from PE_PLANOS_ASSOCIADOS x where x.ID_PLANO_CAB = b.ID_RECLAMACAO) = 0))");
+						+ " and (( (" + varquery10 + " != 1 )) or (a.ID_MODULO = 13 AND isnull(x.total,0)   > 0 ))"
+						+ " and (( (" + varquery10 + " != 2 )) or (a.ID_MODULO = 13 AND isnull(x.total,0) = 0 ))");
 
 		// query.setParameter("query2", estado);
 		List<GT_MOV_TAREFAS> data = query.getResultList();

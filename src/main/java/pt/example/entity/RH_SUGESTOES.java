@@ -44,6 +44,16 @@ public class RH_SUGESTOES {
 	private Integer UTZ_ANULA;
 	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
+	@JsonProperty("IP")
+	private String IP;
+
+	public String getIP() {
+		return IP;
+	}
+
+	public void setIP(String iP) {
+		IP = iP;
+	}
 
 	public Integer getID() {
 		return ID;

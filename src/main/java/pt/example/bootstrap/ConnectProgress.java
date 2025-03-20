@@ -670,7 +670,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getComponentesPintura3(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where  Protypcod in ('PSOP','PFPP') and Gescod='OFPP' and Datann is null";
+		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where  Protypcod in ('PSOP','PFPP','PPSF') and Gescod='OFPP' and Datann is null";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -919,7 +919,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getReferencias(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP','PSOI') ORDER BY PROREF";
+		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP','PPSF','PSOI') ORDER BY PROREF";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -948,7 +948,7 @@ public class ConnectProgress {
 	
 	public List<HashMap<String, String>> getReferenciaSearch(String url,String query_) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP')"
+		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP','PPSF')"
 				+ "and (PROREF like  REPLACE('%"+query_+"%',' ','%') or PRODES1 like REPLACE('%"+query_+"%',' ','%')) ORDER BY PROREF";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();

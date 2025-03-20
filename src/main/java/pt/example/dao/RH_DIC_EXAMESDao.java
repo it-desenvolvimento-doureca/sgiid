@@ -23,7 +23,7 @@ public class RH_DIC_EXAMESDao extends GenericDaoJpaImpl<RH_DIC_EXAMES, Integer>
 
 	public List<RH_DIC_EXAMES> getall() {
 
-		Query query = entityManager.createQuery("Select a from RH_DIC_EXAMES a ");
+		Query query = entityManager.createQuery("Select a from RH_DIC_EXAMES a where a.ATIVO = 1");
 		List<RH_DIC_EXAMES> data = query.getResultList();
 		return data;
 

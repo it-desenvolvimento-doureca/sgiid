@@ -23,7 +23,7 @@ public class RH_DIC_CRITERIOS_AVALIACAODao extends GenericDaoJpaImpl<RH_DIC_CRIT
 
 	public List<RH_DIC_CRITERIOS_AVALIACAO> getall() {
 
-		Query query = entityManager.createQuery("Select a from RH_DIC_CRITERIOS_AVALIACAO a ");
+		Query query = entityManager.createQuery("Select a from RH_DIC_CRITERIOS_AVALIACAO a where a.ATIVO = 1");
 		List<RH_DIC_CRITERIOS_AVALIACAO> data = query.getResultList();
 		return data;
 

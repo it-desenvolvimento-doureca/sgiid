@@ -23,7 +23,7 @@ public class RH_DIC_ENTIDADE_MEDICADao extends GenericDaoJpaImpl<RH_DIC_ENTIDADE
 
 	public List<RH_DIC_ENTIDADE_MEDICA> getall() {
 
-		Query query = entityManager.createQuery("Select a from RH_DIC_ENTIDADE_MEDICA a ");
+		Query query = entityManager.createQuery("Select a from RH_DIC_ENTIDADE_MEDICA a where a.ATIVO = 1");
 		List<RH_DIC_ENTIDADE_MEDICA> data = query.getResultList();
 		return data;
 

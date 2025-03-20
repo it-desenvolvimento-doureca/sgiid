@@ -195,4 +195,29 @@ public class RH_FORMACAODao extends GenericDaoJpaImpl<RH_FORMACAO, Integer>
 		return data;
 
 	}
+	
+	public List<Object[]> RH_GET_MAIS_35_HORAS(String ano, String utilizador, String DATA_INICIO,
+			String DATA_FIM) {
+
+		Query query = entityManager.createNativeQuery("declare @DATA_INICIO varchar(25) =  " + DATA_INICIO
+				+ " declare @DATA_FIM varchar(25) =  " + DATA_FIM + " declare @utilizador varchar(25) =  " + utilizador
+				+ " declare @ano varchar(25) =  " + ano
+				+ " Select pa.NOME_FUNCIONARIO,sum(ISNULL(a.DURACAO,0)) TOTAL,pa.ID_FUNCIONARIO "
+				+ "from RH_FORMACAO_PARTICIPANTES pa "
+				+ "left join RH_FORMACAO a  on a.ID = pa.ID_FORMACAO "
+				+ "left join RH_DIC_AREA_FORMACAO b on a.ID_AREA_FORMACAO = b.ID  "
+				+ "left join RH_DIC_CRITERIOS_AVALIACAO c on a.ID_CRITERIOS_AVALIACAO = c.ID  "
+				+ "left join RH_DIC_ENTIDADE_FORMADORA d on a.ID_ENTIDADE_FORMADORA = d.ID  "
+				+ "where a.ATIVO = 1 and YEAR(DATA_INICIO) = @ano  "
+				+ "AND ((@utilizador is null) or (a.ID in ((select f.ID_FORMACAO from RH_FORMACAO_PARTICIPANTES f where f.ID_FUNCIONARIO = @utilizador))))  "
+				+ "AND ((@DATA_INICIO is null ) or ( @DATA_INICIO <= DATA_INICIO))  "
+				+ "AND ((@DATA_FIM is null ) or ( @DATA_FIM >= DATA_INICIO))  "
+				+ "group by pa.NOME_FUNCIONARIO,pa.ID_FUNCIONARIO "
+				+ "having sum(ISNULL(a.DURACAO,0)) >= 35 "
+				+ "order by TOTAL desc "
+				+ "");
+		List<Object[]> data = query.getResultList();
+		return data;
+
+	}
 }

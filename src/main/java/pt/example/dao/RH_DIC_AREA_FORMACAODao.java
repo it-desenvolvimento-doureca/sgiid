@@ -23,7 +23,7 @@ public class RH_DIC_AREA_FORMACAODao extends GenericDaoJpaImpl<RH_DIC_AREA_FORMA
 
 	public List<RH_DIC_AREA_FORMACAO> getall() {
 
-		Query query = entityManager.createQuery("Select a from RH_DIC_AREA_FORMACAO a ");
+		Query query = entityManager.createQuery("Select a from RH_DIC_AREA_FORMACAO a where a.ATIVO = 1");
 		List<RH_DIC_AREA_FORMACAO> data = query.getResultList();
 		return data;
 
