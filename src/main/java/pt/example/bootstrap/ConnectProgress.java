@@ -610,7 +610,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getComponentes(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where ACHFAMCOD='C001' AND ACHFASCOD IN ('CM04','CM05','CM06')";
+		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where ACHFAMCOD in ('C001','C009') AND ACHFASCOD IN ('CM04','CM05','CM06','CM11')";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -861,7 +861,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getComponentesDOSGIID(String url) throws SQLException {
 
-		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where /*ACHFAMCOD='C001' AND*/ ACHFASCOD IN ('CM04','CM05','CM06','CM22') AND PROREF in (select COD_REF from SGIID.dbo.AB_DIC_COMPONENTE WHERE COD_REF is not null and COD_REF != '' )";
+		String query = "select PROREF,PRODES1,PRODES2,UNISTO from SDTPRA where /*ACHFAMCOD='C001' AND*/ ACHFASCOD IN ('CM04','CM05','CM06','CM22','CM11') AND PROREF in (select COD_REF from SGIID.dbo.AB_DIC_COMPONENTE WHERE COD_REF is not null and COD_REF != '' )";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -1132,6 +1132,40 @@ public class ConnectProgress {
 		}
 		return list;
 	}
+	
+	public List<HashMap<String, String>> getComponentesBySeccao(String url, String seccoes) throws SQLException {
+
+	    // Divide a string de seções por vírgulas e constrói a cláusula IN dinamicamente
+	    String[] secArray = seccoes.split(",");
+	    StringBuilder inClause = new StringBuilder();
+	    for (int i = 0; i < secArray.length; i++) {
+	        inClause.append("'").append(secArray[i]).append("'");
+	        if (i < secArray.length - 1) {
+	            inClause.append(",");
+	        }
+	    }
+
+	    String query = "SELECT PROREF, PRODES1, PRODES2 FROM SDTPRA WHERE gescod IN (" + inClause + ")";
+
+	    List<HashMap<String, String>> list = new ArrayList<>();
+
+	    // Usa o try-with-resources para fechar os recursos automaticamente
+	    try (Connection connection = getConnection(url);
+	         Statement stmt = connection.createStatement();
+	         ResultSet rs = stmt.executeQuery(query)) {
+	        while (rs.next()) {
+	            HashMap<String, String> x = new HashMap<>();
+	            x.put("PROREF", rs.getString("PROREF"));
+	            x.put("PRODES1", rs.getString("PRODES1"));
+	            x.put("PRODES2", rs.getString("PRODES2"));
+	            list.add(x);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
 
 	public List<HashMap<String, String>> getComponentesSaoBento(String url) throws SQLException {
 
@@ -1368,7 +1402,7 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getDadosEtiquetaPintura(String url, String etiqueta) throws SQLException {
 
-		String query = "select a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
+		String query = "select c.LOTDATVLF,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
 				+ " ,(SELECT count(*) FROM stodet x WHERE x.proref= a.PROREF AND x.LIECOD='DPCHI' AND x.empcod='ZONQUA' AND x.EMPCOD != b.EMPCOD AND lotqte>0 ) TOTAL_ZONQUA ,c.LOTDATCRE  "
 				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
 				+ "left join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
@@ -1401,7 +1435,7 @@ public class ConnectProgress {
 				x.put("TOTAL_ZONQUA", rs.getString("TOTAL_ZONQUA"));
 				
 				
-				ArrayList<String>  result =  getDadosEtiquetaPinturaTotal(url, etiqueta,rs.getString("PROREF"), rs.getString("LOTDATCRE"));
+				ArrayList<String>  result =  getDadosEtiquetaPinturaTotal(url, etiqueta,rs.getString("PROREF"), rs.getString("LOTDATCRE"),rs.getString("LOTDATVLF"));
 				
 				if(result != null) {
 					x.put("EXISTE_ETIQUETAS", result.get(0));
@@ -1427,17 +1461,20 @@ public class ConnectProgress {
 	}
 
 	
-	public ArrayList<String> getDadosEtiquetaPinturaTotal(String url, String etiqueta,String PROREF,String LOTDATCRE) throws SQLException {
+	public ArrayList<String> getDadosEtiquetaPinturaTotal(String url, String etiqueta,String PROREF,String LOTDATCRE,String LOTDATVLF) throws SQLException {
 
 		
 		if(etiqueta == null || PROREF == null || LOTDATCRE == null) {
 			return null;
 		}
 		
+		
 		String query = "select count(*) AS TOTAL,STRING_AGG(cast(ETQNUM as nvarchar(max)),',') ETQNUM from  SETQDE b  "
 				+ "left join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
-				+ "where 1=1 and b.ETQETAT = 1 and b.ETQSITSTO=2  and ETQEMBQTE > 0 "
-				+ "and  LOTDATCRE < '"+LOTDATCRE+"' and ETQNUM <> '"+etiqueta+"' AND b.PROREF = '"+PROREF+"' ";
+				+ "where 1=1 and b.ETQETAT = 1 and b.ETQSITSTO=2  and ETQEMBQTE > 0 " 
+				+ "AND CASE WHEN LOTDATVLF is null or LOTDATVLF = '"+LOTDATVLF+"' or '"+LOTDATVLF+"' = 'null' THEN LOTDATCRE ELSE  LOTDATVLF END < "
+				+ "CASE WHEN LOTDATVLF is null or LOTDATVLF = '"+LOTDATVLF+"' or '"+LOTDATVLF+"' = 'null' THEN '"+LOTDATCRE+"' ELSE '"+LOTDATVLF+"' END "
+				+ "and ETQNUM <> '"+etiqueta+"' AND b.PROREF = '"+PROREF+"' AND LIECOD in (select COD_ARMAZEM from SGIID.dbo.PIN_DIC_ARMAZEM) ";
 
 		ArrayList<String> result = null;
 

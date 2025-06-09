@@ -31,7 +31,7 @@ public class RH_FORMACAO_DOCUMENTOSDao extends GenericDaoJpaImpl<RH_FORMACAO_DOC
 
 	}
 	
-	public List<RH_FORMACAO_DOCUMENTOS> getbyidEquipamento(Integer id) {
+	public List<RH_FORMACAO_DOCUMENTOS> getbyid2(Integer id) {
 
 		Query query = entityManager.createQuery("select a,b from RH_FORMACAO_DOCUMENTOS a, GER_UTILIZADORES b "
 				+ "where a.UTZ_CRIA = b.ID_UTILIZADOR and a.ID_FORMACAO = :id order by a.DATA_CRIA");
@@ -41,7 +41,7 @@ public class RH_FORMACAO_DOCUMENTOSDao extends GenericDaoJpaImpl<RH_FORMACAO_DOC
 
 	}
 	
-	public List<RH_FORMACAO_DOCUMENTOS> getbyidEquipamento2(Integer id) {
+	public List<RH_FORMACAO_DOCUMENTOS> getbyid3(Integer id) {
 
 		Query query = entityManager.createQuery("select a.ID,a.TAMANHO,a.NOME,a.CAMINHO,a.DESCRICAO,a.TIPO,a.ID_FORMACAO,a.UTZ_CRIA,a.DATA_CRIA,a.UTZ_ULT_MODIF,a.DATA_ULT_MODIF,a.DATATYPE,a.ORDEM,b from RH_FORMACAO_DOCUMENTOS a, GER_UTILIZADORES b "
 				+ "where a.UTZ_CRIA = b.ID_UTILIZADOR and a.ID_FORMACAO = :id order by a.DATA_CRIA");

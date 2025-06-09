@@ -21,6 +21,15 @@ public class DOC_DIC_POSTOSDao extends GenericDaoJpaImpl<DOC_DIC_POSTOS, Integer
 
 	}
 
+	public List<DOC_DIC_POSTOS> getbyip(String ip) {
+
+		Query query = entityManager.createQuery("Select a from DOC_DIC_POSTOS a where a.IP_POSTO = :ip ");
+		query.setParameter("ip", ip);
+		List<DOC_DIC_POSTOS> data = query.getResultList();
+		return data;
+
+	}
+	
 	public List<DOC_DIC_POSTOS> getall() {
 
 		Query query = entityManager.createQuery("Select a from DOC_DIC_POSTOS a ");

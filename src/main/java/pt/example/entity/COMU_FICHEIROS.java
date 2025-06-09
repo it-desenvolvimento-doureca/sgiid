@@ -22,6 +22,8 @@ public class COMU_FICHEIROS {
 	private Integer ID;
 	@JsonProperty("NOME_FICHEIRO")
 	private String NOME_FICHEIRO;
+	@JsonProperty("ORIGINAL_NAME")
+	private String ORIGINAL_NAME;
 	@JsonProperty("DESCRICAO")
 	private String DESCRICAO;
 	@JsonProperty("DATA_CRIA")
@@ -177,6 +179,14 @@ public class COMU_FICHEIROS {
 
 	public void setTEMPO(Integer tEMPO) {
 		TEMPO = tEMPO;
+	}
+
+	public String getORIGINAL_NAME() {
+		return ORIGINAL_NAME;
+	}
+
+	public void setORIGINAL_NAME(String oRIGINAL_NAME) {
+		ORIGINAL_NAME = oRIGINAL_NAME;
 	}
 
 }

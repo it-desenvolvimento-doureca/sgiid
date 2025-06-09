@@ -45,6 +45,8 @@ public class RH_MEDICINA_TRABALHO_DOCUMENTOS {
 	private String FICHEIRO_2;
 	@JsonProperty("ORDEM")
 	private Integer ORDEM;
+	@JsonProperty("TIPO_DOCUMENTO")
+	private Integer TIPO_DOCUMENTO;
 
 	public Integer getID() {
 		return ID;
@@ -166,5 +168,12 @@ public class RH_MEDICINA_TRABALHO_DOCUMENTOS {
 		ORDEM = oRDEM;
 	}
 
+	public Integer getTIPO_DOCUMENTO() {
+		return TIPO_DOCUMENTO;
+	}
+
+	public void setTIPO_DOCUMENTO(Integer tIPO_DOCUMENTO) {
+		TIPO_DOCUMENTO = tIPO_DOCUMENTO;
+	}
 
 }

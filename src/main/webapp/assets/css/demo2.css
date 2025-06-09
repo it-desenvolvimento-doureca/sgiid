@@ -5947,9 +5947,9 @@ body>.p-dropdown-panel {
     line-height: 25px !important
 }
 
-/*.tooltip_barras {
+.tooltip_width_max {
     max-width: none !important;
-}*/
+}
 
 .tooltip_ficha {
     max-width: 12.5em;

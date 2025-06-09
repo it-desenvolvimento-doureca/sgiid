@@ -15,7 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.UnknownHostException;
+import java.net.UnknownHostException; 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -67,6 +67,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -1050,6 +1051,22 @@ public class SIRB {
 	@Produces("application/json")
 	public List<GER_UTILIZADORES> getGER_UTILIZADORESbylogin(@PathParam("login") String login) {
 		return dao11.getbylogin(login);
+	}
+	
+	@GET
+	@Path("/getGER_UTILIZADORESbyloginTeste/{login}")
+	@Produces("application/json")
+	public Response getGER_UTILIZADORESbyloginTeste(@PathParam("login") String login) {
+	    String cookie = "name=value; Path=/; HttpOnly"; // Construct your cookie value properly
+
+	    // Build response with the desired message
+	    Response.ResponseBuilder responseBuilder = Response.ok("Olá");
+
+	    // Add Set-Cookie header to the response
+	    responseBuilder.header(HttpHeaders.SET_COOKIE, cookie);
+
+	    // Build and return the response
+	    return responseBuilder.build();
 	}
 
 	@GET
@@ -3339,6 +3356,18 @@ public class SIRB {
 		ConnectProgress connectionProgress = new ConnectProgress();
 
 		List<HashMap<String, String>> dados = connectionProgress.getComponentesProducao(getURLSILVER());
+		return dados;
+	}
+	
+
+	@POST
+	@Path("/getComponentesBySeccao")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getComponentesBySeccao(final String SECCOES) throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesBySeccao(getURLSILVER(),SECCOES);
 		return dados;
 	}
 
@@ -7040,12 +7069,13 @@ public class SIRB {
 	@Path("/getVERSAO_APP")
 	@Produces("application/json")
 	public List<Object[]> getVERSAO_APPO() {
-		Query query = entityManager.createNativeQuery("select top 1 VERSAO_SGIID,'' as d from VERSAO_APP");
+		Query query = entityManager.createNativeQuery("select top 1 VERSAO_SGIID,VERSAO_SUGESTOES from VERSAO_APP");
 
 		List<Object[]> dados = query.getResultList();
 		return dados;
 	}
-
+	
+	 
 	/************************************* RC_MOV_RECLAMACAO_ARTIGO_SIMILARES */
 	@POST
 	@Path("/createRC_MOV_RECLAMACAO_ARTIGO_SIMILARES")
@@ -8528,7 +8558,7 @@ public class SIRB {
 	}
 
 	// save uploaded file to new location
-	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
+	void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
 
 		try {
 			OutputStream out = new FileOutputStream(new File(uploadedFileLocation));

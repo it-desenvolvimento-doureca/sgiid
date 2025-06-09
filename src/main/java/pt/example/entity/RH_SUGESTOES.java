@@ -46,6 +46,18 @@ public class RH_SUGESTOES {
 	private Boolean ATIVO;
 	@JsonProperty("IP")
 	private String IP;
+	@JsonProperty("DATA_IMPLEMENTADA")
+	private Timestamp DATA_IMPLEMENTADA;
+	@JsonProperty("DATA_PLANEADA")
+	private Timestamp DATA_PLANEADA;
+	@JsonProperty("DATA_REJEITADA")
+	private Timestamp DATA_REJEITADA;
+	@JsonProperty("UTZ_IMPLEMENTADA")
+	private Integer UTZ_IMPLEMENTADA;
+	@JsonProperty("UTZ_PLANEADA")
+	private Integer UTZ_PLANEADA;
+	@JsonProperty("UTZ_REJEITADA")
+	private Integer UTZ_REJEITADA;
 
 	public String getIP() {
 		return IP;
@@ -165,6 +177,54 @@ public class RH_SUGESTOES {
 
 	public void setATIVO(Boolean aTIVO) {
 		ATIVO = aTIVO;
+	}
+
+	public Timestamp getDATA_IMPLEMENTADA() {
+		return DATA_IMPLEMENTADA;
+	}
+
+	public Timestamp getDATA_PLANEADA() {
+		return DATA_PLANEADA;
+	}
+
+	public Timestamp getDATA_REJEITADA() {
+		return DATA_REJEITADA;
+	}
+
+	public Integer getUTZ_IMPLEMENTADA() {
+		return UTZ_IMPLEMENTADA;
+	}
+
+	public Integer getUTZ_PLANEADA() {
+		return UTZ_PLANEADA;
+	}
+
+	public Integer getUTZ_REJEITADA() {
+		return UTZ_REJEITADA;
+	}
+
+	public void setDATA_IMPLEMENTADA(Timestamp dATA_IMPLEMENTADA) {
+		DATA_IMPLEMENTADA = dATA_IMPLEMENTADA;
+	}
+
+	public void setDATA_PLANEADA(Timestamp dATA_PLANEADA) {
+		DATA_PLANEADA = dATA_PLANEADA;
+	}
+
+	public void setDATA_REJEITADA(Timestamp dATA_REJEITADA) {
+		DATA_REJEITADA = dATA_REJEITADA;
+	}
+
+	public void setUTZ_IMPLEMENTADA(Integer uTZ_IMPLEMENTADA) {
+		UTZ_IMPLEMENTADA = uTZ_IMPLEMENTADA;
+	}
+
+	public void setUTZ_PLANEADA(Integer uTZ_PLANEADA) {
+		UTZ_PLANEADA = uTZ_PLANEADA;
+	}
+
+	public void setUTZ_REJEITADA(Integer uTZ_REJEITADA) {
+		UTZ_REJEITADA = uTZ_REJEITADA;
 	}
 
 }

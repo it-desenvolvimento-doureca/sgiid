@@ -23,7 +23,7 @@ public class COMU_FICHEIROSDao extends GenericDaoJpaImpl<COMU_FICHEIROS, Integer
 
 	public List<COMU_FICHEIROS> getall() {
 
-		Query query = entityManager.createQuery("Select a from COMU_FICHEIROS a where a.ATIVO = 1");
+		Query query = entityManager.createQuery("Select a from COMU_FICHEIROS a where a.INATIVO = 0");
 		List<COMU_FICHEIROS> data = query.getResultList();
 		return data;
 

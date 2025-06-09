@@ -615,6 +615,20 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
+	
+	@GET
+	@Path("/getSeccoesSilver")
+	@Produces("application/json")
+	public List<Object[]> getSeccoesSilver() {
+
+		Query query_folder = entityManager
+				.createNativeQuery(" select distinct a.SEcCOD,b.SECLIB from SILVER.dbo.SDTSEC a inner join SILVER.dbo.SPASEC b on a.SECCOD = b.SECCOD ");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
 	@GET
 	@Path("/GET_TIPO_ACABAMENTO")
 	@Produces("application/json")
@@ -7022,6 +7036,13 @@ public class SIRB_2 {
 	public List<DOC_DIC_POSTOS> getDOC_DIC_POSTOSbyid(@PathParam("id") Integer id) {
 		return dao85.getbyid(id);
 	}
+	
+	@GET
+	@Path("/getDOC_DIC_POSTOSbyip/{ip}")
+	@Produces("application/json")
+	public List<DOC_DIC_POSTOS> getDOC_DIC_POSTOSbyip(@PathParam("ip") String ip) {
+		return dao85.getbyip(ip);
+	}
 
 	@PUT
 	@Path("/updateDOC_DIC_POSTOS")
@@ -7289,40 +7310,11 @@ public class SIRB_2 {
 
 		for (Object[] content : dados_folder) {
 			if (content[13] != null && content[13].toString().equals("LD")) {
-				criarFicheiroLD(content);
-				/*
-				 * String nome_ficheiro = ""; String data = new
-				 * SimpleDateFormat("yyyyMMddHHmmss_").format(new java.util.Date());
-				 * 
-				 * Query query = entityManager.createNativeQuery(
-				 * "Select (select top 1 OF_NUM from AB_DIC_LINHA_OF e where ID_LINHA = a.id_linha and DATA <= GETDATE() order by e.DATA desc) as ofnum,a.SECCAO,a.SUBSECCAO,a.REF_COMPOSTO "
-				 * + "from AB_DIC_LINHA a where a.ID_LINHA = " + content[12].toString() + "");
-				 * 
-				 * List<Object[]> dados_ = query.getResultList();
-				 * 
-				 * for (Object[] content_ : dados_) { nome_ficheiro = data +
-				 * "_ETIQUETA_PINTURA_" + content_[0].toString() + ".txt";
-				 * 
-				 * criarFicheiroETIQUETAS(nome_ficheiro, content_[0].toString(),
-				 * content_[1].toString(), content_[2].toString(), content_[3].toString(),
-				 * content[14].toString(), content[15].toString()); }
-				 */
-
+				criarFicheiroLD(content);	
 			}
+			
 			if (content[13] != null && content[13].toString().equals("UL")) {
-				criarFicheiroUL(content);
-				Printer impressoras = new Printer();
-				String nomeficheiro = (content[17] == null) ? null : content[17].toString();
-				String impressora = (content[18] == null) ? null : content[18].toString();
-
-				try {
-					if (impressora != null && !impressora.equals("") && !impressora.isEmpty())
-						impressoras.printTxt(nomeficheiro, impressora);
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (PrinterException e) {
-					e.printStackTrace();
-				}
+				criarFicheiroUL(content);				
 			}
 		}
 
@@ -7334,6 +7326,45 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
+	@POST
+	@Path("/PR_WINROBOT_GERAR_CARTELA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PR_WINROBOT_GERAR_CARTELA(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
+		
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC PR_WINROBOT_GERAR_CARTELA " + ID);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		for (Object[] content : dados_folder) {
+		 					 
+				Printer impressoras = new Printer();
+				String nomeficheiro = (content[0] == null) ? null : content[0].toString();
+				String impressora = (content[1] == null) ? null : content[1].toString();
+
+				try {
+					if (impressora != null && !impressora.equals("") && !impressora.isEmpty())
+						impressoras.printTxt(nomeficheiro, impressora);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (PrinterException e) {
+					e.printStackTrace();
+				}
+			
+		}
+
+		// criarFicheiroETIQUETAS //fim carga
+		// criarFicheiroLD //fim carga
+
+		// criarFicheiroUL //fim descarga
+
+		return dados_folder;
+	}
+	
 	public void criarFicheiroLD(Object[] dados) {
 		String nome_ficheiro = "LD" + dados[2].toString() + "_" + dados[11].toString();
 		String path = "";
@@ -8337,7 +8368,7 @@ public class SIRB_2 {
 		Query query_folder = entityManager
 				.createNativeQuery("EXEC PR_WINROBOT_UPDATE_DADOS " + ID + ", '" + USER + "'");
 
-		int dados_folder = query_folder.executeUpdate();
+		int dados_folder = 1; //query_folder.executeUpdate();
 
 		return dados_folder;
 	}

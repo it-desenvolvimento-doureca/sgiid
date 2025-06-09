@@ -55,7 +55,12 @@ public class RH_FORMACAODao extends GenericDaoJpaImpl<RH_FORMACAO, Integer>
 				
 				+ "sum(case when CAST(GETDATE() as date) > DATA_FIM THEN DURACAO else 0 end * ISNULL(b.total,0)) total_Horas_Terminadas, "
 				+ "sum(case when CAST(GETDATE() as date) >= DATA_INICIO and  CAST(GETDATE() as date) <= DATA_FIM THEN DURACAO else 0 end * ISNULL(b.total,0)) total_Horas_Em_Progresso, "
-				+ "sum(case when DATA_INICIO > CAST(GETDATE() as date) THEN DURACAO else 0 end * ISNULL(b.total,0)) total_Horas_Por_Iniciar "
+				+ "sum(case when DATA_INICIO > CAST(GETDATE() as date) THEN DURACAO else 0 end * ISNULL(b.total,0)) total_Horas_Por_Iniciar, "
+				
+				+ "sum(case when CAST(GETDATE() as date) > DATA_FIM THEN DURACAO else 0 end ) total_Horas_Terminadas_2, "
+				+ "sum(case when CAST(GETDATE() as date) >= DATA_INICIO and  CAST(GETDATE() as date) <= DATA_FIM THEN DURACAO else 0 end ) total_Horas_Em_Progresso_2, "
+				+ "sum(case when DATA_INICIO > CAST(GETDATE() as date) THEN DURACAO else 0 end ) total_Horas_Por_Iniciar_2 "
+	
 				+ " from RH_FORMACAO a "
 				+ " left join (select count(f.ID_FUNCIONARIO) total,f.ID_FORMACAO from RH_FORMACAO_PARTICIPANTES f where ((@utilizador is null ) or (f.ID_FUNCIONARIO =  @utilizador)) group by ID_FORMACAO ) b on b.ID_FORMACAO = a.ID "
 				+ " where a.ATIVO = 1 and YEAR(DATA_INICIO) = @ano "
@@ -190,7 +195,7 @@ public class RH_FORMACAODao extends GenericDaoJpaImpl<RH_FORMACAO, Integer>
 				+ "AND ((@utilizador is null) or (a.ID in ((select f.ID_FORMACAO from RH_FORMACAO_PARTICIPANTES f where f.ID_FUNCIONARIO = @utilizador)))) "
 				+ "AND ((@DATA_INICIO is null ) or ( @DATA_INICIO <= DATA_INICIO)) "
 				+ "AND ((@DATA_FIM is null ) or ( @DATA_FIM >= DATA_INICIO)) "
-				+ "and ISNULL(a.AVALIACAO_EFICACIA,0) = 0 and DATEDIFF(day,DATA_FIM,GETDATE()) > 90 order by DATA_INICIO");
+				+ "and ISNULL(a.AVALIACAO_EFICACIA,0) = 1 and DATEDIFF(day,DATA_FIM,GETDATE()) > 90 order by DATA_INICIO");
 		List<Object[]> data = query.getResultList();
 		return data;
 

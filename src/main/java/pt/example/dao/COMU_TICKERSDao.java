@@ -23,7 +23,7 @@ public class COMU_TICKERSDao extends GenericDaoJpaImpl<COMU_TICKERS, Integer>
 
 	public List<COMU_TICKERS> getall() {
 
-		Query query = entityManager.createQuery("Select a from COMU_TICKERS a where a.ATIVO = 1");
+		Query query = entityManager.createQuery("Select a,b from COMU_TICKERS a ,COMU_DIC_CATEGORIAS b where a.INATIVO = 0 and a.ID_CATEGORIA = b.ID");
 		List<COMU_TICKERS> data = query.getResultList();
 		return data;
 
