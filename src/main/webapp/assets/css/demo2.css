@@ -1506,6 +1506,10 @@ body #main_dashboard_css .p-tabview .p-tabview-panels {
     overflow: auto;
 }
 
+body .main_dashboard_css_2 .p-tabview .p-tabview-panels {
+    height: 100% !important;
+}
+
 body #main_dashboard_css .p-tabview .p-tabview-panels .step_recursos_humanos .p-tabview-panel {
     height: 100%;
 }

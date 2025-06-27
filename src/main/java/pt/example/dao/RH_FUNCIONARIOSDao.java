@@ -72,9 +72,8 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 			queryallsector = "or (a.COD_SECTOR is null)";
 
 		/*
-		 * Query query =
-		 * entityManager.createNativeQuery("DECLARE @DATA date = '" + datageral
-		 * + "'; " +
+		 * Query query = entityManager.createNativeQuery("DECLARE @DATA date = '" +
+		 * datageral + "'; " +
 		 * "select a.COD_FUNCIONARIO,a.NOME as nome_func,a.EMPRESA,a.DATA_ADMISSAO,a.DATA_DEMISSAO,a.ATIVO,a.LOCAL,a.RESPONSAVEL,b.DES_SECTOR,c.DES_TURNO,d.NOME,a.NUM_CACIFO,a.DATA_INICIO,a.DATA_FIM,e.DESIGNACAO,a.DATA_PREV_RET,	"
 		 * +
 		 * " inicial.data_hora hora_entra, final.data_hora hora_saida,a.COD_SECTOR,b.COD_TURNO from RH_FUNCIONARIOS a "
@@ -89,10 +88,9 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 		 * "left join (SELECT a.NFuncionario,a.data ,(SELECT top 1 c.Data_Hora from RH_DIC_COLETA c where a.data = c.data and a.NFuncionario = c.NFuncionario order by Data_Hora desc) as data_hora "
 		 * +
 		 * "from RH_DIC_COLETA a where a.data = @DATA GROUP BY a.NFuncionario,a.data) as final on final.NFuncionario = a.COD_FUNCIONARIO "
-		 * + "where (a.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector
-		 * + ") and ((not " + Operario +
-		 * " is not null) or (a.COD_FUNCIONARIO  = " + Operario + " )) " +
-		 * querywhere +
+		 * + "where (a.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector +
+		 * ") and ((not " + Operario + " is not null) or (a.COD_FUNCIONARIO  = " +
+		 * Operario + " )) " + querywhere +
 		 * " order by CASE WHEN a.COD_FUNCIONARIO > 0 THEN a.COD_FUNCIONARIO ELSE a.COD_FUNCIONARIO * -1 END"
 		 * );
 		 */
@@ -107,9 +105,8 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ "left join RH_FUNCIONARIOS d on b.CHEFE1 = d.COD_FUNCIONARIO "
 				+ "left join RH_ESTADOS_FUNC e on a.ESTADO = e.COD_ESTADO "
 				+ "left join  RH_DIC_PONTO f on f.NFuncionario = a.COD_FUNC_ORIGEM and CheckDate = @DATA "
-				//+ "left join  @TABELATEMP f on f.NFuncionario = a.COD_FUNC_ORIGEM " 
-				+ "where (a.COD_SECTOR in ("
-				+ SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + Operario
+				// + "left join @TABELATEMP f on f.NFuncionario = a.COD_FUNC_ORIGEM "
+				+ "where (a.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + Operario
 				+ " is not null) or (a.COD_FUNCIONARIO  = " + Operario + " )) " + querywhere
 				+ " order by CASE WHEN a.COD_FUNCIONARIO > 0 THEN a.COD_FUNCIONARIO ELSE a.COD_FUNCIONARIO * -1 END");
 
@@ -180,6 +177,19 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ SECTOR_ACESSO + ") " + queryallsector + ") and((not " + Operario
 				+ " is not null) or (a.COD_FUNCIONARIO  = " + Operario + " )) " + querywhere);
 		List<RH_FUNCIONARIOS> data = query.getResultList();
+		return data;
+
+	}
+
+	public List<RH_FUNCIONARIOS> getProdutividade_(String data1, String data2, String Ativo, String Operario,
+			String SECTOR_ACESSO, Boolean ADMIN) {
+		List<RH_FUNCIONARIOS> data = entityManager
+				.createNativeQuery("EXEC RH_GET_PRODUTIVIDADE "
+						+ ":DATA, :DATA2, :Ativo,  :Operario, :ADMIN, :SECTOR_ACESSO")
+				.setParameter("DATA", data1).setParameter("DATA2", data2).setParameter("Ativo", Ativo)
+				.setParameter("Operario", Operario).setParameter("ADMIN", ADMIN ? 1 : 0)
+				.setParameter("SECTOR_ACESSO", SECTOR_ACESSO).getResultList();
+
 		return data;
 
 	}
@@ -255,6 +265,20 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 	}
 
+	public List<RH_FUNCIONARIOS> getOperacoes_(String data1, String data2, String Ativo, String Operario,
+			String SECTOR_ACESSO, Boolean ADMIN, String tipo_cadencia, String Sector) {
+
+		List<RH_FUNCIONARIOS> data = entityManager
+				.createNativeQuery("EXEC RH_GET_OPERACOES "
+						+ ":DATA, :DATA2, :Ativo, :tipo_cadencia, :Sector, :Operario, :ADMIN, :SECTOR_ACESSO")
+				.setParameter("DATA", data1).setParameter("DATA2", data2).setParameter("Ativo", Ativo)
+				.setParameter("tipo_cadencia", tipo_cadencia).setParameter("Sector", Sector)
+				.setParameter("Operario", Operario).setParameter("ADMIN", ADMIN ? 1 : 0)
+				.setParameter("SECTOR_ACESSO", SECTOR_ACESSO).getResultList();
+
+		return data;
+	}
+
 	public List<RH_FUNCIONARIOS> getOperacoes(String data1, String data2, String Ativo, String Operario,
 			String SECTOR_ACESSO, Boolean ADMIN, String tipo_cadencia, String Sector) {
 
@@ -277,91 +301,89 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 		if (Sector != null)
 			sectornull = 1;
 
-		Query query = entityManager
-				.createNativeQuery("DECLARE @DATA date = '" + data1 + "'; " + "DECLARE @DATA2 date = '" + data2 + "';  "
-						+ " select distinct COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,quant,TempoPrep,TempoExec,"
-						+ " CASE WHEN (TempoPausas = 0 or TempoPausas is null) and  (TempoTotalPausa/totalproref) >0 THEN TempoTotal - TempoPausas + (TempoTotalPausa/totalproref) ELSE TempoTotal END TempoTotal ,heudeb,heufin,ofnum,cadencia, "
-						+ " CASE WHEN (TempoPausas = 0 or TempoPausas is null) and  (TempoTotalPausa/totalproref) >0 THEN (TempoTotalPausa/totalproref) ELSE TempoPausas END TempoPausas "
-						+ " from ( select   COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,quant,TempoPrep,TempoExec,"
-						+ "	CASE WHEN TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/ + TempoPrep + TempoExec !=  TempoTotal THEN TempoTotal + TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/ ELSE TempoTotal END TempoTotal,heudeb,heufin,ofnum,cadencia,"
-						+ " TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/  as TempoPausas,TempoTotalPausa,COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb) totalproref "
-						+ " from ( select COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,"
-						+ " SUM(quant) quant,SUM(TempoPrep) TempoPrep,SUM(TempoExec) TempoExec,SUM(TempoTotal)  TempoTotal,heudeb,heufin,ofnum,"
-						+ " CASE WHEN SUM(TempoTotal) < 0 and SUM(quant) > 0 THEN 0 ELSE CONVERT(DECIMAL(19,2), CASE WHEN  PecasHora ='' or (SUM(TempoExec)) = 0 or ( totalproref)=0 THEN 0 ELSE (((((SUM(quant)) * 60) / ((( SUM(TempoExec) )* totalproref)* 60)) /  PecasHora))*100  END) END cadencia "
-						+ ",AVG(TempoPausas) TempoPausas /*AVG(cadencia)  cadencia*/ "
-						+ " from ( select COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes, SUM(quant) /*OVER(PARTITION BY COD_FUNCIONARIO,proref,datdeb,ofnum,ofdnumenr)*/ quant,"
-						+ " SUM(TempoPrep) TempoPrep,SUM(TempoExec) TempoExec,SUM(TempoTotal)  TempoTotal,SUM(TempoPausas)OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb/*, opecod*/) TempoPausas,heudeb,heufin,ofnum, "
-						+ " /*SUM(cadencia) OVER(PARTITION BY COD_FUNCIONARIO,proref,datdeb,ofnum,ofdnumenr) cadencia*/ PecasHora,typof,totalproref  "
-						+ " from ( select b.COD_FUNCIONARIO,b.NOME,b.ATIVO,b.LOCAL,b.RESPONSAVEL,b.COD_SECTOR,c.DES_SECTOR,(select NOME from RH_FUNCIONARIOS where COD_FUNCIONARIO = c.CHEFE1) chefe ,a.datdeb,a.proref,a.prodes1,a.opecod "
-						+ ",a.opedes,CASE WHEN a.TempoTotal < 0 and a.total > 0 THEN 0 ELSE  CONVERT(decimal(10,1),(a.total)) END quant, "
-						+ "(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoPrep/total_ofref)*a.totalproref ELSE a.TempoPrep*a.totalproref END)   TempoPrep, "
-						+ "(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoExec/total_ofref)*a.totalproref ELSE a.TempoExec*a.totalproref END)   TempoExec, "
-						+ "(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoTotal/total_ofref)*a.totalproref ELSE a.TempoTotal*a.totalproref END)   TempoTotal, "
-						+ "CASE WHEN a.TempoTotal = 0 THEN 0 ELSE(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoPausas/total_ofref)*a.totalproref ELSE a.TempoPausas*a.totalproref END)END   TempoPausas "
-						+ ",a.heudeb,a.heufin,a.ofnum,a.ofdnumenr "
-						+ "/*,CASE WHEN a.TempoTotal < 0 and a.total > 0 THEN 0 ELSE CONVERT(DECIMAL(19,2), CASE WHEN  k.PecasHora ='' or (a.TempoExec) = 0 or (a.totalproref)=0 THEN 0 ELSE (((((total) * 60) / (((CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN ((a.TempoExec)*a.totalproref)/(total_ofref) ELSE (a.TempoExec)*a.totalproref END)*a.totalproref)* 60)) / k.PecasHora))*100  END) END cadencia*/ "
-						+ " ,PecasHora,typof,totalproref "
-						+ "from ( "
-						+ "(SELECT d.ofdnumenr,typof,(select COUNT(tfa.ofref) AS total_ofref   from SILVER_BI.dbo.SOFA tfa where tfa.ofref = a.ofref Group by tfa.ofref) total_ofref "
-						+ ",CASE WHEN ISNUMERIC(rescod)=1 THEN t.rescod ELSE null END rescod, t.datdeb, q.proref,p.prodes1,d.opecod,d.openum,d.opedes,(total_pecas /*q.qterr+q.qterb*/) quant,t.heudeb,t.heufin,( /*t.atpse+*/ ( case when t.atpsp = 0 then 0 else t.stpsp end + t.stpse) - (t.atpse + t.atpsp)) TempoExec,(t.atpse + t.atpsp) TempoPausas,"
-						+ " CONVERT(DECIMAL(19,0),CASE WHEN (total_horas) = 0 THEN 0 ELSE ((total_pecas*(t.stpse + t.stpsp))/(total_horas)) END) total, (/*t.atpsp+*/ t.stpsp - t.atpsp) TempoPrep, ( /*t.atpse+*/ t.stpse+ /*t.atpsp+*/ t.stpsp) TempoTotal,case when gescod in ('OFCF','OFCF2')	or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f "
-						+ "left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (CASE WHEN total_pecas <> 0 THEN total_pecas ELSE 1 END) / (CASE WHEN total_pecas > 0 THEN total_pecas ELSE 1 END)	else 1 END as totalproref ,a.ofnum    "
-						+ "FROM	"
-						+ "	( select xva.SVANUMENR as SVANUMENR2,datdeb,xva.ofdnumenr,SVANUMORI,stpsp,rescod,heudeb,heufin,stpse,restypcod,atpse,atpsp"
-						+ "	,CASE WHEN xq.svanumenr is null THEN isnull((select top 1 svanumenr from SILVER_BI.dbo.SCPSVQ where ofdnumenr = xva.ofdnumenr and svanumenr in (select vaa.svanumenr from SILVER_BI.dbo.SCPSVA vaa where vaa.datdeb = xva.datdeb and vaa.heudeb = xva.heudeb )),xva.svanumenr) ELSE xq.svanumenr END as svanumenr"
-						+ "	from SILVER_BI.dbo.SCPSVA xva"
-						+ "	left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xva.SVANUMORI = 0 THEN xva.SVANUMENR ELSE xva.SVANUMORI END)"
-						+ "	where restypcod='MO' and  ISNUMERIC(RESCOD) = 1 and datdeb>=@DATA and datdeb<= @DATA2 /*and not EXISTS(select svanumenr from  SILVER.dbo.SCPSVB  svb where svb.svanumenr in (xva.svanumenr))*/ ) t "
-						+ ""
-						+ "	LEFT JOIN (select proref,ofbnumenr,ofdnumenr,svanumenr,qterb,qterr from SILVER_BI.dbo.SCPSVQ) q on  q.SVANUMENR = (CASE WHEN t.SVANUMORI = 0 THEN t.SVANUMENR ELSE t.SVANUMORI END)"
-						+ "	left join (select ofdnumenr,opecod,openum,opedes,ofanumenr from SILVER_BI.dbo.SOFD) d ON d.ofdnumenr= t.ofdnumenr"
-						+ "	left join (select ofanumenr,ofref,typof,ofnum from SILVER_BI.dbo.SOFA bb)  a on a.ofanumenr = d.ofanumenr"
-						+ "	" + "	left join 	(select  ofdnumenr,svanumenr,svanumori,"
-						+ "	case when total_pecas = 0 and total_horas <> 0 and svanumori= 0  then	(select SUM(qterr+ qterb) from SILVER_BI.dbo.SCPSVA xva1 inner join  SILVER_BI.dbo.SCPSVA xva2 on xva1.datdeb = xva2.datdeb and xva1.heudeb = xva2.heudeb"
-						+ "	left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xva1.SVANUMORI = 0 THEN xva1.SVANUMENR ELSE xva1.SVANUMORI END) "
-						+ "where xva1.ofdnumenr = tabx.ofdnumenr  and tabx.svanumenr = xva2.svanumenr) else total_pecas END * case when  total_horas < 0  and total_pecas >=0  then -1 else 1 end total_pecas,total_horas "
-						+ "	from (select  ofdnumenr,svanumenr,svanumori/*,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_operarios_linha ELSE total_operarios END)total_operarios */"
-						+ " ,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_pecas_linha ELSE case when /*total_pecas <> total_trabalho and total_pecas = 0 and*/ ID_OF_CAB is not null THEN total_trabalho else total_pecas END  END)total_pecas "
-						+ "	,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_horas_linha ELSE total_horas END)total_horas	,AVG(qtt3) qtt3 "
-						+ "	from (	select ofdnumenr,svanumori,isnull(svanumenr,svanumenr2) svanumenr,typof"
-						+ "/*,count(xa.rescod) over(partition by xa.ofdnumenr) total_operarios_linha,count(xa.rescod) over(partition by xa.svanumori,) total_operarios*/"
-						+ " ,sum(tag.qterr+tag.qterb) over(partition by tag.ofdnumenr) total_pecas_linha,tag.qterr+tag.qterb total_pecas "
-						+ ",sum(tag.stpse+ tag.stpsp) over(partition by tag.ofdnumenr) total_horas_linha, "
-						+ "/*sum(tag.stpse+ tag.stpsp) over(partition by tag.svanumori,tag.svanumenr/*,xasvanumenr*/)total_horas*/"
-						+ " sum(tag.stpse+ tag.stpsp) over(partition by tag.ofdnumenr,ISNULL(CONVERT(varchar(50),ID_OF_CAB),CONCAT(tag.svanumori,'_',tag.svanumenr)),proref)total_horas  "
-						+ ",tag.qterr+tag.qterb qtt3,sum(tag.qterr+tag.qterb) over(partition by tag.ofdnumenr,ID_OF_CAB,rescod,proref) total_trabalho,ID_OF_CAB from (select proref,rescod,xa.svanumenr as xasvanumenr,datdeb,(CASE WHEN ISDATE(heudeb) = 0 THEN '00:00:00.000' ELSE heudeb END) heudeb,(CASE WHEN ISDATE(heufin) = 0 THEN '00:00:00.000' ELSE heufin END) heufin ,xq.qterr,xq.qterb,xa.stpse, xa.stpsp,xa.ofdnumenr,xa.svanumori "
-						+ ",CASE WHEN xq.svanumenr is null THEN (select top 1 svanumenr from SILVER_BI.dbo.SCPSVQ where ofdnumenr = xa.ofdnumenr and svanumenr in (select vaa.svanumenr from SILVER_BI.dbo.SCPSVA vaa where vaa.datdeb = xa.datdeb and vaa.heudeb = xa.heudeb )) ELSE xq.svanumenr END as svanumenr "
-						+ ",xfa.typof,/*xa.svanumenr*/(CASE WHEN xa.SVANUMORI=0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) as svanumenr2 from SILVER_BI.dbo.SCPSVA xa "
-						+ "left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
-						+ "left JOIN SILVER_BI.dbo.SOFA xfa on xa.ofanumenr = xfa.ofanumenr "
-						+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= DATEADD(DAY,3,@DATA2) AND (NOT EXISTS (SELECT svanumenr FROM SILVER.dbo.SCPSVB WHERE svanumenr IN (xa.svanumenr)) OR (xa.atpse + xa.atpsp) = 0 )"
-						+ "	) tag left join SGIID.dbo.RP_OF_OP_FUNC b on ID_UTZ_CRIA = rescod AND  ((DATA_INI = datdeb AND heudeb = HORA_INI AND heufin = HORA_FIM)  OR (DATA_INI_M1 = datdeb AND heudeb = HORA_INI_M1 AND heufin = HORA_FIM_M1)  OR (DATA_INI_M2 = datdeb AND heudeb = HORA_INI_M2 AND heufin = HORA_FIM_M2) )  "
-						+ " left join SGIID.dbo.RP_OF_OP_CAB c on b.ID_OP_CAB = c.ID_OP_CAB "
-						+ ") taby where (typof in ('OFC1', 'OFC2','OFCF') or (total_pecas is not null) and total_horas > 0 or total_pecas = qtt3) group by ofdnumenr,svanumenr,svanumori) tabx "
-						+ ")  txa on txa.SVANUMENR = (CASE WHEN t.SVANUMORI = 0 THEN CASE WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN t.SVANUMENR ELSE t.SVANUMENR2 END ELSE t.SVANUMORI END) "
-						+ "left join SILVER_BI.dbo.SDTPRA p on p.proref=q.proref "
-						+ "/*left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
-						+ "from SILVER_BI.dbo.SCPSVQ ty "
-						+ "inner join (select svanumenr,ofanumenr,heudeb,datdeb from SILVER_BI.dbo.SCPSVA) th on ty.svanumenr = th.svanumenr "
-						+ "inner join SILVER_BI.dbo.SOFA tj on tj.ofanumenr = th.ofanumenr GROUP BY ofref,heudeb,datdeb,th.svanumenr	) j on j.datdeb = t.datdeb /*and j.heudeb = t.heudeb*/ and j.ofref = a.ofref and j.svanumenr = q.svanumenr*/ WHERE t.datdeb>=@DATA and t.datdeb<=@DATA2"
-						+ "	and t.restypcod='MO' /*and p.proref is not null*/ /*and ((((stpse - atpse)+(stpsp-atpsp)) > 0.1) or (((stpse - atpse)+(stpsp-atpsp)) < -0.1) )*/ ) ) as a  "
-						+ "left join RH_FUNCIONARIOS b on  cast(a.rescod as int) = b.COD_FUNCIONARIO left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR "
-						+ query_tipo_cadencia + " " + "where /*a.proref is not null and total is not null and*/ (b.COD_SECTOR in ("
-						+ SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + sectornull
-						+ " is not null) or (c.COD_SECTOR  in (" + Sector + ") )) and ((not " + Operario
-						+ " is not null) or (b.COD_FUNCIONARIO  = " + Operario + " )) " + querywhere + ""						
-						+ " ) a group by  COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod ,opedes ,heudeb,heufin,ofnum,ofdnumenr,quant,PecasHora,typof,totalproref,TempoPausas "
-						+ ") b where b.proref is not null  group by  COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod ,opedes ,heudeb,heufin,ofnum,PecasHora,typof,totalproref "
-						+ ") c "
-						+ "left join ( "
-						+ " SELECT  t.rescod, t.datdeb as datedeb2,t.heudeb as heudeb2,SUM(t.stpse+t.stpsp) TempoTotalPausa,SUM(CASE WHEN x.ARRCOD in ('TECH') THEN 1 ELSE 0 END ) TOTAL_P "
-						+ "FROM SILVER.dbo.SCPSVB x	"
-						+ "INNER JOIN SILVER.dbo.SCPSVA t  on t.SVANUMENR=  x.SVANUMENR "
-						+ "INNER JOIN SILVER.dbo.SPAARR p  on p.ARRCOD=  x.ARRCOD "
-						+ "WHERE x.datdeb>=@DATA and x.datdeb<=@DATA2 and t.restypcod='MO'and (t.stpse<>0 or t.stpsp<>0) "
-						+ "GROUP BY  t.rescod, t.datdeb,t.heudeb "
-						+ " ) p on  CASE WHEN IsNumeric(REPLACE(p.rescod,'.','')) = 1 THEN  cast(REPLACE(p.rescod,'.','') as bigint) ELSE null END = c.COD_FUNCIONARIO and p.datedeb2 = c.datdeb and p.heudeb2 between c.heudeb and heufin "
-						+ "where ((TempoTotal <> 0 AND (TempoPrep+TempoExec) <> 0) OR (TempoTotal > 0 and (TempoPrep+TempoExec) = 0 and TempoTotalPausa <> 0 or (TempoTotal = 0 and TOTAL_P > 1)) ) and quant >= 0  and  (quant >= 0 and (TempoPrep+TempoExec) <> 0) ) c order by datdeb desc ,heudeb desc,heufin desc,proref");
+		Query query = entityManager.createNativeQuery("DECLARE @DATA date = '" + data1 + "'; "
+				+ "DECLARE @DATA2 date = '" + data2 + "';  "
+				+ " select distinct COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,quant,TempoPrep,TempoExec,"
+				+ " CASE WHEN (TempoPausas = 0 or TempoPausas is null) and  (TempoTotalPausa/totalproref) >0 THEN TempoTotal - TempoPausas + (TempoTotalPausa/totalproref) ELSE TempoTotal END TempoTotal ,heudeb,heufin,ofnum,cadencia, "
+				+ " CASE WHEN (TempoPausas = 0 or TempoPausas is null) and  (TempoTotalPausa/totalproref) >0 THEN (TempoTotalPausa/totalproref) ELSE TempoPausas END TempoPausas "
+				+ " from ( select   COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,quant,TempoPrep,TempoExec,"
+				+ "	CASE WHEN TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/ + TempoPrep + TempoExec !=  TempoTotal THEN TempoTotal + TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/ ELSE TempoTotal END TempoTotal,heudeb,heufin,ofnum,cadencia,"
+				+ " TempoPausas /*/COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb)*/  as TempoPausas,TempoTotalPausa,COUNT(proref) OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb) totalproref "
+				+ " from ( select COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes,"
+				+ " SUM(quant) quant,SUM(TempoPrep) TempoPrep,SUM(TempoExec) TempoExec,SUM(TempoTotal)  TempoTotal,heudeb,heufin,ofnum,"
+				+ " CASE WHEN SUM(TempoTotal) < 0 and SUM(quant) > 0 THEN 0 ELSE CONVERT(DECIMAL(19,2), CASE WHEN  PecasHora ='' or (SUM(TempoExec)) = 0 or ( totalproref)=0 THEN 0 ELSE (((((SUM(quant)) * 60) / ((( SUM(TempoExec) )* totalproref)* 60)) /  PecasHora))*100  END) END cadencia "
+				+ ",AVG(TempoPausas) TempoPausas /*AVG(cadencia)  cadencia*/ "
+				+ " from ( select COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod,opedes, SUM(quant) /*OVER(PARTITION BY COD_FUNCIONARIO,proref,datdeb,ofnum,ofdnumenr)*/ quant,"
+				+ " SUM(TempoPrep) TempoPrep,SUM(TempoExec) TempoExec,SUM(TempoTotal)  TempoTotal,SUM(TempoPausas)OVER(PARTITION BY COD_FUNCIONARIO,datdeb,heudeb/*, opecod*/) TempoPausas,heudeb,heufin,ofnum, "
+				+ " /*SUM(cadencia) OVER(PARTITION BY COD_FUNCIONARIO,proref,datdeb,ofnum,ofdnumenr) cadencia*/ PecasHora,typof,totalproref  "
+				+ " from ( select b.COD_FUNCIONARIO,b.NOME,b.ATIVO,b.LOCAL,b.RESPONSAVEL,b.COD_SECTOR,c.DES_SECTOR,(select NOME from RH_FUNCIONARIOS where COD_FUNCIONARIO = c.CHEFE1) chefe ,a.datdeb,a.proref,a.prodes1,a.opecod "
+				+ ",a.opedes,CASE WHEN a.TempoTotal < 0 and a.total > 0 THEN 0 ELSE  CONVERT(decimal(10,1),(a.total)) END quant, "
+				+ "(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoPrep/total_ofref)*a.totalproref ELSE a.TempoPrep*a.totalproref END)   TempoPrep, "
+				+ "(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoExec/total_ofref)*a.totalproref ELSE a.TempoExec*a.totalproref END)   TempoExec, "
+				+ "(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoTotal/total_ofref)*a.totalproref ELSE a.TempoTotal*a.totalproref END)   TempoTotal, "
+				+ "CASE WHEN a.TempoTotal = 0 THEN 0 ELSE(CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN (a.TempoPausas/total_ofref)*a.totalproref ELSE a.TempoPausas*a.totalproref END)END   TempoPausas "
+				+ ",a.heudeb,a.heufin,a.ofnum,a.ofdnumenr "
+				+ "/*,CASE WHEN a.TempoTotal < 0 and a.total > 0 THEN 0 ELSE CONVERT(DECIMAL(19,2), CASE WHEN  k.PecasHora ='' or (a.TempoExec) = 0 or (a.totalproref)=0 THEN 0 ELSE (((((total) * 60) / (((CASE  WHEN a.typof IN ('OFC1', 'OFC2','OFCF') THEN ((a.TempoExec)*a.totalproref)/(total_ofref) ELSE (a.TempoExec)*a.totalproref END)*a.totalproref)* 60)) / k.PecasHora))*100  END) END cadencia*/ "
+				+ " ,PecasHora,typof,totalproref " + "from ( "
+				+ "(SELECT d.ofdnumenr,typof,(select COUNT(tfa.ofref) AS total_ofref   from SILVER_BI.dbo.SOFA tfa where tfa.ofref = a.ofref Group by tfa.ofref) total_ofref "
+				+ ",CASE WHEN ISNUMERIC(rescod)=1 THEN t.rescod ELSE null END rescod, t.datdeb, q.proref,p.prodes1,d.opecod,d.openum,d.opedes,(total_pecas /*q.qterr+q.qterb*/) quant,t.heudeb,t.heufin,( /*t.atpse+*/ ( case when t.atpsp = 0 then 0 else t.stpsp end + t.stpse) - (t.atpse + t.atpsp)) TempoExec,(t.atpse + t.atpsp) TempoPausas,"
+				+ " CONVERT(DECIMAL(19,0),CASE WHEN (total_horas) = 0 THEN 0 ELSE ((total_pecas*(t.stpse + t.stpsp))/(total_horas)) END) total, (/*t.atpsp+*/ t.stpsp - t.atpsp) TempoPrep, ( /*t.atpse+*/ t.stpse+ /*t.atpsp+*/ t.stpsp) TempoTotal,case when gescod in ('OFCF','OFCF2')	or (SELECT f.c FROM (SELECT prorefout, COUNT (prorefout) c FROM SILVER_BI.dbo.XCOUPON  GROUP BY prorefout) f "
+				+ "left join SILVER_BI.dbo.XCOUPON g on f.prorefout = g.prorefout WHERE f.c>1 and proref = q.proref) > 1 then (CASE WHEN total_pecas <> 0 THEN total_pecas ELSE 1 END) / (CASE WHEN total_pecas > 0 THEN total_pecas ELSE 1 END)	else 1 END as totalproref ,a.ofnum    "
+				+ "FROM	"
+				+ "	( select xva.SVANUMENR as SVANUMENR2,datdeb,xva.ofdnumenr,SVANUMORI,stpsp,rescod,heudeb,heufin,stpse,restypcod,atpse,atpsp"
+				+ "	,CASE WHEN xq.svanumenr is null THEN isnull((select top 1 svanumenr from SILVER_BI.dbo.SCPSVQ where ofdnumenr = xva.ofdnumenr and svanumenr in (select vaa.svanumenr from SILVER_BI.dbo.SCPSVA vaa where vaa.datdeb = xva.datdeb and vaa.heudeb = xva.heudeb )),xva.svanumenr) ELSE xq.svanumenr END as svanumenr"
+				+ "	from SILVER_BI.dbo.SCPSVA xva"
+				+ "	left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xva.SVANUMORI = 0 THEN xva.SVANUMENR ELSE xva.SVANUMORI END)"
+				+ "	where restypcod='MO' and  ISNUMERIC(RESCOD) = 1 and datdeb>=@DATA and datdeb<= @DATA2 /*and not EXISTS(select svanumenr from  SILVER.dbo.SCPSVB  svb where svb.svanumenr in (xva.svanumenr))*/ ) t "
+				+ ""
+				+ "	LEFT JOIN (select proref,ofbnumenr,ofdnumenr,svanumenr,qterb,qterr from SILVER_BI.dbo.SCPSVQ) q on  q.SVANUMENR = (CASE WHEN t.SVANUMORI = 0 THEN t.SVANUMENR ELSE t.SVANUMORI END)"
+				+ "	left join (select ofdnumenr,opecod,openum,opedes,ofanumenr from SILVER_BI.dbo.SOFD) d ON d.ofdnumenr= t.ofdnumenr"
+				+ "	left join (select ofanumenr,ofref,typof,ofnum from SILVER_BI.dbo.SOFA bb)  a on a.ofanumenr = d.ofanumenr"
+				+ "	" + "	left join 	(select  ofdnumenr,svanumenr,svanumori,"
+				+ "	case when total_pecas = 0 and total_horas <> 0 and svanumori= 0  then	(select SUM(qterr+ qterb) from SILVER_BI.dbo.SCPSVA xva1 inner join  SILVER_BI.dbo.SCPSVA xva2 on xva1.datdeb = xva2.datdeb and xva1.heudeb = xva2.heudeb"
+				+ "	left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xva1.SVANUMORI = 0 THEN xva1.SVANUMENR ELSE xva1.SVANUMORI END) "
+				+ "where xva1.ofdnumenr = tabx.ofdnumenr  and tabx.svanumenr = xva2.svanumenr) else total_pecas END * case when  total_horas < 0  and total_pecas >=0  then -1 else 1 end total_pecas,total_horas "
+				+ "	from (select  ofdnumenr,svanumenr,svanumori/*,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_operarios_linha ELSE total_operarios END)total_operarios */"
+				+ " ,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_pecas_linha ELSE case when /*total_pecas <> total_trabalho and total_pecas = 0 and*/ ID_OF_CAB is not null THEN total_trabalho else total_pecas END  END)total_pecas "
+				+ "	,AVG(CASE  WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN  total_horas_linha ELSE total_horas END)total_horas	,AVG(qtt3) qtt3 "
+				+ "	from (	select ofdnumenr,svanumori,isnull(svanumenr,svanumenr2) svanumenr,typof"
+				+ "/*,count(xa.rescod) over(partition by xa.ofdnumenr) total_operarios_linha,count(xa.rescod) over(partition by xa.svanumori,) total_operarios*/"
+				+ " ,sum(tag.qterr+tag.qterb) over(partition by tag.ofdnumenr) total_pecas_linha,tag.qterr+tag.qterb total_pecas "
+				+ ",sum(tag.stpse+ tag.stpsp) over(partition by tag.ofdnumenr) total_horas_linha, "
+				+ "/*sum(tag.stpse+ tag.stpsp) over(partition by tag.svanumori,tag.svanumenr/*,xasvanumenr*/)total_horas*/"
+				+ " sum(tag.stpse+ tag.stpsp) over(partition by tag.ofdnumenr,ISNULL(CONVERT(varchar(50),ID_OF_CAB),CONCAT(tag.svanumori,'_',tag.svanumenr)),proref)total_horas  "
+				+ ",tag.qterr+tag.qterb qtt3,sum(tag.qterr+tag.qterb) over(partition by tag.ofdnumenr,ID_OF_CAB,rescod,proref) total_trabalho,ID_OF_CAB from (select proref,rescod,xa.svanumenr as xasvanumenr,datdeb,(CASE WHEN ISDATE(heudeb) = 0 THEN '00:00:00.000' ELSE heudeb END) heudeb,(CASE WHEN ISDATE(heufin) = 0 THEN '00:00:00.000' ELSE heufin END) heufin ,xq.qterr,xq.qterb,xa.stpse, xa.stpsp,xa.ofdnumenr,xa.svanumori "
+				+ ",CASE WHEN xq.svanumenr is null THEN (select top 1 svanumenr from SILVER_BI.dbo.SCPSVQ where ofdnumenr = xa.ofdnumenr and svanumenr in (select vaa.svanumenr from SILVER_BI.dbo.SCPSVA vaa where vaa.datdeb = xa.datdeb and vaa.heudeb = xa.heudeb )) ELSE xq.svanumenr END as svanumenr "
+				+ ",xfa.typof,/*xa.svanumenr*/(CASE WHEN xa.SVANUMORI=0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) as svanumenr2 from SILVER_BI.dbo.SCPSVA xa "
+				+ "left join SILVER_BI.dbo.SCPSVQ xq on xq.SVANUMENR = (CASE WHEN xa.SVANUMORI = 0 THEN xa.SVANUMENR ELSE xa.SVANUMORI END) "
+				+ "left JOIN SILVER_BI.dbo.SOFA xfa on xa.ofanumenr = xfa.ofanumenr "
+				+ "	where xa.restypcod='MO' and xa.datdeb>=@DATA and xa.datdeb<= DATEADD(DAY,3,@DATA2) AND (NOT EXISTS (SELECT svanumenr FROM SILVER.dbo.SCPSVB WHERE svanumenr IN (xa.svanumenr)) OR (xa.atpse + xa.atpsp) = 0 )"
+				+ "	) tag left join SGIID.dbo.RP_OF_OP_FUNC b on ID_UTZ_CRIA = rescod AND  ((DATA_INI = datdeb AND heudeb = HORA_INI AND heufin = HORA_FIM)  OR (DATA_INI_M1 = datdeb AND heudeb = HORA_INI_M1 AND heufin = HORA_FIM_M1)  OR (DATA_INI_M2 = datdeb AND heudeb = HORA_INI_M2 AND heufin = HORA_FIM_M2) )  "
+				+ " left join SGIID.dbo.RP_OF_OP_CAB c on b.ID_OP_CAB = c.ID_OP_CAB "
+				+ ") taby where (typof in ('OFC1', 'OFC2','OFCF') or (total_pecas is not null) and total_horas > 0 or total_pecas = qtt3) group by ofdnumenr,svanumenr,svanumori) tabx "
+				+ ")  txa on txa.SVANUMENR = (CASE WHEN t.SVANUMORI = 0 THEN CASE WHEN typof IN ('OFC1', 'OFC2','OFCF') THEN t.SVANUMENR ELSE t.SVANUMENR2 END ELSE t.SVANUMORI END) "
+				+ "left join SILVER_BI.dbo.SDTPRA p on p.proref=q.proref "
+				+ "/*left join (select SUM(ty.qterr + ty.qterb) total,ofref,heudeb,datdeb,th.svanumenr "
+				+ "from SILVER_BI.dbo.SCPSVQ ty "
+				+ "inner join (select svanumenr,ofanumenr,heudeb,datdeb from SILVER_BI.dbo.SCPSVA) th on ty.svanumenr = th.svanumenr "
+				+ "inner join SILVER_BI.dbo.SOFA tj on tj.ofanumenr = th.ofanumenr GROUP BY ofref,heudeb,datdeb,th.svanumenr	) j on j.datdeb = t.datdeb /*and j.heudeb = t.heudeb*/ and j.ofref = a.ofref and j.svanumenr = q.svanumenr*/ WHERE t.datdeb>=@DATA and t.datdeb<=@DATA2"
+				+ "	and t.restypcod='MO' /*and p.proref is not null*/ /*and ((((stpse - atpse)+(stpsp-atpsp)) > 0.1) or (((stpse - atpse)+(stpsp-atpsp)) < -0.1) )*/ ) ) as a  "
+				+ "left join RH_FUNCIONARIOS b on  cast(a.rescod as int) = b.COD_FUNCIONARIO left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR "
+				+ query_tipo_cadencia + " "
+				+ "where /*a.proref is not null and total is not null and*/ (b.COD_SECTOR in (" + SECTOR_ACESSO + ") "
+				+ queryallsector + ") and ((not " + sectornull + " is not null) or (c.COD_SECTOR  in (" + Sector
+				+ ") )) and ((not " + Operario + " is not null) or (b.COD_FUNCIONARIO  = " + Operario + " )) "
+				+ querywhere + ""
+				+ " ) a group by  COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod ,opedes ,heudeb,heufin,ofnum,ofdnumenr,quant,PecasHora,typof,totalproref,TempoPausas "
+				+ ") b where b.proref is not null  group by  COD_FUNCIONARIO,NOME,ATIVO,LOCAL,RESPONSAVEL,COD_SECTOR,DES_SECTOR,chefe,datdeb,proref,prodes1,opecod ,opedes ,heudeb,heufin,ofnum,PecasHora,typof,totalproref "
+				+ ") c " + "left join ( "
+				+ " SELECT  t.rescod, t.datdeb as datedeb2,t.heudeb as heudeb2,SUM(t.stpse+t.stpsp) TempoTotalPausa,SUM(CASE WHEN x.ARRCOD in ('TECH') THEN 1 ELSE 0 END ) TOTAL_P "
+				+ "FROM SILVER.dbo.SCPSVB x	" + "INNER JOIN SILVER.dbo.SCPSVA t  on t.SVANUMENR=  x.SVANUMENR "
+				+ "INNER JOIN SILVER.dbo.SPAARR p  on p.ARRCOD=  x.ARRCOD "
+				+ "WHERE x.datdeb>=@DATA and x.datdeb<=@DATA2 and t.restypcod='MO'and (t.stpse<>0 or t.stpsp<>0) "
+				+ "GROUP BY  t.rescod, t.datdeb,t.heudeb "
+				+ " ) p on  CASE WHEN IsNumeric(REPLACE(p.rescod,'.','')) = 1 THEN  cast(REPLACE(p.rescod,'.','') as bigint) ELSE null END = c.COD_FUNCIONARIO and p.datedeb2 = c.datdeb and p.heudeb2 between c.heudeb and heufin "
+				+ "where ((TempoTotal <> 0 AND (TempoPrep+TempoExec) <> 0) OR (TempoTotal > 0 and (TempoPrep+TempoExec) = 0 and TempoTotalPausa <> 0 or (TempoTotal = 0 and TOTAL_P > 1)) ) and quant >= 0  and  (quant >= 0 and (TempoPrep+TempoExec) <> 0) ) c order by datdeb desc ,heudeb desc,heufin desc,proref");
 		List<RH_FUNCIONARIOS> data = query.getResultList();
 		return data;
 
@@ -380,25 +402,38 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 		String queryallsector = "";
 		if (ADMIN)
 			queryallsector = "or (b.COD_SECTOR is null)";
-		Query query = entityManager
-				.createNativeQuery("DECLARE @DATA date = '" + data1 + "'; " + "DECLARE @DATA2 date = '" + data2
-						+ "';   select b.COD_FUNCIONARIO,b.NOME,b.ATIVO,b.LOCAL,b.RESPONSAVEL,b.COD_SECTOR,c.DES_SECTOR, "
-						+ "(select NOME from RH_FUNCIONARIOS where COD_FUNCIONARIO = c.CHEFE1) as CHEFE,a.datdeb,a.TempoPrep , "
-						+ "a.TempoExec,a.TempoTotal TempoTotal,a.heudeb,a.heufin,codigo,descricao from ( "
-						+ "SELECT t.rescod, t.datdeb,x.heudeb,x.heufin,(t.stpse) TempoExec, (t.stpsp) TempoPrep, (t.stpse+t.stpsp) TempoTotal,x.ARRCOD as codigo,p.ARRLIB as descricao "
-						+ "	FROM SILVER.dbo.SCPSVB x	INNER JOIN SILVER.dbo.SCPSVA t  on t.SVANUMENR=  x.SVANUMENR "
-						+ "	INNER JOIN SILVER.dbo.SPAARR p  on p.ARRCOD=  x.ARRCOD "
-						+ "	WHERE x.datdeb>=@DATA and x.datdeb<=@DATA2 /*and t.heudeb>= (select top 1 cast(DataHora as time) from  Cronos.dbo.Ponto where NumeroEmpregado = cast(rescod as int) and t.datdeb = cast(DataHora as date))*/ "
-						+ "and t.restypcod='MO'and (t.stpse<>0 or t.stpsp<>0) ) as a "
-						+ " left join RH_FUNCIONARIOS b on  CASE WHEN IsNumeric(REPLACE(a.rescod,'.','')) = 1 THEN  cast(REPLACE(a.rescod,'.','') as int) ELSE null END = b.COD_FUNCIONARIO left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR  "
-						+ "where (b.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + Operario
-						+ " is not null) or (b.COD_FUNCIONARIO  = " + Operario + " )) " + querywhere
-						+ " order by a.datdeb desc ,a.heudeb desc,heufin desc");
+		Query query = entityManager.createNativeQuery("DECLARE @DATA date = '" + data1 + "'; "
+				+ "DECLARE @DATA2 date = '" + data2
+				+ "';   select b.COD_FUNCIONARIO,b.NOME,b.ATIVO,b.LOCAL,b.RESPONSAVEL,b.COD_SECTOR,c.DES_SECTOR, "
+				+ "(select NOME from RH_FUNCIONARIOS where COD_FUNCIONARIO = c.CHEFE1) as CHEFE,a.datdeb,a.TempoPrep , "
+				+ "a.TempoExec,a.TempoTotal TempoTotal,a.heudeb,a.heufin,codigo,descricao from ( "
+				+ "SELECT t.rescod, t.datdeb,x.heudeb,x.heufin,(t.stpse) TempoExec, (t.stpsp) TempoPrep, (t.stpse+t.stpsp) TempoTotal,x.ARRCOD as codigo,p.ARRLIB as descricao "
+				+ "	FROM SILVER.dbo.SCPSVB x	INNER JOIN SILVER.dbo.SCPSVA t  on t.SVANUMENR=  x.SVANUMENR "
+				+ "	INNER JOIN SILVER.dbo.SPAARR p  on p.ARRCOD=  x.ARRCOD "
+				+ "	WHERE x.datdeb>=@DATA and x.datdeb<=@DATA2 /*and t.heudeb>= (select top 1 cast(DataHora as time) from  Cronos.dbo.Ponto where NumeroEmpregado = cast(rescod as int) and t.datdeb = cast(DataHora as date))*/ "
+				+ "and t.restypcod='MO'and (t.stpse<>0 or t.stpsp<>0) ) as a "
+				+ " left join RH_FUNCIONARIOS b on  CASE WHEN IsNumeric(REPLACE(a.rescod,'.','')) = 1 THEN  cast(REPLACE(a.rescod,'.','') as bigint) ELSE null END = b.COD_FUNCIONARIO left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR  "
+				+ "where (b.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + Operario
+				+ " is not null) or (b.COD_FUNCIONARIO  = " + Operario + " )) " + querywhere
+				+ " order by a.datdeb desc ,a.heudeb desc,heufin desc");
 		List<RH_FUNCIONARIOS> data = query.getResultList();
 		return data;
 
 	}
 
+	public List<RH_FUNCIONARIOS> getSectores_(String data1, String Ativo, String Operario, String Sector,
+			String SECTOR_ACESSO, String tipo_cadencia) {
+		
+		List<RH_FUNCIONARIOS> data = entityManager
+				.createNativeQuery("EXEC RH_GET_SECTOR "
+						+ ":DATA,   :Ativo, :Sector, :SECTOR_ACESSO, :Operario, :tipo_cadencia")
+				.setParameter("DATA", data1).setParameter("Ativo", Ativo)
+				.setParameter("tipo_cadencia", tipo_cadencia).setParameter("Sector", Sector)
+				.setParameter("Operario", Operario)
+				.setParameter("SECTOR_ACESSO", SECTOR_ACESSO).getResultList();
+
+		return data;
+	}
 	public List<RH_FUNCIONARIOS> getSectores(String data1, String Ativo, String Operario, String Sector,
 			String SECTOR_ACESSO, String tipo_cadencia) {
 
@@ -543,6 +578,18 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 	}
 
+	public List<RH_FUNCIONARIOS> getSectoresComparativa_(String data1, String Ativo, String Sector, String SECTOR_ACESSO,
+			Boolean ADMIN, String tipo_cadencia) {
+
+		List<RH_FUNCIONARIOS> data = entityManager
+				.createNativeQuery("EXEC RH_GET_COMPARATIVA_SECTORES "
+						+ ":DATA, :Ativo, :Sector, :SECTOR_ACESSO, :ADMIN,:tipo_cadencia")
+				.setParameter("DATA", data1).setParameter("Ativo", Ativo).setParameter("Sector", Sector).setParameter("ADMIN", ADMIN ? 1 : 0)
+				.setParameter("SECTOR_ACESSO", SECTOR_ACESSO).setParameter("tipo_cadencia", tipo_cadencia).getResultList();
+
+		return data;
+	}
+	
 	public List<RH_FUNCIONARIOS> getSectoresComparativa(String data1, String Ativo, String Sector, String SECTOR_ACESSO,
 			Boolean ADMIN, String tipo_cadencia) {
 

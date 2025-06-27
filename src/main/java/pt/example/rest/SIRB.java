@@ -2962,7 +2962,7 @@ public class SIRB {
 		if (OPERARIO.isEmpty())
 			OPERARIO = null;
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
-		return dao63.getProdutividade(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN);
+		return dao63.getProdutividade_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN);
 	}
 
 	@POST
@@ -2981,8 +2981,28 @@ public class SIRB {
 		if (OPERARIO.isEmpty())
 			OPERARIO = null;
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
+		return dao63.getOperacoes_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR);
+	}
+	
+	@POST
+	@Path("/getRH_FUNCIONARIOSOPERACOESOLD")
+	@Produces("application/json")
+	public List<RH_FUNCIONARIOS> getRH_FUNCIONARIOSOPERACOESOLD(final List<HashMap<String, String>> datas) {
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String data1 = firstMap.get("DATA1");
+		String data2 = firstMap.get("DATA2");
+		String Ativo = firstMap.get("ATIVO");
+		String OPERARIO = firstMap.get("OPERARIO");
+		String SECTOR_ACESSO = firstMap.get("SECTOR_ACESSO");
+		String tipo_cadencia = firstMap.get("TIPO_CADENCIA");
+		String SECTOR = firstMap.get("SECTOR");
+		if (OPERARIO.isEmpty())
+			OPERARIO = null;
+		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
 		return dao63.getOperacoes(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR);
 	}
+
 
 	@POST
 	@Path("/getRH_FUNCIONARIOSPAUSAS")
@@ -3018,7 +3038,7 @@ public class SIRB {
 			OPERARIO = null;
 		if (SECTOR != null && SECTOR.isEmpty())
 			SECTOR = null;
-		return dao63.getSectores(data1, Ativo, OPERARIO, SECTOR, SECTOR_ACESSO, tipo_cadencia);
+		return dao63.getSectores_(data1, Ativo, OPERARIO, SECTOR, SECTOR_ACESSO, tipo_cadencia);
 	}
 
 	@POST
@@ -3059,7 +3079,7 @@ public class SIRB {
 		if (SECTOR != null && SECTOR.isEmpty())
 			SECTOR = null;
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
-		return dao63.getSectoresComparativa(data1, Ativo, SECTOR, SECTOR_ACESSO, ADMIN, tipo_cadencia);
+		return dao63.getSectoresComparativa_(data1, Ativo, SECTOR, SECTOR_ACESSO, ADMIN, tipo_cadencia);
 	}
 
 	/*******************************************

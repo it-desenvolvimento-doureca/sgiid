@@ -55,7 +55,9 @@ public class MAN_MOV_MANUTENCAO_PLANOS {
 	private Integer UTILIZADOR;
 	@JsonProperty("TEMPO_ESTIMADO")
 	private Time TEMPO_ESTIMADO;
-	
+	@JsonProperty("ANEXO")
+	private String ANEXO;
+
 	public Integer getID() {
 		return ID;
 	}
@@ -198,6 +200,14 @@ public class MAN_MOV_MANUTENCAO_PLANOS {
 
 	public void setTEMPO_ESTIMADO(Time tEMPO_ESTIMADO) {
 		TEMPO_ESTIMADO = tEMPO_ESTIMADO;
+	}
+
+	public String getANEXO() {
+		return ANEXO;
+	}
+
+	public void setANEXO(String aNEXO) {
+		ANEXO = aNEXO;
 	}
 
 }

@@ -28,6 +28,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -84,8 +85,12 @@ import pt.example.dao.PIN_MOV_UV_RADIATIONDao;
 import pt.example.dao.PIN_PLANEAMENTO_PINTURADao;
 import pt.example.dao.PIN_PLANEAMENTO_PINTURA_LINHASDao;
 import pt.example.dao.PR_DIC_MAQUINAS_MATRIXDao;
+import pt.example.dao.PR_DIC_MOTIVO_CRITICIDADEDao;
 import pt.example.dao.PR_DIC_RELACAO_ETIQUETAS_MATRIXDao;
+import pt.example.dao.PR_DIC_SECTORES_PECAS_CRITICASDao;
+import pt.example.dao.PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORESDao;
 import pt.example.dao.PR_DIC_SECTORES_SECCAODao;
+import pt.example.dao.PR_PECAS_CRITICASDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_OPERACOES_CABDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHASDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISESDao;
@@ -162,8 +167,12 @@ import pt.example.entity.PIN_MOV_UV_RADIATION;
 import pt.example.entity.PIN_PLANEAMENTO_PINTURA;
 import pt.example.entity.PIN_PLANEAMENTO_PINTURA_LINHAS;
 import pt.example.entity.PR_DIC_MAQUINAS_MATRIX;
+import pt.example.entity.PR_DIC_MOTIVO_CRITICIDADE;
 import pt.example.entity.PR_DIC_RELACAO_ETIQUETAS_MATRIX;
+import pt.example.entity.PR_DIC_SECTORES_PECAS_CRITICAS;
+import pt.example.entity.PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES;
 import pt.example.entity.PR_DIC_SECTORES_SECCAO;
+import pt.example.entity.PR_PECAS_CRITICAS;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES;
@@ -348,6 +357,14 @@ public class SIRB_3 {
 	private PR_DIC_MAQUINAS_MATRIXDao dao74;
 	@Inject
 	private PR_DIC_RELACAO_ETIQUETAS_MATRIXDao dao75;
+	@Inject
+	private PR_DIC_SECTORES_PECAS_CRITICASDao dao76;
+	@Inject
+	private PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORESDao dao77;
+	@Inject
+	private PR_DIC_MOTIVO_CRITICIDADEDao dao78;
+	@Inject
+	private PR_PECAS_CRITICASDao dao79;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -476,8 +493,31 @@ public class SIRB_3 {
 	public List<Object[]> MAN_ANALISE_TEMPOS_PREVISTOS(final List<HashMap<String, String>> dados) {
 
 		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC MAN_ANALISE_TEMPOS_PREVISTOS");
+		String EQUIPAMENTO = firstMap.get("EQUIPAMENTO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+		String LOCALIZACAO = firstMap.get("LOCALIZACAO");
+		String AMBITO = firstMap.get("AMBITO");
+		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+		String ACAO = firstMap.get("ACAO");
+		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
+		Boolean SEVESO = Boolean.valueOf(firstMap.get("SEVESO"));
+		Boolean ATEX = Boolean.valueOf(firstMap.get("ATEX"));
+
+		if (LOCALIZACAO != null)
+			LOCALIZACAO = "'" + LOCALIZACAO + "'";
+
+		if (DATA_INICIO != null)
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_ANALISE_TEMPOS_PREVISTOS " + ANO + ","
+				+ DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + "," + FUNCIONARIO + ","
+				+ EQUIPAMENTO + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX + "," + ACAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -6129,18 +6169,21 @@ public class SIRB_3 {
 	@POST
 	@Path("/GET_PR_SECCOES_ANALISES_RECURSOS_HUMANOS_REFERENCIAS")
 	@Produces("application/json")
-	public List<Object[]> GET_PR_SECCOES_ANALISES_RECURSOS_HUMANOS_REFERENCIAS(final List<HashMap<String, String>> dados) {
+	public List<Object[]> GET_PR_SECCOES_ANALISES_RECURSOS_HUMANOS_REFERENCIAS(
+			final List<HashMap<String, String>> dados) {
 		HashMap<String, String> firstMap = dados.get(0);
 		String COD_SECCAO = firstMap.get("COD_SECCAO");
 		String ID = firstMap.get("ID");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC PR_SECCOES_ANALISES_RECURSOS_HUMANOS_REFERENCIAS :id,:cod_seccao").setParameter("id", ID).setParameter("cod_seccao", COD_SECCAO);
+		Query query_folder = entityManager
+				.createNativeQuery("EXEC PR_SECCOES_ANALISES_RECURSOS_HUMANOS_REFERENCIAS :id,:cod_seccao")
+				.setParameter("id", ID).setParameter("cod_seccao", COD_SECCAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	/************************************* PR_DIC_MAQUINAS_MATRIX */
 	@POST
 	@Path("/createPR_DIC_MAQUINAS_MATRIX")
@@ -6221,5 +6264,243 @@ public class SIRB_3 {
 			final PR_DIC_RELACAO_ETIQUETAS_MATRIX PR_DIC_RELACAO_ETIQUETAS_MATRIX) {
 		PR_DIC_RELACAO_ETIQUETAS_MATRIX.setID(PR_DIC_RELACAO_ETIQUETAS_MATRIX.getID());
 		return dao75.update(PR_DIC_RELACAO_ETIQUETAS_MATRIX);
+	}
+
+	/************************************* PR_DIC_SECTORES_PECAS_CRITICAS */
+	@POST
+	@Path("/createPR_DIC_SECTORES_PECAS_CRITICAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_DIC_SECTORES_PECAS_CRITICAS insertPR_DIC_SECTORES_PECAS_CRITICAS(
+			final PR_DIC_SECTORES_PECAS_CRITICAS data) {
+		return dao76.create(data);
+	}
+
+	@GET
+	@Path("/getPR_DIC_SECTORES_PECAS_CRITICAS")
+	@Produces("application/json")
+	public List<PR_DIC_SECTORES_PECAS_CRITICAS> getPR_DIC_SECTORES_PECAS_CRITICAS() {
+		return dao76.getall();
+	}
+
+	@GET
+	@Path("/getPR_DIC_SECTORES_PECAS_CRITICAS2/{user}")
+	@Produces("application/json")
+	public List<PR_DIC_SECTORES_PECAS_CRITICAS> getPR_DIC_SECTORES_PECAS_CRITICAS2(@PathParam("user") Integer user) {
+		return dao76.getall2(user);
+	}
+
+	@GET
+	@Path("/getPR_DIC_SECTORES_PECAS_CRITICASbyid/{id}")
+	@Produces("application/json")
+	public List<PR_DIC_SECTORES_PECAS_CRITICAS> getPR_DIC_SECTORES_PECAS_CRITICASbyid(@PathParam("id") Integer id) {
+		return dao76.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePR_DIC_SECTORES_PECAS_CRITICAS/{id}")
+	public void deletePR_DIC_SECTORES_PECAS_CRITICAS(@PathParam("id") Integer id) {
+		PR_DIC_SECTORES_PECAS_CRITICAS item = new PR_DIC_SECTORES_PECAS_CRITICAS();
+		item.setID(id);
+		dao76.delete(item);
+	}
+
+	@PUT
+	@Path("/updatePR_DIC_SECTORES_PECAS_CRITICAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_DIC_SECTORES_PECAS_CRITICAS updatePR_DIC_SECTORES_PECAS_CRITICAS(
+			final PR_DIC_SECTORES_PECAS_CRITICAS data) {
+		data.setID(data.getID());
+		return dao76.update(data);
+	}
+
+	/*************************************
+	 * PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES
+	 */
+	@POST
+	@Path("/createPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES insertPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES(
+			final PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES data) {
+		return dao77.create(data);
+	}
+
+	@GET
+	@Path("/getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES")
+	@Produces("application/json")
+	public List<PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES> getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES() {
+		return dao77.getall();
+	}
+
+	@GET
+	@Path("/getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORESbyid/{id}")
+	@Produces("application/json")
+	public List<PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES> getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORESbyid(
+			@PathParam("id") Integer id) {
+		return dao77.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES/{id}")
+	public void deletePR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES(@PathParam("id") Integer id) {
+		PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES item = new PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES();
+		item.setID(id);
+		dao77.delete(item);
+	}
+
+	@PUT
+	@Path("/updatePR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES updatePR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES(
+			final PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES data) {
+		data.setID(data.getID());
+		return dao77.update(data);
+	}
+
+	@GET
+	@Path("/getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES_ALLUSERS/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES_ALLUSERS(@PathParam("id") Integer id) {
+		return dao77.getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES_ALLUSERS(id);
+	}
+
+	@GET
+	@Path("/getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES_ID/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES_ID(@PathParam("id") Integer id) {
+		return dao77.getPR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES_ID(id);
+	}
+
+	/************************************* PR_DIC_MOTIVO_CRITICIDADE */
+	@POST
+	@Path("/createPR_DIC_MOTIVO_CRITICIDADE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_DIC_MOTIVO_CRITICIDADE insertPR_DIC_MOTIVO_CRITICIDADE(final PR_DIC_MOTIVO_CRITICIDADE data) {
+		return dao78.create(data);
+	}
+
+	@GET
+	@Path("/getPR_DIC_MOTIVO_CRITICIDADE")
+	@Produces("application/json")
+	public List<PR_DIC_MOTIVO_CRITICIDADE> getPR_DIC_MOTIVO_CRITICIDADE() {
+		return dao78.getall();
+	}
+
+	@GET
+	@Path("/getPR_DIC_MOTIVO_CRITICIDADEbyid/{id}")
+	@Produces("application/json")
+	public List<PR_DIC_MOTIVO_CRITICIDADE> getPR_DIC_MOTIVO_CRITICIDADEbyid(@PathParam("id") Integer id) {
+		return dao78.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePR_DIC_MOTIVO_CRITICIDADE/{id}")
+	public void deletePR_DIC_MOTIVO_CRITICIDADE(@PathParam("id") Integer id) {
+		PR_DIC_MOTIVO_CRITICIDADE item = new PR_DIC_MOTIVO_CRITICIDADE();
+		item.setID(id);
+		dao78.delete(item);
+	}
+
+	@PUT
+	@Path("/updatePR_DIC_MOTIVO_CRITICIDADE")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_DIC_MOTIVO_CRITICIDADE updatePR_DIC_MOTIVO_CRITICIDADE(final PR_DIC_MOTIVO_CRITICIDADE data) {
+		data.setID(data.getID());
+		return dao78.update(data);
+	}
+
+	/************************************* PR_PECAS_CRITICAS */
+	public boolean existsByProrefAndSector(String proref, Integer idSector, Integer excludeId) {
+		String query = "SELECT COUNT(p) FROM PR_PECAS_CRITICAS p " + "WHERE p.PROREF = :proref "
+				+ "AND p.ID_SECTOR_PECAS_CRITICAS.ID = :idSector " + "AND (:excludeId IS NULL OR p.ID <> :excludeId)";
+
+		Long count = entityManager.createQuery(query, Long.class).setParameter("proref", proref)
+				.setParameter("idSector", idSector).setParameter("excludeId", excludeId).getSingleResult();
+
+		return count > 0;
+	}
+
+	@POST
+	@Path("/createPR_PECAS_CRITICAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PECAS_CRITICAS insertPR_PECAS_CRITICAS(final PR_PECAS_CRITICAS data) {
+
+		if (existsByProrefAndSector(data.getPROREF(), data.getID_SECTOR_PECAS_CRITICAS().getID(), data.getID())) {
+			throw new WebApplicationException("Já existe um registro com esse PROREF e Setor.", 409);
+		}
+
+		return dao79.create(data);
+	}
+
+	@GET
+	@Path("/getPR_PECAS_CRITICAS/{user}")
+	@Produces("application/json")
+	public List<PR_PECAS_CRITICAS> getPR_PECAS_CRITICAS(@PathParam("user") Integer user) {
+		return dao79.getall(user);
+	}
+
+	@GET
+	@Path("/getPR_PECAS_CRITICASbyid/{id}/{user}")
+	@Produces("application/json")
+	public List<PR_PECAS_CRITICAS> getPR_PECAS_CRITICASbyid(@PathParam("id") Integer id,
+			@PathParam("user") Integer user) {
+		return dao79.getbyid(id, user);
+	}
+
+	@DELETE
+	@Path("/deletePR_PECAS_CRITICAS/{id}")
+	public void deletePR_PECAS_CRITICAS(@PathParam("id") Integer id) {
+		PR_PECAS_CRITICAS item = new PR_PECAS_CRITICAS();
+		item.setID(id);
+		dao79.delete(item);
+	}
+
+	@PUT
+	@Path("/updatePR_PECAS_CRITICAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PECAS_CRITICAS updatePR_PECAS_CRITICAS(final PR_PECAS_CRITICAS data) {
+
+		if (existsByProrefAndSector(data.getPROREF(), data.getID_SECTOR_PECAS_CRITICAS().getID(), data.getID())) {
+			throw new WebApplicationException("Já existe um registro com esse PROREF e Setor.", 409);
+		}
+
+		data.setID(data.getID());
+		return dao79.update(data);
+	}
+
+	@PUT
+	@Path("/updatePR_PECAS_CRITICASFastRespnse")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_PECAS_CRITICAS updatePR_PECAS_CRITICASFastRespnse(final PR_PECAS_CRITICAS data) {
+		PR_PECAS_CRITICAS original = dao79.read(data.getID());
+
+		if (original != null) {
+			original.setFAST_RESPONSE(data.getFAST_RESPONSE());
+			original.setUTZ_MODIF(data.getUTZ_MODIF());
+			original.setDATA_MODIF(data.getDATA_MODIF());
+			return dao79.update(original);
+		} else {
+			throw new WebApplicationException("ID não encontrado", 404);
+		}
+	}
+
+	@GET
+	@Path("/getReferenciasPECAS_CRITICAS/{user}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getReferenciasPECAS_CRITICAS(@PathParam("user") Integer user)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getReferenciasPECAS_CRITICAS(getURLSILVER(), user);
+		return dados;
 	}
 }

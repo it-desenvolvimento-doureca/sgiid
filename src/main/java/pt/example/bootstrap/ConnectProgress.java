@@ -945,11 +945,45 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
-	public List<HashMap<String, String>> getReferenciaSearch(String url,String query_) throws SQLException {
+
+	public List<HashMap<String, String>> getReferenciasPECAS_CRITICAS(String url, Integer user) throws SQLException {
+
+		String query = "SELECT po.PROREF, po.PRODES1, po.PRDFAMCOD  "
+				+ "FROM SDTPRA po  "
+				+ "WHERE po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP','PPSF','PSOI')  "
+				+ "AND (po.GESCOD IN ( "
+				+ "SELECT spc.SECTOR  "
+				+ "FROM SGIID.dbo.PR_DIC_SECTORES_PECAS_CRITICAS spc  "
+				+ "JOIN SGIID.dbo.PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES u ON spc.ID = u.ID_SECTORES_PECAS_CRITICAS  "
+				+ "WHERE u.ID_UTILIZADOR = ? "
+				+ ") OR (select top 1 ADMIN from  SGIID.dbo.GER_UTILIZADORES where ID_UTILIZADOR = ?) = 1) "
+				+ "ORDER BY po.PROREF";
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		try (Connection connection = getConnection(url); PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, user); 
+			stmt.setInt(2, user);
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					HashMap<String, String> x = new HashMap<>();
+					x.put("PROREF", rs.getString("PROREF"));
+					x.put("PRODES1", rs.getString("PRODES1"));
+					x.put("FAMCOD", rs.getString("PRDFAMCOD"));
+					list.add(x);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			globalconnection.close(); // caso esteja usando como fallback
+		}
+		return list;
+	}
+
+	public List<HashMap<String, String>> getReferenciaSearch(String url, String query_) throws SQLException {
 
 		String query = "select PROREF,PRODES1,PRDFAMCOD from SDTPRA po where po.protypcod IN ('COM','PF','PCF','PSOF','PSO','COMS','EMBA','PFI','PSOP','PFPP','PPSF')"
-				+ "and (PROREF like  REPLACE('%"+query_+"%',' ','%') or PRODES1 like REPLACE('%"+query_+"%',' ','%')) ORDER BY PROREF";
+				+ "and (PROREF like  REPLACE('%" + query_ + "%',' ','%') or PRODES1 like REPLACE('%" + query_
+				+ "%',' ','%')) ORDER BY PROREF";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -975,7 +1009,6 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-
 
 	public List<HashMap<String, String>> getReferencia(String PROREF, String url) throws SQLException {
 
@@ -1013,8 +1046,11 @@ public class ConnectProgress {
 
 	public List<HashMap<String, String>> getReferenciasMANU(String url) throws SQLException {
 
-		String query = "select po.PROREF,PRODES1,STOCK_TOTAL from SDTPRA po left join(SELECT PROREF, sum(lotqte) STOCK_TOTAL FROM stodet "
-				+ " GROUP BY proref ) pa on po.proref = pa.PROREF where po.protypcod IN ('MANU') ORDER BY po.PROREF";
+		String query = "select po.PROREF,PRODES1,STOCK_TOTAL,c.Localizacao from SDTPRA po  "
+				+ "left join(SELECT PROREF, sum(lotqte) STOCK_TOTAL FROM stodet  GROUP BY proref ) pa on po.proref = pa.PROREF "
+				+ "left join ( select Referencia, ISNULL(STRING_AGG(nullif(CONCAT(Armazem,'-',Localizacao),'') ,';')  WITHIN GROUP (ORDER BY Localizacao),'s/ localização') Localizacao from ( "
+				+ "SELECT distinct proref Referencia, liecod Armazem, empcod Localizacao FROM stodet where  lotqte <> 0  ) a GROUP BY Referencia ) c on c.Referencia = po.proref "
+				+ "where po.protypcod IN ('MANU') ORDER BY po.PROREF ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -1027,6 +1063,7 @@ public class ConnectProgress {
 				x.put("PROREF", rs.getString("PROREF"));
 				x.put("PRODES1", rs.getString("PRODES1"));
 				x.put("STOCK_TOTAL", rs.getString("STOCK_TOTAL"));
+				x.put("Localizacao", rs.getString("Localizacao"));
 
 				list.add(x);
 			}
@@ -1132,40 +1169,39 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getComponentesBySeccao(String url, String seccoes) throws SQLException {
 
-	    // Divide a string de seções por vírgulas e constrói a cláusula IN dinamicamente
-	    String[] secArray = seccoes.split(",");
-	    StringBuilder inClause = new StringBuilder();
-	    for (int i = 0; i < secArray.length; i++) {
-	        inClause.append("'").append(secArray[i]).append("'");
-	        if (i < secArray.length - 1) {
-	            inClause.append(",");
-	        }
-	    }
+		// Divide a string de seções por vírgulas e constrói a cláusula IN dinamicamente
+		String[] secArray = seccoes.split(",");
+		StringBuilder inClause = new StringBuilder();
+		for (int i = 0; i < secArray.length; i++) {
+			inClause.append("'").append(secArray[i]).append("'");
+			if (i < secArray.length - 1) {
+				inClause.append(",");
+			}
+		}
 
-	    String query = "SELECT PROREF, PRODES1, PRODES2 FROM SDTPRA WHERE gescod IN (" + inClause + ")";
+		String query = "SELECT PROREF, PRODES1, PRODES2 FROM SDTPRA WHERE gescod IN (" + inClause + ")";
 
-	    List<HashMap<String, String>> list = new ArrayList<>();
+		List<HashMap<String, String>> list = new ArrayList<>();
 
-	    // Usa o try-with-resources para fechar os recursos automaticamente
-	    try (Connection connection = getConnection(url);
-	         Statement stmt = connection.createStatement();
-	         ResultSet rs = stmt.executeQuery(query)) {
-	        while (rs.next()) {
-	            HashMap<String, String> x = new HashMap<>();
-	            x.put("PROREF", rs.getString("PROREF"));
-	            x.put("PRODES1", rs.getString("PRODES1"));
-	            x.put("PRODES2", rs.getString("PRODES2"));
-	            list.add(x);
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return list;
+		// Usa o try-with-resources para fechar os recursos automaticamente
+		try (Connection connection = getConnection(url);
+				Statement stmt = connection.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+			while (rs.next()) {
+				HashMap<String, String> x = new HashMap<>();
+				x.put("PROREF", rs.getString("PROREF"));
+				x.put("PRODES1", rs.getString("PRODES1"));
+				x.put("PRODES2", rs.getString("PRODES2"));
+				list.add(x);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
-
 
 	public List<HashMap<String, String>> getComponentesSaoBento(String url) throws SQLException {
 
@@ -1405,8 +1441,8 @@ public class ConnectProgress {
 		String query = "select c.LOTDATVLF,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
 				+ " ,(SELECT count(*) FROM stodet x WHERE x.proref= a.PROREF AND x.LIECOD='DPCHI' AND x.empcod='ZONQUA' AND x.EMPCOD != b.EMPCOD AND lotqte>0 ) TOTAL_ZONQUA ,c.LOTDATCRE  "
 				+ "from  SDTPRA a " + "inner join  SETQDE b on a.PROREF= b.PROREF "
-				+ "left join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
-				+ "where b.ETQNUM = '" + etiqueta + "' and b.ETQETAT = 1 and b.ETQSITSTO=2 ";
+				+ "left join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF " + "where b.ETQNUM = '"
+				+ etiqueta + "' and b.ETQETAT = 1 and b.ETQSITSTO=2 ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 
@@ -1433,19 +1469,18 @@ public class ConnectProgress {
 				x.put("DATCRE", rs.getString("DATCRE"));
 				x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
 				x.put("TOTAL_ZONQUA", rs.getString("TOTAL_ZONQUA"));
-				
-				
-				ArrayList<String>  result =  getDadosEtiquetaPinturaTotal(url, etiqueta,rs.getString("PROREF"), rs.getString("LOTDATCRE"),rs.getString("LOTDATVLF"));
-				
-				if(result != null) {
+
+				ArrayList<String> result = getDadosEtiquetaPinturaTotal(url, etiqueta, rs.getString("PROREF"),
+						rs.getString("LOTDATCRE"), rs.getString("LOTDATVLF"));
+
+				if (result != null) {
 					x.put("EXISTE_ETIQUETAS", result.get(0));
 					x.put("ETIQUETAS", result.get(1));
-				}else {
-					x.put("EXISTE_ETIQUETAS","0");
-					x.put("ETIQUETAS","");
+				} else {
+					x.put("EXISTE_ETIQUETAS", "0");
+					x.put("ETIQUETAS", "");
 				}
-				 
-				
+
 				list.add(x);
 			}
 			stmt.close();
@@ -1460,21 +1495,21 @@ public class ConnectProgress {
 		return list;
 	}
 
-	
-	public ArrayList<String> getDadosEtiquetaPinturaTotal(String url, String etiqueta,String PROREF,String LOTDATCRE,String LOTDATVLF) throws SQLException {
+	public ArrayList<String> getDadosEtiquetaPinturaTotal(String url, String etiqueta, String PROREF, String LOTDATCRE,
+			String LOTDATVLF) throws SQLException {
 
-		
-		if(etiqueta == null || PROREF == null || LOTDATCRE == null) {
+		if (etiqueta == null || PROREF == null || LOTDATCRE == null) {
 			return null;
 		}
-		
-		
+
 		String query = "select count(*) AS TOTAL,STRING_AGG(cast(ETQNUM as nvarchar(max)),',') ETQNUM from  SETQDE b  "
 				+ "left join  STOLOT c on b.INDNUMENR = c.INDNUMENR and b.ETQORILOT1 = c.LOTREF "
-				+ "where 1=1 and b.ETQETAT = 1 and b.ETQSITSTO=2  and ETQEMBQTE > 0 " 
-				+ "AND CASE WHEN LOTDATVLF is null or LOTDATVLF = '"+LOTDATVLF+"' or '"+LOTDATVLF+"' = 'null' THEN LOTDATCRE ELSE  LOTDATVLF END < "
-				+ "CASE WHEN LOTDATVLF is null or LOTDATVLF = '"+LOTDATVLF+"' or '"+LOTDATVLF+"' = 'null' THEN '"+LOTDATCRE+"' ELSE '"+LOTDATVLF+"' END "
-				+ "and ETQNUM <> '"+etiqueta+"' AND b.PROREF = '"+PROREF+"' AND LIECOD in (select COD_ARMAZEM from SGIID.dbo.PIN_DIC_ARMAZEM) ";
+				+ "where 1=1 and b.ETQETAT = 1 and b.ETQSITSTO=2  and ETQEMBQTE > 0 "
+				+ "AND CASE WHEN LOTDATVLF is null or LOTDATVLF = '" + LOTDATVLF + "' or '" + LOTDATVLF
+				+ "' = 'null' THEN LOTDATCRE ELSE  LOTDATVLF END < " + "CASE WHEN LOTDATVLF is null or LOTDATVLF = '"
+				+ LOTDATVLF + "' or '" + LOTDATVLF + "' = 'null' THEN '" + LOTDATCRE + "' ELSE '" + LOTDATVLF + "' END "
+				+ "and ETQNUM <> '" + etiqueta + "' AND b.PROREF = '" + PROREF
+				+ "' AND LIECOD in (select COD_ARMAZEM from SGIID.dbo.PIN_DIC_ARMAZEM) ";
 
 		ArrayList<String> result = null;
 
@@ -1482,12 +1517,12 @@ public class ConnectProgress {
 		try (Connection connection = getConnection(url);
 				Statement stmt = connection.createStatement();
 				ResultSet rs = stmt.executeQuery(query)) {
-			while (rs.next()) {	
+			while (rs.next()) {
 				result = new ArrayList<>();
-				result.add(0,rs.getString("TOTAL"));
-				result.add(1,rs.getString("ETQNUM"));				 
+				result.add(0, rs.getString("TOTAL"));
+				result.add(1, rs.getString("ETQNUM"));
 			}
-			
+
 			stmt.close();
 			rs.close();
 			connection.close();
@@ -1500,7 +1535,6 @@ public class ConnectProgress {
 		return result;
 	}
 
-	
 	public List<HashMap<String, String>> getDadosEtiquetabyREF(String url, String PROREF) throws SQLException {
 
 		String query = "select  b.ETQNUM,a.PROREF,a.PRODES1,b.ETQEMBQTE,a.UNISTO,b.VA1REF,b.VA2REF,b.UNICOD,b.EMPCOD,b.ETQORILOT1,b.LIECOD, b.INDREF,b.ETQNUMENR ,c.LOTNUMENR,b.INDNUMENR,b.DATCRE,b.ETQORIQTE1 "
@@ -1628,7 +1662,7 @@ public class ConnectProgress {
 		}
 		return list;
 	}
-	
+
 	public List<HashMap<String, String>> getTypof(String url) throws SQLException {
 
 		String query = "select distinct TYPOF,OFTYPLIB from SPAOFT where TYPOF <> '' ";

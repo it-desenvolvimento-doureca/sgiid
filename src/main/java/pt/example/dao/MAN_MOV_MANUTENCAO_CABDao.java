@@ -29,7 +29,8 @@ public class MAN_MOV_MANUTENCAO_CABDao extends GenericDaoJpaImpl<MAN_MOV_MANUTEN
 		if(tipo != null && !tipo.equals("null")) query_filter = query_filter+ " and a.TIPO_MANUTENCAO = '"+tipo+"' ";
 		
 		Query query = entityManager.createNativeQuery("select a.TIPO_MANUTENCAO,a.ESTADO,a.DATA_INICIO,a.DATA_FIM,a.DATA_HORA_PEDIDO,a.DATA_CRIA,a.ID_MANUTENCAO_CAB "
-				+ ",c.DESCRICAO_PT,b.TEMPO,b.TEMPO_ESTIMADO,b.REALIZADA "
+				+ ",c.DESCRICAO_PT,b.TEMPO,b.TEMPO_ESTIMADO,b.REALIZADA , CASE WHEN b.TIPO_REPETICAO= 2 THEN 'W'  WHEN b.TIPO_REPETICAO= 3 THEN CASE WHEN b.REPETIR = 1 THEN 'M' WHEN b.REPETIR = 2 THEN 'B' WHEN b.REPETIR = 3 THEN 'T' WHEN b.REPETIR = 4 THEN 'Q' WHEN b.REPETIR = 6 THEN 'S' ELSE "
+				+ "	'M' END  WHEN b.TIPO_REPETICAO = 4 THEN 'A' WHEN b.TIPO_REPETICAO= 1 THEN 'D' ELSE '' END   periodicidade "
 				+ "from MAN_MOV_MANUTENCAO_CAB a "
 				+ "left join MAN_MOV_MANUTENCAO_ACCOES b on a.ID_MANUTENCAO_CAB = b.ID_MANUTENCAO_CAB "
 				+ "left join GT_DIC_TAREFAS c on b.ID_ACAO = c.ID "

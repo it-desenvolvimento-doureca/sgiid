@@ -4700,6 +4700,7 @@ public class SIRB_2 {
 		String LOCALIZACAO = firstMap.get("LOCALIZACAO");
 		String AMBITO = firstMap.get("AMBITO");
 		String FUNCIONARIO = firstMap.get("FUNCIONARIO");
+		String ACAO = firstMap.get("ACAO");
 		Boolean MAQUINA_PRODUTIVA = Boolean.valueOf(firstMap.get("MAQUINA_PRODUTIVA"));
 		Boolean SEVESO = Boolean.valueOf(firstMap.get("SEVESO"));
 		Boolean ATEX = Boolean.valueOf(firstMap.get("ATEX"));
@@ -4715,7 +4716,7 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_ANALISE_MANUTENCAO " + ANO + ","
 				+ TIPO_MANUTENCAO + "," + DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + ","
-				+ FUNCIONARIO + "," + EQUIPAMENTO + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX);
+				+ FUNCIONARIO + "," + EQUIPAMENTO + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX+ "," + ACAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

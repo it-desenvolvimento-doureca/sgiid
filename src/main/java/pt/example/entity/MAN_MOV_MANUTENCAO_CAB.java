@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -18,67 +19,71 @@ public class MAN_MOV_MANUTENCAO_CAB {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonProperty("ID_MANUTENCAO_CAB") 
+	@JsonProperty("ID_MANUTENCAO_CAB")
 	private Integer ID_MANUTENCAO_CAB;
-	@JsonProperty( "NUMERO_PEDIDO")
+	@JsonProperty("NUMERO_PEDIDO")
 	private String NUMERO_PEDIDO;
-	@JsonProperty( "RESPONSAVEL_PEDIDO")
+	@JsonProperty("RESPONSAVEL_PEDIDO")
 	private Integer RESPONSAVEL_PEDIDO;
-	@JsonProperty( "DATA_HORA_PEDIDO")
+	@JsonProperty("DATA_HORA_PEDIDO")
 	private Timestamp DATA_HORA_PEDIDO;
-	@JsonProperty( "LOCALIZACAO")
+	@JsonProperty("LOCALIZACAO")
 	private Integer LOCALIZACAO;
-	@JsonProperty( "EQUIPAMENTO")
+	@JsonProperty("EQUIPAMENTO")
 	private Integer EQUIPAMENTO;
-	@JsonProperty( "COMPONENTE")
+	@JsonProperty("COMPONENTE")
 	private Integer COMPONENTE;
-	@JsonProperty( "DESCRICAO_PEDIDO")
+	@JsonProperty("DESCRICAO_PEDIDO")
 	private String DESCRICAO_PEDIDO;
-	@JsonProperty( "OBSERVACOES")
+	@JsonProperty("OBSERVACOES")
 	private String OBSERVACOES;
-	@JsonProperty( "DATA_INICIO")
+	@JsonProperty("DATA_INICIO")
 	private Timestamp DATA_INICIO;
-	@JsonProperty( "DATA_FIM")
+	@JsonProperty("DATA_FIM")
 	private Timestamp DATA_FIM;
-	@JsonProperty( "ESTADO")
+	@JsonProperty("ESTADO")
 	private String ESTADO;
 	@JsonProperty("TIPO_MANUTENCAO")
 	private String TIPO_MANUTENCAO;
-	@JsonProperty( "UTZ_CRIA")
+	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
-	@JsonProperty( "DATA_CRIA")
+	@JsonProperty("DATA_CRIA")
 	private Timestamp DATA_CRIA;
-	@JsonProperty( "UTZ_ULT_MODIF")
+	@JsonProperty("UTZ_ULT_MODIF")
 	private Integer UTZ_ULT_MODIF;
-	@JsonProperty( "DATA_ULT_MODIF")
+	@JsonProperty("DATA_ULT_MODIF")
 	private Timestamp DATA_ULT_MODIF;
 	@JsonProperty("TIPO_LOCALIZACAO")
 	private String TIPO_LOCALIZACAO;
-	@JsonProperty( "TIPO_RESPONSAVEL")
+	@JsonProperty("TIPO_RESPONSAVEL")
 	private String TIPO_RESPONSAVEL;
-	@JsonProperty( "UTILIZADOR")
+	@JsonProperty("UTILIZADOR")
 	private Integer UTILIZADOR;
-	@JsonProperty( "DATA_REALIZACAO")
+	@JsonProperty("DATA_REALIZACAO")
 	private Timestamp DATA_REALIZACAO;
-	@JsonProperty( "COD_FORNECEDOR")
+	@JsonProperty("COD_FORNECEDOR")
 	private String COD_FORNECEDOR;
-	@JsonProperty( "NOME_FORNECEDOR")
+	@JsonProperty("NOME_FORNECEDOR")
 	private String NOME_FORNECEDOR;
-	@JsonProperty( "EMAIL_FORNECEDOR")
+	@JsonProperty("EMAIL_FORNECEDOR")
 	private String EMAIL_FORNECEDOR;
-	@JsonProperty( "AMBITO_MANUTENCAO")
-	private Integer AMBITO_MANUTENCAO;	
-	@JsonProperty( "NOTAS_PLANEAMENTO")
+	@JsonProperty("AMBITO_MANUTENCAO")
+	private Integer AMBITO_MANUTENCAO;
+	@JsonProperty("NOTAS_PLANEAMENTO")
 	private String NOTAS_PLANEAMENTO;
-	@JsonProperty( "STATUS_MAQUINA")
+	@JsonProperty("STATUS_MAQUINA")
 	private String STATUS_MAQUINA;
-	@JsonProperty( "ORDEM")
+	@JsonProperty("ORDEM")
 	private Integer ORDEM;
-	@JsonProperty( "ID_ORIGEM")
+	@JsonProperty("ID_ORIGEM")
 	private Integer ID_ORIGEM;
-	@JsonProperty( "ID_TIPOLOGIA_AVARIA")
+	@JsonProperty("ID_TIPOLOGIA_AVARIA")
 	private Integer ID_TIPOLOGIA_AVARIA;
-	
+	@JsonProperty("SEGURANCA_AMBIENTE")
+	private Boolean SEGURANCA_AMBIENTE;
+	@JsonProperty("PRAZO")
+	private Date PRAZO;
+
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
 	}
@@ -317,6 +322,22 @@ public class MAN_MOV_MANUTENCAO_CAB {
 
 	public void setID_TIPOLOGIA_AVARIA(Integer iD_TIPOLOGIA_AVARIA) {
 		ID_TIPOLOGIA_AVARIA = iD_TIPOLOGIA_AVARIA;
+	}
+
+	public Boolean getSEGURANCA_AMBIENTE() {
+		return SEGURANCA_AMBIENTE;
+	}
+
+	public void setSEGURANCA_AMBIENTE(Boolean sEGURANCA_AMBIENTE) {
+		SEGURANCA_AMBIENTE = sEGURANCA_AMBIENTE;
+	}
+
+	public Date getPRAZO() {
+		return PRAZO;
+	}
+
+	public void setPRAZO(Date pRAZO) {
+		PRAZO = pRAZO;
 	}
 
 }
