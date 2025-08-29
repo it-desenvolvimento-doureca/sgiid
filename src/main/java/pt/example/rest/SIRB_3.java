@@ -1,10 +1,8 @@
 package pt.example.rest;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -32,14 +30,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.FileUtils;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pt.example.bootstrap.AlfrescoApi;
 import pt.example.bootstrap.ConnectProgress;
+import pt.example.dao.AB_DIC_COMPONENTE_DOCUMENTOSDao;
 import pt.example.dao.COMU_DIC_CATEGORIASDao;
 import pt.example.dao.COMU_FICHEIROSDao;
 import pt.example.dao.COMU_TICKERSDao;
@@ -73,6 +68,7 @@ import pt.example.dao.PIN_DIC_RACKSDao;
 import pt.example.dao.PIN_DIC_REGISTO_BASTIDORDao;
 import pt.example.dao.PIN_DIC_REGISTO_SALAS_MISTURADao;
 import pt.example.dao.PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIASDao;
+import pt.example.dao.PIN_DIC_TIPOS_ACABAMENTODao;
 import pt.example.dao.PIN_DIC_TIPO_ACABAMENTODao;
 import pt.example.dao.PIN_MOV_PREPARACAODao;
 import pt.example.dao.PIN_MOV_PREPARACAO_CABDao;
@@ -84,12 +80,14 @@ import pt.example.dao.PIN_MOV_RECEITAS_REFERENCIASDao;
 import pt.example.dao.PIN_MOV_UV_RADIATIONDao;
 import pt.example.dao.PIN_PLANEAMENTO_PINTURADao;
 import pt.example.dao.PIN_PLANEAMENTO_PINTURA_LINHASDao;
+import pt.example.dao.PR_DIC_ACOES_PECAS_CRITICASDao;
 import pt.example.dao.PR_DIC_MAQUINAS_MATRIXDao;
 import pt.example.dao.PR_DIC_MOTIVO_CRITICIDADEDao;
 import pt.example.dao.PR_DIC_RELACAO_ETIQUETAS_MATRIXDao;
 import pt.example.dao.PR_DIC_SECTORES_PECAS_CRITICASDao;
 import pt.example.dao.PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORESDao;
 import pt.example.dao.PR_DIC_SECTORES_SECCAODao;
+import pt.example.dao.PR_INDICADORES_PECAS_CRITICASDao;
 import pt.example.dao.PR_PECAS_CRITICASDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_OPERACOES_CABDao;
 import pt.example.dao.PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHASDao;
@@ -119,10 +117,10 @@ import pt.example.dao.RH_REGISTO_ACOESDao;
 import pt.example.dao.RH_SUGESTOESDao;
 import pt.example.dao.RH_SUGESTOES_ATIVIDADEDao;
 import pt.example.dao.RH_SUGESTOES_DOCUMENTOSDao;
+import pt.example.entity.AB_DIC_COMPONENTE_DOCUMENTOS;
 import pt.example.entity.COMU_DIC_CATEGORIAS;
 import pt.example.entity.COMU_FICHEIROS;
 import pt.example.entity.COMU_TICKERS;
-import pt.example.entity.COM_ACORDOS;
 import pt.example.entity.COM_BUDGETS;
 import pt.example.entity.COM_BUDGETS_ANALISES;
 import pt.example.entity.COM_BUDGETS_LINHAS;
@@ -140,7 +138,6 @@ import pt.example.entity.GER_INFO_PAGINAS;
 import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.MAN_DIC_ARTIGOS_TIPOLOGIA;
 import pt.example.entity.MAN_DIC_FAMILIA_EQUIPAMENTOS;
-import pt.example.entity.MAN_MOV_MANUTENCAO_OPERARIOS;
 import pt.example.entity.PIN_DIC_ARMAZEM;
 import pt.example.entity.PIN_DIC_CABINES;
 import pt.example.entity.PIN_DIC_CORES;
@@ -155,6 +152,7 @@ import pt.example.entity.PIN_DIC_RACKS;
 import pt.example.entity.PIN_DIC_REGISTO_BASTIDOR;
 import pt.example.entity.PIN_DIC_REGISTO_SALAS_MISTURA;
 import pt.example.entity.PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS;
+import pt.example.entity.PIN_DIC_TIPOS_ACABAMENTO;
 import pt.example.entity.PIN_DIC_TIPO_ACABAMENTO;
 import pt.example.entity.PIN_MOV_PREPARACAO;
 import pt.example.entity.PIN_MOV_PREPARACAO_CAB;
@@ -166,12 +164,14 @@ import pt.example.entity.PIN_MOV_RECEITAS_REFERENCIAS;
 import pt.example.entity.PIN_MOV_UV_RADIATION;
 import pt.example.entity.PIN_PLANEAMENTO_PINTURA;
 import pt.example.entity.PIN_PLANEAMENTO_PINTURA_LINHAS;
+import pt.example.entity.PR_DIC_ACOES_PECAS_CRITICAS;
 import pt.example.entity.PR_DIC_MAQUINAS_MATRIX;
 import pt.example.entity.PR_DIC_MOTIVO_CRITICIDADE;
 import pt.example.entity.PR_DIC_RELACAO_ETIQUETAS_MATRIX;
 import pt.example.entity.PR_DIC_SECTORES_PECAS_CRITICAS;
 import pt.example.entity.PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES;
 import pt.example.entity.PR_DIC_SECTORES_SECCAO;
+import pt.example.entity.PR_INDICADORES_PECAS_CRITICAS;
 import pt.example.entity.PR_PECAS_CRITICAS;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS;
@@ -180,7 +180,6 @@ import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES_RECURSOS_HUMAN
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB;
 import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS;
 import pt.example.entity.PR_REGISTO_PINTURA;
-import pt.example.entity.PR_WINROBOT_CAB;
 import pt.example.entity.PR_WINROBOT_USERS;
 import pt.example.entity.RH_CANDIDATURAS;
 import pt.example.entity.RH_DADOS_FUNCIONARIO;
@@ -365,6 +364,14 @@ public class SIRB_3 {
 	private PR_DIC_MOTIVO_CRITICIDADEDao dao78;
 	@Inject
 	private PR_PECAS_CRITICASDao dao79;
+	@Inject
+	private PR_DIC_ACOES_PECAS_CRITICASDao dao80;
+	@Inject
+	private AB_DIC_COMPONENTE_DOCUMENTOSDao dao81;
+	@Inject
+	private PIN_DIC_TIPOS_ACABAMENTODao dao82;
+	@Inject
+	private PR_INDICADORES_PECAS_CRITICASDao dao83;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -3771,6 +3778,13 @@ public class SIRB_3 {
 		return dao36.getall2();
 	}
 
+	@GET
+	@Path("/getPIN_DIC_CORES_ACABAMENTOS3")
+	@Produces("application/json")
+	public List<PIN_DIC_CORES_ACABAMENTOS> getPIN_DIC_CORES_ACABAMENTOS3() {
+		return dao36.getall3();
+	}
+
 	@DELETE
 	@Path("/deletePIN_DIC_CORES_ACABAMENTOS/{id}")
 	public void deletePIN_DIC_CORES_ACABAMENTOS(@PathParam("id") Integer id) {
@@ -6417,7 +6431,8 @@ public class SIRB_3 {
 	/************************************* PR_PECAS_CRITICAS */
 	public boolean existsByProrefAndSector(String proref, Integer idSector, Integer excludeId) {
 		String query = "SELECT COUNT(p) FROM PR_PECAS_CRITICAS p " + "WHERE p.PROREF = :proref "
-				+ "AND p.ID_SECTOR_PECAS_CRITICAS.ID = :idSector " + "AND (:excludeId IS NULL OR p.ID <> :excludeId)";
+				+ "AND p.ID_SECTOR_PECAS_CRITICAS.ID = :idSector "
+				+ "AND (:excludeId IS NULL OR p.ID <> :excludeId) AND  p.ATIVO = 1";
 
 		Long count = entityManager.createQuery(query, Long.class).setParameter("proref", proref)
 				.setParameter("idSector", idSector).setParameter("excludeId", excludeId).getSingleResult();
@@ -6432,7 +6447,7 @@ public class SIRB_3 {
 	public PR_PECAS_CRITICAS insertPR_PECAS_CRITICAS(final PR_PECAS_CRITICAS data) {
 
 		if (existsByProrefAndSector(data.getPROREF(), data.getID_SECTOR_PECAS_CRITICAS().getID(), data.getID())) {
-			throw new WebApplicationException("Já existe um registro com esse PROREF e Setor.", 409);
+			throw new WebApplicationException("Já existe um registo com esse PROREF e Setor.", 409);
 		}
 
 		return dao79.create(data);
@@ -6468,7 +6483,7 @@ public class SIRB_3 {
 	public PR_PECAS_CRITICAS updatePR_PECAS_CRITICAS(final PR_PECAS_CRITICAS data) {
 
 		if (existsByProrefAndSector(data.getPROREF(), data.getID_SECTOR_PECAS_CRITICAS().getID(), data.getID())) {
-			throw new WebApplicationException("Já existe um registro com esse PROREF e Setor.", 409);
+			throw new WebApplicationException("Já existe um registo com esse PROREF e Setor.", 409);
 		}
 
 		data.setID(data.getID());
@@ -6503,4 +6518,251 @@ public class SIRB_3 {
 		List<HashMap<String, String>> dados = connectionProgress.getReferenciasPECAS_CRITICAS(getURLSILVER(), user);
 		return dados;
 	}
+
+	/************************************* PR_DIC_ACOES_PECAS_CRITICAS */
+	@POST
+	@Path("/createPR_DIC_ACOES_PECAS_CRITICAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_DIC_ACOES_PECAS_CRITICAS insertPR_DIC_ACOES_PECAS_CRITICAS(final PR_DIC_ACOES_PECAS_CRITICAS data) {
+		return dao80.create(data);
+	}
+
+	@GET
+	@Path("/getPR_DIC_ACOES_PECAS_CRITICAS")
+	@Produces("application/json")
+	public List<PR_DIC_ACOES_PECAS_CRITICAS> getPR_DIC_ACOES_PECAS_CRITICAS() {
+		return dao80.getall();
+	}
+
+	@GET
+	@Path("/getPR_DIC_ACOES_PECAS_CRITICASbyid/{id}")
+	@Produces("application/json")
+	public List<PR_DIC_ACOES_PECAS_CRITICAS> getPR_DIC_ACOES_PECAS_CRITICASbyid(@PathParam("id") Integer id) {
+		return dao80.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePR_DIC_ACOES_PECAS_CRITICAS/{id}")
+	public void deletePR_DIC_ACOES_PECAS_CRITICAS(@PathParam("id") Integer id) {
+		PR_DIC_ACOES_PECAS_CRITICAS item = new PR_DIC_ACOES_PECAS_CRITICAS();
+		item.setID(id);
+		dao80.delete(item);
+	}
+
+	@PUT
+	@Path("/updatePR_DIC_ACOES_PECAS_CRITICAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_DIC_ACOES_PECAS_CRITICAS updatePR_DIC_ACOES_PECAS_CRITICAS(final PR_DIC_ACOES_PECAS_CRITICAS data) {
+		return dao80.update(data);
+	}
+
+	/************************************ AB_DIC_COMPONENTE_DOCUMENTOS */
+
+	@POST
+	@Path("/createAB_DIC_COMPONENTE_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AB_DIC_COMPONENTE_DOCUMENTOS insertAB_DIC_COMPONENTE_DOCUMENTOS(final AB_DIC_COMPONENTE_DOCUMENTOS data) {
+		return dao81.create(data);
+	}
+
+	@GET
+	@Path("/getAB_DIC_COMPONENTE_DOCUMENTOS")
+	@Produces("application/json")
+	public List<AB_DIC_COMPONENTE_DOCUMENTOS> getAB_DIC_COMPONENTE_DOCUMENTOS() {
+		return dao81.getall();
+	}
+
+	@GET
+	@Path("/getAB_DIC_COMPONENTE_DOCUMENTOSbyid/{id}")
+	@Produces("application/json")
+	public List<AB_DIC_COMPONENTE_DOCUMENTOS> getAB_DIC_COMPONENTE_DOCUMENTOSbyid(@PathParam("id") Integer id) {
+		return dao81.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateAB_DIC_COMPONENTE_DOCUMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AB_DIC_COMPONENTE_DOCUMENTOS updateAB_DIC_COMPONENTE_DOCUMENTOS(
+			final AB_DIC_COMPONENTE_DOCUMENTOS AB_DIC_COMPONENTE_DOCUMENTOS) {
+		AB_DIC_COMPONENTE_DOCUMENTOS.setID(AB_DIC_COMPONENTE_DOCUMENTOS.getID());
+		return dao81.update(AB_DIC_COMPONENTE_DOCUMENTOS);
+	}
+
+	@GET
+	@Path("/getAB_DIC_COMPONENTE_DOCUMENTOSbyid2/{id}")
+	@Produces("application/json")
+	public List<AB_DIC_COMPONENTE_DOCUMENTOS> getAB_DIC_COMPONENTE_DOCUMENTOSbyid2(@PathParam("id") Integer id) {
+		return dao81.getbyid2(id);
+	}
+
+	@GET
+	@Path("/getAB_DIC_COMPONENTE_DOCUMENTOSbyid3/{id}")
+	@Produces("application/json")
+	public List<AB_DIC_COMPONENTE_DOCUMENTOS> getAB_DIC_COMPONENTE_DOCUMENTOSbyid32(@PathParam("id") Integer id) {
+		return dao81.getbyid3(id);
+	}
+
+	@DELETE
+	@Path("/deleteAB_DIC_COMPONENTE_DOCUMENTOS/{id}")
+	public void deleteAB_DIC_COMPONENTE_DOCUMENTOS(@PathParam("id") Integer id) {
+		AB_DIC_COMPONENTE_DOCUMENTOS AB_DIC_COMPONENTE_DOCUMENTOS = new AB_DIC_COMPONENTE_DOCUMENTOS();
+		AB_DIC_COMPONENTE_DOCUMENTOS.setID(id);
+		dao81.delete(AB_DIC_COMPONENTE_DOCUMENTOS);
+	}
+
+	/************************************* PIN_DIC_TIPOS_ACABAMENTO */
+	@POST
+	@Path("/createPIN_DIC_TIPOS_ACABAMENTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_TIPOS_ACABAMENTO insertPIN_DIC_TIPOS_ACABAMENTO(final PIN_DIC_TIPOS_ACABAMENTO data) {
+		return dao82.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_TIPOS_ACABAMENTObyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_TIPOS_ACABAMENTO> getPIN_DIC_TIPOS_ACABAMENTObyid(@PathParam("id") Integer id) {
+		return dao82.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_TIPOS_ACABAMENTObytipo/{tipo}")
+	@Produces("application/json")
+	public List<PIN_DIC_TIPOS_ACABAMENTO> getPIN_DIC_TIPOS_ACABAMENTObytipo(@PathParam("id") String tipo) {
+		return dao82.getbytipo(tipo);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_TIPOS_ACABAMENTObytipoAll")
+	@Produces("application/json")
+	public List<PIN_DIC_TIPOS_ACABAMENTO> getPIN_DIC_TIPOS_ACABAMENTObytipoAll() {
+		return dao82.getbytipoAll();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_TIPOS_ACABAMENTObytipoAll2")
+	@Produces("application/json")
+	public List<PIN_DIC_TIPOS_ACABAMENTO> getPIN_DIC_TIPOS_ACABAMENTObytipoAll2() {
+		return dao82.getbytipoAll2();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_TIPOS_ACABAMENTO")
+	@Produces("application/json")
+	public List<PIN_DIC_TIPOS_ACABAMENTO> getPIN_DIC_TIPOS_ACABAMENTO() {
+		return dao82.getall();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_TIPOS_ACABAMENTO2")
+	@Produces("application/json")
+	public List<PIN_DIC_TIPOS_ACABAMENTO> getPIN_DIC_TIPOS_ACABAMENTO2() {
+		return dao82.getall2();
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_TIPOS_ACABAMENTO/{id}")
+	public void deletePIN_DIC_TIPOS_ACABAMENTO(@PathParam("id") Integer id) {
+		PIN_DIC_TIPOS_ACABAMENTO PIN_DIC_TIPOS_ACABAMENTO = new PIN_DIC_TIPOS_ACABAMENTO();
+		PIN_DIC_TIPOS_ACABAMENTO.setID(id);
+		dao82.delete(PIN_DIC_TIPOS_ACABAMENTO);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_TIPOS_ACABAMENTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_TIPOS_ACABAMENTO updatePIN_DIC_TIPOS_ACABAMENTO(
+			final PIN_DIC_TIPOS_ACABAMENTO PIN_DIC_TIPOS_ACABAMENTO) {
+		PIN_DIC_TIPOS_ACABAMENTO.setID(PIN_DIC_TIPOS_ACABAMENTO.getID());
+
+		PIN_DIC_TIPOS_ACABAMENTO _PIN_DIC_TIPOS_ACABAMENTO = dao82.update(PIN_DIC_TIPOS_ACABAMENTO);
+
+		return _PIN_DIC_TIPOS_ACABAMENTO;
+	}
+
+	/************************************* PR_INDICADORES_PECAS_CRITICAS */
+	public boolean existsByData(Date data, Integer idSector, Integer excludeId) {
+		String query = "SELECT COUNT(p) FROM PR_INDICADORES_PECAS_CRITICAS p " + "WHERE p.DATA = :data "
+				+ "AND p.ID_SECTOR_PECAS_CRITICAS.ID = :idSector " + "AND (:excludeId IS NULL OR p.ID <> :excludeId) "
+				+ "AND p.ATIVO = 1";
+
+		Long count = entityManager.createQuery(query, Long.class).setParameter("data", data)
+				.setParameter("excludeId", excludeId).setParameter("idSector", idSector).getSingleResult();
+
+		return count > 0;
+	}
+
+	@POST
+	@Path("/createPR_INDICADORES_PECAS_CRITICAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_INDICADORES_PECAS_CRITICAS insertPR_INDICADORES_PECAS_CRITICAS(final PR_INDICADORES_PECAS_CRITICAS data) {
+
+		if (existsByData(data.getDATA(), data.getID_SECTOR_PECAS_CRITICAS().getID(), data.getID())) {
+			throw new WebApplicationException("Já existe um registo para essa DATA/SECTOR.", 409);
+		}
+
+		return dao83.create(data);
+	}
+
+	@GET
+	@Path("/getPR_INDICADORES_PECAS_CRITICAS/{user}")
+	@Produces("application/json")
+	public List<PR_INDICADORES_PECAS_CRITICAS> getPR_INDICADORES_PECAS_CRITICAS(@PathParam("user") Integer user) {
+		return dao83.getall(user);
+	}
+
+	@GET
+	@Path("/getPR_INDICADORES_PECAS_CRITICASbyid/{id}/{user}")
+	@Produces("application/json")
+	public List<PR_INDICADORES_PECAS_CRITICAS> getPR_INDICADORES_PECAS_CRITICASbyid(@PathParam("id") Integer id,
+			@PathParam("user") Integer user) {
+		return dao83.getbyid(id, user);
+	}
+
+	@DELETE
+	@Path("/deletePR_INDICADORES_PECAS_CRITICAS/{id}")
+	public void deletePR_INDICADORES_PECAS_CRITICAS(@PathParam("id") Integer id) {
+		PR_INDICADORES_PECAS_CRITICAS item = new PR_INDICADORES_PECAS_CRITICAS();
+		item.setID(id);
+		dao83.delete(item);
+	}
+
+	@PUT
+	@Path("/updatePR_INDICADORES_PECAS_CRITICAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_INDICADORES_PECAS_CRITICAS updatePR_INDICADORES_PECAS_CRITICAS(final PR_INDICADORES_PECAS_CRITICAS data) {
+
+		if (existsByData(data.getDATA(), data.getID_SECTOR_PECAS_CRITICAS().getID(), data.getID())) {
+			throw new WebApplicationException("Já existe um registo para essa DATA/SECTOR.", 409);
+		}
+
+		data.setID(data.getID());
+		return dao83.update(data);
+	}
+
+	@PUT
+	@Path("/updatePR_INDICADORES_PECAS_CRITICASFastRespnse")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PR_INDICADORES_PECAS_CRITICAS updatePR_INDICADORES_PECAS_CRITICASFastRespnse(
+			final PR_INDICADORES_PECAS_CRITICAS data) {
+		PR_INDICADORES_PECAS_CRITICAS original = dao83.read(data.getID());
+
+		if (original != null) {
+			original.setUTZ_MODIF(data.getUTZ_MODIF());
+			original.setDATA_MODIF(data.getDATA_MODIF());
+			return dao83.update(original);
+		} else {
+			throw new WebApplicationException("ID não encontrado", 404);
+		}
+	}
+
 }

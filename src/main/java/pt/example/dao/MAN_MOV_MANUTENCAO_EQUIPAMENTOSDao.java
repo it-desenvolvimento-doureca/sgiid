@@ -22,15 +22,19 @@ public class MAN_MOV_MANUTENCAO_EQUIPAMENTOSDao extends GenericDaoJpaImpl<MAN_MO
 
 	}
 	
-	public List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> getall2() {
+	public List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> getall2(Integer id) {
 
-		Query query = entityManager.createNativeQuery("Select a.ID_MANUTENCAO,a.NOME,a.LOCALIZACAO,e.DESCRICAO,a.COD_EQUIPAMENTO_PRINCIPAL,c.NOME  NOME_EQUIPAMENTO_PRINCIPAL,a.ATIVO,a.OBSOLETO,a.FABRICANTE ,a.MODELO ,a.ANO ,a.N_SERIE from MAN_MOV_MANUTENCAO_EQUIPAMENTOS a "
+		Query query = entityManager.createNativeQuery("DECLARE @UTILIZADOR int = :id ; "
+				+ " Select a.ID_MANUTENCAO,a.NOME,a.LOCALIZACAO,e.DESCRICAO,a.COD_EQUIPAMENTO_PRINCIPAL,c.NOME  NOME_EQUIPAMENTO_PRINCIPAL,a.ATIVO,a.OBSOLETO,a.FABRICANTE ,a.MODELO ,a.ANO ,a.N_SERIE,mad.NOME as AMBITO from MAN_MOV_MANUTENCAO_EQUIPAMENTOS a "
 				+ " left join (select CONCAT('E',ID)  as ID,DESCRICAO from MAN_DIC_EDIFICIOS 	union all"
 				+ "	select CONCAT('P',a.ID) as ID,b.DESCRICAO + '/' + a.DESCRICAO  from MAN_DIC_PISOS a inner join MAN_DIC_EDIFICIOS b on a.ID_EDIFICIO = b.ID "
 				+ "	union all 	select CONCAT('D' , a.ID)  as ID,c.DESCRICAO + '/' + b.DESCRICAO+ '/' + a.DESCRICAO from MAN_DIC_DIVISOES a "
 				+ " inner join MAN_DIC_PISOS b on a.ID_PISO = b.ID inner join MAN_DIC_EDIFICIOS c on b.ID_EDIFICIO = c.ID  ) e on e.ID = CONCAT(ISNULL(a.TIPO_LOCALIZACAO,'E'), a.LOCALIZACAO)"
-				+ " left join MAN_MOV_MANUTENCAO_EQUIPAMENTOS c on a.COD_EQUIPAMENTO_PRINCIPAL = c.ID_MANUTENCAO");
+				+ " left join MAN_MOV_MANUTENCAO_EQUIPAMENTOS c on a.COD_EQUIPAMENTO_PRINCIPAL = c.ID_MANUTENCAO"
+				+ " left join MAN_DIC_AMBITOS mad on mad.ID = a.AMBITO_MANUTENCAO"
+				+ " where  ( @UTILIZADOR is null OR (select ADMIN from GER_UTILIZADORES x where x.ID_UTILIZADOR = @UTILIZADOR) = 1 OR (select count(*) from MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS x where x.ID_UTILIZADOR = @UTILIZADOR AND x.ID_EQUIPA = a.AMBITO_MANUTENCAO  ) > 0 ) ");
 
+		query.setParameter("id", id);
 		List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> utz = query.getResultList();
 		return utz;
 

@@ -2984,6 +2984,25 @@ public class SIRB {
 		return dao63.getOperacoes_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR);
 	}
 	
+
+	@POST
+	@Path("/getRH_FUNCIONARIOSANALISERACIOS")
+	@Produces("application/json")
+	public List<RH_FUNCIONARIOS> getRH_FUNCIONARIOSANALISERACIOS(final List<HashMap<String, String>> datas) {
+		HashMap<String, String> firstMap = datas.get(0);
+
+		String data = firstMap.get("DATA");
+		String OPERARIO = firstMap.get("OPERARIO");
+		String SECTOR_ACESSO = firstMap.get("SECTOR_ACESSO"); 
+		String SECTOR = firstMap.get("SECTOR");
+		
+		if (OPERARIO.isEmpty())
+			OPERARIO = null;
+		
+		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
+		return dao63.getAnaliseRacios_(data, OPERARIO, SECTOR_ACESSO, ADMIN, SECTOR);
+	}
+	
 	@POST
 	@Path("/getRH_FUNCIONARIOSOPERACOESOLD")
 	@Produces("application/json")
@@ -4955,7 +4974,7 @@ public class SIRB {
 
 		entityManager.createNativeQuery("UPDATE b SET b.ESTADO = 'I' from GT_MOV_TAREFAS a "
 				+ "inner join PA_MOV_LINHA b on a.ID_CAMPO = b.ID_PLANO_LINHA and a.ID_MODULO = 13 "
-				+ "AND a.ESTADO != b.ESTADO and a.ESTADO != 'A' AND a.ESTADO in ('C') AND b.ESTADO in ('P') AND b.ID_PLANO_CAB = "
+				+ "AND a.ESTADO != b.ESTADO and a.ESTADO != 'A' AND a.ESTADO in ('C') AND a.ID_TAREFA_PAI is null AND b.ESTADO in ('P') AND b.ID_PLANO_CAB = "
 				+ id).executeUpdate();
 		return entityManager.createNativeQuery(
 				"DECLARE @TOTAL int = (SELECT COUNT(*) FROM PA_MOV_LINHA where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB =  "

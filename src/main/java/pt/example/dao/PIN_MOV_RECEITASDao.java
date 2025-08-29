@@ -50,7 +50,7 @@ public class PIN_MOV_RECEITASDao extends GenericDaoJpaImpl<PIN_MOV_RECEITAS, Int
 		}
 
 		Query query = entityManager
-				.createNativeQuery(" Select distinct ID,a.VERSAO,NOME_PROJETO,nome_LINHA,b.COR,id_LINHA,RECEITA_INATIVA "
+				.createNativeQuery(" Select distinct ID,a.VERSAO,NOME_PROJETO,nome_LINHA,b.COR,id_LINHA,RECEITA_INATIVA ,a.ACABAMENTOS,a.ASPETO,a.COD_ASPETO,a.CLASSIFICACAO "
 						+ " from PIN_MOV_RECEITAS a " + query_
 						+ " left join AB_DIC_LINHA b on a.LINHA = b.ID_LINHA and a.INATIVO != 1"
 						+ " where a.VERSAO_ATIVA = 1 and a.INATIVO != 1  ");

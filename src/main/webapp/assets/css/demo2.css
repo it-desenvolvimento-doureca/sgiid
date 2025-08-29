@@ -2783,11 +2783,11 @@ body .p-menu .p-menu-list .p-menuitem .p-menuitem-link {
     color: #373a3c;
 }
 
-body .p-menu .p-menu-list .p-menuitem .p-menuitem-link:hover,
+/*body .p-menu .p-menu-list .p-menuitem .p-menuitem-link:hover,
 body .p-menu .p-menu-list .p-menuitem.p-menuitem-active>.p-menuitem-link {
     background-color: #0275d8;
     color: #ffffff;
-}
+}*/
 
 body .p-menu .p-menu-list .p-menu-child {
     padding: 0;
@@ -6353,4 +6353,8 @@ label {
 .Doc .p-multiselect-token {
     color: black !important;
     background: transparent !important;
+}
+
+.menu-export {
+    width: 288px;
 }

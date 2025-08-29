@@ -75,6 +75,18 @@ public class SendEmail {
 			} else {
 				message.setFrom(new InternetAddress(de));
 			}
+			
+			
+			if (para == null || para.trim().isEmpty()) {
+				System.err.println("De: " + de);
+				System.err.println("Para: " + para);
+				System.err.println("BCC: " + bcc);
+				System.err.println("Assunto: " + assunto);
+				System.err.println("O campo 'para' (destinatário) é obrigatório.");
+				return;
+			    
+			}
+			
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(para));
 			if (bcc != null)
 				message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));

@@ -70,6 +70,7 @@ import pt.example.dao.GER_REFERENCIAS_FASTRESPONSE_REJEICOESDao;
 import pt.example.dao.LG_ANALISE_ENVIOSDao;
 import pt.example.dao.MAN_DIC_AMBITOSDao;
 import pt.example.dao.MAN_DIC_AMBITO_UTILIZADORESDao;
+import pt.example.dao.MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSDao;
 import pt.example.dao.MAN_DIC_DIVISOESDao;
 import pt.example.dao.MAN_DIC_EDIFICIOSDao;
 import pt.example.dao.MAN_DIC_EQUIPASDao;
@@ -164,6 +165,7 @@ import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.LG_ANALISE_ENVIOS;
 import pt.example.entity.MAN_DIC_AMBITOS;
 import pt.example.entity.MAN_DIC_AMBITO_UTILIZADORES;
+import pt.example.entity.MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS;
 import pt.example.entity.MAN_DIC_DIVISOES;
 import pt.example.entity.MAN_DIC_EDIFICIOS;
 import pt.example.entity.MAN_DIC_EQUIPAS;
@@ -419,6 +421,9 @@ public class SIRB_2 {
 	private PR_WINROBOT_RACKSDao dao92;
 	@Inject
 	private PR_WINROBOT_CABDao dao93;
+	@Inject
+	private MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSDao dao94;
+
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -4205,7 +4210,14 @@ public class SIRB_2 {
 	@Path("/getMAN_MOV_MANUTENCAO_EQUIPAMENTOS2")
 	@Produces("application/json")
 	public List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> getMAN_MOV_MANUTENCAO_EQUIPAMENTOS2() {
-		return dao51.getall2();
+		return dao51.getall2(null);
+	}
+	
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_EQUIPAMENTOS2/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> getMAN_MOV_MANUTENCAO_EQUIPAMENTOS2(@PathParam("id") Integer id) {
+		return dao51.getall2(id);
 	}
 
 	@GET
@@ -4559,6 +4571,42 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC MAN_GET_ANALISE_PREVENTIVAS_2 " + ANO + "," + UNIDADE + "," + AMBITO + "," + EQUIPAMENTO + ","
+						+ DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO + "," + DATA_FIM);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/MAN_GET_ANALISE_PREDITIVAS")
+	@Produces("application/json")
+	public List<Object[]> MAN_GET_ANALISE_PREDITIVAS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String UNIDADE = firstMap.get("UNIDADE");
+		String AMBITO = firstMap.get("AMBITO");
+		String EQUIPAMENTO = firstMap.get("EQUIPAMENTO");
+		String DEPARTAMENTO = firstMap.get("DEPARTAMENTO");
+		String NIVEL = firstMap.get("NIVEL");
+		String SEMANAS = firstMap.get("SEMANAS");
+		String DATA_INCIO = firstMap.get("DATA_INCIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+
+		if (UNIDADE != null)
+			UNIDADE = "'" + UNIDADE + "'";
+
+		if (SEMANAS != null)
+			SEMANAS = "'" + SEMANAS + "'";
+
+		if (DATA_INCIO != null)
+			DATA_INCIO = "'" + DATA_INCIO + "'";
+
+		if (DATA_FIM != null)
+			DATA_FIM = "'" + DATA_FIM + "'";
+
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC MAN_GET_ANALISE_PREDITIVAS " + ANO + "," + UNIDADE + "," + AMBITO + "," + EQUIPAMENTO + ","
 						+ DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO + "," + DATA_FIM);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
@@ -6465,6 +6513,64 @@ public class SIRB_2 {
 		MAN_DIC_AMBITO_UTILIZADORES.setID(id);
 		dao80.delete(MAN_DIC_AMBITO_UTILIZADORES);
 	}
+	
+	
+	/************************************ MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS */
+
+	@POST
+	@Path("/createMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS insertMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS(final MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS data) {
+		return dao94.create(data);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS")
+	@Produces("application/json")
+	public List<MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS> getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS() {
+		return dao94.getall();
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSbyid/{id}")
+	@Produces("application/json")
+	public List<MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS> getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSbyid(@PathParam("id") Integer id) {
+		// return dao94.getbyid(id);
+		return null;
+	}
+
+	@PUT
+	@Path("/updateMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS updateMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS(
+			final MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS) {
+		MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS.setID(MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS.getID());
+		return dao94.update(MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS_ALLUSERS/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS_ALLUSERS(@PathParam("id") Integer id) {
+		return dao94.getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS_ALLUSERS(id);
+	}
+
+	@GET
+	@Path("/getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS_EQUIPA/{id}")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS_EQUIPA(@PathParam("id") Integer id) {
+		return dao94.getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS_EQUIPA(id);
+	}
+
+	@DELETE
+	@Path("/deleteMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS/{id}")
+	public void deleteMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS(@PathParam("id") Integer id) {
+		MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS = new MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS();
+		MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS.setID(id);
+		dao94.delete(MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS);
+	}
 
 	/************************************ MAN_DIC_AMBITOS */
 
@@ -6679,6 +6785,7 @@ public class SIRB_2 {
 		String ID = firstMap.get("ID");
 		String REFERENCIA = firstMap.get("REFERENCIA");
 		String CODIGO = firstMap.get("CODIGO");
+		String TIPO = firstMap.get("TIPO");
 
 		/*
 		 * Query query_folder = entityManager.createNativeQuery(
@@ -6698,7 +6805,7 @@ public class SIRB_2 {
 		 */
 
 		Query query_folder = entityManager.createNativeQuery("EXEC DOC_checkIfCodeExist " + ID + ",'" + REFERENCIA
-				+ "','" + SECTOR + "','" + CODIGO + "','" + MAQUINA + "' ");
+				+ "','" + SECTOR + "','" + CODIGO + "','" + MAQUINA + "'," + TIPO );
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 

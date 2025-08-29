@@ -28,14 +28,32 @@ public class PR_WINROBOT_CABDao extends GenericDaoJpaImpl<PR_WINROBOT_CAB, Integ
 
 	public List<PR_WINROBOT_CAB> getbyestado(String estado) {
 
-		Query query = entityManager.createNativeQuery(
-				"Select a.* ,b.REFERENCIA as referencias ,C.RACKS as racks from PR_WINROBOT_CAB a "
-						+ " left join (select STRING_AGG(CONCAT(x.COD_REF,' - ',x.DESIGN_REF),',') REFERENCIA,x.ID_CAB from PR_WINROBOT_ARTICLES x group by x.ID_CAB) b on a.ID = b.ID_CAB "
-						+ " left join (select STRING_AGG(CONCAT(x.RACK_CODE,''),',') RACKS,x.ID_CAB from PR_WINROBOT_RACKS x group by x.ID_CAB) c on a.ID = c.ID_CAB    "
-						+ " where a.ESTADO_POLL = :estado and a.ESTADO in ('C') order by CASE WHEN ORDEM_POLL is null THEN 999999 ELSE ORDEM_POLL END,DATA_HORA_FIM",
-				PR_WINROBOT_CAB.class);
+		/*
+		 * Query query = entityManager.createNativeQuery(
+		 * "Select a.* ,b.REFERENCIA as referencias ,C.RACKS as racks from PR_WINROBOT_CAB a "
+		 * +
+		 * " left join (select STRING_AGG(CONCAT(x.COD_REF,' - ',x.DESIGN_REF),',') REFERENCIA,x.ID_CAB from PR_WINROBOT_ARTICLES x group by x.ID_CAB) b on a.ID = b.ID_CAB "
+		 * +
+		 * " left join (select STRING_AGG(CONCAT(x.RACK_CODE,''),',') RACKS,x.ID_CAB from PR_WINROBOT_RACKS x group by x.ID_CAB) c on a.ID = c.ID_CAB    "
+		 * +
+		 * " where a.ESTADO_POLL = :estado and a.ESTADO in ('C') order by CASE WHEN ORDEM_POLL is null THEN 999999 ELSE ORDEM_POLL END,DATA_HORA_FIM"
+		 * , PR_WINROBOT_CAB.class);
+		 */
+
+		Query query = entityManager.createNativeQuery(";WITH CTE_REFERENCIAS AS (  SELECT ID_CAB, "
+				+ " STRING_AGG(CONCAT(COD_REF, ' - ', DESIGN_REF), ',') AS REFERENCIA "
+				+ " FROM PR_WINROBOT_ARTICLES  GROUP BY ID_CAB ), CTE_RACKS AS ( "
+				+ " SELECT ID_CAB,  STRING_AGG(RACK_CODE, ',') AS RACKS   FROM PR_WINROBOT_RACKS "
+				+ " GROUP BY ID_CAB ) SELECT a.*,  b.REFERENCIA AS referencias, "
+				+ " c.RACKS AS racks FROM PR_WINROBOT_CAB a "
+				+ "LEFT JOIN CTE_REFERENCIAS b ON a.ID = b.ID_CAB LEFT JOIN CTE_RACKS c ON a.ID = c.ID_CAB "
+				+ "WHERE a.ESTADO_POLL = :estado  AND a.ESTADO = 'C' "
+				+ "ORDER BY CASE WHEN a.ORDEM_POLL IS NULL THEN 999999 ELSE a.ORDEM_POLL END, "
+				+ " a.DATA_HORA_FIM  ", PR_WINROBOT_CAB.class);
+
 		query.setParameter("estado", estado);
 		List<PR_WINROBOT_CAB> data = query.getResultList();
+
 		return data;
 
 	}
@@ -94,10 +112,11 @@ public class PR_WINROBOT_CABDao extends GenericDaoJpaImpl<PR_WINROBOT_CAB, Integ
 		query.setParameter("user", user);
 
 		if (estado.equals("P")) {
-			Query query2_ = entityManager.createNativeQuery("INSERT INTO [PR_WINROBOT_CARROS_TEMP] (NUM_CARRO,ID_CAB,UTZ_CRIA,DATA_CRIA) "
-					+ "select NUM_CARRO,ID_CAB,:user UTZ_CRIA,GETDATE() DATA_CRIA from [PR_WINROBOT_CARROS] where ID_CAB = :id ");
+			Query query2_ = entityManager
+					.createNativeQuery("INSERT INTO [PR_WINROBOT_CARROS_TEMP] (NUM_CARRO,ID_CAB,UTZ_CRIA,DATA_CRIA) "
+							+ "select NUM_CARRO,ID_CAB,:user UTZ_CRIA,GETDATE() DATA_CRIA from [PR_WINROBOT_CARROS] where ID_CAB = :id ");
 			query2_.setParameter("id", id).setParameter("user", user).executeUpdate();
-			
+
 			Query query2 = entityManager.createNativeQuery("DELETE [PR_WINROBOT_CARROS] where ID_CAB = :id ");
 			query2.setParameter("id", id).executeUpdate();
 		}
@@ -132,7 +151,7 @@ public class PR_WINROBOT_CABDao extends GenericDaoJpaImpl<PR_WINROBOT_CAB, Integ
 
 		CriteriaUpdate<PR_WINROBOT_CAB> update = cb.createCriteriaUpdate(PR_WINROBOT_CAB.class);
 		Root<PR_WINROBOT_CAB> e = update.from(PR_WINROBOT_CAB.class);
- 
+
 		// set update and where clause
 		update.set("DATA_HORA_INICIO", PR_WINROBOT_CAB.getDATA_HORA_INICIO());
 		update.set("DATA_HORA_FIM", PR_WINROBOT_CAB.getDATA_HORA_FIM());

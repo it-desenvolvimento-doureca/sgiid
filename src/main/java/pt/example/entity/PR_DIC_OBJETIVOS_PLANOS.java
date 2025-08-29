@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -37,6 +38,11 @@ public class PR_DIC_OBJETIVOS_PLANOS {
 	private Float OBJETIVO_REJEICAO_GLOBAL_INJECAO;
 	private Float LIMITE_INJECAO_INJECAO_MENOR_10;
 	private Float LIMITE_INJECAO_INJECAO_MAIOR_10;
+	
+ 
+	private Float OBJETIVO_REALIZADAS; 
+	private Float OBJETIVO_PECAS_NOK;
+
 
 	@Id
 	@Column(name = "ID")
@@ -238,4 +244,23 @@ public class PR_DIC_OBJETIVOS_PLANOS {
 		LIMITE_INJECAO_INJECAO_MAIOR_10 = lIMITE_INJECAO_INJECAO_MAIOR_10;
 	}
 
+	@Column(name = "OBJETIVO_REALIZADAS")
+	public Float getOBJETIVO_REALIZADAS() {
+		return OBJETIVO_REALIZADAS;
+	}
+
+	@Column(name = "OBJETIVO_PECAS_NOK")
+	public Float getOBJETIVO_PECAS_NOK() {
+		return OBJETIVO_PECAS_NOK;
+	}
+
+	public void setOBJETIVO_REALIZADAS(Float oBJETIVO_REALIZADAS) {
+		OBJETIVO_REALIZADAS = oBJETIVO_REALIZADAS;
+	}
+
+	public void setOBJETIVO_PECAS_NOK(Float oBJETIVO_PECAS_NOK) {
+		OBJETIVO_PECAS_NOK = oBJETIVO_PECAS_NOK;
+	}
+
+	
 }

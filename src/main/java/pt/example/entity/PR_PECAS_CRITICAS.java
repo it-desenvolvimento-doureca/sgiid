@@ -17,50 +17,60 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table(name = "PR_PECAS_CRITICAS")
 public class PR_PECAS_CRITICAS {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("ID")
-    private Integer ID;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonProperty("ID")
+	private Integer ID;
 
-    @JsonProperty("PROREF")
-    private String PROREF;
+	@JsonProperty("PROREF")
+	private String PROREF;
 
-    @JsonProperty("DESC_PROREF")
-    private String DESC_PROREF;
+	@JsonProperty("DESC_PROREF")
+	private String DESC_PROREF;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_SECTOR_PECAS_CRITICAS", referencedColumnName = "ID")
-    @JsonProperty("ID_SECTOR_PECAS_CRITICAS")
-    private PR_DIC_SECTORES_PECAS_CRITICAS ID_SECTOR_PECAS_CRITICAS;
+	@ManyToOne
+	@JoinColumn(name = "ID_SECTOR_PECAS_CRITICAS", referencedColumnName = "ID")
+	@JsonProperty("ID_SECTOR_PECAS_CRITICAS")
+	private PR_DIC_SECTORES_PECAS_CRITICAS ID_SECTOR_PECAS_CRITICAS;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_MOTIVO", referencedColumnName = "ID")
-    @JsonProperty("ID_MOTIVO")
-    private PR_DIC_MOTIVO_CRITICIDADE ID_MOTIVO;
+	@ManyToOne
+	@JoinColumn(name = "ID_MOTIVO", referencedColumnName = "ID")
+	@JsonProperty("ID_MOTIVO")
+	private PR_DIC_MOTIVO_CRITICIDADE ID_MOTIVO;
 
-    @JsonProperty("FAST_RESPONSE")
-    private Boolean FAST_RESPONSE;
+	@JsonProperty("FAST_RESPONSE")
+	private Boolean FAST_RESPONSE;
 
-    @JsonProperty("DATA_CRIA")
-    private Timestamp DATA_CRIA;
+	@JsonProperty("DATA_CRIA")
+	private Timestamp DATA_CRIA;
 
-    @JsonProperty("UTZ_CRIA")
-    private Integer UTZ_CRIA;
+	@JsonProperty("UTZ_CRIA")
+	private Integer UTZ_CRIA;
 
-    @JsonProperty("DATA_MODIF")
-    private Timestamp DATA_MODIF;
+	@JsonProperty("DATA_MODIF")
+	private Timestamp DATA_MODIF;
 
-    @JsonProperty("UTZ_MODIF")
-    private Integer UTZ_MODIF;
+	@JsonProperty("UTZ_MODIF")
+	private Integer UTZ_MODIF;
 
-    @JsonProperty("DATA_ANULA")
-    private Timestamp DATA_ANULA;
+	@JsonProperty("DATA_ANULA")
+	private Timestamp DATA_ANULA;
 
-    @JsonProperty("UTZ_ANULA")
-    private Integer UTZ_ANULA;
+	@JsonProperty("UTZ_ANULA")
+	private Integer UTZ_ANULA;
 
-    @JsonProperty("ATIVO")
-    private Boolean ATIVO;
+	@JsonProperty("ATIVO")
+	private Boolean ATIVO;
+	
+	@ManyToOne
+	@JoinColumn(name = "ID_DEPARTAMENTO", referencedColumnName = "ID")
+	@JsonProperty("ID_DEPARTAMENTO")
+	private GER_SECCAO ID_DEPARTAMENTO;
+
+	@ManyToOne
+	@JoinColumn(name = "ID_ACAO", referencedColumnName = "ID")
+	@JsonProperty("ID_ACAO")
+	private PR_DIC_ACOES_PECAS_CRITICAS ID_ACAO;
 
 	public Integer getID() {
 		return ID;
@@ -165,7 +175,13 @@ public class PR_PECAS_CRITICAS {
 	public void setATIVO(Boolean aTIVO) {
 		ATIVO = aTIVO;
 	}
- 
-    
-    
+
+	public PR_DIC_ACOES_PECAS_CRITICAS getID_ACAO() {
+		return ID_ACAO;
+	}
+
+	public void setID_ACAO(PR_DIC_ACOES_PECAS_CRITICAS iD_ACAO) {
+		ID_ACAO = iD_ACAO;
+	}
+
 }

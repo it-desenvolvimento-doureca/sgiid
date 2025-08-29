@@ -265,6 +265,20 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 	}
 
+	
+	public List<RH_FUNCIONARIOS> getAnaliseRacios_(String dataAnalise,String Operario,
+			String SECTOR_ACESSO, Boolean ADMIN, String Sector) {
+
+		List<RH_FUNCIONARIOS> data = entityManager
+				.createNativeQuery("EXEC RH_GET_ANALISE_RACIOS "
+						+ ":DATA, :Sector, :Operario, :ADMIN, :SECTOR_ACESSO")
+				.setParameter("DATA", dataAnalise).setParameter("Sector", Sector)
+				.setParameter("Operario", Operario).setParameter("ADMIN", ADMIN ? 1 : 0)
+				.setParameter("SECTOR_ACESSO", SECTOR_ACESSO).getResultList();
+
+		return data;
+	}
+	
 	public List<RH_FUNCIONARIOS> getOperacoes_(String data1, String data2, String Ativo, String Operario,
 			String SECTOR_ACESSO, Boolean ADMIN, String tipo_cadencia, String Sector) {
 

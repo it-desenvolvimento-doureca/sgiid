@@ -57,6 +57,8 @@ public class MAN_MOV_MANUTENCAO_PLANOS {
 	private Time TEMPO_ESTIMADO;
 	@JsonProperty("ANEXO")
 	private String ANEXO;
+	@JsonProperty("TIPO_MANUTENCAO")
+	private String TIPO_MANUTENCAO;
 
 	public Integer getID() {
 		return ID;
@@ -208,6 +210,14 @@ public class MAN_MOV_MANUTENCAO_PLANOS {
 
 	public void setANEXO(String aNEXO) {
 		ANEXO = aNEXO;
+	}
+
+	public String getTIPO_MANUTENCAO() {
+		return TIPO_MANUTENCAO;
+	}
+
+	public void setTIPO_MANUTENCAO(String tIPO_MANUTENCAO) {
+		TIPO_MANUTENCAO = tIPO_MANUTENCAO;
 	}
 
 }

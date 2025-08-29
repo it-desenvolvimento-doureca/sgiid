@@ -41,6 +41,8 @@ public class PIN_DIC_CORES_ACABAMENTOS {
 	private Timestamp DATA_ANULA;
 	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
+	@JsonProperty("ID_TIPO_ACABAMENTO")
+	private Integer ID_TIPO_ACABAMENTO;
 
 	public Integer getID() {
 		return ID;
@@ -128,6 +130,14 @@ public class PIN_DIC_CORES_ACABAMENTOS {
 
 	public void setID_POTE(String iD_POTE) {
 		ID_POTE = iD_POTE;
+	}
+
+	public Integer getID_TIPO_ACABAMENTO() {
+		return ID_TIPO_ACABAMENTO;
+	}
+
+	public void setID_TIPO_ACABAMENTO(Integer iD_TIPO_ACABAMENTO) {
+		ID_TIPO_ACABAMENTO = iD_TIPO_ACABAMENTO;
 	}
 
 }

@@ -81,4 +81,36 @@ public class PIN_DIC_CORES_ACABAMENTOSDao extends GenericDaoJpaImpl<PIN_DIC_CORE
 
 	}
 	
+	public List<PIN_DIC_CORES_ACABAMENTOS> getall3() {
+
+		Query query = entityManager.createNativeQuery("select a.ID,a.CODIGO,a.NOME,a.ID_POTE,a.UTZ_CRIA,a.DATA_CRIA,a.UTZ_ULT_MODIF,a.DATA_ULT_MODIF,a.UTZ_ANULA,a.DATA_ANULA,a.ATIVO,  "
+				+ "STRING_AGG(concat(b.NOME,' - ', c.NOME_CABINE),' | ') NOME_POTE  "
+				+ ",a.ID_TIPO_ACABAMENTO,d.NOME as NOME_ACABAMENTO,e.MASTER  "
+				+ " from PIN_DIC_CORES_ACABAMENTOS a    "
+				+ " left join PIN_DIC_POTES b on  b.ID  in (select value from string_split(a.ID_POTE,','))  "
+				+ " left join PIN_DIC_CABINES c on b.ID_CABINE = c.ID   "
+				+ " left join PIN_DIC_TIPOS_ACABAMENTO d on d.ID = a.ID_TIPO_ACABAMENTO  "
+				+ " OUTER APPLY ( "
+				+ "  SELECT STRING_AGG(MASTER, ' , ') AS MASTER "
+				+ "  FROM ( "
+				+ "    SELECT DISTINCT ax.MASTER "
+				+ "    FROM PIN_MOV_RECEITAS ax "
+				+ "    INNER JOIN PIN_MOV_RECEITAS_LINHAS bx ON ax.ID = bx.ID_RECEITA AND ax.VERSAO = bx.VERSAO "
+				+ "    WHERE ax.VERSAO_ATIVA = 1 AND ax.INATIVO = 0 "
+				+ "      AND CASE  "
+				+ "            WHEN c.TIPO = 'PRIMARIO' THEN ax.PRIMARIO  "
+				+ "            WHEN c.TIPO = 'BASE' THEN ax.BASE  "
+				+ "            WHEN c.TIPO = 'VERNIZ' THEN ax.VERNIZ  "
+				+ "            ELSE NULL  "
+				+ "          END = a.ID "
+				+ "      AND bx.REFERENCIA_A = a.NOME "
+				+ "  ) AS sub "
+				+ ") e "
+				+ " where  a.ATIVO = 1   "
+				+ " GROUP BY a.ID,a.CODIGO,a.NOME,a.ID_POTE,a.UTZ_CRIA,a.DATA_CRIA,a.UTZ_ULT_MODIF,a.DATA_ULT_MODIF,a.UTZ_ANULA,a.DATA_ANULA,a.ATIVO,a.ID_TIPO_ACABAMENTO,d.NOME,e.MASTER ");
+		List<PIN_DIC_CORES_ACABAMENTOS> data = query.getResultList();
+		return data;
+
+	}
+	
 }

@@ -109,6 +109,8 @@ public class PIN_MOV_RECEITAS implements Serializable {
 	private Integer CICLO_BASE;
 	@JsonProperty("CICLO_VERNIZ")
 	private Integer CICLO_VERNIZ;
+	@JsonProperty("CLASSIFICACAO")
+	private String CLASSIFICACAO;
 
 	public Float getTAXA_REJEICAO() {
 		return TAXA_REJEICAO;
@@ -460,6 +462,14 @@ public class PIN_MOV_RECEITAS implements Serializable {
 
 	public void setCICLO_VERNIZ(Integer cICLO_VERNIZ) {
 		CICLO_VERNIZ = cICLO_VERNIZ;
+	}
+
+	public String getCLASSIFICACAO() {
+		return CLASSIFICACAO;
+	}
+
+	public void setCLASSIFICACAO(String cLASSIFICACAO) {
+		CLASSIFICACAO = cLASSIFICACAO;
 	}
 
 }
