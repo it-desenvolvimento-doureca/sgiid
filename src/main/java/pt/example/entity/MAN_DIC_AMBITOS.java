@@ -1,9 +1,7 @@
 package pt.example.entity;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +19,7 @@ public class MAN_DIC_AMBITOS {
 	@JsonProperty("ID")
 	private Integer ID;
 	@JsonProperty("NOME")
-	private String NOME; 
+	private String NOME;
 	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
 	@JsonProperty("DATA_CRIA")
@@ -32,6 +30,8 @@ public class MAN_DIC_AMBITOS {
 	private Timestamp DATA_ULT_MODIF;
 	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
+	@JsonProperty("OBRIGA_DOCUMENTOS")
+	private Boolean OBRIGA_DOCUMENTOS;
 
 	public Integer getID() {
 		return ID;
@@ -79,6 +79,22 @@ public class MAN_DIC_AMBITOS {
 
 	public void setATIVO(Boolean aTIVO) {
 		ATIVO = aTIVO;
+	}
+
+	public String getNOME() {
+		return NOME;
+	}
+
+	public Boolean getOBRIGA_DOCUMENTOS() {
+		return OBRIGA_DOCUMENTOS;
+	}
+
+	public void setNOME(String nOME) {
+		NOME = nOME;
+	}
+
+	public void setOBRIGA_DOCUMENTOS(Boolean oBRIGA_DOCUMENTOS) {
+		OBRIGA_DOCUMENTOS = oBRIGA_DOCUMENTOS;
 	}
 
 }

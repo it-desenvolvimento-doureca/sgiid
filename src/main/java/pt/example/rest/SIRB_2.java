@@ -424,7 +424,6 @@ public class SIRB_2 {
 	@Inject
 	private MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSDao dao94;
 
-
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
 
@@ -620,20 +619,19 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
-	
 	@GET
 	@Path("/getSeccoesSilver")
 	@Produces("application/json")
 	public List<Object[]> getSeccoesSilver() {
 
-		Query query_folder = entityManager
-				.createNativeQuery(" select distinct a.SEcCOD,b.SECLIB from SILVER.dbo.SDTSEC a inner join SILVER.dbo.SPASEC b on a.SECCOD = b.SECCOD ");
+		Query query_folder = entityManager.createNativeQuery(
+				" select distinct a.SEcCOD,b.SECLIB from SILVER.dbo.SDTSEC a inner join SILVER.dbo.SPASEC b on a.SECCOD = b.SECCOD ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	@GET
 	@Path("/GET_TIPO_ACABAMENTO")
 	@Produces("application/json")
@@ -1446,7 +1444,6 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
-	
 	@POST
 	@Path("/GET_SEMANAS_PLANEAMENTO_OPERACAO")
 	@Produces("application/json")
@@ -1464,7 +1461,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/GET_SEMANAS_PLANEAMENTO_SECCAO")
 	@Produces("application/json")
@@ -3663,6 +3660,36 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_CAB_RESUMO_UTILIZADORES/{id}")
+	@Produces("application/json")
+	public List<Object[]> getMAN_MOV_MANUTENCAO_CAB_RESUMO_UTILIZADORES(@PathParam("id") Integer id) {
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_UTILIZADORES :id").setParameter("id", id);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+		return dados_folder;
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_CAB_RESUMO_ACOES/{id}")
+	@Produces("application/json")
+	public List<Object[]> getMAN_MOV_MANUTENCAO_CAB_RESUMO_ACOES(@PathParam("id") Integer id) {
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_ACOES :id").setParameter("id", id);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+		return dados_folder;
+	}
+
+	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_CAB_RESUMO_MATERIAL/{id}")
+	@Produces("application/json")
+	public List<Object[]> getMAN_MOV_MANUTENCAO_CAB_RESUMO_MATERIAL(@PathParam("id") Integer id) {
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_MATERIAL :id").setParameter("id", id);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+		return dados_folder;
+	}
+
 	/************************************* MAN_MOV_MANUTENCAO_OPERARIOS */
 
 	@POST
@@ -4212,7 +4239,7 @@ public class SIRB_2 {
 	public List<MAN_MOV_MANUTENCAO_EQUIPAMENTOS> getMAN_MOV_MANUTENCAO_EQUIPAMENTOS2() {
 		return dao51.getall2(null);
 	}
-	
+
 	@GET
 	@Path("/getMAN_MOV_MANUTENCAO_EQUIPAMENTOS2/{id}")
 	@Produces("application/json")
@@ -4577,7 +4604,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/MAN_GET_ANALISE_PREDITIVAS")
 	@Produces("application/json")
@@ -4764,7 +4791,7 @@ public class SIRB_2 {
 
 		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_ANALISE_MANUTENCAO " + ANO + ","
 				+ TIPO_MANUTENCAO + "," + DATA_INICIO + "," + DATA_FIM + "," + LOCALIZACAO + "," + AMBITO + ","
-				+ FUNCIONARIO + "," + EQUIPAMENTO + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX+ "," + ACAO);
+				+ FUNCIONARIO + "," + EQUIPAMENTO + "," + MAQUINA_PRODUTIVA + "," + SEVESO + "," + ATEX + "," + ACAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -6513,15 +6540,17 @@ public class SIRB_2 {
 		MAN_DIC_AMBITO_UTILIZADORES.setID(id);
 		dao80.delete(MAN_DIC_AMBITO_UTILIZADORES);
 	}
-	
-	
-	/************************************ MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS */
+
+	/************************************
+	 * MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS
+	 */
 
 	@POST
 	@Path("/createMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS insertMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS(final MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS data) {
+	public MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS insertMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS(
+			final MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS data) {
 		return dao94.create(data);
 	}
 
@@ -6535,7 +6564,8 @@ public class SIRB_2 {
 	@GET
 	@Path("/getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSbyid/{id}")
 	@Produces("application/json")
-	public List<MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS> getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSbyid(@PathParam("id") Integer id) {
+	public List<MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS> getMAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSbyid(
+			@PathParam("id") Integer id) {
 		// return dao94.getbyid(id);
 		return null;
 	}
@@ -6805,7 +6835,7 @@ public class SIRB_2 {
 		 */
 
 		Query query_folder = entityManager.createNativeQuery("EXEC DOC_checkIfCodeExist " + ID + ",'" + REFERENCIA
-				+ "','" + SECTOR + "','" + CODIGO + "','" + MAQUINA + "'," + TIPO );
+				+ "','" + SECTOR + "','" + CODIGO + "','" + MAQUINA + "'," + TIPO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -7144,7 +7174,7 @@ public class SIRB_2 {
 	public List<DOC_DIC_POSTOS> getDOC_DIC_POSTOSbyid(@PathParam("id") Integer id) {
 		return dao85.getbyid(id);
 	}
-	
+
 	@GET
 	@Path("/getDOC_DIC_POSTOSbyip/{ip}")
 	@Produces("application/json")
@@ -7418,11 +7448,11 @@ public class SIRB_2 {
 
 		for (Object[] content : dados_folder) {
 			if (content[13] != null && content[13].toString().equals("LD")) {
-				criarFicheiroLD(content);	
+				criarFicheiroLD(content);
 			}
-			
+
 			if (content[13] != null && content[13].toString().equals("UL")) {
-				criarFicheiroUL(content);				
+				criarFicheiroUL(content);
 			}
 		}
 
@@ -7441,28 +7471,26 @@ public class SIRB_2 {
 	public List<Object[]> PR_WINROBOT_GERAR_CARTELA(final List<HashMap<String, String>> dados) {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ID = firstMap.get("ID");
-		
 
-		Query query_folder = entityManager.createNativeQuery(
-				"EXEC PR_WINROBOT_GERAR_CARTELA " + ID);
+		Query query_folder = entityManager.createNativeQuery("EXEC PR_WINROBOT_GERAR_CARTELA " + ID);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		for (Object[] content : dados_folder) {
-		 					 
-				Printer impressoras = new Printer();
-				String nomeficheiro = (content[0] == null) ? null : content[0].toString();
-				String impressora = (content[1] == null) ? null : content[1].toString();
 
-				try {
-					if (impressora != null && !impressora.equals("") && !impressora.isEmpty())
-						impressoras.printTxt(nomeficheiro, impressora);
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (PrinterException e) {
-					e.printStackTrace();
-				}
-			
+			Printer impressoras = new Printer();
+			String nomeficheiro = (content[0] == null) ? null : content[0].toString();
+			String impressora = (content[1] == null) ? null : content[1].toString();
+
+			try {
+				if (impressora != null && !impressora.equals("") && !impressora.isEmpty())
+					impressoras.printTxt(nomeficheiro, impressora);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (PrinterException e) {
+				e.printStackTrace();
+			}
+
 		}
 
 		// criarFicheiroETIQUETAS //fim carga
@@ -7472,7 +7500,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	public void criarFicheiroLD(Object[] dados) {
 		String nome_ficheiro = "LD" + dados[2].toString() + "_" + dados[11].toString();
 		String path = "";
@@ -8074,7 +8102,6 @@ public class SIRB_2 {
 
 		if (IP_POSTO != null)
 			IP_POSTO = "'" + IP_POSTO + "'";
-		
 
 		Query query_folder = entityManager.createNativeQuery("EXEC VALIDA_POSTO " + IP_POSTO);
 
@@ -8476,7 +8503,7 @@ public class SIRB_2 {
 		Query query_folder = entityManager
 				.createNativeQuery("EXEC PR_WINROBOT_UPDATE_DADOS " + ID + ", '" + USER + "'");
 
-		int dados_folder = 1; //query_folder.executeUpdate();
+		int dados_folder = 1; // query_folder.executeUpdate();
 
 		return dados_folder;
 	}
@@ -8991,7 +9018,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/GET_REGISTO_ATIVIDADE")
 	@Produces("application/json")

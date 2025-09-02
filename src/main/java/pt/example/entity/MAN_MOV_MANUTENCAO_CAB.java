@@ -83,6 +83,8 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	private Boolean SEGURANCA_AMBIENTE;
 	@JsonProperty("PRAZO")
 	private Date PRAZO;
+	@JsonProperty("PERCENTAGEM_CONCLUSAO")
+	private Integer PERCENTAGEM_CONCLUSAO;
 
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
@@ -338,6 +340,14 @@ public class MAN_MOV_MANUTENCAO_CAB {
 
 	public void setPRAZO(Date pRAZO) {
 		PRAZO = pRAZO;
+	}
+
+	public Integer getPERCENTAGEM_CONCLUSAO() {
+		return PERCENTAGEM_CONCLUSAO;
+	}
+
+	public void setPERCENTAGEM_CONCLUSAO(Integer pERCENTAGEM_CONCLUSAO) {
+		PERCENTAGEM_CONCLUSAO = pERCENTAGEM_CONCLUSAO;
 	}
 
 }
