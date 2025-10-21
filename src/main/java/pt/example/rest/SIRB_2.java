@@ -8,11 +8,18 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.activation.DataSource;
 import javax.ejb.Stateless;
@@ -611,8 +618,8 @@ public class SIRB_2 {
 	@Produces("application/json")
 	public List<Object[]> getSeccoes() {
 
-		Query query_folder = entityManager
-				.createNativeQuery("select gescod,geslib from SILVER_BI.dbo.spages where gescod like 'OF%'");
+		Query query_folder = entityManager.createNativeQuery(
+				"select gescod,geslib from SILVER_BI.dbo.spages a inner join SILVER_BI.dbo.SPAOFT b on b.typof = a.gescod");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -3555,6 +3562,13 @@ public class SIRB_2 {
 	}
 
 	@GET
+	@Path("/getMAN_MOV_MANUTENCAO_CAB_EMAIL")
+	@Produces("application/json")
+	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CAB_EMAIL( ) {
+		return dao39.getall3();
+	}
+	
+	@GET
 	@Path("/MAN_GET_MANUTENCOES_MELHORIA/{id}")
 	@Produces("application/json")
 	public List<MAN_MOV_MANUTENCAO_CAB> MAN_GET_MANUTENCOES_MELHORIA(@PathParam("id") String id) {
@@ -3664,7 +3678,8 @@ public class SIRB_2 {
 	@Path("/getMAN_MOV_MANUTENCAO_CAB_RESUMO_UTILIZADORES/{id}")
 	@Produces("application/json")
 	public List<Object[]> getMAN_MOV_MANUTENCAO_CAB_RESUMO_UTILIZADORES(@PathParam("id") Integer id) {
-		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_UTILIZADORES :id").setParameter("id", id);
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_UTILIZADORES :id")
+				.setParameter("id", id);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 		return dados_folder;
@@ -3674,7 +3689,8 @@ public class SIRB_2 {
 	@Path("/getMAN_MOV_MANUTENCAO_CAB_RESUMO_ACOES/{id}")
 	@Produces("application/json")
 	public List<Object[]> getMAN_MOV_MANUTENCAO_CAB_RESUMO_ACOES(@PathParam("id") Integer id) {
-		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_ACOES :id").setParameter("id", id);
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_ACOES :id").setParameter("id",
+				id);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 		return dados_folder;
@@ -3684,7 +3700,8 @@ public class SIRB_2 {
 	@Path("/getMAN_MOV_MANUTENCAO_CAB_RESUMO_MATERIAL/{id}")
 	@Produces("application/json")
 	public List<Object[]> getMAN_MOV_MANUTENCAO_CAB_RESUMO_MATERIAL(@PathParam("id") Integer id) {
-		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_MATERIAL :id").setParameter("id", id);
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_MELHORIA_RESUMO_MATERIAL :id").setParameter("id",
+				id);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 		return dados_folder;
@@ -7464,42 +7481,88 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
+	/*
+	 * @POST
+	 * 
+	 * @Path("/PR_WINROBOT_GERAR_CARTELA")
+	 */// @Consumes("*/*")
+	/*
+	 * @Produces("application/json") public List<Object[]>
+	 * PR_WINROBOT_GERAR_CARTELA(final List<HashMap<String, String>> dados) {
+	 * HashMap<String, String> firstMap = dados.get(0); String ID =
+	 * firstMap.get("ID");
+	 * 
+	 * Query query_folder =
+	 * entityManager.createNativeQuery("EXEC PR_WINROBOT_GERAR_CARTELA " + ID);
+	 * 
+	 * List<Object[]> dados_folder = query_folder.getResultList();
+	 * 
+	 * for (Object[] content : dados_folder) {
+	 * 
+	 * Printer impressoras = new Printer(); String nomeficheiro = (content[0] ==
+	 * null) ? null : content[0].toString(); String impressora = (content[1] ==
+	 * null) ? null : content[1].toString();
+	 * 
+	 * try { if (impressora != null && !impressora.equals("") &&
+	 * !impressora.isEmpty()) impressoras.printTxt(nomeficheiro, impressora); }
+	 * catch (IOException e) { e.printStackTrace(); } catch (PrinterException e) {
+	 * e.printStackTrace(); }
+	 * 
+	 * }
+	 * 
+	 * // criarFicheiroETIQUETAS //fim carga // criarFicheiroLD //fim carga
+	 * 
+	 * // criarFicheiroUL //fim descarga
+	 * 
+	 * return dados_folder; }
+	 */
+
+	// Pool com no máximo 5 threads (podes ajustar)
+	private static final ExecutorService pool = Executors.newFixedThreadPool(15);
+	// Lock por lote
+	private static final Map<String, Object> lotLocks = new ConcurrentHashMap<>();
+
 	@POST
 	@Path("/PR_WINROBOT_GERAR_CARTELA")
 	@Consumes("*/*")
 	@Produces("application/json")
-	public List<Object[]> PR_WINROBOT_GERAR_CARTELA(final List<HashMap<String, String>> dados) {
-		HashMap<String, String> firstMap = dados.get(0);
-		String ID = firstMap.get("ID");
+	public Response PR_WINROBOT_GERAR_CARTELA_ASYNC(final List<HashMap<String, String>> dados) {
+	    HashMap<String, String> firstMap = dados.get(0);
+	    String ID = firstMap.get("ID");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC PR_WINROBOT_GERAR_CARTELA " + ID);
+	    // Cria um lock específico para cada Lote
+	    Object lock = lotLocks.computeIfAbsent(ID, k -> new Object());
 
-		List<Object[]> dados_folder = query_folder.getResultList();
+	    // Submete a tarefa para execução em background
+	    pool.submit(() -> {
+	        synchronized (lock) {
+	            try {
+	                Query query = entityManager.createNativeQuery("EXEC PR_WINROBOT_GERAR_CARTELA " + ID);
+	                List<Object[]> dados_folder = query.getResultList();
 
-		for (Object[] content : dados_folder) {
+	                for (Object[] content : dados_folder) {
+	                    Printer impressoras = new Printer();
+	                    String nomeficheiro = (content[0] == null) ? null : content[0].toString();
+	                    String impressora = (content[1] == null) ? null : content[1].toString();
 
-			Printer impressoras = new Printer();
-			String nomeficheiro = (content[0] == null) ? null : content[0].toString();
-			String impressora = (content[1] == null) ? null : content[1].toString();
+	                    if (impressora != null && !impressora.equals("") && !impressora.isEmpty())
+	                        impressoras.printTxt(nomeficheiro, impressora);
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                // Aqui você pode logar o erro ou registrar em DB
+	            } finally {
+	                lotLocks.remove(ID); // Limpa o lock
+	            }
+	        }
+	    });
 
-			try {
-				if (impressora != null && !impressora.equals("") && !impressora.isEmpty())
-					impressoras.printTxt(nomeficheiro, impressora);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (PrinterException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-		// criarFicheiroETIQUETAS //fim carga
-		// criarFicheiroLD //fim carga
-
-		// criarFicheiroUL //fim descarga
-
-		return dados_folder;
+	    // Retorna imediatamente para o cliente
+	    return Response.ok("{\"status\":\"em processamento\",\"ID\":\"" + ID + "\"}")
+	                   .type(MediaType.APPLICATION_JSON)
+	                   .build();
 	}
+
 
 	public void criarFicheiroLD(Object[] dados) {
 		String nome_ficheiro = "LD" + dados[2].toString() + "_" + dados[11].toString();
@@ -8678,6 +8741,10 @@ public class SIRB_2 {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public PR_WINROBOT_PAUSAS insertPR_WINROBOT_PAUSAS(final PR_WINROBOT_PAUSAS data) {
+
+		// data_inicio set data atual
+		data.setDATA_INICIO(new Timestamp(System.currentTimeMillis()));
+
 		PR_WINROBOT_PAUSAS datare = dao89.create(data);
 		Query query_folder = entityManager.createNativeQuery("UPDATE PR_WINROBOT_USERS SET ESTADO = 'S'  WHERE ID = "
 				+ data.getID_CAB_OPERARIO() + "; "

@@ -85,6 +85,8 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	private Date PRAZO;
 	@JsonProperty("PERCENTAGEM_CONCLUSAO")
 	private Integer PERCENTAGEM_CONCLUSAO;
+	@JsonProperty("ORIGEM")
+	private String ORIGEM;
 
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
@@ -350,4 +352,13 @@ public class MAN_MOV_MANUTENCAO_CAB {
 		PERCENTAGEM_CONCLUSAO = pERCENTAGEM_CONCLUSAO;
 	}
 
+	public String getORIGEM() {
+		return ORIGEM;
+	}
+
+	public void setORIGEM(String oRIGEM) {
+		ORIGEM = oRIGEM;
+	}
+
+	
 }

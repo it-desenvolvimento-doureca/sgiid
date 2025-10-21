@@ -109,6 +109,9 @@ public class RH_DADOS_FUNCIONARIO {
 	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
 
+	@JsonProperty("VENCIMENTO")
+	private BigDecimal VENCIMENTO;
+
 	public Integer getID_CODIGO_POSTAL() {
 		return ID_CODIGO_POSTAL;
 	}
@@ -347,6 +350,14 @@ public class RH_DADOS_FUNCIONARIO {
 
 	public void setUTZ_MODIF(Integer uTZ_MODIF) {
 		UTZ_MODIF = uTZ_MODIF;
+	}
+
+	public BigDecimal getVENCIMENTO() {
+		return VENCIMENTO;
+	}
+
+	public void setVENCIMENTO(BigDecimal vENCIMENTO) {
+		VENCIMENTO = vENCIMENTO;
 	}
 
 }

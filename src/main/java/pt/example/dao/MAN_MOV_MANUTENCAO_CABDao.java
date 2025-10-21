@@ -61,6 +61,15 @@ public class MAN_MOV_MANUTENCAO_CABDao extends GenericDaoJpaImpl<MAN_MOV_MANUTEN
 
 	}
 	
+	public List<MAN_MOV_MANUTENCAO_CAB> getall3() {
+
+		Query query = entityManager.createNativeQuery("EXEC MAN_GET_PEDIDOS_LISTA_EMAIL");
+
+		List<MAN_MOV_MANUTENCAO_CAB> utz = query.getResultList();
+		return utz;
+
+	}
+	
 	public List<MAN_MOV_MANUTENCAO_CAB> getbyid_MANUTENCAO(Integer id) {
 		Query query = entityManager.createNativeQuery(
 				"select a.ID_MANUTENCAO_CAB,a.DATA_INICIO,a.ESTADO from MAN_MOV_MANUTENCAO_CAB a "

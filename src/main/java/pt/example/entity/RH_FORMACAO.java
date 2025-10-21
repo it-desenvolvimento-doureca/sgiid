@@ -70,6 +70,8 @@ public class RH_FORMACAO {
 	private Boolean AVALIACAO_SATISFACAO;
 	@JsonProperty("LINK_FORMULARIO")
 	private String LINK_FORMULARIO;
+	@JsonProperty("CUSTO_FORMACAO")
+	private BigDecimal CUSTO_FORMACAO;
 
 	public Integer getID() {
 		return ID;
@@ -271,5 +273,20 @@ public class RH_FORMACAO {
 		AVALIACAO_SATISFACAO = aVALIACAO_SATISFACAO;
 	}
 
-	
+	public String getLINK_FORMULARIO() {
+		return LINK_FORMULARIO;
+	}
+
+	public BigDecimal getCUSTO_FORMACAO() {
+		return CUSTO_FORMACAO;
+	}
+
+	public void setLINK_FORMULARIO(String lINK_FORMULARIO) {
+		LINK_FORMULARIO = lINK_FORMULARIO;
+	}
+
+	public void setCUSTO_FORMACAO(BigDecimal cUSTO_FORMACAO) {
+		CUSTO_FORMACAO = cUSTO_FORMACAO;
+	}
+
 }

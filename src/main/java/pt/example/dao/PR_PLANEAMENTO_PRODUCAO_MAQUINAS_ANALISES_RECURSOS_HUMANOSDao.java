@@ -1,0 +1,34 @@
+package pt.example.dao;
+
+import java.util.List;
+
+import javax.persistence.Query;
+
+import pt.example.entity.PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS;
+
+public class PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOSDao extends GenericDaoJpaImpl<PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS, Integer>
+		implements GenericDao<PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS, Integer> {
+	public PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOSDao() {
+		super(PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS.class);
+	}
+
+	public List<PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS> getbyid(Integer id) {
+
+		Query query = entityManager.createQuery(
+				"Select a from PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS a where a.ID_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES = :id ");
+		query.setParameter("id", id);
+		List<PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS> data = query.getResultList();
+		return data;
+
+	}
+
+	public List<PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS> getall() {
+
+		Query query = entityManager.createQuery("Select a from PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS a ");
+		List<PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS> data = query.getResultList();
+		return data;
+
+	}	
+	
+
+}

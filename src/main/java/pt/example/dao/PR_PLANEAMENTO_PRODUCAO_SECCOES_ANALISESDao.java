@@ -34,9 +34,12 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISESDao extends GenericDaoJpaIm
 	public List<PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES> getall2() {
 
 		Query query = entityManager.createNativeQuery("Select a.ID_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES,a.DATA_CRIA,a.SEMANA,a.ANO,a.N_SEMANAS, "
-				+ " (select CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(x.ID_PLANEAMENTO_PRODUCAO_CAB,' | '), CAST (x.DATA_CRIA as DATE )) +' | ' ,CAST (x.DATA_MRP as date)) ,' | '), x.N_MRP)  "
-				+ " from PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB x where x.ID_PLANEAMENTO_PRODUCAO_CAB in(select value from string_split(ID_PLANOS,',')) ) as PLANOS "
-				+ " from PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES a where a.ATIVO = 1 order by a.ID_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES DESC");
+				+ " ( "
+				+ " select STRING_AGG(CONCAT(x.ID_PLANEAMENTO_PRODUCAO_CAB, ' | ', CAST(x.DATA_CRIA as DATE), ' | ', CAST(x.DATA_MRP as DATE), ' | ', x.N_MRP, ' | ',x.SECCAO), ', ') "
+				+ " from PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB x "
+				+ " where x.ID_PLANEAMENTO_PRODUCAO_CAB in (select value from string_split(ID_PLANOS,',')) "
+				+ " ) as PLANOS,b.NOME_UTILIZADOR "
+				+ " from PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES a  LEFT JOIN GER_UTILIZADORES b on a.UTZ_CRIA = b.ID_UTILIZADOR where a.ATIVO = 1 order by a.ID_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES DESC");
 		List<PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES> data = query.getResultList();
 		return data;
 

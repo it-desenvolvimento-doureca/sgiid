@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import javax.persistence.Column;
@@ -37,6 +38,8 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES_RECURSOS_HUMANOS {
 	private Integer OPERARIOS_DISPONIVEIS;
 	@JsonProperty("OPERARIOS_NECESSARIOS")
 	private Integer OPERARIOS_NECESSARIOS;
+	@JsonProperty("OPERARIOS_NECESSARIOS_VALOR")
+	private BigDecimal OPERARIOS_NECESSARIOS_VALOR;
 
 	public Integer getID() {
 		return ID;
@@ -118,4 +121,13 @@ public class PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES_RECURSOS_HUMANOS {
 		OPERARIOS_NECESSARIOS = oPERARIOS_NECESSARIOS;
 	}
 
+	public BigDecimal getOPERARIOS_NECESSARIOS_VALOR() {
+		return OPERARIOS_NECESSARIOS_VALOR;
+	}
+
+	public void setOPERARIOS_NECESSARIOS_VALOR(BigDecimal oPERARIOS_NECESSARIOS_VALOR) {
+		OPERARIOS_NECESSARIOS_VALOR = oPERARIOS_NECESSARIOS_VALOR;
+	}
+
+	
 }

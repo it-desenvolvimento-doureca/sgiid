@@ -15,7 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.UnknownHostException; 
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -1052,21 +1052,21 @@ public class SIRB {
 	public List<GER_UTILIZADORES> getGER_UTILIZADORESbylogin(@PathParam("login") String login) {
 		return dao11.getbylogin(login);
 	}
-	
+
 	@GET
 	@Path("/getGER_UTILIZADORESbyloginTeste/{login}")
 	@Produces("application/json")
 	public Response getGER_UTILIZADORESbyloginTeste(@PathParam("login") String login) {
-	    String cookie = "name=value; Path=/; HttpOnly"; // Construct your cookie value properly
+		String cookie = "name=value; Path=/; HttpOnly"; // Construct your cookie value properly
 
-	    // Build response with the desired message
-	    Response.ResponseBuilder responseBuilder = Response.ok("Olá");
+		// Build response with the desired message
+		Response.ResponseBuilder responseBuilder = Response.ok("Olá");
 
-	    // Add Set-Cookie header to the response
-	    responseBuilder.header(HttpHeaders.SET_COOKIE, cookie);
+		// Add Set-Cookie header to the response
+		responseBuilder.header(HttpHeaders.SET_COOKIE, cookie);
 
-	    // Build and return the response
-	    return responseBuilder.build();
+		// Build and return the response
+		return responseBuilder.build();
 	}
 
 	@GET
@@ -1386,7 +1386,7 @@ public class SIRB {
 
 		if (LINHA != null)
 			LINHA = "'" + LINHA + "'";
-		
+
 		Query query_folder = entityManager.createNativeQuery("EXEC SILVER_BI.dbo.QUERY_REJEICOES_REF " + LINHA + ",'"
 				+ DATA_INI + "','" + DATA_FIM + "','" + REF + "'," + objetivos_gerais + "," + FAM + "," + LOTE + ","
 				+ AREA_PECA + " ,'" + HORA_INI + "','" + HORA_FIM + "'");
@@ -1518,7 +1518,7 @@ public class SIRB {
 
 		if (LINHA != null)
 			LINHA = "'" + LINHA + "'";
-		
+
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC SILVER_BI.dbo.QUERY_REJEICOES_FAM_DEFEITOS " + LINHA + ",'" + DATA_INI + "','" + DATA_FIM + "','"
 						+ PROREF + "'," + FAM + "," + AREA_PECA + " ,'" + HORA_INI + "','" + HORA_FIM + "'," + FASE);
@@ -1546,7 +1546,7 @@ public class SIRB {
 
 		if (FASE != null)
 			FASE = "'" + FASE + "'";
-		
+
 		if (LINHA != null)
 			LINHA = "'" + LINHA + "'";
 
@@ -1577,7 +1577,7 @@ public class SIRB {
 
 		if (FASE != null)
 			FASE = "'" + FASE + "'";
-		
+
 		if (LINHA != null)
 			LINHA = "'" + LINHA + "'";
 
@@ -2983,7 +2983,6 @@ public class SIRB {
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
 		return dao63.getOperacoes_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR);
 	}
-	
 
 	@POST
 	@Path("/getRH_FUNCIONARIOSANALISERACIOS")
@@ -2993,16 +2992,16 @@ public class SIRB {
 
 		String data = firstMap.get("DATA");
 		String OPERARIO = firstMap.get("OPERARIO");
-		String SECTOR_ACESSO = firstMap.get("SECTOR_ACESSO"); 
+		String SECTOR_ACESSO = firstMap.get("SECTOR_ACESSO");
 		String SECTOR = firstMap.get("SECTOR");
-		
+
 		if (OPERARIO.isEmpty())
 			OPERARIO = null;
-		
+
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
 		return dao63.getAnaliseRacios_(data, OPERARIO, SECTOR_ACESSO, ADMIN, SECTOR);
 	}
-	
+
 	@POST
 	@Path("/getRH_FUNCIONARIOSOPERACOESOLD")
 	@Produces("application/json")
@@ -3021,7 +3020,6 @@ public class SIRB {
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
 		return dao63.getOperacoes(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR);
 	}
-
 
 	@POST
 	@Path("/getRH_FUNCIONARIOSPAUSAS")
@@ -3397,16 +3395,16 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getComponentesProducao(getURLSILVER());
 		return dados;
 	}
-	
 
 	@POST
 	@Path("/getComponentesBySeccao")
 	@Produces("application/json")
-	public List<HashMap<String, String>> getComponentesBySeccao(final String SECCOES) throws SQLException, ClassNotFoundException {
+	public List<HashMap<String, String>> getComponentesBySeccao(final String SECCOES)
+			throws SQLException, ClassNotFoundException {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 
-		List<HashMap<String, String>> dados = connectionProgress.getComponentesBySeccao(getURLSILVER(),SECCOES);
+		List<HashMap<String, String>> dados = connectionProgress.getComponentesBySeccao(getURLSILVER(), SECCOES);
 		return dados;
 	}
 
@@ -3442,15 +3440,16 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getReferencias(getURLSILVER());
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getReferenciaSearch/{query}")
 	@Produces("application/json")
-	public List<HashMap<String, String>> getReferenciaSearch(@PathParam("query") String query) throws SQLException, ClassNotFoundException {
+	public List<HashMap<String, String>> getReferenciaSearch(@PathParam("query") String query)
+			throws SQLException, ClassNotFoundException {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
 		String query_ = java.net.URLDecoder.decode(query);
-		List<HashMap<String, String>> dados = connectionProgress.getReferenciaSearch(getURLSILVER(),query_);
+		List<HashMap<String, String>> dados = connectionProgress.getReferenciaSearch(getURLSILVER(), query_);
 		return dados;
 	}
 
@@ -3509,7 +3508,6 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getClientes(getURLSILVER());
 		return dados;
 	}
-	
 
 	@GET
 	@Path("/getTypof")
@@ -3791,7 +3789,7 @@ public class SIRB {
 		List<Object[]> dados = query.getResultList();
 		return dados;
 	}
-	
+
 	@POST
 	@Path("/getRacks2")
 	@Produces("application/json")
@@ -3800,8 +3798,7 @@ public class SIRB {
 		HashMap<String, String> firstMap = datas.get(0);
 		String RACKNUM = firstMap.get("RACKNUM");
 		String RACK_TYPE = firstMap.get("RACK_TYPE");
-		Query query = entityManager
-				.createNativeQuery("EXEC PR_GET_RACK '" + RACKNUM + "' , '" + RACK_TYPE + "'");
+		Query query = entityManager.createNativeQuery("EXEC PR_GET_RACK '" + RACKNUM + "' , '" + RACK_TYPE + "'");
 
 		List<Object[]> dados = query.getResultList();
 		return dados;
@@ -7113,8 +7110,7 @@ public class SIRB {
 		List<Object[]> dados = query.getResultList();
 		return dados;
 	}
-	
-	 
+
 	/************************************* RC_MOV_RECLAMACAO_ARTIGO_SIMILARES */
 	@POST
 	@Path("/createRC_MOV_RECLAMACAO_ARTIGO_SIMILARES")
@@ -7760,6 +7756,29 @@ public class SIRB {
 	}
 
 	@POST
+	@Path("/getAtualizaTarefaSugestoes/{id}/{modulo}")
+	@Produces("application/json")
+	public void getAtualizaTarefaSugestoes(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
+			final String link) {
+
+		Query query = entityManager.createNativeQuery("select ID,ID_SUGESTAO from RH_SUGESTOES_PLANOS_ACCOES "
+				+ "where ID_SUGESTAO = " + id
+				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = 8 and SUB_MODULO not in ('D','C') and ID_CAMPO = ID)");
+
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+			String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + content[0].toString() + "," + modulo + ",'SUG'";
+
+			Query query_tarefa = entityManager.createNativeQuery(url);
+			query_tarefa.executeUpdate();
+
+			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, "SUG");
+		}
+
+	}
+
+	@POST
 	@Path("/getAtualizaTarefaDerrogacoes/{id}/{modulo}")
 	@Produces("application/json")
 	public void getAtualizaTarefaDerrogacoes(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
@@ -7864,6 +7883,12 @@ public class SIRB {
 							+ "'' NOME_CLIENTE,b.ID_REUNIAO,a.DATA_PREVISTA,b.DATA_REUNIAO "
 							+ "from REU_REUNIOES_PLANOS_ACCOES a inner join REU_REUNIOES b on b.ID_REUNIAO = a.ID_REUNIAO "
 							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID  where a.ID = " + id);
+		} else if (submodulo.equals("SUG")) {
+			query = entityManager.createNativeQuery(
+					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(a.OBSERVACOES,'') ,c.DESCRICAO_PT,b.CODIGO,b.DESCRICAO, "
+							+ "b.ASSUNTO,b.ID,a.DATA_PREVISTA,b.DATA_CRIA "
+							+ "from RH_SUGESTOES_PLANOS_ACCOES a inner join RH_SUGESTOES b on b.ID = a.ID_SUGESTAO "
+							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
 		} else {
 			query = entityManager.createNativeQuery(
 					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(OBSERVACOES,'') ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
@@ -7877,7 +7902,7 @@ public class SIRB {
 		for (Object[] content : dados) {
 			observacao = content[3].toString();
 			numero_reclamacao = content[8].toString();
-			cliente = content[7].toString();
+			cliente = (content[7] == null) ? "" : content[7].toString();
 			data_reclamacao = content[10].toString();
 			referencia = content[5].toString() + " - " + content[6].toString();
 			numero_tarefa = (content[0] == null) ? null : content[0].toString();
@@ -7922,6 +7947,9 @@ public class SIRB {
 			} else if (submodulo.equals("REU")) {
 				n.put("MODULO", "19");
 				n.put("PAGINA", "Reuniões");
+			} else if (submodulo.equals("SUG")) {
+				n.put("MODULO", "8");
+				n.put("PAGINA", "Sugestões");
 			} else {
 				n.put("MODULO", "5");
 				n.put("PAGINA", "Reclamações Clientes");
@@ -7947,6 +7975,11 @@ public class SIRB {
 								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_reuniao::" + data_reclamacao
 								+ "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::" + numero_tarefa
 								+ "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
+			} else if (submodulo.equals("SUG")) {
+				n.put("DADOS",
+						"{observacao::" + observacao + "\n/link::" + link + numero_reclamacao + "\n/numero_sugestao::"
+								+ numero_reclamacao + "\n/numero_tarefa::" + numero_tarefa + "\n/accao::" + accao
+								+ "\n/data_prevista::" + data_prevista + "}");
 			} else {
 				n.put("DADOS",
 						"{observacao::" + observacao + "\n/link::" + link + numero_tarefa + "\n/numero_reclamacao::"
@@ -9120,7 +9153,7 @@ public class SIRB {
 		// System.out.println(data.getPARA());
 		SendEmail send = new SendEmail();
 		send.enviarEmail(data.getDE(), data.getPARA(), data.getASSUNTO(), data.getMENSAGEM(), data.getNOME_FICHEIRO(),
-				fic, getFILEPATH(), ficheiro,data.getBCC());
+				fic, getFILEPATH(), ficheiro, data.getBCC());
 		return data;
 
 	}
@@ -10851,7 +10884,7 @@ public class SIRB {
 			data_fim = content[4].toString();
 			numero_derrogacao = content[5].toString();
 			estado = content[6].toString();
-			cliente = content[7].toString();
+			cliente = (content[7] == null) ? "" : content[7].toString();
 			referencia = content[8].toString();
 			link = content[9].toString();
 
