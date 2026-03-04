@@ -35,6 +35,7 @@ public class RH_FUNCIONARIOS {
 	private Boolean REGISTA_PONTO;
 	private Boolean EXPOSTO_RISCOS;
 	private String PERIOCIDADE;
+	private Boolean DIRECAO;
 	
 
 	@Id
@@ -219,4 +220,14 @@ public class RH_FUNCIONARIOS {
 		PERIOCIDADE = pERIOCIDADE;
 	}
 
+	@Column(name = "DIRECAO")
+	public Boolean getDIRECAO() {
+		return DIRECAO;
+	}
+
+	public void setDIRECAO(Boolean dIRECAO) {
+		DIRECAO = dIRECAO;
+	}
+
+	
 }

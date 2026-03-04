@@ -59,6 +59,8 @@ public class MAN_MOV_MANUTENCAO_PLANOS {
 	private String ANEXO;
 	@JsonProperty("TIPO_MANUTENCAO")
 	private String TIPO_MANUTENCAO;
+	@JsonProperty("NIVEL")
+	private Integer NIVEL;
 
 	public Integer getID() {
 		return ID;
@@ -218,6 +220,14 @@ public class MAN_MOV_MANUTENCAO_PLANOS {
 
 	public void setTIPO_MANUTENCAO(String tIPO_MANUTENCAO) {
 		TIPO_MANUTENCAO = tIPO_MANUTENCAO;
+	}
+
+	public Integer getNIVEL() {
+		return NIVEL;
+	}
+
+	public void setNIVEL(Integer nIVEL) {
+		NIVEL = nIVEL;
 	}
 
 }

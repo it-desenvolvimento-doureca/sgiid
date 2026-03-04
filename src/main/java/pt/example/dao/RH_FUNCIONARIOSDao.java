@@ -182,12 +182,12 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 	}
 
 	public List<RH_FUNCIONARIOS> getProdutividade_(String data1, String data2, String Ativo, String Operario,
-			String SECTOR_ACESSO, Boolean ADMIN) {
-		List<RH_FUNCIONARIOS> data = entityManager
+			String SECTOR_ACESSO, Boolean ADMIN,String hora1, String hora2,String SECTOR) {
+		List<RH_FUNCIONARIOS> data = entityManager 
 				.createNativeQuery("EXEC RH_GET_PRODUTIVIDADE "
-						+ ":DATA, :DATA2, :Ativo,  :Operario, :ADMIN, :SECTOR_ACESSO")
+						+ ":DATA, :DATA2, :Ativo,  :Operario, :ADMIN, :SECTOR_ACESSO, :hora1, :hora2, :sector")
 				.setParameter("DATA", data1).setParameter("DATA2", data2).setParameter("Ativo", Ativo)
-				.setParameter("Operario", Operario).setParameter("ADMIN", ADMIN ? 1 : 0)
+				.setParameter("Operario", Operario).setParameter("ADMIN", ADMIN ? 1 : 0).setParameter("hora1", hora1).setParameter("hora2", hora2).setParameter("sector", SECTOR)
 				.setParameter("SECTOR_ACESSO", SECTOR_ACESSO).getResultList();
 
 		return data;
@@ -280,14 +280,15 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 	}
 	
 	public List<RH_FUNCIONARIOS> getOperacoes_(String data1, String data2, String Ativo, String Operario,
-			String SECTOR_ACESSO, Boolean ADMIN, String tipo_cadencia, String Sector) {
+			String SECTOR_ACESSO, Boolean ADMIN, String tipo_cadencia, String Sector,String hora1, String hora2) {
 
 		List<RH_FUNCIONARIOS> data = entityManager
 				.createNativeQuery("EXEC RH_GET_OPERACOES "
-						+ ":DATA, :DATA2, :Ativo, :tipo_cadencia, :Sector, :Operario, :ADMIN, :SECTOR_ACESSO")
+						+ ":DATA, :DATA2, :Ativo, :tipo_cadencia, :Sector, :Operario, :ADMIN, :SECTOR_ACESSO, :hora1, :hora2")
 				.setParameter("DATA", data1).setParameter("DATA2", data2).setParameter("Ativo", Ativo)
 				.setParameter("tipo_cadencia", tipo_cadencia).setParameter("Sector", Sector)
 				.setParameter("Operario", Operario).setParameter("ADMIN", ADMIN ? 1 : 0)
+				.setParameter("hora1", hora1).setParameter("hora2", hora2)
 				.setParameter("SECTOR_ACESSO", SECTOR_ACESSO).getResultList();
 
 		return data;
@@ -421,11 +422,11 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 				+ "';   select b.COD_FUNCIONARIO,b.NOME,b.ATIVO,b.LOCAL,b.RESPONSAVEL,b.COD_SECTOR,c.DES_SECTOR, "
 				+ "(select NOME from RH_FUNCIONARIOS where COD_FUNCIONARIO = c.CHEFE1) as CHEFE,a.datdeb,a.TempoPrep , "
 				+ "a.TempoExec,a.TempoTotal TempoTotal,a.heudeb,a.heufin,codigo,descricao from ( "
-				+ "SELECT t.rescod, t.datdeb,x.heudeb,x.heufin,(t.stpse) TempoExec, (t.stpsp) TempoPrep, (t.stpse+t.stpsp) TempoTotal,x.ARRCOD as codigo,p.ARRLIB as descricao "
+				+ "SELECT t.rescod, t.datdeb,x.heudeb,x.heufin,(t.atpse) TempoExec, (t.atpsp) TempoPrep, (t.atpse+t.atpsp) TempoTotal,x.ARRCOD as codigo,p.ARRLIB as descricao "
 				+ "	FROM SILVER.dbo.SCPSVB x	INNER JOIN SILVER.dbo.SCPSVA t  on t.SVANUMENR=  x.SVANUMENR "
 				+ "	INNER JOIN SILVER.dbo.SPAARR p  on p.ARRCOD=  x.ARRCOD "
 				+ "	WHERE x.datdeb>=@DATA and x.datdeb<=@DATA2 /*and t.heudeb>= (select top 1 cast(DataHora as time) from  Cronos.dbo.Ponto where NumeroEmpregado = cast(rescod as int) and t.datdeb = cast(DataHora as date))*/ "
-				+ "and t.restypcod='MO'and (t.stpse<>0 or t.stpsp<>0) ) as a "
+				+ "and t.restypcod='MO'and (t.atpse<>0 or t.atpsp<>0) ) as a "
 				+ " left join RH_FUNCIONARIOS b on  CASE WHEN IsNumeric(REPLACE(a.rescod,'.','')) = 1 THEN  cast(REPLACE(a.rescod,'.','') as bigint) ELSE null END = b.COD_FUNCIONARIO left join RH_SECTORES c on b.COD_SECTOR = c.COD_SECTOR  "
 				+ "where (b.COD_SECTOR in (" + SECTOR_ACESSO + ") " + queryallsector + ") and ((not " + Operario
 				+ " is not null) or (b.COD_FUNCIONARIO  = " + Operario + " )) " + querywhere

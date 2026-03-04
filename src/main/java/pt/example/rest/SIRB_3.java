@@ -3,6 +3,7 @@ package pt.example.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -33,8 +34,15 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import microsoft.exchange.webservices.data.core.ExchangeService;
+import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
+import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
+import microsoft.exchange.webservices.data.core.service.folder.Folder;
+import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
+import microsoft.exchange.webservices.data.credential.WebCredentials;
 import pt.example.bootstrap.AlfrescoApi;
 import pt.example.bootstrap.ConnectProgress;
+
 import pt.example.dao.*;
 import pt.example.entity.*;
 
@@ -240,6 +248,10 @@ public class SIRB_3 {
 	private GER_CAIXAS_EMAILDao dao98;
 	@Inject
 	private GER_REGRAS_EMAILDao dao99;
+	@Inject
+	private RH_DIC_TIPOS_FALTAS_LINHADao dao100;
+	@Inject
+	private RH_DIC_TIPOS_GRATIFICACOES_LINHADao dao101;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -1380,6 +1392,55 @@ public class SIRB_3 {
 	public PIN_MOV_PREPARACAO updateAB_MOV_ANALISE_LINHA(final PIN_MOV_PREPARACAO PIN_MOV_PREPARACAO) {
 		PIN_MOV_PREPARACAO.setID_PREPARACAO(PIN_MOV_PREPARACAO.getID_PREPARACAO());
 		return dao16.update(PIN_MOV_PREPARACAO);
+	}
+
+	// Atualizar Estados manutenções
+	@GET
+	@Path("/atualizarestadosPintura/{id}")
+	@Produces("application/json")
+	public int atualizarestados(@PathParam("id") Integer id) {
+
+		String sql = "UPDATE PIN_MOV_PREPARACAO " + "SET ESTADO = 'Preparado' " + "WHERE ID_PREPARACAO = :id "
+				+ "  AND INATIVO != 1 "
+				+ "  AND (SELECT COUNT(*) FROM PIN_MOV_PREPARACAO_CAB WHERE ID_PREPARACAO = :id AND INATIVO != 1) = "
+				+ "      (SELECT COUNT(*) FROM PIN_MOV_PREPARACAO_CAB WHERE ID_PREPARACAO = :id AND DATA_PREPARACAO IS NOT NULL AND INATIVO != 1) "
+				+ "  AND (SELECT COUNT(*) FROM PIN_MOV_PREPARACAO_CAB WHERE ID_PREPARACAO = :id AND DATA_EXECUCAO IS NOT NULL AND INATIVO != 1) = 0 "
+				+ "  AND ESTADO IN ('Em Preparação', 'Planeado') "
+				+ "  AND (SELECT COUNT(*) FROM PIN_MOV_PREPARACAO_CAB WHERE ID_PREPARACAO = :id AND INATIVO != 1) > 0; "
+				+
+
+				"UPDATE PIN_MOV_PREPARACAO " + "SET ESTADO = 'Executado' " + "WHERE ID_PREPARACAO = :id "
+				+ "  AND INATIVO != 1 "
+				+ "  AND (SELECT COUNT(*) FROM PIN_MOV_PREPARACAO_CAB WHERE ID_PREPARACAO = :id AND INATIVO != 1) = "
+				+ "      (SELECT COUNT(*) FROM PIN_MOV_PREPARACAO_CAB WHERE ID_PREPARACAO = :id AND DATA_EXECUCAO IS NOT NULL AND INATIVO != 1) "
+				+ "  AND (SELECT COUNT(*) FROM PIN_MOV_PREPARACAO_CAB WHERE ID_PREPARACAO = :id AND INATIVO != 1) > 0";
+
+		Query query = entityManager.createNativeQuery(sql);
+		query.setParameter("id", id);
+
+		return query.executeUpdate();
+	}
+
+	// Atualizar Estados manutenções
+	@GET
+	@Path("/atualizarestadosDosificadoresPintura/{id}")
+	@Produces("application/json")
+	public int atualizarestadosDosificadores(@PathParam("id") Integer id) {
+
+		/*
+		 * Query query = entityManager.createNativeQuery("DECLARE @ID int = 1 UPDATE
+		 * PIN_MOV_PREPARACAO set ESTADO = 'Executado' where ID_PREPARACAO = @ID and
+		 * (select count(*) from PIN_MOV_MANUTENCAO_DOSIFICADORES where ID_PREPARACAO
+		 * = @ID and INATIVO != 1 ) = (select count(*) from
+		 * PIN_MOV_PREPARACAO_DOSIFICADORES where ID_PREPARACAO = @ID and DATA_EXECUCAO
+		 * is not null and INATIVO != 1) and (select count(*) from
+		 * PIN_MOV_PREPARACAO_DOSIFICADORES where ID_PREPARACAO = @ID and INATIVO != 1 )
+		 * > 0");
+		 * 
+		 * int dados = query.executeUpdate();
+		 */
+
+		return 1;
 	}
 
 	/************************************ PIN_MOV_PREPARACAO_CAB */
@@ -5918,7 +5979,7 @@ public class SIRB_3 {
 				+ ANO + "; "
 				+ "select a.ID_PLANEAMENTO_PRODUCAO_CAB,CAST(a.DATA_CRIA as date) DATA_CRIA ,a.DATA_MRP,a.N_MRP,null ID_LINHA,a.ESTADO,a.NUMERO_SEMANAS ,a.SECCAO "
 				+ "from PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB a "
-				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1 ");
+				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1 order by a.ID_PLANEAMENTO_PRODUCAO_CAB desc ");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -5937,7 +5998,7 @@ public class SIRB_3 {
 				+ ANO + "; "
 				+ "select a.ID_PLANEAMENTO_PRODUCAO_CAB,CAST(a.DATA_CRIA as date) DATA_CRIA ,a.DATA_MRP,a.N_MRP,null ID_LINHA,a.ESTADO,a.NUMERO_SEMANAS "
 				+ "from PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB a "
-				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1 ");
+				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1 order by a.ID_PLANEAMENTO_PRODUCAO_CAB desc");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -7188,24 +7249,25 @@ public class SIRB_3 {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public RH_AVALIACAO_DESEMPENHO insertRH_AVALIACAO_DESEMPENHO(final RH_AVALIACAO_DESEMPENHO data) {
-		if (dao94.existsByAno(data.getANO(), 0)) {
+		if (dao94.existsByAno(data.getANO(), 0, data.getTIPO())) {
 			throw new WebApplicationException("Já existe um registo para este ano.", 409);
 		}
 		return dao94.create(data);
 	}
 
 	@GET
-	@Path("/getRH_AVALIACAO_DESEMPENHO")
+	@Path("/getRH_AVALIACAO_DESEMPENHO/{tipo}")
 	@Produces("application/json")
-	public List<RH_AVALIACAO_DESEMPENHO> getRH_AVALIACAO_DESEMPENHO() {
-		return dao94.getAll();
+	public List<RH_AVALIACAO_DESEMPENHO> getRH_AVALIACAO_DESEMPENHO(@PathParam("tipo") String tipo) {
+		return dao94.getAll(tipo);
 	}
 
 	@GET
-	@Path("/getRH_AVALIACAO_DESEMPENHObyid/{id}")
+	@Path("/getRH_AVALIACAO_DESEMPENHObyid/{id}/{tipo}")
 	@Produces("application/json")
-	public List<RH_AVALIACAO_DESEMPENHO> getRH_AVALIACAO_DESEMPENHObyid(@PathParam("id") Integer id) {
-		return dao94.getByid(id);
+	public List<RH_AVALIACAO_DESEMPENHO> getRH_AVALIACAO_DESEMPENHObyid(@PathParam("id") Integer id,
+			@PathParam("tipo") String tipo) {
+		return dao94.getByid(id, tipo);
 	}
 
 	@DELETE
@@ -7224,7 +7286,7 @@ public class SIRB_3 {
 
 		Integer ID = obj.getID() != null ? obj.getID() : 0;
 
-		if (dao94.existsByAno(obj.getANO(), ID)) {
+		if (dao94.existsByAno(obj.getANO(), ID, obj.getTIPO())) {
 			throw new WebApplicationException("Já existe um registo para este ano.", 409);
 		}
 
@@ -7255,6 +7317,14 @@ public class SIRB_3 {
 	@Produces("application/json")
 	public List<RH_AVALIACAO_DESEMPENHO_LINHAS> getRH_AVALIACAO_DESEMPENHO_LINHASbyid(@PathParam("id") Integer id) {
 		return dao95.getById(id);
+	}
+
+	@POST
+	@Path("/getRH_AVALIACAO_DESEMPENHO_LINHASbyidGrupo/{id}")
+	@Produces("application/json")
+	public List<RH_AVALIACAO_DESEMPENHO_LINHAS> getRH_AVALIACAO_DESEMPENHO_LINHASbyidGrupo(@PathParam("id") Integer id,
+			final List<HashMap<String, String>> dados) {
+		return dao95.getByidGrupo(id, dados);
 	}
 
 	@DELETE
@@ -7297,7 +7367,20 @@ public class SIRB_3 {
 
 		HashMap<String, String> firstMap = dados.get(0);
 		String ANO = firstMap.get("ANO");
-		Query query_folder = entityManager.createNativeQuery("EXEC RH_AVALIACAO_DESEMPENHO_DADOS_FUNCIONARIOS " + ANO);
+		String TIPO = firstMap.get("TIPO");
+		String DATA_INICIO = firstMap.get("DATA_INICIO");
+		String DATA_FIM = firstMap.get("DATA_FIM");
+
+		if (DATA_INICIO != null) {
+			DATA_INICIO = "'" + DATA_INICIO + "'";
+		}
+
+		if (DATA_FIM != null) {
+			DATA_FIM = "'" + DATA_FIM + "'";
+		}
+
+		Query query_folder = entityManager.createNativeQuery("EXEC RH_AVALIACAO_DESEMPENHO_DADOS_FUNCIONARIOS " + ANO
+				+ "," + TIPO + "," + DATA_INICIO + "," + DATA_FIM);
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		List<RH_AVALIACAO_DESEMPENHO_LINHAS> lista = new ArrayList<>();
@@ -7333,6 +7416,7 @@ public class SIRB_3 {
 
 			obj.setESTADO(row[12] != null ? row[12].toString() : null);
 			obj.setVENCIMENTO_ANUAL(row[13] != null ? new BigDecimal(row[13].toString()) : BigDecimal.ZERO);
+			obj.setVENCIMENTO(row[44] != null ? new BigDecimal(row[44].toString()) : BigDecimal.ZERO);
 			obj.setPERCENTUAL_VENCIMENTO_ANUAL(row[14] != null ? new BigDecimal(row[14].toString()) : BigDecimal.ZERO);
 			obj.setID_VENCIMENTO_ANUAL(row[15] != null ? ((Number) row[15]).intValue() : null);
 			obj.setAVALIACAO_DESEMPENHO(row[16] != null ? new BigDecimal(row[16].toString()) : null);
@@ -7362,9 +7446,12 @@ public class SIRB_3 {
 			obj.setLIMITE_MAXIMO_PREMIO_PCT(row[38] != null ? new BigDecimal(row[38].toString()) : BigDecimal.ZERO);
 			obj.setVALOR_PREMIO_GRUPO(row[39] != null ? new BigDecimal(row[39].toString()) : BigDecimal.ZERO);
 			obj.setVALOR_MAXIMO_PREMIO(row[40] != null ? new BigDecimal(row[40].toString()) : null);
-			obj.setMESES_TRABALHADOS(row[41] != null ? ((Number) row[41]).intValue() : null);
+			obj.setMESES_TRABALHADOS(row[41] != null ? new BigDecimal(row[41].toString()) : null);
 			obj.setPREMIO_PCT(row[42] != null ? new BigDecimal(row[42].toString()) : null);
 			obj.setVALOR_PREMIO(row[43] != null ? new BigDecimal(row[43].toString()) : null);
+			obj.setID_GRUPO_COLABORADORES(row[45] != null ? ((Number) row[45]).intValue() : null);
+			obj.setVALOR_PREMIO_ANO_ANTERIOR(row[46] != null ? new BigDecimal(row[46].toString()) : BigDecimal.ZERO);
+			obj.setPONTUACAO_FINAL_PERC(row[47] != null ? new BigDecimal(row[47].toString()) : BigDecimal.ZERO);
 
 			lista.add(obj);
 		}
@@ -7538,6 +7625,34 @@ public class SIRB_3 {
 	/************************************* GER_CAIXAS_EMAIL */
 
 	@POST
+	@Path("/GER_CAIXAS_EMAILtestarEmail")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_CAIXAS_EMAIL GER_CAIXAS_EMAILtestarEmail(final GER_CAIXAS_EMAIL data) {
+
+		String password = data.getPALAVRA_CHAVE();
+		String user = data.getUTILIZADOR();
+		try {
+			ExchangeService service = new ExchangeService(ExchangeVersion.Exchange2010_SP2);
+			ExchangeCredentials credentials = new WebCredentials(user, password);
+			service.setCredentials(credentials);
+
+			// Define a URL do EWS diretamente ou via Autodiscover
+			service.setUrl(new URI("https://mail.doureca.pt/EWS/Exchange.asmx"));
+
+			// Tenta acessar a Inbox para validar login
+			Folder inbox = Folder.bind(service, WellKnownFolderName.Inbox);
+			inbox.getTotalCount(); // força a chamada ao servidor
+
+		} catch (Exception e) {
+			throw new WebApplicationException("Não foi possível ligar à caixa de email. " + e.getMessage(), 409);
+		}
+
+		return data;
+
+	}
+
+	@POST
 	@Path("/createGER_CAIXAS_EMAIL")
 	@Consumes("*/*")
 	@Produces("application/json")
@@ -7615,5 +7730,87 @@ public class SIRB_3 {
 	public GER_REGRAS_EMAIL updateGER_REGRAS_EMAIL(final GER_REGRAS_EMAIL obj) {
 		obj.setID(obj.getID());
 		return dao99.update(obj);
+	}
+
+	/************************************* RH_DIC_TIPOS_FALTAS_LINHA */
+	@POST
+	@Path("/createRH_DIC_TIPOS_FALTAS_LINHA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_TIPOS_FALTAS_LINHA insertRH_DIC_TIPOS_FALTAS_LINHA(final RH_DIC_TIPOS_FALTAS_LINHA data) {
+		return dao100.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_TIPOS_FALTAS_LINHA")
+	@Produces("application/json")
+	public List<RH_DIC_TIPOS_FALTAS_LINHA> getRH_DIC_TIPOS_FALTAS_LINHA() {
+		return dao100.getAll();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_TIPOS_FALTAS_LINHA/{id}")
+	public void deleteRH_DIC_TIPOS_FALTAS_LINHA(@PathParam("id") Integer id) {
+		RH_DIC_TIPOS_FALTAS_LINHA obj = new RH_DIC_TIPOS_FALTAS_LINHA();
+		obj.setID(id);
+		dao100.delete(obj);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_TIPOS_FALTAS_LINHA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_TIPOS_FALTAS_LINHA updateRH_DIC_TIPOS_FALTAS_LINHA(final RH_DIC_TIPOS_FALTAS_LINHA obj) {
+		obj.setID(obj.getID());
+		return dao100.update(obj);
+	}
+
+	@GET
+	@Path("/getRH_DIC_TIPOS_FALTAS_LINHAgetFaltasAll")
+	@Produces("application/json")
+	public List<Object[]> getFaltasAll() {
+		return dao100.getFaltasAll();
+	}
+
+	/************************************* RH_DIC_TIPOS_GRATIFICACOES_LINHA */
+	@POST
+	@Path("/createRH_DIC_TIPOS_GRATIFICACOES_LINHA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_TIPOS_GRATIFICACOES_LINHA insertRH_DIC_TIPOS_GRATIFICACOES_LINHA(
+			final RH_DIC_TIPOS_GRATIFICACOES_LINHA data) {
+		return dao101.create(data);
+	}
+
+	@GET
+	@Path("/getRH_DIC_TIPOS_GRATIFICACOES_LINHA")
+	@Produces("application/json")
+	public List<RH_DIC_TIPOS_GRATIFICACOES_LINHA> getRH_DIC_TIPOS_GRATIFICACOES_LINHA() {
+		return dao101.getAll();
+	}
+
+	@DELETE
+	@Path("/deleteRH_DIC_TIPOS_GRATIFICACOES_LINHA/{id}")
+	public void deleteRH_DIC_TIPOS_GRATIFICACOES_LINHA(@PathParam("id") Integer id) {
+		RH_DIC_TIPOS_GRATIFICACOES_LINHA obj = new RH_DIC_TIPOS_GRATIFICACOES_LINHA();
+		obj.setID(id);
+		dao101.delete(obj);
+	}
+
+	@PUT
+	@Path("/updateRH_DIC_TIPOS_GRATIFICACOES_LINHA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_DIC_TIPOS_GRATIFICACOES_LINHA updateRH_DIC_TIPOS_GRATIFICACOES_LINHA(
+			final RH_DIC_TIPOS_GRATIFICACOES_LINHA obj) {
+		obj.setID(obj.getID());
+		return dao101.update(obj);
+	}
+
+	@GET
+	@Path("/getRH_DIC_TIPOS_GRATIFICACOES_LINHAgetGratificacoesAll")
+	@Produces("application/json")
+	public List<Object[]> getGratificacoesAll() {
+		return dao101.getGRATIFICACAOsAll();
 	}
 }

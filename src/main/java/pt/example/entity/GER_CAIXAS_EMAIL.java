@@ -23,6 +23,12 @@ public class GER_CAIXAS_EMAIL {
 	private String PALAVRA_CHAVE;
 	@JsonProperty("ATIVA")
 	private Boolean ATIVA;
+	@JsonProperty("PROCESSA_INBOX_INICIAL")
+	private Boolean PROCESSA_INBOX_INICIAL;
+	@JsonProperty("MOVE_PARA_PASTA_LIDAS")
+	private Boolean MOVE_PARA_PASTA_LIDAS;
+	@JsonProperty("NOME_PASTA_LIDAS")
+	private String NOME_PASTA_LIDAS;
 
 	public Integer getID() {
 		return ID;
@@ -62,6 +68,30 @@ public class GER_CAIXAS_EMAIL {
 
 	public void setATIVA(Boolean aTIVA) {
 		ATIVA = aTIVA;
+	}
+
+	public Boolean getPROCESSA_INBOX_INICIAL() {
+		return PROCESSA_INBOX_INICIAL;
+	}
+
+	public void setPROCESSA_INBOX_INICIAL(Boolean pROCESSA_INBOX_INICIAL) {
+		PROCESSA_INBOX_INICIAL = pROCESSA_INBOX_INICIAL;
+	}
+
+	public Boolean getMOVE_PARA_PASTA_LIDAS() {
+		return MOVE_PARA_PASTA_LIDAS;
+	}
+
+	public String getNOME_PASTA_LIDAS() {
+		return NOME_PASTA_LIDAS;
+	}
+
+	public void setMOVE_PARA_PASTA_LIDAS(Boolean mOVE_PARA_PASTA_LIDAS) {
+		MOVE_PARA_PASTA_LIDAS = mOVE_PARA_PASTA_LIDAS;
+	}
+
+	public void setNOME_PASTA_LIDAS(String nOME_PASTA_LIDAS) {
+		NOME_PASTA_LIDAS = nOME_PASTA_LIDAS;
 	}
 
 }

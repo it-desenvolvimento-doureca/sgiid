@@ -35,8 +35,7 @@ public class RH_DIC_CATEGORIAS_PROFISSIONAIS_LINHADao
 		List<Object[]> all = query.getResultList();
 
 		Query associados = entityManager.createNativeQuery(
-				"SELECT ID_CATEGORIA FROM RH_DIC_CATEGORIAS_PROFISSIONAIS_LINHA WHERE ID_CATEGORIA_PROFISSIONAL = "
-						+ idCategoriaProfissional + "");
+				"SELECT a.ID_CATEGORIA FROM RH_DIC_CATEGORIAS_PROFISSIONAIS_LINHA  a inner join RH_DIC_CATEGORIAS_PROFISSIONAIS b on a.ID_CATEGORIA_PROFISSIONAL = b.ID and b.ATIVO = 1 ");
 		List<String> ids = associados.getResultList();
 
 		return all.stream().filter(row -> {

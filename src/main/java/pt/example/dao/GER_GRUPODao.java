@@ -38,5 +38,18 @@ public class GER_GRUPODao extends GenericDaoJpaImpl<GER_GRUPO, Integer> implemen
 		return data;
 
 	}
+	
+	public List<GER_GRUPO> getall2() {
+
+		Query query = entityManager.createNativeQuery("SELECT g.ID, g.DESCRICAO, STRING_AGG(g.EMAIL, '; ') AS EMAILS "
+				+ "FROM ( SELECT DISTINCT a.ID, a.DESCRICAO, c.EMAIL "
+				+ "FROM GER_GRUPO a "
+				+ "LEFT JOIN GER_GRUPO_UTZ b ON a.ID = b.ID_GRUPO "
+				+ "LEFT JOIN GER_UTILIZADORES c ON b.ID_UTZ = c.ID_UTILIZADOR "
+				+ "WHERE a.INATIVO != 1 ) g GROUP BY g.ID, g.DESCRICAO ORDER BY  DESCRICAO");
+		List<GER_GRUPO> data = query.getResultList();
+		return data;
+
+	}
 
 }

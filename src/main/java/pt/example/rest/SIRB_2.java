@@ -1073,7 +1073,7 @@ public class SIRB_2 {
 				+ ";DECLARE @TIPO varchar(50) = '" + TIPO + "'; " + " DECLARE @ANO int = " + ANO + "; "
 				+ "select a.ID_PLANEAMENTO_PRODUCAO_CAB,CAST(a.DATA_CRIA as date) DATA_CRIA ,a.DATA_MRP,a.N_MRP,a.ID_LINHA,a.ESTADO,a.NUMERO_SEMANAS "
 				+ "from PR_PLANEAMENTO_PRODUCAO_CAB a "
-				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1 AND (((@TIPO = 'Cromagem' ) AND ( a.ID_LINHA in (1,2,3))) OR ((@TIPO = 'Pintura' ) AND ( a.ID_LINHA in (4))))");
+				+ "where DATEPART(iso_week,a.DATA_CRIA) = @SEMANA and YEAR(a.DATA_CRIA) = @ANO and ativo = 1 AND (((@TIPO = 'Cromagem' ) AND ( a.ID_LINHA in (1,2,3))) OR ((@TIPO = 'Pintura' ) AND ( a.ID_LINHA in (4)))) order by a.ID_PLANEAMENTO_PRODUCAO_CAB desc");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1442,9 +1442,15 @@ public class SIRB_2 {
 		String NUMERO_SEMANAS = firstMap.get("NUMERO_SEMANAS");
 		String NOVO = firstMap.get("NOVO");
 		String ID = firstMap.get("ID");
+		String LINHA = firstMap.get("LINHA");
+		
+		if(ID!=null) {
+			ID= "'"+ID+"'";
+		}
+		
 
 		Query query_folder = entityManager.createNativeQuery(
-				"EXEC [GET_SEMANAS_PLANEAMENTO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID);
+				"EXEC [GET_SEMANAS_PLANEAMENTO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + LINHA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1460,9 +1466,18 @@ public class SIRB_2 {
 		String NUMERO_SEMANAS = firstMap.get("NUMERO_SEMANAS");
 		String NOVO = firstMap.get("NOVO");
 		String ID = firstMap.get("ID");
+		String SECCAO = firstMap.get("SECCAO");
+		
+		if(ID!=null) {
+			ID= "'"+ID+"'";
+		}
 
+		if(SECCAO!=null) {
+			SECCAO= "'"+SECCAO+"'";
+		}
+		
 		Query query_folder = entityManager.createNativeQuery(
-				"EXEC [GET_SEMANAS_PLANEAMENTO_OPERACAO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID);
+				"EXEC [GET_SEMANAS_PLANEAMENTO_OPERACAO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + SECCAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1478,9 +1493,18 @@ public class SIRB_2 {
 		String NUMERO_SEMANAS = firstMap.get("NUMERO_SEMANAS");
 		String NOVO = firstMap.get("NOVO");
 		String ID = firstMap.get("ID");
+		String SECCAO = firstMap.get("SECCAO");
 
+		if(ID!=null) {
+			ID= "'"+ID+"'";
+		}
+		
+		if(SECCAO!=null) {
+			SECCAO= "'"+SECCAO+"'";
+		}
+		
 		Query query_folder = entityManager.createNativeQuery(
-				"EXEC [GET_SEMANAS_PLANEAMENTO_SECCAO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID);
+				"EXEC [GET_SEMANAS_PLANEAMENTO_SECCAO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + SECCAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -4600,6 +4624,8 @@ public class SIRB_2 {
 		String SEMANAS = firstMap.get("SEMANAS");
 		String DATA_INCIO = firstMap.get("DATA_INCIO");
 		String DATA_FIM = firstMap.get("DATA_FIM");
+		String EQUIPA = firstMap.get("EQUIPA");
+		String NIVEL_EQUIPAMENTO = firstMap.get("NIVEL_EQUIPAMENTO");
 
 		if (UNIDADE != null)
 			UNIDADE = "'" + UNIDADE + "'";
@@ -4612,10 +4638,13 @@ public class SIRB_2 {
 
 		if (DATA_FIM != null)
 			DATA_FIM = "'" + DATA_FIM + "'";
+		
+		if (EQUIPA != null)
+			EQUIPA = "'" + EQUIPA + "'";
 
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC MAN_GET_ANALISE_PREVENTIVAS_2 " + ANO + "," + UNIDADE + "," + AMBITO + "," + EQUIPAMENTO + ","
-						+ DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO + "," + DATA_FIM);
+						+ DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO + "," + DATA_FIM + "," + NIVEL_EQUIPAMENTO+ "," + EQUIPA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -4636,6 +4665,8 @@ public class SIRB_2 {
 		String SEMANAS = firstMap.get("SEMANAS");
 		String DATA_INCIO = firstMap.get("DATA_INCIO");
 		String DATA_FIM = firstMap.get("DATA_FIM");
+		String EQUIPA = firstMap.get("EQUIPA");
+		String NIVEL_EQUIPAMENTO = firstMap.get("NIVEL_EQUIPAMENTO");
 
 		if (UNIDADE != null)
 			UNIDADE = "'" + UNIDADE + "'";
@@ -4648,10 +4679,13 @@ public class SIRB_2 {
 
 		if (DATA_FIM != null)
 			DATA_FIM = "'" + DATA_FIM + "'";
+		
+		if (EQUIPA != null)
+			EQUIPA = "'" + EQUIPA + "'";
 
 		Query query_folder = entityManager.createNativeQuery(
 				"EXEC MAN_GET_ANALISE_PREDITIVAS " + ANO + "," + UNIDADE + "," + AMBITO + "," + EQUIPAMENTO + ","
-						+ DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO + "," + DATA_FIM);
+						+ DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO + "," + DATA_FIM + "," + NIVEL_EQUIPAMENTO+ "," + EQUIPA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -7396,7 +7430,7 @@ public class SIRB_2 {
 			IP_POSTO = "'" + IP_POSTO + "'";
 
 		Query query_folder = entityManager.createNativeQuery(
-				"SELECT TOP 1 ID,NOME,SECTOR,LINHA,TIPO_POSTO FROM DOC_DIC_POSTOS where IP_POSTO = " + IP_POSTO);
+				"SELECT TOP 1 ID,CASE WHEN MULTIPOSTO = 1 THEN POSTO_ATUAL ELSE NOME END as NOME,SECTOR,LINHA,TIPO_POSTO,MULTIPOSTO,SECCOD,SECLIB FROM DOC_DIC_POSTOS where IP_POSTO = " + IP_POSTO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -8167,6 +8201,29 @@ public class SIRB_2 {
 			IP_POSTO = "'" + IP_POSTO + "'";
 
 		Query query_folder = entityManager.createNativeQuery("EXEC VALIDA_POSTO " + IP_POSTO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
+	@POST
+	@Path("/ATUALIZA_POSTO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> ATUALIZA_POSTO(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String NUM_POSTO = firstMap.get("NUM_POSTO");
+		String IP_POSTO = firstMap.get("IP_POSTO");
+
+		if (NUM_POSTO != null)
+			NUM_POSTO = "'" + NUM_POSTO + "'";
+		
+		
+		if (IP_POSTO != null)
+			IP_POSTO = "'" + IP_POSTO + "'";
+
+		Query query_folder = entityManager.createNativeQuery("EXEC ATUALIZA_POSTO " + NUM_POSTO + "," + IP_POSTO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -9034,13 +9091,25 @@ public class SIRB_2 {
 		String ID = firstMap.get("ID");
 		String USER = firstMap.get("USER");
 
-		Query query_folder = entityManager
+		/*Query query_folder = entityManager
 				.createNativeQuery("INSERT INTO PR_WINROBOT_CARROS  ([NUM_CARRO] ,[DATA_CRIA],[UTZ_CRIA],ID_CAB) "
 						+ "VALUES(:carro,GETDATE(),:user,:id) "
 						+ " UPDATE a SET NUM_CARRO = (select string_agg(b.NUM_CARRO,', ') from PR_WINROBOT_CARROS b where b.ID_CAB = a.ID GROUP BY b.ID_CAB ) FROM PR_WINROBOT_CAB a"
 						+ "	where a.ID = :id ")
-				.setParameter("carro", NUM_CARRO).setParameter("id", ID).setParameter("user", USER);
+				.setParameter("carro", NUM_CARRO).setParameter("id", ID).setParameter("user", USER);*/
 
+		 Query query_folder = entityManager
+		          .createNativeQuery(
+		              "INSERT INTO PR_WINROBOT_CARROS ([NUM_CARRO], [DATA_CRIA], [UTZ_CRIA], ID_CAB) " +
+		              "SELECT :carro, GETDATE(), :user, :id " +
+		              "WHERE NOT EXISTS (SELECT 1 FROM PR_WINROBOT_CARROS WITH (UPDLOCK, HOLDLOCK) " +
+		              "                  WHERE NUM_CARRO = :carro AND ID_CAB = :id); " +
+		              "UPDATE a SET NUM_CARRO = (SELECT STRING_AGG(b.NUM_CARRO, ', ') " +
+		              "                          FROM PR_WINROBOT_CARROS b WHERE b.ID_CAB = a.ID) " +
+		              "FROM PR_WINROBOT_CAB a WHERE a.ID = :id")
+		          .setParameter("carro", NUM_CARRO)
+		          .setParameter("id", ID)
+		          .setParameter("user", USER);
 		/*
 		 * Query query_folder = entityManager.
 		 * createNativeQuery("UPDATE PR_WINROBOT_CAB SET NUM_CARRO = :carro " +

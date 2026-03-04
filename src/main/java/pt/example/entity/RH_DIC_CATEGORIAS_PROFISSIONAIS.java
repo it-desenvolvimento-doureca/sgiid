@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,7 +43,8 @@ public class RH_DIC_CATEGORIAS_PROFISSIONAIS {
     @JsonProperty("ATIVO")
     private Boolean ATIVO;
 
- 
+    @JsonProperty("PERCENTAGEM_MAX_PREMIO")
+	private BigDecimal PERCENTAGEM_MAX_PREMIO;
 
 	public Integer getID() {
 		return ID;

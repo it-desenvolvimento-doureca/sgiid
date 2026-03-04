@@ -61,7 +61,7 @@ public class DOC_FICHA_DOCUMENTOSDao extends GenericDaoJpaImpl<DOC_FICHA_DOCUMEN
 	public List<DOC_FICHA_DOCUMENTOS> getall2() {
 
 		Query query = entityManager.createNativeQuery(
-				"Select  a.ID,a.DATA_CRIA,b.COD_DOCUMENTO,a.REFERENCIA,a.DESC_REFERENCIA,a.COD_MAQUINA,a.DESC_MAQUINA,b.NOME_DOCUMENTO,(select STRING_AGG(x.DES_SECTOR,' | ') from RH_SECTORES x where x.COD_SECTOR in (select value from string_split(a.SECTOR,',')))  as desc_sector from DOC_FICHA_DOCUMENTOS a left join DOC_DOCUMENTOS b on a.ID_FICHEIRO = b.ID where a.INATIVO != 1 ");
+				"Select  a.ID,a.DATA_CRIA,b.COD_DOCUMENTO,a.REFERENCIA,a.DESC_REFERENCIA,a.COD_MAQUINA,a.DESC_MAQUINA,b.NOME_DOCUMENTO,(select STRING_AGG(x.DES_SECTOR,' | ') from RH_SECTORES x where x.COD_SECTOR in (select value from string_split(a.SECTOR,',')))  as desc_sector,a.DATA_INICIO,a.DATA_FIM from DOC_FICHA_DOCUMENTOS a left join DOC_DOCUMENTOS b on a.ID_FICHEIRO = b.ID where a.INATIVO != 1 ");
 		List<DOC_FICHA_DOCUMENTOS> data = query.getResultList();
 		return data;
 

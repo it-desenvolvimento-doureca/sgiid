@@ -41,6 +41,14 @@ public class DOC_DIC_POSTOS {
 	private String IMPRESSORA;
 	@JsonProperty("ID_MAQUINA")
 	private Integer ID_MAQUINA;
+	@JsonProperty("MULTIPOSTO")
+	private Boolean MULTIPOSTO;
+	@JsonProperty("POSTO_ATUAL")
+	private String POSTO_ATUAL;
+	@JsonProperty("SECCOD")
+	private String SECCOD;
+	@JsonProperty("SECLIB")
+	private String SECLIB;
 
 	public Integer getID() {
 		return ID;
@@ -136,6 +144,38 @@ public class DOC_DIC_POSTOS {
 
 	public void setID_MAQUINA(Integer iD_MAQUINA) {
 		ID_MAQUINA = iD_MAQUINA;
+	}
+
+	public Boolean getMULTIPOSTO() {
+		return MULTIPOSTO;
+	}
+
+	public String getPOSTO_ATUAL() {
+		return POSTO_ATUAL;
+	}
+
+	public void setMULTIPOSTO(Boolean mULTIPOSTO) {
+		MULTIPOSTO = mULTIPOSTO;
+	}
+
+	public void setPOSTO_ATUAL(String pOSTO_ATUAL) {
+		POSTO_ATUAL = pOSTO_ATUAL;
+	}
+
+	public String getSECCOD() {
+		return SECCOD;
+	}
+
+	public String getSECLIB() {
+		return SECLIB;
+	}
+
+	public void setSECCOD(String sECCOD) {
+		SECCOD = sECCOD;
+	}
+
+	public void setSECLIB(String sECLIB) {
+		SECLIB = sECLIB;
 	}
 
 }

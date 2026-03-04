@@ -188,7 +188,7 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ " /*and((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') ))*/ "
 						+ query_where + " "
 						+ "AND ( (a.ESTADO = 'P' AND a.ID_PLANO_CAB in (select pa.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS pa inner join PE_MOV_CAB pb on pa.ID_PLANO_ESTRATEGICO = pb.ID  WHERE pb.ANO_PLANO !=  @ano AND pa.ID_PLANO_ESTRATEGICO != @id_plano))"
-						+ " or (select count(xa.ID_PLANO_CAB) from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_CAB = a.ID_PLANO_CAB) = 0 )"
+						+ " or ((select count(xa.ID_PLANO_CAB) from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_CAB = a.ID_PLANO_CAB) = 0 ) and a.ESTADO in ('P','EX') )"
 						+ " and a.ID_PLANO_CAB not in (select xa.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_ESTRATEGICO = @id_plano) and a.ESTADO not in ('A','E') "
 						+ "order by a.DATA_CRIA asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
 		List<PA_MOV_CAB> data = query.getResultList();

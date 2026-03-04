@@ -43,6 +43,10 @@ public class PE_MOV_CAB {
 	private Integer ANO_PLANO;
 	@JsonProperty("TIPO")
 	private String TIPO;
+	@JsonProperty("DATA_FECHA")
+	private Timestamp DATA_FECHA;
+	@JsonProperty("UTZ_FECHA")
+	private Integer UTZ_FECHA;
 	
 	public Integer getID() {
 		return ID;
@@ -147,5 +151,23 @@ public class PE_MOV_CAB {
 	public void setTIPO(String tIPO) {
 		TIPO = tIPO;
 	}
+
+	public Timestamp getDATA_FECHA() {
+		return DATA_FECHA;
+	}
+
+	public Integer getUTZ_FECHA() {
+		return UTZ_FECHA;
+	}
+
+	public void setDATA_FECHA(Timestamp dATA_FECHA) {
+		DATA_FECHA = dATA_FECHA;
+	}
+
+	public void setUTZ_FECHA(Integer uTZ_FECHA) {
+		UTZ_FECHA = uTZ_FECHA;
+	}
+	
+	
 
 }

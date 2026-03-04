@@ -45,6 +45,15 @@ public class RH_AVALIACAO_DESEMPENHO {
 	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
 
+	@JsonProperty("TIPO")
+	private String TIPO;
+
+	@JsonProperty("DATA_INICIO")
+	private Date DATA_INICIO;
+
+	@JsonProperty("DATA_FIM")
+	private Date DATA_FIM;
+
 	public Integer getID() {
 		return ID;
 	}
@@ -115,6 +124,30 @@ public class RH_AVALIACAO_DESEMPENHO {
 
 	public void setATIVO(Boolean aTIVO) {
 		ATIVO = aTIVO;
+	}
+
+	public String getTIPO() {
+		return TIPO;
+	}
+
+	public void setTIPO(String tIPO) {
+		TIPO = tIPO;
+	}
+
+	public Date getDATA_INICIO() {
+		return DATA_INICIO;
+	}
+
+	public Date getDATA_FIM() {
+		return DATA_FIM;
+	}
+
+	public void setDATA_INICIO(Date dATA_INICIO) {
+		DATA_INICIO = dATA_INICIO;
+	}
+
+	public void setDATA_FIM(Date dATA_FIM) {
+		DATA_FIM = dATA_FIM;
 	}
 
 }

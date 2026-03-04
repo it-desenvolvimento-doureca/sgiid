@@ -22,9 +22,9 @@ public class RH_DIC_AVALIACAO_CATEGORIA {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("ID")
+	@JsonProperty("ID")
 	private Integer ID;
-	
+
 	@JsonProperty("VALOR_AVALIACAO_DESEMPENHO")
 	private BigDecimal VALOR_AVALIACAO_DESEMPENHO;
 
@@ -50,8 +50,8 @@ public class RH_DIC_AVALIACAO_CATEGORIA {
 	private Timestamp DATA_CRIA;
 
 	@ManyToOne
-	@JoinColumn(name = "ID_CATEGORIA")
-	private RH_DIC_CATEGORIAS_PROFISSIONAIS categoria;
+	@JoinColumn(name = "ID_GRUPO")
+	private RH_DIC_GRUPOS_COLABORADORES grupo;
 
 	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
@@ -72,16 +72,16 @@ public class RH_DIC_AVALIACAO_CATEGORIA {
 	private Boolean ATIVO;
 
 	// Setter auxiliar para aceitar ID direto no JSON
-	@JsonProperty("ID_CATEGORIA")
-	public void setID_CATEGORIA(Integer id) {
-		this.categoria = new RH_DIC_CATEGORIAS_PROFISSIONAIS();
-		this.categoria.setID(id);
+	@JsonProperty("ID_GRUPO")
+	public void setID_GRUPO(Integer id) {
+		this.grupo = new RH_DIC_GRUPOS_COLABORADORES();
+		this.grupo.setID(id);
 	}
 
 	// Getter opcional se quiseres expor o ID no JSON de saída
-	@JsonProperty("ID_CATEGORIA")
-	public Integer getID_CATEGORIA() {
-		return categoria != null ? categoria.getID() : null;
+	@JsonProperty("ID_GRUPO")
+	public Integer getID_GRUPO() {
+		return grupo != null ? grupo.getID() : null;
 	}
 
 	public Integer getID() {
@@ -116,8 +116,8 @@ public class RH_DIC_AVALIACAO_CATEGORIA {
 		return DATA_CRIA;
 	}
 
-	public RH_DIC_CATEGORIAS_PROFISSIONAIS getCategoria() {
-		return categoria;
+	public RH_DIC_GRUPOS_COLABORADORES getGrupo() {
+		return grupo;
 	}
 
 	public Integer getUTZ_CRIA() {
@@ -176,8 +176,8 @@ public class RH_DIC_AVALIACAO_CATEGORIA {
 		DATA_CRIA = dATA_CRIA;
 	}
 
-	public void setCategoria(RH_DIC_CATEGORIAS_PROFISSIONAIS categoria) {
-		this.categoria = categoria;
+	public void setGrupo(RH_DIC_GRUPOS_COLABORADORES grupo) {
+		this.grupo = grupo;
 	}
 
 	public void setUTZ_CRIA(Integer uTZ_CRIA) {
@@ -211,7 +211,5 @@ public class RH_DIC_AVALIACAO_CATEGORIA {
 	public void setVALOR_AVALIACAO_DESEMPENHO(BigDecimal vALOR_AVALIACAO_DESEMPENHO) {
 		VALOR_AVALIACAO_DESEMPENHO = vALOR_AVALIACAO_DESEMPENHO;
 	}
-	
-	
 
 }

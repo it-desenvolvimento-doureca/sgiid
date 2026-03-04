@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -53,6 +54,10 @@ public class DOC_FICHA_DOCUMENTOS {
 	private Boolean INATIVO;
 	@JsonProperty("ID_FICHEIRO")
 	private Integer ID_FICHEIRO;
+	@JsonProperty("DATA_INICIO")
+	private Date DATA_INICIO;
+	@JsonProperty("DATA_FIM")
+	private Date DATA_FIM;
 
 	public Integer getID() {
 		return ID;
@@ -196,6 +201,22 @@ public class DOC_FICHA_DOCUMENTOS {
 
 	public void setID_FICHEIRO(Integer iD_FICHEIRO) {
 		ID_FICHEIRO = iD_FICHEIRO;
+	}
+
+	public Date getDATA_INICIO() {
+		return DATA_INICIO;
+	}
+
+	public Date getDATA_FIM() {
+		return DATA_FIM;
+	}
+
+	public void setDATA_INICIO(Date dATA_INICIO) {
+		DATA_INICIO = dATA_INICIO;
+	}
+
+	public void setDATA_FIM(Date dATA_FIM) {
+		DATA_FIM = dATA_FIM;
 	}
 
 }

@@ -31,6 +31,9 @@ public class RH_AVALIACAO_DESEMPENHO_LINHAS {
 	@JsonProperty("GRUPO_COLABORADORES")
 	private String GRUPO_COLABORADORES;
 
+	@JsonProperty("ID_GRUPO_COLABORADORES")
+	private Integer ID_GRUPO_COLABORADORES;
+
 	@JsonProperty("NUMERO_FUNCIONARIO")
 	private String NUMERO_FUNCIONARIO;
 
@@ -60,6 +63,9 @@ public class RH_AVALIACAO_DESEMPENHO_LINHAS {
 
 	@JsonProperty("VENCIMENTO_ANUAL")
 	private BigDecimal VENCIMENTO_ANUAL;
+
+	@JsonProperty("VENCIMENTO")
+	private BigDecimal VENCIMENTO;
 
 	@JsonProperty("PERCENTUAL_VENCIMENTO_ANUAL")
 	private BigDecimal PERCENTUAL_VENCIMENTO_ANUAL;
@@ -133,6 +139,9 @@ public class RH_AVALIACAO_DESEMPENHO_LINHAS {
 	@JsonProperty("PONTUACAO_FINAL")
 	private BigDecimal PONTUACAO_FINAL;
 
+	@JsonProperty("PONTUACAO_FINAL_PERC")
+	private BigDecimal PONTUACAO_FINAL_PERC;
+
 	@JsonProperty("LIMITE_MAXIMO_PREMIO_PCT")
 	private BigDecimal LIMITE_MAXIMO_PREMIO_PCT;
 
@@ -140,7 +149,7 @@ public class RH_AVALIACAO_DESEMPENHO_LINHAS {
 	private BigDecimal VALOR_MAXIMO_PREMIO;
 
 	@JsonProperty("MESES_TRABALHADOS")
-	private Integer MESES_TRABALHADOS;
+	private BigDecimal MESES_TRABALHADOS;
 
 	@JsonProperty("PREMIO_PCT")
 	private BigDecimal PREMIO_PCT;
@@ -150,6 +159,12 @@ public class RH_AVALIACAO_DESEMPENHO_LINHAS {
 
 	@JsonProperty("VALOR_PREMIO_GRUPO")
 	private BigDecimal VALOR_PREMIO_GRUPO;
+
+	@JsonProperty("VALOR_PREMIO_ANO_ANTERIOR")
+	private BigDecimal VALOR_PREMIO_ANO_ANTERIOR;
+	
+	@JsonProperty("VALOR_PREMIO_CORRIGIDO")
+	private BigDecimal VALOR_PREMIO_CORRIGIDO;
 
 	public Integer getID() {
 		return ID;
@@ -311,7 +326,7 @@ public class RH_AVALIACAO_DESEMPENHO_LINHAS {
 		return VALOR_MAXIMO_PREMIO;
 	}
 
-	public Integer getMESES_TRABALHADOS() {
+	public BigDecimal getMESES_TRABALHADOS() {
 		return MESES_TRABALHADOS;
 	}
 
@@ -483,7 +498,7 @@ public class RH_AVALIACAO_DESEMPENHO_LINHAS {
 		VALOR_MAXIMO_PREMIO = vALOR_MAXIMO_PREMIO;
 	}
 
-	public void setMESES_TRABALHADOS(Integer mESES_TRABALHADOS) {
+	public void setMESES_TRABALHADOS(BigDecimal mESES_TRABALHADOS) {
 		MESES_TRABALHADOS = mESES_TRABALHADOS;
 	}
 
@@ -501,6 +516,46 @@ public class RH_AVALIACAO_DESEMPENHO_LINHAS {
 
 	public void setVALOR_PREMIO_GRUPO(BigDecimal vALOR_PREMIO_GRUPO) {
 		VALOR_PREMIO_GRUPO = vALOR_PREMIO_GRUPO;
+	}
+
+	public BigDecimal getVENCIMENTO() {
+		return VENCIMENTO;
+	}
+
+	public void setVENCIMENTO(BigDecimal vENCIMENTO) {
+		VENCIMENTO = vENCIMENTO;
+	}
+
+	public Integer getID_GRUPO_COLABORADORES() {
+		return ID_GRUPO_COLABORADORES;
+	}
+
+	public void setID_GRUPO_COLABORADORES(Integer iD_GRUPO_COLABORADORES) {
+		ID_GRUPO_COLABORADORES = iD_GRUPO_COLABORADORES;
+	}
+
+	public BigDecimal getPONTUACAO_FINAL_PERC() {
+		return PONTUACAO_FINAL_PERC;
+	}
+
+	public void setPONTUACAO_FINAL_PERC(BigDecimal pONTUACAO_FINAL_PERC) {
+		PONTUACAO_FINAL_PERC = pONTUACAO_FINAL_PERC;
+	}
+
+	public BigDecimal getVALOR_PREMIO_ANO_ANTERIOR() {
+		return VALOR_PREMIO_ANO_ANTERIOR;
+	}
+
+	public void setVALOR_PREMIO_ANO_ANTERIOR(BigDecimal vALOR_PREMIO_ANO_ANTERIOR) {
+		VALOR_PREMIO_ANO_ANTERIOR = vALOR_PREMIO_ANO_ANTERIOR;
+	}
+
+	public BigDecimal getVALOR_PREMIO_CORRIGIDO() {
+		return VALOR_PREMIO_CORRIGIDO;
+	}
+
+	public void setVALOR_PREMIO_CORRIGIDO(BigDecimal vALOR_PREMIO_CORRIGIDO) {
+		VALOR_PREMIO_CORRIGIDO = vALOR_PREMIO_CORRIGIDO;
 	}
 
 }

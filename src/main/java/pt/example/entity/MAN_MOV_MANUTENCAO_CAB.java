@@ -87,6 +87,8 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	private Integer PERCENTAGEM_CONCLUSAO;
 	@JsonProperty("ORIGEM")
 	private String ORIGEM;
+	@JsonProperty("NIVEL")
+	private Integer NIVEL;
 
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
@@ -358,6 +360,14 @@ public class MAN_MOV_MANUTENCAO_CAB {
 
 	public void setORIGEM(String oRIGEM) {
 		ORIGEM = oRIGEM;
+	}
+
+	public Integer getNIVEL() {
+		return NIVEL;
+	}
+
+	public void setNIVEL(Integer nIVEL) {
+		NIVEL = nIVEL;
 	}
 
 	

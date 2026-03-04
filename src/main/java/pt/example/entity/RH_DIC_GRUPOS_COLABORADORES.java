@@ -1,5 +1,6 @@
 package pt.example.entity;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
@@ -14,37 +15,36 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table(name = "RH_DIC_GRUPOS_COLABORADORES")
 public class RH_DIC_GRUPOS_COLABORADORES {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("ID")
-    private Integer ID;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonProperty("ID")
+	private Integer ID;
 
-    @JsonProperty("NOME")
-    private String NOME;
+	@JsonProperty("NOME")
+	private String NOME;
 
-    @JsonProperty("DATA_CRIA")
-    private Timestamp DATA_CRIA;
+	@JsonProperty("DATA_CRIA")
+	private Timestamp DATA_CRIA;
 
-    @JsonProperty("UTZ_CRIA")
-    private Integer UTZ_CRIA;
+	@JsonProperty("UTZ_CRIA")
+	private Integer UTZ_CRIA;
 
-    @JsonProperty("DATA_MODIF")
-    private Timestamp DATA_MODIF;
+	@JsonProperty("DATA_MODIF")
+	private Timestamp DATA_MODIF;
 
-    @JsonProperty("UTZ_MODIF")
-    private Integer UTZ_MODIF;
+	@JsonProperty("UTZ_MODIF")
+	private Integer UTZ_MODIF;
 
-    @JsonProperty("DATA_ANULA")
-    private Timestamp DATA_ANULA;
+	@JsonProperty("DATA_ANULA")
+	private Timestamp DATA_ANULA;
 
-    @JsonProperty("UTZ_ANULA")
-    private Integer UTZ_ANULA;
+	@JsonProperty("UTZ_ANULA")
+	private Integer UTZ_ANULA;
 
-    @JsonProperty("ATIVO")
-    private Boolean ATIVO;
+	@JsonProperty("ATIVO")
+	private Boolean ATIVO;
 
- 
-
+	 
 	public Integer getID() {
 		return ID;
 	}
@@ -80,7 +80,6 @@ public class RH_DIC_GRUPOS_COLABORADORES {
 	public Boolean getATIVO() {
 		return ATIVO;
 	}
- 
 
 	public void setID(Integer iD) {
 		ID = iD;
@@ -118,6 +117,4 @@ public class RH_DIC_GRUPOS_COLABORADORES {
 		ATIVO = aTIVO;
 	}
  
-    
-    
 }

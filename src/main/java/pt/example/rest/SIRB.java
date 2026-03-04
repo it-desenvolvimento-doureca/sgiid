@@ -1350,6 +1350,8 @@ public class SIRB {
 		HashMap<String, String> firstMap = dados.get(0);
 		String LIECOD = firstMap.get("ARMAZENS");
 
+		String LIECOD_ = firstMap.get("ARMAZENS") == null ? null : "LIECOD";
+
 		Query query_folder = entityManager.createNativeQuery(
 				"SELECT e.proref CodRef, a.prodes1 DesRef,e.etqorilot1 Lote, e.etqnum NumEtiq, e.etqembqte QuantEtiq, e.liecod Armazem, e.empcod Localiz,"
 						+ "b.UTZ_CRIA,c.NOME 'OPERARIO',d.COD_SECTOR,d.DES_SECTOR 'SECTOR', b.DATA_CRIA,CONCAT(b.COD_SECTOR_OF, + ' - ' + b.DES_SECTOR_OF) 'SECTOR_OF',p.DESCRICAO 'POSTO' "
@@ -1358,8 +1360,8 @@ public class SIRB {
 						+ "LEFT JOIN RH_FUNCIONARIOS c on b.UTZ_CRIA = c.COD_FUNCIONARIO "
 						+ "LEFT JOIN RH_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
 						+ "LEFT JOIN GER_POSTOS p on p.IP_IMPRESSORA = b.IP_POSTO "
-						+ "WHERE e.etqsitsto=2 AND e.etqetat=1 AND ((not " + LIECOD + " is not null) or (e.LIECOD  in ("
-						+ LIECOD + ") )) ORDER BY b.DATA_CRIA,e.etqnum");
+						+ "WHERE e.etqsitsto=2 AND e.etqetat=1 AND ((not " + LIECOD_
+						+ " is not null) or (e.LIECOD  in (" + LIECOD + ") )) ORDER BY b.DATA_CRIA,e.etqnum");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -2957,12 +2959,16 @@ public class SIRB {
 		String data1 = firstMap.get("DATA1");
 		String data2 = firstMap.get("DATA2");
 		String Ativo = firstMap.get("ATIVO");
+		String hora1 = firstMap.get("HORA1");
+		String hora2 = firstMap.get("HORA2");
 		String OPERARIO = firstMap.get("OPERARIO");
 		String SECTOR_ACESSO = firstMap.get("SECTOR_ACESSO");
+		String SECTOR = firstMap.get("SECTOR");
+		
 		if (OPERARIO.isEmpty())
 			OPERARIO = null;
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
-		return dao63.getProdutividade_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN);
+		return dao63.getProdutividade_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN,hora1,hora2,SECTOR);
 	}
 
 	@POST
@@ -2973,6 +2979,8 @@ public class SIRB {
 
 		String data1 = firstMap.get("DATA1");
 		String data2 = firstMap.get("DATA2");
+		String hora1 = firstMap.get("HORA1");
+		String hora2 = firstMap.get("HORA2");
 		String Ativo = firstMap.get("ATIVO");
 		String OPERARIO = firstMap.get("OPERARIO");
 		String SECTOR_ACESSO = firstMap.get("SECTOR_ACESSO");
@@ -2981,7 +2989,7 @@ public class SIRB {
 		if (OPERARIO.isEmpty())
 			OPERARIO = null;
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
-		return dao63.getOperacoes_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR);
+		return dao63.getOperacoes_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR,hora1,hora2);
 	}
 
 	@POST
@@ -3351,6 +3359,18 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getFamilias(getURLSILVER());
 		return dados;
 	}
+	
+
+	@GET
+	@Path("/getSeccoes_")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getSeccoes() throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getSeccoes(getURLSILVER());
+		return dados;
+	}
 
 	@GET
 	@Path("/getDefeitos")
@@ -3472,6 +3492,18 @@ public class SIRB {
 		String referencia = java.net.URLDecoder.decode(proref);
 		ConnectProgress connectionProgress = new ConnectProgress();
 		List<HashMap<String, String>> dados = connectionProgress.getReferencia(referencia, getURLSILVER());
+		return dados;
+	}
+	
+	@GET
+	@Path("/getEtiqueta/{etiqueta}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getEtiqueta(@PathParam("etiqueta") String etiqueta)
+			throws SQLException, ClassNotFoundException {
+
+		ConnectProgress connectionProgress = new ConnectProgress();
+
+		List<HashMap<String, String>> dados = connectionProgress.getEtiqueta(etiqueta, getURLSILVER());
 		return dados;
 	}
 
@@ -7813,6 +7845,18 @@ public class SIRB {
 
 		List<Object[]> dados = query.getResultList();
 
+		if (dados.size() == 0) {
+			String sql = "UPDATE REU_REUNIOES_PLANOS_ACCOES  SET ID_TAREFA = (   SELECT TOP 1 ID_TAREFA "
+					+ "   FROM GT_MOV_TAREFAS x WHERE x.ID_MODULO = 19  AND x.SUB_MODULO = 'R' "
+					+ "     AND x.ID_CAMPO = ID )  WHERE ID_TAREFA IS NULL  AND ID = ?";
+
+			Query query_ = entityManager.createNativeQuery(sql);
+			query_.setParameter(1, id);
+			query_.executeUpdate();
+
+			return;
+		}
+
 		for (Object[] content : dados) {
 			String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + content[0].toString() + "," + modulo + ",'R'";
 
@@ -8241,6 +8285,13 @@ public class SIRB {
 	@Produces("application/json")
 	public List<GER_GRUPO> getGER_GRUPO() {
 		return dao52.getall();
+	}
+
+	@GET
+	@Path("/getGER_GRUPO2")
+	@Produces("application/json")
+	public List<GER_GRUPO> getGER_GRUPO2() {
+		return dao52.getall2();
 	}
 
 	@GET
@@ -10769,8 +10820,8 @@ public class SIRB {
 	@Produces("application/json")
 	public int atualizarestadosDosificadores(@PathParam("id") Integer id) {
 
-		Query query = entityManager.createNativeQuery("DECLARE @ID int = 69937 ; "
-				+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO = " + id
+		Query query = entityManager.createNativeQuery("DECLARE @ID int = " + id + " "
+				+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO =  @ID" 
 				+ " and (select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO =  @ID and INATIVO != 1 ) = "
 				+ "(select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO = @ID and DATA_EXECUCAO is not null and INATIVO != 1) "
 				+ "and (select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO = @ID and INATIVO != 1 ) > 0");

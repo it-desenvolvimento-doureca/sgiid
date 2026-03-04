@@ -33,7 +33,7 @@ public class RH_DIC_GRUPOS_COLABORADORES_LINHADao extends GenericDaoJpaImpl<RH_D
 	        "FROM RH_FUNCIONARIOS f " +
 	        "WHERE f.COD_FUNC_ORIGEM NOT IN ( " +
 	        "    SELECT l.COD_FUNC FROM RH_DIC_GRUPOS_COLABORADORES_LINHA l WHERE l.ID_GRUPO_COLABORADORES = @ID " +
-	        ") " +
+	        ") and ISNULL(f.DIRECAO,0) = 0" +
 	        "ORDER BY f.NOME"
 	    );
 	    return query.getResultList();
@@ -42,7 +42,7 @@ public class RH_DIC_GRUPOS_COLABORADORES_LINHADao extends GenericDaoJpaImpl<RH_D
 	public List<Object[]> getColaboradoresGrupos(Integer idGrupo) {
 	    Query query = entityManager.createNativeQuery(
 	        "DECLARE @ID INT = " + idGrupo + " " +
-	        "SELECT RIGHT(CONCAT('00000', f.COD_FUNC_ORIGEM), 5) AS COD_FUNC, f.* " +
+	        "SELECT RIGHT(CONCAT('00000', f.COD_FUNC_ORIGEM), 5) AS COD_FUNC,l.id , f.NOME " +
 	        "FROM RH_DIC_GRUPOS_COLABORADORES_LINHA l " +
 	        "INNER JOIN RH_FUNCIONARIOS f ON l.COD_FUNC = RIGHT(CONCAT('00000', f.COD_FUNC_ORIGEM), 5) " +
 	        "WHERE l.ID_GRUPO_COLABORADORES = @ID " +
