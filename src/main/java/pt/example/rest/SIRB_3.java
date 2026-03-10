@@ -252,6 +252,10 @@ public class SIRB_3 {
 	private RH_DIC_TIPOS_FALTAS_LINHADao dao100;
 	@Inject
 	private RH_DIC_TIPOS_GRATIFICACOES_LINHADao dao101;
+	@Inject
+	private PIN_PLANO_DIARIO_PINTURADao dao102;
+	@Inject
+	private PIN_PLANO_DIARIO_PINTURA_LINHASDao dao103;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -7812,5 +7816,146 @@ public class SIRB_3 {
 	@Produces("application/json")
 	public List<Object[]> getGratificacoesAll() {
 		return dao101.getGRATIFICACAOsAll();
+	}
+
+	/************************************* PIN_PLANO_DIARIO_PINTURA */
+	@POST
+	@Path("/createPIN_PLANO_DIARIO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_PLANO_DIARIO_PINTURA createPIN_PLANO_DIARIO_PINTURA(final PIN_PLANO_DIARIO_PINTURA data) {
+		return dao102.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_PLANO_DIARIO_PINTURAbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_PLANO_DIARIO_PINTURA> getPIN_PLANO_DIARIO_PINTURAbyid(@PathParam("id") Integer id) {
+		return dao102.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_PLANO_DIARIO_PINTURA")
+	@Produces("application/json")
+	public List<PIN_PLANO_DIARIO_PINTURA> getPIN_PLANO_DIARIO_PINTURA() {
+		return dao102.getall();
+	}
+
+	@GET
+	@Path("/getPIN_PLANO_DIARIO_PINTURA2")
+	@Produces("application/json")
+	public List<Object[]> getPIN_PLANO_DIARIO_PINTURA2() {
+		Query query = entityManager.createNativeQuery(
+				"SELECT p.ID_PLANO_DIARIO_PINTURA, p.ANO, p.SEMANA, p.ID_PLANO, p.DATA_CRIA, u.NOME_UTILIZADOR "
+						+ "FROM PIN_PLANO_DIARIO_PINTURA p "
+						+ "LEFT JOIN GER_UTILIZADORES u ON p.UTZ_CRIA = u.ID_UTILIZADOR "
+						+ "WHERE p.ATIVO = 1 "
+						+ "ORDER BY p.DATA_CRIA DESC");
+		return query.getResultList();
+	}
+
+	@DELETE
+	@Path("/deletePIN_PLANO_DIARIO_PINTURA/{id}")
+	public void deletePIN_PLANO_DIARIO_PINTURA(@PathParam("id") Integer id) {
+		PIN_PLANO_DIARIO_PINTURA obj = new PIN_PLANO_DIARIO_PINTURA();
+		obj.setID_PLANO_DIARIO_PINTURA(id);
+		dao102.delete(obj);
+	}
+
+	@PUT
+	@Path("/updatePIN_PLANO_DIARIO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_PLANO_DIARIO_PINTURA updatePIN_PLANO_DIARIO_PINTURA(final PIN_PLANO_DIARIO_PINTURA data) {
+		data.setID_PLANO_DIARIO_PINTURA(data.getID_PLANO_DIARIO_PINTURA());
+		return dao102.update(data);
+	}
+
+	@POST
+	@Path("/GET_PLANO_DIARIO_BY_PLANO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> GET_PLANO_DIARIO_BY_PLANO(final PIN_PLANO_DIARIO_PINTURA data) {
+		Query query = entityManager.createNativeQuery(
+				"SELECT p.ID_PLANO_DIARIO_PINTURA, p.ANO, p.SEMANA, p.ID_PLANO, p.DATA_CRIA, p.UTZ_CRIA, p.ATIVO "
+						+ "FROM PIN_PLANO_DIARIO_PINTURA p "
+						+ "WHERE p.ANO = :ano AND p.SEMANA = :semana AND p.ID_PLANO = :idPlano AND p.ATIVO = 1");
+		query.setParameter("ano", data.getANO());
+		query.setParameter("semana", data.getSEMANA());
+		query.setParameter("idPlano", data.getID_PLANO());
+		return query.getResultList();
+	}
+
+	/************************************* PIN_PLANO_DIARIO_PINTURA_LINHAS */
+	@POST
+	@Path("/createPIN_PLANO_DIARIO_PINTURA_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_PLANO_DIARIO_PINTURA_LINHAS createPIN_PLANO_DIARIO_PINTURA_LINHAS(
+			final PIN_PLANO_DIARIO_PINTURA_LINHAS data) {
+		return dao103.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_PLANO_DIARIO_PINTURA_LINHASbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_PLANO_DIARIO_PINTURA_LINHAS> getPIN_PLANO_DIARIO_PINTURA_LINHASbyid(
+			@PathParam("id") Integer id) {
+		return dao103.getbyid(id);
+	}
+
+	@GET
+	@Path("/getPIN_PLANO_DIARIO_PINTURA_LINHAS")
+	@Produces("application/json")
+	public List<PIN_PLANO_DIARIO_PINTURA_LINHAS> getPIN_PLANO_DIARIO_PINTURA_LINHAS() {
+		return dao103.getall();
+	}
+
+	@DELETE
+	@Path("/deletePIN_PLANO_DIARIO_PINTURA_LINHAS/{id}")
+	public void deletePIN_PLANO_DIARIO_PINTURA_LINHAS(@PathParam("id") Integer id) {
+		PIN_PLANO_DIARIO_PINTURA_LINHAS obj = new PIN_PLANO_DIARIO_PINTURA_LINHAS();
+		obj.setID_PLANO_DIARIO_PINTURA_LINHA(id);
+		dao103.delete(obj);
+	}
+
+	@PUT
+	@Path("/updatePIN_PLANO_DIARIO_PINTURA_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_PLANO_DIARIO_PINTURA_LINHAS updatePIN_PLANO_DIARIO_PINTURA_LINHAS(
+			final PIN_PLANO_DIARIO_PINTURA_LINHAS data) {
+		data.setID_PLANO_DIARIO_PINTURA_LINHA(data.getID_PLANO_DIARIO_PINTURA_LINHA());
+		return dao103.update(data);
+	}
+
+	@GET
+	@Path("/GET_LINHAS_BY_PLANO_DIARIO/{id}")
+	@Produces("application/json")
+	public List<PIN_PLANO_DIARIO_PINTURA_LINHAS> GET_LINHAS_BY_PLANO_DIARIO(@PathParam("id") Integer id) {
+		return dao103.getByPlanoDiario(id);
+	}
+
+	@POST
+	@Path("/GRAVAR_PLANO_DIARIO_PINTURA_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<PIN_PLANO_DIARIO_PINTURA_LINHAS> GRAVAR_PLANO_DIARIO_PINTURA_LINHAS(
+			final List<PIN_PLANO_DIARIO_PINTURA_LINHAS> linhas) {
+		List<PIN_PLANO_DIARIO_PINTURA_LINHAS> result = new ArrayList<>();
+		if (linhas != null && !linhas.isEmpty()) {
+			Integer idPlanoDiario = linhas.get(0).getID_PLANO_DIARIO_PINTURA();
+			// Apagar linhas existentes do plano diário
+			Query deleteQuery = entityManager.createQuery(
+					"DELETE FROM PIN_PLANO_DIARIO_PINTURA_LINHAS a WHERE a.ID_PLANO_DIARIO_PINTURA = :id");
+			deleteQuery.setParameter("id", idPlanoDiario);
+			deleteQuery.executeUpdate();
+			// Inserir novas linhas
+			for (PIN_PLANO_DIARIO_PINTURA_LINHAS linha : linhas) {
+				linha.setID_PLANO_DIARIO_PINTURA_LINHA(null);
+				result.add(dao103.create(linha));
+			}
+		}
+		return result;
 	}
 }

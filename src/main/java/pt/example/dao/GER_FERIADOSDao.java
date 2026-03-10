@@ -31,7 +31,7 @@ public class GER_FERIADOSDao extends GenericDaoJpaImpl<GER_FERIADOS, Integer>
 	
 	public List<GER_FERIADOS> getbyAno(Integer ano) {
 
-		Query query = entityManager.createQuery("Select a from GER_FERIADOS a where a.ANO = :ano");
+		Query query = entityManager.createQuery("Select a from GER_FERIADOS a where YEAR(a.DATA) = :ano");
 		query.setParameter("ano", ano);
 		List<GER_FERIADOS> data = query.getResultList();
 		return data;

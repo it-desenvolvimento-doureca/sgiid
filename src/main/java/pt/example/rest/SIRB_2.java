@@ -759,6 +759,24 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
+	@POST
+	@Path("/getPR_PLANEAMENTO_PRODUCAO_LINHAS_RECEITAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> getPR_PLANEAMENTO_PRODUCAO_LINHAS_RECEITAS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID_PLANEAMENTO_PRODUCAO_CAB = firstMap.get("ID_PLANEAMENTO_PRODUCAO_CAB");
+		String SEMANA = firstMap.get("SEMANA");
+		String ANO = firstMap.get("ANO"); 
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PR_PLANEAMENTO_PRODUCAO_LINHAS_RECEITAS] "
+				+ ID_PLANEAMENTO_PRODUCAO_CAB + "," + SEMANA + ","+ANO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
 	@GET
 	@Path("/getPR_PLANEAMENTO_PRODUCAO_LINHAS_BASE_COR")
 	@Consumes("*/*")
@@ -1080,6 +1098,28 @@ public class SIRB_2 {
 		return dados_folder;
 	}
 
+	@POST
+	@Path("/GET_PLANOS_PRIMEIRA_SEMANA")
+	@Produces("application/json")
+	public List<Object[]> GET_PLANOS_PRIMEIRA_SEMANA(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String SEMANA = firstMap.get("SEMANA");
+		String TIPO = firstMap.get("TIPO");
+
+		Query query_folder = entityManager.createNativeQuery("DECLARE @SEMANA int = " + SEMANA
+				+ ";DECLARE @TIPO varchar(50) = '" + TIPO + "'; " + " DECLARE @ANO int = " + ANO + "; "
+				+ "select a.ID_PLANEAMENTO_PRODUCAO_CAB,CAST(a.DATA_CRIA as date) DATA_CRIA ,a.DATA_MRP,a.N_MRP,a.ID_LINHA,a.ESTADO,a.NUMERO_SEMANAS "
+				+ "from PR_PLANEAMENTO_PRODUCAO_CAB a "
+				+ "where CAST((SELECT MIN(CAST(value AS INT)) FROM STRING_SPLIT(SEMANAS, ',')) AS INT) = @SEMANA "
+				+ "and YEAR(DATEADD(DAY, 4 - ((DATEPART(WEEKDAY, a.DATA_MRP) + @@DATEFIRST - 2) % 7 + 1), a.DATA_MRP)) = @ANO and ativo = 1 AND (((@TIPO = 'Cromagem' ) AND ( a.ID_LINHA in (1,2,3))) OR ((@TIPO = 'Pintura' ) AND ( a.ID_LINHA in (4)))) "
+				+ "order by a.ID_PLANEAMENTO_PRODUCAO_CAB desc");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+	
 	@POST
 	@Path("/GET_BARRAS_PRODUZIR")
 	@Produces("application/json")
