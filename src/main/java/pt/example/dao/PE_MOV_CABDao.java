@@ -36,18 +36,28 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 	} 
 	
 	
-	public List<PE_MOV_CAB> getallbyTIPO(String tipo, String emAtraso,String user) {
+	public List<PE_MOV_CAB> getallbyTIPO(String tipo, String emAtraso, String user) {
+		String emAtrasoVal = emAtraso.equals("true") ? "1" : "0";
+
+		Query query = entityManager.createNativeQuery("EXEC PE_GET_PLANOS_ESTRATEGICOS '" + tipo + "', " + emAtrasoVal + ", " + user);
+		List<PE_MOV_CAB> data = query.getResultList();
+		return data;
+	}
+
+	public List<PE_MOV_CAB> getallbyDEPT(String departamento, String ano, String user) {
+		Query query = entityManager.createNativeQuery(
+			"EXEC PE_GET_PLANOS_ESTRATEGICOS 'T', 0, " + user + ", N'" + departamento.replace("'", "''") + "', " + ano);
+		List<PE_MOV_CAB> data = query.getResultList();
+		return data;
+	}
+
+	@SuppressWarnings("unused")
+	private List<PE_MOV_CAB> getallbyTIPO_OLD(String tipo, String emAtraso,String user) {
 		String query_where = "";
 		if (!tipo.equals("T")) {
 			query_where = "and xa.TIPO = '" + tipo + "' ";
 		}
-		 
-		if (emAtraso.equals("true")) {
-			emAtraso = "1";
-		} else {
-			emAtraso = "0";
-		}
-
+		if (emAtraso.equals("true")) { emAtraso = "1"; } else { emAtraso = "0"; }
 		Query query = entityManager.createNativeQuery(
 				" DECLARE @emAtraso bit = " + emAtraso + " " + "select "
 						+ "a.ID_PLANO_CAB,a.DATA_CRIA,a.DATA_OBJETIVO,a.AMBITO,a.ORIGEM,(select NOME_UTILIZADOR from GER_UTILIZADORES x where x.ID_UTILIZADOR = a.UTZ_CRIA) as UTZ_CRIA,a.DESCRICAO,a.ESTADO "
@@ -124,13 +134,12 @@ public class PE_MOV_CABDao extends GenericDaoJpaImpl<PE_MOV_CAB, Integer> implem
 						+ "left join GT_MOV_TAREFAS g WITH (NOLOCK) on g.ID_MODULO = 13 and g.SUB_MODULO = 'PA' and b.ID_PLANO_LINHA = g.ID_CAMPO and g.ID_TAREFA_PAI is null "
 						+ " where  "
 						+ " ((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') )) "
-						+ query_where + " order by a.DATA_OBJETIVO asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
+						+ query_where + " order by xa.DATA_CRIA desc, a.DATA_OBJETIVO asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
 		List<PE_MOV_CAB> data = query.getResultList();
 		return data;
 
 	}
 
-	
 
 
 }

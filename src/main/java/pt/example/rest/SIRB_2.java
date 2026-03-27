@@ -6711,6 +6711,69 @@ public class SIRB_2 {
 	}
 
 	@POST
+	@Path("/PE_GET_HISTORICO_CONTADORES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PE_GET_HISTORICO_CONTADORES(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PE_GET_HISTORICO_CONTADORES " + ANO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/PE_GET_HISTORICO_GRAFICO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PE_GET_HISTORICO_GRAFICO(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PE_GET_HISTORICO_GRAFICO " + ANO);
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
+	@Path("/getPE_MOV_CABbyDEPT")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<PE_MOV_CAB> getPE_MOV_CABbyDEPT(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String departamento = firstMap.get("DEPARTAMENTO");
+		String ano = firstMap.get("ANO");
+		String user = firstMap.get("USER");
+
+		return dao75.getallbyDEPT(departamento, ano, user);
+	}
+
+	@POST
+	@Path("/PE_GET_HISTORICO_GRAFICO_DEPT")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<Object[]> PE_GET_HISTORICO_GRAFICO_DEPT(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String ANO = firstMap.get("ANO");
+		String DEPARTAMENTO = firstMap.get("DEPARTAMENTO");
+
+		Query query_folder = entityManager.createNativeQuery("EXEC PE_GET_HISTORICO_GRAFICO_DEPT " + ANO + ", N'" + DEPARTAMENTO.replace("'", "''") + "'");
+
+		List<Object[]> dados_folder = query_folder.getResultList();
+
+		return dados_folder;
+	}
+
+	@POST
 	@Path("/getDASHBOARD_PLANEAMENTO_2")
 	@Produces("application/json")
 	public List<Object[]> getDASHBOARD_PLANEAMENTO(final List<HashMap<String, String>> dados) {
