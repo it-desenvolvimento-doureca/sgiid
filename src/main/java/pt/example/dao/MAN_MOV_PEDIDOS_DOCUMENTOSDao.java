@@ -33,4 +33,24 @@ public class MAN_MOV_PEDIDOS_DOCUMENTOSDao extends GenericDaoJpaImpl<MAN_MOV_PED
 
 	}
 	
+	public List<MAN_MOV_PEDIDOS_DOCUMENTOS> getbyid2(Integer id) {
+
+		Query query = entityManager.createQuery("select a.ID,a.TAMANHO,a.NOME,a.CAMINHO,a.DESCRICAO,a.TIPO,a.ID_PEDIDO,a.UTZ_CRIA,a.DATA_CRIA,a.UTZ_ULT_MODIF,a.DATA_ULT_MODIF,a.DATATYPE,b from MAN_MOV_PEDIDOS_DOCUMENTOS a, GER_UTILIZADORES b "
+				+ "where a.UTZ_CRIA = b.ID_UTILIZADOR and a.ID_PEDIDO = :id order by a.DATA_CRIA");
+		query.setParameter("id", id);
+		List<MAN_MOV_PEDIDOS_DOCUMENTOS> data = query.getResultList();
+		return data;
+
+	}
+	
+	public List<MAN_MOV_PEDIDOS_DOCUMENTOS> getbyFicheiro(Integer id) {
+
+		Query query = entityManager.createQuery("select a.FICHEIRO_1,a.FICHEIRO_2 from MAN_MOV_PEDIDOS_DOCUMENTOS a "
+				+ "where a.ID = :id  ");
+		query.setParameter("id", id);
+		List<MAN_MOV_PEDIDOS_DOCUMENTOS> data = query.getResultList();
+		return data;
+
+	}
+	
 }

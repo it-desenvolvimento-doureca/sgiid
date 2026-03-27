@@ -26,8 +26,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.mail.util.ByteArrayDataSource;
 import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -767,16 +769,16 @@ public class SIRB_2 {
 		HashMap<String, String> firstMap = dados.get(0);
 		String ID_PLANEAMENTO_PRODUCAO_CAB = firstMap.get("ID_PLANEAMENTO_PRODUCAO_CAB");
 		String SEMANA = firstMap.get("SEMANA");
-		String ANO = firstMap.get("ANO"); 
+		String ANO = firstMap.get("ANO");
 
 		Query query_folder = entityManager.createNativeQuery("EXEC [GET_PR_PLANEAMENTO_PRODUCAO_LINHAS_RECEITAS] "
-				+ ID_PLANEAMENTO_PRODUCAO_CAB + "," + SEMANA + ","+ANO);
+				+ ID_PLANEAMENTO_PRODUCAO_CAB + "," + SEMANA + "," + ANO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
 	}
-	
+
 	@GET
 	@Path("/getPR_PLANEAMENTO_PRODUCAO_LINHAS_BASE_COR")
 	@Consumes("*/*")
@@ -1119,7 +1121,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/GET_BARRAS_PRODUZIR")
 	@Produces("application/json")
@@ -1483,14 +1485,13 @@ public class SIRB_2 {
 		String NOVO = firstMap.get("NOVO");
 		String ID = firstMap.get("ID");
 		String LINHA = firstMap.get("LINHA");
-		
-		if(ID!=null) {
-			ID= "'"+ID+"'";
-		}
-		
 
-		Query query_folder = entityManager.createNativeQuery(
-				"EXEC [GET_SEMANAS_PLANEAMENTO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + LINHA);
+		if (ID != null) {
+			ID = "'" + ID + "'";
+		}
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_SEMANAS_PLANEAMENTO] '" + DATA + "',"
+				+ NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + LINHA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1507,17 +1508,17 @@ public class SIRB_2 {
 		String NOVO = firstMap.get("NOVO");
 		String ID = firstMap.get("ID");
 		String SECCAO = firstMap.get("SECCAO");
-		
-		if(ID!=null) {
-			ID= "'"+ID+"'";
+
+		if (ID != null) {
+			ID = "'" + ID + "'";
 		}
 
-		if(SECCAO!=null) {
-			SECCAO= "'"+SECCAO+"'";
+		if (SECCAO != null) {
+			SECCAO = "'" + SECCAO + "'";
 		}
-		
-		Query query_folder = entityManager.createNativeQuery(
-				"EXEC [GET_SEMANAS_PLANEAMENTO_OPERACAO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + SECCAO);
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_SEMANAS_PLANEAMENTO_OPERACAO] '" + DATA + "',"
+				+ NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + SECCAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -1535,16 +1536,16 @@ public class SIRB_2 {
 		String ID = firstMap.get("ID");
 		String SECCAO = firstMap.get("SECCAO");
 
-		if(ID!=null) {
-			ID= "'"+ID+"'";
+		if (ID != null) {
+			ID = "'" + ID + "'";
 		}
-		
-		if(SECCAO!=null) {
-			SECCAO= "'"+SECCAO+"'";
+
+		if (SECCAO != null) {
+			SECCAO = "'" + SECCAO + "'";
 		}
-		
-		Query query_folder = entityManager.createNativeQuery(
-				"EXEC [GET_SEMANAS_PLANEAMENTO_SECCAO] '" + DATA + "'," + NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + SECCAO);
+
+		Query query_folder = entityManager.createNativeQuery("EXEC [GET_SEMANAS_PLANEAMENTO_SECCAO] '" + DATA + "',"
+				+ NUMERO_SEMANAS + "," + NOVO + "," + ID + "," + SECCAO);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -2750,6 +2751,318 @@ public class SIRB_2 {
 		return dao32.update(QUA_DERROGACOES_EQUIPA);
 	}
 
+	// Helper: converte tristate (null/true/false) para Integer (null/1/0)
+	private Integer toTriState(String value) {
+		if (value == null || value.equals("null")) return null;
+		return "true".equals(value) ? 1 : 0;
+	}
+
+	/************************************* QUA_MURO_QUALIDADE_ANALISES */
+	@GET
+	@Path("/getQUA_MURO_QUALIDADE_UNIDADES")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MURO_QUALIDADE_UNIDADES() {
+		String sql = "SELECT DISTINCT SEC_NUM, SEC_DES FROM RP_OF_CAB WHERE OP_COD = '100' ORDER BY SEC_NUM, SEC_DES";
+		javax.persistence.Query query = entityManager.createNativeQuery(sql);
+		return query.getResultList();
+	}
+
+	@POST
+	@Path("/getQUA_MURO_QUALIDADE_ANALISE_GERAL")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MURO_QUALIDADE_ANALISE_GERAL(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+
+		// Campos de filtro
+		String DATA_INI = firstMap.get("data_ini");
+		String DATA_FIM = firstMap.get("data_fim");
+		String UNIDADE = firstMap.get("unidade");
+		String SECTOR = firstMap.get("sector");
+		String FUNCIONARIO = firstMap.get("funcionario");
+		String FAMILIA_DEFEITO = firstMap.get("familiaDefeito");
+		String REFERENCIA = firstMap.get("referencia");
+		String ETIQUETA = firstMap.get("etiqueta");
+
+		// Checkboxes tristate: null=ignorar, true=1, false=0
+		Integer TESTE_DIMENSIONAL = toTriState(firstMap.get("teste_dimensional"));
+		Integer OPERARIO_FORMACAO = toTriState(firstMap.get("operario_formacao"));
+		Integer ORIGEM_RECLAMACAO = toTriState(firstMap.get("origem_reclamacao"));
+		Integer STOCK_ETIQUETA_30 = toTriState(firstMap.get("stock_etiqueta_30"));
+		Integer DEFEITOS_INJECAO = toTriState(firstMap.get("defeitos_injecao"));
+		Integer DEVOLUCAO_CLIENTE = toTriState(firstMap.get("devolucao_cliente"));
+		Integer GAMA_EMBALAGEM_INCORRETA = toTriState(firstMap.get("gama_embalagem_incorreta"));
+		Integer MODO_DEGRADADO = toTriState(firstMap.get("modo_degradado"));
+		Integer ENSAIO_DIA = toTriState(firstMap.get("ensaio_dia"));
+		Integer VERIFICACAO_QUANT_EMBALAGEM = toTriState(firstMap.get("verificacao_quant_embalagem"));
+
+		String DATA_ORIGEM_RECLAMACAO_INI = firstMap.get("data_origem_reclamacao_ini");
+		String DATA_ORIGEM_RECLAMACAO_FIM = firstMap.get("data_origem_reclamacao_fim");
+		String DATA_DEVOLUCAO_CLIENTE_INI = firstMap.get("data_devolucao_cliente_ini");
+		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
+		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
+
+		// Inlinar datas no SQL como literais para evitar problema do jTDS com null Date (envia varbinary)
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+
+		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_GERAL "
+				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO,:REFERENCIA, :ETIQUETA, "
+				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
+				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
+				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
+
+		javax.persistence.Query query = entityManager.createNativeQuery(sql);
+
+		// Setar parâmetros
+		query.setParameter("DATA_INI", DATA_INI);
+		query.setParameter("DATA_FIM", DATA_FIM);
+		query.setParameter("UNIDADE", UNIDADE);
+		query.setParameter("SECTOR", SECTOR);
+		query.setParameter("FUNCIONARIO", FUNCIONARIO);
+		query.setParameter("FAMILIA_DEFEITO", FAMILIA_DEFEITO);
+		query.setParameter("REFERENCIA", REFERENCIA);
+		query.setParameter("ETIQUETA", ETIQUETA);
+
+		query.setParameter("TESTE_DIMENSIONAL", TESTE_DIMENSIONAL);
+		query.setParameter("OPERARIO_FORMACAO", OPERARIO_FORMACAO);
+		query.setParameter("ORIGEM_RECLAMACAO", ORIGEM_RECLAMACAO);
+		query.setParameter("STOCK_ETIQUETA_30", STOCK_ETIQUETA_30);
+		query.setParameter("DEFEITOS_INJECAO", DEFEITOS_INJECAO);
+		query.setParameter("DEVOLUCAO_CLIENTE", DEVOLUCAO_CLIENTE);
+		query.setParameter("GAMA_EMBALAGEM_INCORRETA", GAMA_EMBALAGEM_INCORRETA);
+		query.setParameter("MODO_DEGRADADO", MODO_DEGRADADO);
+		query.setParameter("ENSAIO_DIA", ENSAIO_DIA);
+		query.setParameter("VERIFICACAO_QUANT_EMBALAGEM", VERIFICACAO_QUANT_EMBALAGEM);
+
+		query.setParameter("MOTIVO_MODO_DEGRADADO", MOTIVO_MODO_DEGRADADO);
+
+		// Executa SP
+		List<Object[]> result = query.getResultList();
+		return result;
+	}
+
+	@POST
+	@Path("/getQUA_MURO_QUALIDADE_ANALISE_PROGRESSO")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MURO_QUALIDADE_ANALISE_PROGRESSO(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+
+		// Campos de filtro
+		String DATA_INI = firstMap.get("data_ini");
+		String DATA_FIM = firstMap.get("data_fim");
+		String UNIDADE = firstMap.get("unidade");
+		String SECTOR = firstMap.get("sector");
+		String FUNCIONARIO = firstMap.get("funcionario");
+		String FAMILIA_DEFEITO = firstMap.get("familiaDefeito");
+		String REFERENCIA = firstMap.get("referencia");
+		String ETIQUETA = firstMap.get("etiqueta");
+
+		// Checkboxes tristate: null=ignorar, true=1, false=0
+		Integer TESTE_DIMENSIONAL = toTriState(firstMap.get("teste_dimensional"));
+		Integer OPERARIO_FORMACAO = toTriState(firstMap.get("operario_formacao"));
+		Integer ORIGEM_RECLAMACAO = toTriState(firstMap.get("origem_reclamacao"));
+		Integer STOCK_ETIQUETA_30 = toTriState(firstMap.get("stock_etiqueta_30"));
+		Integer DEFEITOS_INJECAO = toTriState(firstMap.get("defeitos_injecao"));
+		Integer DEVOLUCAO_CLIENTE = toTriState(firstMap.get("devolucao_cliente"));
+		Integer GAMA_EMBALAGEM_INCORRETA = toTriState(firstMap.get("gama_embalagem_incorreta"));
+		Integer MODO_DEGRADADO = toTriState(firstMap.get("modo_degradado"));
+		Integer ENSAIO_DIA = toTriState(firstMap.get("ensaio_dia"));
+		Integer VERIFICACAO_QUANT_EMBALAGEM = toTriState(firstMap.get("verificacao_quant_embalagem"));
+
+		String DATA_ORIGEM_RECLAMACAO_INI = firstMap.get("data_origem_reclamacao_ini");
+		String DATA_ORIGEM_RECLAMACAO_FIM = firstMap.get("data_origem_reclamacao_fim");
+		String DATA_DEVOLUCAO_CLIENTE_INI = firstMap.get("data_devolucao_cliente_ini");
+		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
+		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
+
+		// Inlinar datas no SQL como literais para evitar problema do jTDS com null Date (envia varbinary)
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+
+		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_PROGRESSO "
+				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO, :REFERENCIA, :ETIQUETA, "
+				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
+				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
+				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
+
+		javax.persistence.Query query = entityManager.createNativeQuery(sql);
+
+		// Setar parâmetros
+		query.setParameter("DATA_INI", DATA_INI);
+		query.setParameter("DATA_FIM", DATA_FIM);
+		query.setParameter("UNIDADE", UNIDADE);
+		query.setParameter("SECTOR", SECTOR);
+		query.setParameter("FUNCIONARIO", FUNCIONARIO);
+		query.setParameter("FAMILIA_DEFEITO", FAMILIA_DEFEITO);
+		query.setParameter("REFERENCIA", REFERENCIA);
+		query.setParameter("ETIQUETA", ETIQUETA);
+
+		query.setParameter("TESTE_DIMENSIONAL", TESTE_DIMENSIONAL);
+		query.setParameter("OPERARIO_FORMACAO", OPERARIO_FORMACAO);
+		query.setParameter("ORIGEM_RECLAMACAO", ORIGEM_RECLAMACAO);
+		query.setParameter("STOCK_ETIQUETA_30", STOCK_ETIQUETA_30);
+		query.setParameter("DEFEITOS_INJECAO", DEFEITOS_INJECAO);
+		query.setParameter("DEVOLUCAO_CLIENTE", DEVOLUCAO_CLIENTE);
+		query.setParameter("GAMA_EMBALAGEM_INCORRETA", GAMA_EMBALAGEM_INCORRETA);
+		query.setParameter("MODO_DEGRADADO", MODO_DEGRADADO);
+		query.setParameter("ENSAIO_DIA", ENSAIO_DIA);
+		query.setParameter("VERIFICACAO_QUANT_EMBALAGEM", VERIFICACAO_QUANT_EMBALAGEM);
+
+		query.setParameter("MOTIVO_MODO_DEGRADADO", MOTIVO_MODO_DEGRADADO);
+
+		// Executa SP
+		List<Object[]> result = query.getResultList();
+		return result;
+	}
+
+	@POST
+	@Path("/getQUA_MURO_QUALIDADE_ETIQUETA_DETALHE")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MURO_QUALIDADE_ETIQUETA_DETALHE(final List<HashMap<String, String>> dados) {
+	    HashMap<String, String> firstMap = dados.get(0);
+
+	    String DATA_MES = firstMap.get("data_mes");
+	    String ID_UTZ = firstMap.get("id_utz");
+	    String ETIQUETA = firstMap.get("etiqueta");
+
+	    boolean filtrarPorUtz = ID_UTZ != null && !ID_UTZ.equals("null") && !ID_UTZ.isEmpty();
+
+	    String sql = "SELECT a.TESTE_DIMENSIONAL, a.OPERARIO_FORMACAO, a.ORIGEM_RECLAMACAO, a.DATA_ORIGEM_RECLAMACAO, "
+	            + "a.STOCK_ETIQUETA_30, a.DEFEITOS_INJECAO, a.DEVOLUCAO_CLIENTE, a.GAMA_EMBALAGEM_INCORRETA, "
+	            + "a.MODO_DEGRADADO, a.VERIFICACAO_QUANT_EMBALAGEM, a.DATA_DEVOLUCAO_CLIENTE, a.ENSAIO_DIA, "
+	            + "a.MODO_DEGRADADO_MOTIVO, a.ID_OF_CAB, "
+	            + "STRING_AGG(CAST(x.ID_UTZ AS VARCHAR) + ' - ' + x.NOME_UTZ, '; ') "
+	            + "WITHIN GROUP (ORDER BY x.ID_UTZ) AS OPERARIOS_CAIXA,OF_NUM, ( select count(*) from GER_EVENTO m where m.ID_ORIGEM = a.ID_OF_CAB and m.CAMPO_ORIGEM = 'ID_OF_CAB' ) TOTAL_MENSAGENS "
+	            + "FROM RP_OF_CAB a "
+	            + "LEFT JOIN RP_OF_OPERARIOS_CAIXA x ON x.ID_OF_CAB = a.ID_OF_CAB "
+	            + "WHERE a.ESTADO NOT IN ('A') "
+	            + "AND FORMAT(a.DATA_HORA_CRIA, 'yyyy-MM') = :DATA_MES "
+	            + "AND a.OP_COD_ORIGEM = '100' "
+	            + "AND a.ETIQUETA = :ETIQUETA "
+	            + (filtrarPorUtz ? "AND a.ID_OF_CAB IN (SELECT ID_OF_CAB FROM RP_OF_OPERARIOS_CAIXA WHERE ID_UTZ = :ID_UTZ) " : "")
+	            + "GROUP BY a.TESTE_DIMENSIONAL, a.OPERARIO_FORMACAO, a.ORIGEM_RECLAMACAO, a.DATA_ORIGEM_RECLAMACAO, "
+	            + "a.STOCK_ETIQUETA_30, a.DEFEITOS_INJECAO, a.DEVOLUCAO_CLIENTE, a.GAMA_EMBALAGEM_INCORRETA, "
+	            + "a.MODO_DEGRADADO, a.VERIFICACAO_QUANT_EMBALAGEM, a.DATA_DEVOLUCAO_CLIENTE, a.ENSAIO_DIA, "
+	            + "a.MODO_DEGRADADO_MOTIVO, a.ID_OF_CAB,OF_NUM "
+	            + "ORDER BY a.ID_OF_CAB";
+
+	    javax.persistence.Query query = entityManager.createNativeQuery(sql);
+	    query.setParameter("DATA_MES", DATA_MES);
+	    query.setParameter("ETIQUETA", ETIQUETA);
+	    if (filtrarPorUtz) {
+	        query.setParameter("ID_UTZ", ID_UTZ);
+	    }
+
+	    return query.getResultList();
+	}
+
+	@POST
+	@Path("/getQUA_MURO_QUALIDADE_ANALISE_REFERENCIA")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MURO_QUALIDADE_ANALISE_REFERENCIA(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+
+		String DATA_INI = firstMap.get("data_ini");
+		String DATA_FIM = firstMap.get("data_fim");
+		String UNIDADE = firstMap.get("unidade");
+		String SECTOR = firstMap.get("sector");
+		String FUNCIONARIO = firstMap.get("funcionario");
+		String FAMILIA_DEFEITO = firstMap.get("familiaDefeito");
+		String REFERENCIA = firstMap.get("referencia");
+		String ETIQUETA = firstMap.get("etiqueta");
+
+		Integer TESTE_DIMENSIONAL = toTriState(firstMap.get("teste_dimensional"));
+		Integer OPERARIO_FORMACAO = toTriState(firstMap.get("operario_formacao"));
+		Integer ORIGEM_RECLAMACAO = toTriState(firstMap.get("origem_reclamacao"));
+		Integer STOCK_ETIQUETA_30 = toTriState(firstMap.get("stock_etiqueta_30"));
+		Integer DEFEITOS_INJECAO = toTriState(firstMap.get("defeitos_injecao"));
+		Integer DEVOLUCAO_CLIENTE = toTriState(firstMap.get("devolucao_cliente"));
+		Integer GAMA_EMBALAGEM_INCORRETA = toTriState(firstMap.get("gama_embalagem_incorreta"));
+		Integer MODO_DEGRADADO = toTriState(firstMap.get("modo_degradado"));
+		Integer ENSAIO_DIA = toTriState(firstMap.get("ensaio_dia"));
+		Integer VERIFICACAO_QUANT_EMBALAGEM = toTriState(firstMap.get("verificacao_quant_embalagem"));
+
+		String DATA_ORIGEM_RECLAMACAO_INI = firstMap.get("data_origem_reclamacao_ini");
+		String DATA_ORIGEM_RECLAMACAO_FIM = firstMap.get("data_origem_reclamacao_fim");
+		String DATA_DEVOLUCAO_CLIENTE_INI = firstMap.get("data_devolucao_cliente_ini");
+		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
+		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
+
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+
+		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_REFERENCIA "
+				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO, :REFERENCIA, :ETIQUETA, "
+				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
+				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
+				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
+
+		javax.persistence.Query query = entityManager.createNativeQuery(sql);
+
+		query.setParameter("DATA_INI", DATA_INI);
+		query.setParameter("DATA_FIM", DATA_FIM);
+		query.setParameter("UNIDADE", UNIDADE);
+		query.setParameter("SECTOR", SECTOR);
+		query.setParameter("FUNCIONARIO", FUNCIONARIO);
+		query.setParameter("FAMILIA_DEFEITO", FAMILIA_DEFEITO);
+		query.setParameter("REFERENCIA", REFERENCIA);
+		query.setParameter("ETIQUETA", ETIQUETA);
+
+		query.setParameter("TESTE_DIMENSIONAL", TESTE_DIMENSIONAL);
+		query.setParameter("OPERARIO_FORMACAO", OPERARIO_FORMACAO);
+		query.setParameter("ORIGEM_RECLAMACAO", ORIGEM_RECLAMACAO);
+		query.setParameter("STOCK_ETIQUETA_30", STOCK_ETIQUETA_30);
+		query.setParameter("DEFEITOS_INJECAO", DEFEITOS_INJECAO);
+		query.setParameter("DEVOLUCAO_CLIENTE", DEVOLUCAO_CLIENTE);
+		query.setParameter("GAMA_EMBALAGEM_INCORRETA", GAMA_EMBALAGEM_INCORRETA);
+		query.setParameter("MODO_DEGRADADO", MODO_DEGRADADO);
+		query.setParameter("ENSAIO_DIA", ENSAIO_DIA);
+		query.setParameter("VERIFICACAO_QUANT_EMBALAGEM", VERIFICACAO_QUANT_EMBALAGEM);
+
+		query.setParameter("MOTIVO_MODO_DEGRADADO", MOTIVO_MODO_DEGRADADO);
+
+		List<Object[]> result = query.getResultList();
+		return result;
+	}
+	
+	@GET
+	@Path("/getGER_EVENTObyidOrigem/{id}/{campo}")
+	@Produces("application/json")
+	public List<Object[]> getGER_EVENTO_idOrigem(@PathParam("id") Integer id, @PathParam("campo") String campo) {
+		Query query = entityManager.createNativeQuery("Select ID_EVENTO,ID_ORIGEM,ID_UTZ_CRIA,NOME_UTZ_CRIA,MENSAGEM,ASSUNTO,FORMAT(DATA_HORA_CRIA,'yyyy-MM-dd HH:mm') as DATA_HORA_CRIA from GER_EVENTO a where a.ID_ORIGEM = :id and CAMPO_ORIGEM= :campo order by DATA_HORA_CRIA desc");
+		query.setParameter("id", id);
+		query.setParameter("campo", campo);
+		List<Object[]> data = query.getResultList();
+		return data;
+	}
+
+
 	/************************************* GER_REFERENCIAS_FASTRESPONSE_REJEICOES */
 	@POST
 	@Path("/createGER_REFERENCIAS_FASTRESPONSE_REJEICOES")
@@ -3628,10 +3941,10 @@ public class SIRB_2 {
 	@GET
 	@Path("/getMAN_MOV_MANUTENCAO_CAB_EMAIL")
 	@Produces("application/json")
-	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CAB_EMAIL( ) {
+	public List<MAN_MOV_MANUTENCAO_CAB> getMAN_MOV_MANUTENCAO_CAB_EMAIL() {
 		return dao39.getall3();
 	}
-	
+
 	@GET
 	@Path("/MAN_GET_MANUTENCOES_MELHORIA/{id}")
 	@Produces("application/json")
@@ -4678,13 +4991,13 @@ public class SIRB_2 {
 
 		if (DATA_FIM != null)
 			DATA_FIM = "'" + DATA_FIM + "'";
-		
+
 		if (EQUIPA != null)
 			EQUIPA = "'" + EQUIPA + "'";
 
-		Query query_folder = entityManager.createNativeQuery(
-				"EXEC MAN_GET_ANALISE_PREVENTIVAS_2 " + ANO + "," + UNIDADE + "," + AMBITO + "," + EQUIPAMENTO + ","
-						+ DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO + "," + DATA_FIM + "," + NIVEL_EQUIPAMENTO+ "," + EQUIPA);
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_ANALISE_PREVENTIVAS_2 " + ANO + "," + UNIDADE
+				+ "," + AMBITO + "," + EQUIPAMENTO + "," + DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO
+				+ "," + DATA_FIM + "," + NIVEL_EQUIPAMENTO + "," + EQUIPA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -4719,13 +5032,13 @@ public class SIRB_2 {
 
 		if (DATA_FIM != null)
 			DATA_FIM = "'" + DATA_FIM + "'";
-		
+
 		if (EQUIPA != null)
 			EQUIPA = "'" + EQUIPA + "'";
 
-		Query query_folder = entityManager.createNativeQuery(
-				"EXEC MAN_GET_ANALISE_PREDITIVAS " + ANO + "," + UNIDADE + "," + AMBITO + "," + EQUIPAMENTO + ","
-						+ DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO + "," + DATA_FIM + "," + NIVEL_EQUIPAMENTO+ "," + EQUIPA);
+		Query query_folder = entityManager.createNativeQuery("EXEC MAN_GET_ANALISE_PREDITIVAS " + ANO + "," + UNIDADE
+				+ "," + AMBITO + "," + EQUIPAMENTO + "," + DEPARTAMENTO + "," + NIVEL + "," + SEMANAS + "," + DATA_INCIO
+				+ "," + DATA_FIM + "," + NIVEL_EQUIPAMENTO + "," + EQUIPA);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -5014,6 +5327,20 @@ public class SIRB_2 {
 	@Produces("application/json")
 	public List<MAN_MOV_PEDIDOS_DOCUMENTOS> getMAN_MOV_PEDIDOS_DOCUMENTOSbyid(@PathParam("id") Integer id) {
 		return dao57.getbyid(id);
+	}
+
+	@GET
+	@Path("/getMAN_MOV_PEDIDOS_DOCUMENTOSbyid2/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_PEDIDOS_DOCUMENTOS> getMAN_MOV_PEDIDOS_DOCUMENTOSbyid2(@PathParam("id") Integer id) {
+		return dao57.getbyid2(id);
+	}
+
+	@GET
+	@Path("/getMAN_MOV_PEDIDOS_DOCUMENTOSbyidFicheiro/{id}")
+	@Produces("application/json")
+	public List<MAN_MOV_PEDIDOS_DOCUMENTOS> getMAN_MOV_PEDIDOS_DOCUMENTOSbyidFicheiro(@PathParam("id") Integer id) {
+		return dao57.getbyFicheiro(id);
 	}
 
 	@PUT
@@ -7461,16 +7788,29 @@ public class SIRB_2 {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public List<Object[]> GET_DADOS_POSTO(final List<HashMap<String, String>> dados) {
+
 		HashMap<String, String> firstMap = dados.get(0);
 		String IP_POSTO = firstMap.get("IP_POSTO");
-		String USER = firstMap.get("USER");
-		String USER_NOME = firstMap.get("USER_NOME");
+		String TIPO_POSTO = firstMap.get("TIPO_POSTO");
 
 		if (IP_POSTO != null)
 			IP_POSTO = "'" + IP_POSTO + "'";
 
-		Query query_folder = entityManager.createNativeQuery(
-				"SELECT TOP 1 ID,CASE WHEN MULTIPOSTO = 1 THEN POSTO_ATUAL ELSE NOME END as NOME,SECTOR,LINHA,TIPO_POSTO,MULTIPOSTO,SECCOD,SECLIB FROM DOC_DIC_POSTOS where IP_POSTO = " + IP_POSTO);
+		if (TIPO_POSTO == null)
+			TIPO_POSTO = "APP_LINHA";
+
+		String sql = "SELECT TOP 1 " + "ID, CASE WHEN MULTIPOSTO = 1 THEN POSTO_ATUAL ELSE NOME END as NOME, "
+				+ "SECTOR, LINHA, TIPO_POSTO, MULTIPOSTO, SECCOD, SECLIB " + "FROM DOC_DIC_POSTOS "
+				+ "WHERE IP_POSTO = " + IP_POSTO;
+
+		// adiciona a condição para LINHA apenas se não for REGISTO_PRODUCAO
+		if ("REGISTO_PRODUCAO".equals(TIPO_POSTO)) {
+			sql += " AND LINHA IS NULL"; // ou qualquer condição que você queira aplicar
+		} else {
+			sql += " AND LINHA IS NOT NULL";
+		}
+
+		Query query_folder = entityManager.createNativeQuery(sql);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -7601,42 +7941,40 @@ public class SIRB_2 {
 	@Consumes("*/*")
 	@Produces("application/json")
 	public Response PR_WINROBOT_GERAR_CARTELA_ASYNC(final List<HashMap<String, String>> dados) {
-	    HashMap<String, String> firstMap = dados.get(0);
-	    String ID = firstMap.get("ID");
+		HashMap<String, String> firstMap = dados.get(0);
+		String ID = firstMap.get("ID");
 
-	    // Cria um lock específico para cada Lote
-	    Object lock = lotLocks.computeIfAbsent(ID, k -> new Object());
+		// Cria um lock específico para cada Lote
+		Object lock = lotLocks.computeIfAbsent(ID, k -> new Object());
 
-	    // Submete a tarefa para execução em background
-	    pool.submit(() -> {
-	        synchronized (lock) {
-	            try {
-	                Query query = entityManager.createNativeQuery("EXEC PR_WINROBOT_GERAR_CARTELA " + ID);
-	                List<Object[]> dados_folder = query.getResultList();
+		// Submete a tarefa para execução em background
+		pool.submit(() -> {
+			synchronized (lock) {
+				try {
+					Query query = entityManager.createNativeQuery("EXEC PR_WINROBOT_GERAR_CARTELA " + ID);
+					List<Object[]> dados_folder = query.getResultList();
 
-	                for (Object[] content : dados_folder) {
-	                    Printer impressoras = new Printer();
-	                    String nomeficheiro = (content[0] == null) ? null : content[0].toString();
-	                    String impressora = (content[1] == null) ? null : content[1].toString();
+					for (Object[] content : dados_folder) {
+						Printer impressoras = new Printer();
+						String nomeficheiro = (content[0] == null) ? null : content[0].toString();
+						String impressora = (content[1] == null) ? null : content[1].toString();
 
-	                    if (impressora != null && !impressora.equals("") && !impressora.isEmpty())
-	                        impressoras.printTxt(nomeficheiro, impressora);
-	                }
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	                // Aqui você pode logar o erro ou registrar em DB
-	            } finally {
-	                lotLocks.remove(ID); // Limpa o lock
-	            }
-	        }
-	    });
+						if (impressora != null && !impressora.equals("") && !impressora.isEmpty())
+							impressoras.printTxt(nomeficheiro, impressora);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					// Aqui você pode logar o erro ou registrar em DB
+				} finally {
+					lotLocks.remove(ID); // Limpa o lock
+				}
+			}
+		});
 
-	    // Retorna imediatamente para o cliente
-	    return Response.ok("{\"status\":\"em processamento\",\"ID\":\"" + ID + "\"}")
-	                   .type(MediaType.APPLICATION_JSON)
-	                   .build();
+		// Retorna imediatamente para o cliente
+		return Response.ok("{\"status\":\"em processamento\",\"ID\":\"" + ID + "\"}").type(MediaType.APPLICATION_JSON)
+				.build();
 	}
-
 
 	public void criarFicheiroLD(Object[] dados) {
 		String nome_ficheiro = "LD" + dados[2].toString() + "_" + dados[11].toString();
@@ -8246,7 +8584,7 @@ public class SIRB_2 {
 
 		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/ATUALIZA_POSTO")
 	@Consumes("*/*")
@@ -8258,8 +8596,7 @@ public class SIRB_2 {
 
 		if (NUM_POSTO != null)
 			NUM_POSTO = "'" + NUM_POSTO + "'";
-		
-		
+
 		if (IP_POSTO != null)
 			IP_POSTO = "'" + IP_POSTO + "'";
 
@@ -9131,25 +9468,24 @@ public class SIRB_2 {
 		String ID = firstMap.get("ID");
 		String USER = firstMap.get("USER");
 
-		/*Query query_folder = entityManager
-				.createNativeQuery("INSERT INTO PR_WINROBOT_CARROS  ([NUM_CARRO] ,[DATA_CRIA],[UTZ_CRIA],ID_CAB) "
-						+ "VALUES(:carro,GETDATE(),:user,:id) "
-						+ " UPDATE a SET NUM_CARRO = (select string_agg(b.NUM_CARRO,', ') from PR_WINROBOT_CARROS b where b.ID_CAB = a.ID GROUP BY b.ID_CAB ) FROM PR_WINROBOT_CAB a"
-						+ "	where a.ID = :id ")
-				.setParameter("carro", NUM_CARRO).setParameter("id", ID).setParameter("user", USER);*/
+		/*
+		 * Query query_folder = entityManager
+		 * .createNativeQuery("INSERT INTO PR_WINROBOT_CARROS  ([NUM_CARRO] ,[DATA_CRIA],[UTZ_CRIA],ID_CAB) "
+		 * + "VALUES(:carro,GETDATE(),:user,:id) " +
+		 * " UPDATE a SET NUM_CARRO = (select string_agg(b.NUM_CARRO,', ') from PR_WINROBOT_CARROS b where b.ID_CAB = a.ID GROUP BY b.ID_CAB ) FROM PR_WINROBOT_CAB a"
+		 * + "	where a.ID = :id ") .setParameter("carro", NUM_CARRO).setParameter("id",
+		 * ID).setParameter("user", USER);
+		 */
 
-		 Query query_folder = entityManager
-		          .createNativeQuery(
-		              "INSERT INTO PR_WINROBOT_CARROS ([NUM_CARRO], [DATA_CRIA], [UTZ_CRIA], ID_CAB) " +
-		              "SELECT :carro, GETDATE(), :user, :id " +
-		              "WHERE NOT EXISTS (SELECT 1 FROM PR_WINROBOT_CARROS WITH (UPDLOCK, HOLDLOCK) " +
-		              "                  WHERE NUM_CARRO = :carro AND ID_CAB = :id); " +
-		              "UPDATE a SET NUM_CARRO = (SELECT STRING_AGG(b.NUM_CARRO, ', ') " +
-		              "                          FROM PR_WINROBOT_CARROS b WHERE b.ID_CAB = a.ID) " +
-		              "FROM PR_WINROBOT_CAB a WHERE a.ID = :id")
-		          .setParameter("carro", NUM_CARRO)
-		          .setParameter("id", ID)
-		          .setParameter("user", USER);
+		Query query_folder = entityManager
+				.createNativeQuery("INSERT INTO PR_WINROBOT_CARROS ([NUM_CARRO], [DATA_CRIA], [UTZ_CRIA], ID_CAB) "
+						+ "SELECT :carro, GETDATE(), :user, :id "
+						+ "WHERE NOT EXISTS (SELECT 1 FROM PR_WINROBOT_CARROS WITH (UPDLOCK, HOLDLOCK) "
+						+ "                  WHERE NUM_CARRO = :carro AND ID_CAB = :id); "
+						+ "UPDATE a SET NUM_CARRO = (SELECT STRING_AGG(b.NUM_CARRO, ', ') "
+						+ "                          FROM PR_WINROBOT_CARROS b WHERE b.ID_CAB = a.ID) "
+						+ "FROM PR_WINROBOT_CAB a WHERE a.ID = :id")
+				.setParameter("carro", NUM_CARRO).setParameter("id", ID).setParameter("user", USER);
 		/*
 		 * Query query_folder = entityManager.
 		 * createNativeQuery("UPDATE PR_WINROBOT_CAB SET NUM_CARRO = :carro " +

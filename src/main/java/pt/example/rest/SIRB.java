@@ -2,6 +2,7 @@ package pt.example.rest;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,19 +34,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Pattern;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonArray;
+import javax.mail.BodyPart;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -71,6 +81,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -2888,6 +2899,16 @@ public class SIRB {
 		return dao63.getall();
 	}
 
+	@GET
+	@Path("/getRH_FUNCIONARIOS_MURO")
+	@Produces("application/json")
+	public List<Object[]> getRH_FUNCIONARIOS_MURO() {
+		Query query = entityManager.createNativeQuery("select distinct ID_UTZ,NOME_UTZ from RP_OF_OPERARIOS_CAIXA");
+		List<Object[]> result = query.getResultList();
+
+		return result;
+	}
+
 	@POST
 	@Path("/getRH_FUNCIONARIOS2")
 	@Produces("application/json")
@@ -2964,11 +2985,11 @@ public class SIRB {
 		String OPERARIO = firstMap.get("OPERARIO");
 		String SECTOR_ACESSO = firstMap.get("SECTOR_ACESSO");
 		String SECTOR = firstMap.get("SECTOR");
-		
+
 		if (OPERARIO.isEmpty())
 			OPERARIO = null;
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
-		return dao63.getProdutividade_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN,hora1,hora2,SECTOR);
+		return dao63.getProdutividade_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, hora1, hora2, SECTOR);
 	}
 
 	@POST
@@ -2989,7 +3010,8 @@ public class SIRB {
 		if (OPERARIO.isEmpty())
 			OPERARIO = null;
 		Boolean ADMIN = (firstMap.get("ADMIN").equals("true") ? true : false);
-		return dao63.getOperacoes_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR,hora1,hora2);
+		return dao63.getOperacoes_(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR, hora1,
+				hora2);
 	}
 
 	@POST
@@ -3359,7 +3381,6 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getFamilias(getURLSILVER());
 		return dados;
 	}
-	
 
 	@GET
 	@Path("/getSeccoes_")
@@ -3494,7 +3515,7 @@ public class SIRB {
 		List<HashMap<String, String>> dados = connectionProgress.getReferencia(referencia, getURLSILVER());
 		return dados;
 	}
-	
+
 	@GET
 	@Path("/getEtiqueta/{etiqueta}")
 	@Produces("application/json")
@@ -9052,86 +9073,140 @@ public class SIRB {
 	@POST
 	@Consumes("*/*")
 	@Path("/downloadFileMSGBASE64/{filename}")
-	public Response downloadFileMSGBASE64(@PathParam("filename") String Name, final String bas64file2)
-			throws IOException {
-		File temp = File.createTempFile("tempfile", ".txt");
+	@Produces(MediaType.TEXT_HTML)
+	public Response downloadEmailBASE64(@PathParam("filename") String filename, String base64File) {
 
-		String[] parts = bas64file2.split(",");
-		String bas64file = parts[1];
-
-		File file2 = new File("C:/sgiid/temp_files/" + Name);
-		FileOutputStream out = new FileOutputStream(file2);
-		Base64.Decoder decoder = Base64.getMimeDecoder();
-		byte[] decodedBytes = decoder.decode(bas64file);
-		out.write(decodedBytes);
-		out.close();
-
-		String filepath = "C:/sgiid/temp_files/" + Name;
-
-		String texto = "<div class=\"MsoNormal\"> ";
 		try {
-
-			String fileName = Name;
-
-			MsgParser msgp = new MsgParser();
-			Message msg = msgp.parseMsg(filepath);
-			String from_email = msg.getFromEmail();
-			String from_name = msg.getFromName();
-			String subject = msg.getSubject();
-			String body = msg.getConvertedBodyHTML();
-			String to_list = msg.getDisplayTo();
-			String cc_list = msg.getDisplayCc();
-			String bcc_list = msg.getDisplayBcc();
-			List list = msg.getAttachments();
-			texto += "<b>Anexos</b> - " + list.size() + "<br>";
-			Iterator it_list = list.iterator();
-			Attachment attachemetn = null;
-			while (it_list.hasNext()) {
-				attachemetn = (Attachment) it_list.next();
-				texto += "<i>" + attachemetn + "</i><br>";
+			if (filename == null || filename.isEmpty()) {
+				return Response.status(Response.Status.BAD_REQUEST).entity("Filename inválido").build();
 			}
 
-			body = body.replaceAll("<!\\[endif]-->", "<![endif]");
-			body = body.replaceAll("<!\\[endif]", "<![endif]-->");
-			body = body.replaceAll("(?s)<!--.*?-->", "");
-
-			List<Attachment> atts = msg.getAttachments();
-			for (Attachment att : atts) {
-				if (att instanceof FileAttachment) {
-					FileAttachment file = (FileAttachment) att;
-
-					// you get the actual attachment with
-					if (file.getFilename() != null && !file.getFilename().isEmpty()) {
-						String encodedString = new String(Base64.getEncoder().encodeToString((file.getData())));
-
-						body = body.replaceAll("\\\"cid:" + file.getFilename() + ".*?\\\"",
-								"\"data:image/" + getFileExtension(file) + ";base64," + encodedString + "\"");
-					}
-				}
+			// verificar extensão
+			String lower = filename.toLowerCase();
+			if (lower.endsWith(".msg")) {
+				return processMSG(filename, base64File);
+			} else if (lower.endsWith(".eml")) {
+				return processEML(filename, base64File);
+			} else {
+				return Response.status(Response.Status.BAD_REQUEST)
+						.entity("Extensão não suportada (apenas .msg ou .eml)").build();
 			}
-
-			texto += "------------------------------ <br>";
-			texto += "<b>De</b>:  " + from_name + " <" + from_email + "><br>";
-			texto += "<b>Para</b>: " + to_list + "<br>";
-			texto += "<b>Cc</b>: " + cc_list + "<br>";
-			texto += "<b>Bcc</b>: " + bcc_list + "<br>";
-			texto += "<b>Assunto</b>: " + subject + "<br><br><b>Mensagem</b>:<br></div>";
-			texto += body + "<br>";
 
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro ao processar o email").build();
+		}
+	}
+
+	private Response processMSG(String filename, String base64File) throws IOException {
+
+		int idx = base64File.indexOf(',');
+		String base64 = idx > 0 ? base64File.substring(idx + 1) : base64File;
+		base64 = base64.replaceAll("[^A-Za-z0-9+/=]", "");
+
+		byte[] decodedBytes = Base64.getMimeDecoder().decode(base64);
+		InputStream inputStream = new ByteArrayInputStream(decodedBytes);
+
+		MsgParser msgParser = new MsgParser();
+		Message msg = msgParser.parseMsg(inputStream);
+
+		String fromEmail = Optional.ofNullable(msg.getFromEmail()).orElse("");
+		String fromName = Optional.ofNullable(msg.getFromName()).orElse("");
+		String subject = Optional.ofNullable(msg.getSubject()).orElse("");
+		String body = msg.getBodyText();
+		if (body == null || body.isEmpty())
+			body = msg.getConvertedBodyHTML();
+		if (body == null)
+			body = "";
+		body = body.replace("\r\n", "\n").replace("\n", "<br>");
+
+		String toList = Optional.ofNullable(msg.getDisplayTo()).orElse("");
+		String ccList = Optional.ofNullable(msg.getDisplayCc()).orElse("");
+		String bccList = Optional.ofNullable(msg.getDisplayBcc()).orElse("");
+
+		List<Attachment> attachments = msg.getAttachments();
+		if (attachments == null)
+			attachments = Collections.emptyList();
+
+		// tratar imagens inline
+		for (Attachment att : attachments) {
+			if (att instanceof FileAttachment) {
+				FileAttachment file = (FileAttachment) att;
+				String fname = file.getFilename();
+				if (fname != null && !fname.isEmpty()) {
+					String encoded = Base64.getEncoder().encodeToString(file.getData());
+					body = body.replaceAll("\\\"cid:" + Pattern.quote(fname) + ".*?\\\"",
+							"\"data:image/" + getFileExtension(file) + ";base64," + encoded + "\"");
+				}
+			}
 		}
 
-		BufferedWriter bw = new BufferedWriter(
-				new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
-		bw.write(texto);
-		bw.close();
+		StringBuilder html = new StringBuilder();
+		html.append("<div class=\"MsoNormal\">").append("<b>Anexos</b> - ").append(attachments.size()).append("<br>");
+		for (Attachment att : attachments)
+			html.append("<i>").append(att).append("</i><br>");
+		html.append("------------------------------ <br>").append("<b>De</b>: ").append(fromName).append(" &lt;")
+				.append(fromEmail).append("&gt;<br>").append("<b>Para</b>: ").append(toList).append("<br>")
+				.append("<b>Cc</b>: ").append(ccList).append("<br>").append("<b>Bcc</b>: ").append(bccList)
+				.append("<br>").append("<b>Assunto</b>: ").append(subject).append("<br><br>")
+				.append("<b>Mensagem</b>:<br></div>").append(body).append("<br>");
 
-		file2.delete();
+		byte[] htmlBytes = html.toString().getBytes(StandardCharsets.UTF_8);
+		StreamingOutput stream = output -> output.write(htmlBytes);
 
-		ResponseBuilder response = Response.ok((Object) temp);
-		response.header("Content-Disposition", "attachment; filename=msg.html");
-		return response.build();
+		return Response.ok(stream).header("Content-Disposition", "attachment; filename=\"msg.html\"")
+				.type(MediaType.TEXT_HTML).build();
+	}
+
+	private Response processEML(String filename, String base64File) throws Exception {
+
+		int idx = base64File.indexOf(',');
+		String base64 = idx > 0 ? base64File.substring(idx + 1) : base64File;
+		base64 = base64.replaceAll("[^A-Za-z0-9+/=]", "");
+
+		byte[] decodedBytes = Base64.getMimeDecoder().decode(base64);
+		InputStream is = new ByteArrayInputStream(decodedBytes);
+
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props, null);
+		MimeMessage message = new MimeMessage(session, is);
+
+		String from = InternetAddress.toString(message.getFrom());
+		String to = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.TO));
+		String cc = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.CC));
+		String bcc = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.BCC));
+		String subject = Optional.ofNullable(message.getSubject()).orElse("");
+
+		String body = getTextFromMessage(message); // mesma função auxiliar
+
+		StringBuilder html = new StringBuilder();
+		html.append("<div class=\"MsoNormal\">").append("<b>De</b>: ").append(from).append("<br>")
+				.append("<b>Para</b>: ").append(to).append("<br>").append("<b>Cc</b>: ").append(cc).append("<br>")
+				.append("<b>Bcc</b>: ").append(bcc).append("<br>").append("<b>Assunto</b>: ").append(subject)
+				.append("<br><br>").append("<b>Mensagem</b>:<br></div>").append(body);
+
+		byte[] htmlBytes = html.toString().getBytes(StandardCharsets.UTF_8);
+		StreamingOutput stream = output -> output.write(htmlBytes);
+
+		return Response.ok(stream).header("Content-Disposition", "attachment; filename=\"eml.html\"")
+				.type(MediaType.TEXT_HTML).build();
+	}
+
+	// Função auxiliar para extrair texto/HTML do corpo do EML
+	private String getTextFromMessage(Part p) throws Exception {
+		if (p.isMimeType("text/*")) {
+			return p.getContent().toString().replace("\r\n", "<br>").replace("\n", "<br>");
+		}
+		if (p.isMimeType("multipart/*")) {
+			Multipart mp = (Multipart) p.getContent();
+			StringBuilder result = new StringBuilder();
+			for (int i = 0; i < mp.getCount(); i++) {
+				BodyPart bp = mp.getBodyPart(i);
+				result.append(getTextFromMessage(bp));
+			}
+			return result.toString();
+		}
+		return "";
 	}
 
 	private static String getFileExtension(FileAttachment file) {
@@ -10821,7 +10896,7 @@ public class SIRB {
 	public int atualizarestadosDosificadores(@PathParam("id") Integer id) {
 
 		Query query = entityManager.createNativeQuery("DECLARE @ID int = " + id + " "
-				+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO =  @ID" 
+				+ "UPDATE AB_MOV_MANUTENCAO set ESTADO = 'Executado' where ID_MANUTENCAO =  @ID"
 				+ " and (select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO =  @ID and INATIVO != 1 ) = "
 				+ "(select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO = @ID and DATA_EXECUCAO is not null and INATIVO != 1) "
 				+ "and (select count(*) from AB_MOV_MANUTENCAO_DOSIFICADORES where ID_MANUTENCAO = @ID and INATIVO != 1 ) > 0");
