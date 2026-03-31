@@ -102,7 +102,14 @@ public class PA_MOV_LINHA {
 	private Date DATA_INICIO_ACCAO;
 	@Column(name = "HORA_INICIO_ACCAO")
 	private Time HORA_INICIO_ACCAO;
-	
+
+	@Column(name = "INATIVO")
+	private Boolean INATIVO;
+	@Column(name = "DATA_ANULA")
+	private Timestamp DATA_ANULA;
+	@Column(name = "UTZ_ANULA")
+	private Integer UTZ_ANULA; 
+
 	public Timestamp getDATA_CRIA() {
 		return DATA_CRIA;
 	}
@@ -405,6 +412,30 @@ public class PA_MOV_LINHA {
 
 	public void setHORA_INICIO_ACCAO(Time hORA_INICIO_ACCAO) {
 		HORA_INICIO_ACCAO = hORA_INICIO_ACCAO;
+	}
+
+	public Boolean getINATIVO() {
+		return INATIVO;
+	}
+
+	public void setINATIVO(Boolean iNATIVO) {
+		INATIVO = iNATIVO;
+	}
+
+	public Timestamp getDATA_ANULA() {
+		return DATA_ANULA;
+	}
+
+	public void setDATA_ANULA(Timestamp dATA_ANULA) {
+		DATA_ANULA = dATA_ANULA;
+	}
+
+	public Integer getUTZ_ANULA() {
+		return UTZ_ANULA;
+	}
+
+	public void setUTZ_ANULA(Integer uTZ_ANULA) {
+		UTZ_ANULA = uTZ_ANULA;
 	}
 
 }

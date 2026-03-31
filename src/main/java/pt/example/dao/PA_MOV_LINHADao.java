@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
+
 import pt.example.entity.PA_MOV_LINHA;
 
 public class PA_MOV_LINHADao extends GenericDaoJpaImpl<PA_MOV_LINHA, Integer> implements GenericDao<PA_MOV_LINHA, Integer> {
@@ -11,18 +14,44 @@ public class PA_MOV_LINHADao extends GenericDaoJpaImpl<PA_MOV_LINHA, Integer> im
 		super(PA_MOV_LINHA.class);
 	}
 
-	public List<PA_MOV_LINHA> getbyid(Integer id,Integer user) {
+	public List<PA_MOV_LINHA> getbyid(Integer id, Integer user) {
+		// Native SQL with WITH (NOLOCK) to prevent deadlocks with concurrent UPDATEs
+		// on PA_MOV_LINHA / GT_MOV_TAREFAS (getPA_MOV_LINHAAtualizaESTADOS).
+		// addEntity("a", ...) maps {a.*} columns back to the PA_MOV_LINHA entity,
+		// preserving the same Object[] tuple structure [entity, nome, id_tarefa, segui, subtarefas]
+		// that the calling code expects.
+		String sql = "SELECT {a.*},"
+				+ " (SELECT c.NOME_UTILIZADOR FROM GER_UTILIZADORES c WITH (NOLOCK)"
+				+ "  WHERE c.ID_UTILIZADOR = ("
+				+ "    SELECT b.UTZ_ENCAMINHADO FROM GT_MOV_TAREFAS b WITH (NOLOCK)"
+				+ "    WHERE b.ID_MODULO = 13 AND b.SUB_MODULO = 'PA'"
+				+ "    AND b.ID_CAMPO = a.ID_PLANO_LINHA AND b.ID_TAREFA_PAI IS NULL AND b.INATIVO = 0"
+				+ "  )) AS utz_encaminhado_nome,"
+				+ " (SELECT b.ID_TAREFA FROM GT_MOV_TAREFAS b WITH (NOLOCK)"
+				+ "  WHERE b.ID_MODULO = 13 AND b.SUB_MODULO = 'PA'"
+				+ "  AND b.ID_CAMPO = a.ID_PLANO_LINHA AND b.ID_TAREFA_PAI IS NULL AND b.INATIVO = 0) AS id_tarefa,"
+				+ " (SELECT COUNT(ID) FROM PA_MOV_SEGUIR_LINHA b WITH (NOLOCK)"
+				+ "  WHERE b.ID_PLANO_LINHA = a.ID_PLANO_LINHA AND b.UTILIZADOR = :user) AS segui_linha,"
+				+ " (SELECT COUNT(x.ID_TAREFA) FROM GT_MOV_TAREFAS x WITH (NOLOCK)"
+				+ "  WHERE x.ID_TAREFA_PAI = ("
+				+ "    SELECT b.ID_TAREFA FROM GT_MOV_TAREFAS b WITH (NOLOCK)"
+				+ "    WHERE b.ID_MODULO = 13 AND b.SUB_MODULO = 'PA'"
+				+ "    AND b.ID_CAMPO = a.ID_PLANO_LINHA AND b.ID_TAREFA_PAI IS NULL AND b.INATIVO = 0"
+				+ "  )) AS subtarefas"
+				+ " FROM PA_MOV_LINHA a WITH (NOLOCK)"
+				+ " WHERE a.ID_PLANO_CAB = :id"
+				+ " ORDER BY a.ORDENACAO";
 
-		Query query = entityManager.createQuery("Select a, "
-				+ "(select (select c.NOME_UTILIZADOR from GER_UTILIZADORES c where c.ID_UTILIZADOR =  b.UTZ_ENCAMINHADO) from GT_MOV_TAREFAS b where b.ID_MODULO = 13 and b.SUB_MODULO = 'PA' and b.ID_CAMPO = a.ID_PLANO_LINHA and b.ID_TAREFA_PAI is null  AND b.INATIVO = 0), "
-				+ "(select b.ID_TAREFA from GT_MOV_TAREFAS b where b.ID_MODULO = 13 and b.SUB_MODULO = 'PA' and b.ID_CAMPO = a.ID_PLANO_LINHA and b.ID_TAREFA_PAI is null  AND b.INATIVO = 0) as ID_TAREFA "
-				+ ",(select COUNT(ID) from PA_MOV_SEGUIR_LINHA b where  b.ID_PLANO_LINHA = a.ID_PLANO_LINHA AND b.UTILIZADOR = "+user+" ) as SEGUI_LINHA "
-				+ ",(select COUNT(ID_TAREFA) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = (select b.ID_TAREFA from GT_MOV_TAREFAS b where b.ID_MODULO = 13 and b.SUB_MODULO = 'PA' and b.ID_CAMPO = a.ID_PLANO_LINHA and b.ID_TAREFA_PAI is null  AND b.INATIVO = 0) ) as subtarefas  "
-				+ " from PA_MOV_LINHA a where a.ID_PLANO_CAB = :id ORDER BY a.ORDENACAO");
-		query.setParameter("id", id);
-		List<PA_MOV_LINHA> data = query.getResultList();
-		return data;
-
+		Session session = entityManager.unwrap(Session.class);
+		NativeQuery<?> nq = session.createNativeQuery(sql);
+		nq.addEntity("a", PA_MOV_LINHA.class);
+		nq.addScalar("utz_encaminhado_nome");
+		nq.addScalar("id_tarefa");
+		nq.addScalar("segui_linha");
+		nq.addScalar("subtarefas");
+		nq.setParameter("id", id);
+		nq.setParameter("user", user);
+		return (List<PA_MOV_LINHA>) nq.getResultList();
 	}
 
 

@@ -4797,11 +4797,15 @@ public class SIRB {
 	@Produces("application/json")
 	public int getPA_MOV_CABAssociarPlanoEstrategico(@PathParam("id") String id,
 			@PathParam("id_plano") String id_plano) {
-		return entityManager
-				.createNativeQuery("IF NOT EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = " + id
-						+ " AND ID_PLANO_ESTRATEGICO = " + id_plano
-						+ " ) BEGIN INSERT INTO PE_PLANOS_ASSOCIADOS (ID_PLANO_CAB ,ID_PLANO_ESTRATEGICO ) VALUES ("
-						+ id + "," + id_plano + ") END")
+		return entityManager.createNativeQuery(
+				"IF EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = " + id
+				+ " AND ID_PLANO_ESTRATEGICO = " + id_plano + " AND INATIVO = 1 )"
+				+ " BEGIN UPDATE PE_PLANOS_ASSOCIADOS SET INATIVO = 0, DATA_ANULA = NULL, UTZ_ANULA = NULL"
+				+ " WHERE ID_PLANO_CAB = " + id + " AND ID_PLANO_ESTRATEGICO = " + id_plano + " END"
+				+ " ELSE IF NOT EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = " + id
+				+ " AND ID_PLANO_ESTRATEGICO = " + id_plano + " )"
+				+ " BEGIN INSERT INTO PE_PLANOS_ASSOCIADOS (ID_PLANO_CAB, ID_PLANO_ESTRATEGICO)"
+				+ " VALUES (" + id + ", " + id_plano + ") END")
 				.executeUpdate();
 	}
 
@@ -4812,6 +4816,17 @@ public class SIRB {
 			@PathParam("id_plano") String id_plano) {
 		return entityManager.createNativeQuery(" DELETE PE_PLANOS_ASSOCIADOS where ID_PLANO_CAB = " + id
 				+ " AND ID_PLANO_ESTRATEGICO = " + id_plano + "").executeUpdate();
+	}
+
+	@GET
+	@Path("/getPA_MOV_CABAnularAssociacao/{id_plano}/{id}/{utz}")
+	@Produces("application/json")
+	public int getPA_MOV_CABAnularAssociacao(@PathParam("id") String id,
+			@PathParam("id_plano") String id_plano, @PathParam("utz") String utz) {
+		return entityManager.createNativeQuery(
+				"UPDATE PE_PLANOS_ASSOCIADOS SET INATIVO = 1, DATA_ANULA = GETDATE(), UTZ_ANULA = " + utz
+				+ " WHERE ID_PLANO_CAB = " + id + " AND ID_PLANO_ESTRATEGICO = " + id_plano)
+				.executeUpdate();
 	}
 
 	@GET
@@ -5027,19 +5042,19 @@ public class SIRB {
 				+ "AND a.ESTADO != b.ESTADO and a.ESTADO != 'A' AND a.ESTADO in ('C') AND a.ID_TAREFA_PAI is null AND b.ESTADO in ('P') AND b.ID_PLANO_CAB = "
 				+ id).executeUpdate();
 		return entityManager.createNativeQuery(
-				"DECLARE @TOTAL int = (SELECT COUNT(*) FROM PA_MOV_LINHA where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB =  "
-						+ id + ") ) "
-						+ "IF (SELECT COUNT(*) FROM PA_MOV_LINHA where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB =  "
-						+ id + ") and ESTADO = 'I') = @TOTAL BEGIN "
-						+ "	UPDATE PA_MOV_CAB set ESTADO = 'C' where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB = "
-						+ id + " ) END "
-						+ "ELSE IF (SELECT COUNT(*) FROM PA_MOV_LINHA where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB =  "
-						+ id + ") and ESTADO in ('V','R','D')) = @TOTAL BEGIN "
-						+ "UPDATE PA_MOV_CAB set ESTADO = 'V' where ID_PLANO_CAB in (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB = "
-						+ id + " ) END "
-						+ "ELSE IF EXISTS (select ID_PLANO_CAB from PA_MOV_LINHA where ID_PLANO_CAB =  " + id
-						+ ") BEGIN " + "	UPDATE PA_MOV_CAB set ESTADO = 'P' where ID_PLANO_CAB = " + id
-						+ " and ESTADO != 'E' END")
+				"DECLARE @TOTAL int = (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = "
+						+ id + " AND ESTADO != 'D') "
+						+ "IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = "
+						+ id + " AND ESTADO = 'I') = @TOTAL AND @TOTAL > 0 BEGIN "
+						+ "	UPDATE PA_MOV_CAB SET ESTADO = 'C' WHERE ID_PLANO_CAB = "
+						+ id + " END "
+						+ "ELSE IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = "
+						+ id + " AND ESTADO IN ('V','R')) = @TOTAL AND @TOTAL > 0 BEGIN "
+						+ "	UPDATE PA_MOV_CAB SET ESTADO = 'V' WHERE ID_PLANO_CAB = "
+						+ id + " END "
+						+ "ELSE IF EXISTS (SELECT 1 FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
+						+ ") BEGIN UPDATE PA_MOV_CAB SET ESTADO = 'P' WHERE ID_PLANO_CAB = " + id
+						+ " AND ESTADO != 'E' END")
 				.executeUpdate();
 	}
 

@@ -47,7 +47,11 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ ",CASE WHEN (select COUNT(x.ID) from PA_MOV_SEGUIR_LINHA x where  x.ID_PLANO_LINHA = b.ID_PLANO_LINHA  AND x.UTILIZADOR = "+user+" ) > 0 THEN 1 ELSE 0 END SEGUIR_LINHA"
 						+ ",b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA ,(select count(*) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = g.ID_TAREFA ) subtarefas,b.DATA_ACCAO_ORIGINAL,b.JUSTIFICACAO,g.DATA_CONCLUSAO, "
 						+" CASE WHEN EXISTS(select xg.ID_TAREFA from GT_MOV_TAREFAS xg where xg.ID_MODULO = 13 and xg.SUB_MODULO = 'PA' and  xg.ID_CAMPO in (select xb.ID_PLANO_LINHA from PA_MOV_LINHA xb where xb.ID_PLANO_CAB = a.ID_PLANO_CAB) and xg.ID_TAREFA_PAI is null and xg.ESTADO in ('P','L','E') ) "
-						+ " THEN null ELSE (select MAX(DATA_CONCLUSAO) DATA_CONCLUSAO from GT_MOV_TAREFAS xg where xg.ID_MODULO = 13 and xg.SUB_MODULO = 'PA' and  xg.ID_CAMPO in (select xb.ID_PLANO_LINHA from PA_MOV_LINHA xb where xb.ID_PLANO_CAB = a.ID_PLANO_CAB) and xg.ID_TAREFA_PAI is null and xg.ESTADO not in ('A','P','L','E') ) End DATA_CONCLUSAO_PLANO,a.DATA_ORIGEM " 
+						+ " THEN null ELSE (select MAX(DATA_CONCLUSAO) DATA_CONCLUSAO from GT_MOV_TAREFAS xg where xg.ID_MODULO = 13 and xg.SUB_MODULO = 'PA' and  xg.ID_CAMPO in (select xb.ID_PLANO_LINHA from PA_MOV_LINHA xb where xb.ID_PLANO_CAB = a.ID_PLANO_CAB) and xg.ID_TAREFA_PAI is null and xg.ESTADO not in ('A','P','L','E') ) End DATA_CONCLUSAO_PLANO,a.DATA_ORIGEM "
+						+ ",(select ISNULL(xa.INATIVO,0) from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_CAB = a.ID_PLANO_CAB and xa.ID_PLANO_ESTRATEGICO = " + id + ") as ASSOC_INATIVO "
+						+ ",CASE WHEN EXISTS(SELECT 1 FROM PA_MOV_CAB_HISTORICO h WHERE h.ID_PLANO_CAB = a.ID_PLANO_CAB AND h.TIPO_ALTERACAO = 'DATA_OBJETIVO') THEN 1 ELSE 0 END as TEM_HISTORICO "
+						+ ",CASE WHEN EXISTS(SELECT 1 FROM PA_MOV_LINHA_HISTORICO lh WHERE lh.ID_PLANO_LINHA = b.ID_PLANO_LINHA) THEN 1 ELSE 0 END as TEM_HISTORICO_LINHA "
+						+ ",ISNULL(b.INATIVO,0) as LINHA_INATIVO "
 						+ " from PA_MOV_CAB a "
 						+ "left join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB left join GT_DIC_TAREFAS c on b.ID_ACCAO = c.ID "
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID left join GER_DEPARTAMENTO e on a.DEPARTAMENTO_ORIGEM = e.ID  left join GT_DIC_TIPO_ACAO f on b.TIPO_ACAO = f.ID_TIPO_ACAO "
@@ -97,6 +101,8 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ ",CASE WHEN (select COUNT(x.ID) from PA_MOV_SEGUIR_LINHA x where  x.ID_PLANO_LINHA = b.ID_PLANO_LINHA  AND x.UTILIZADOR = "+user+" ) > 0 THEN 1 ELSE 0 END SEGUIR_LINHA "
 						+ ",b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA "
 						+ " ,(select count(*) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = g.ID_TAREFA ) subtarefas,b.DATA_ACCAO_ORIGINAL,b.JUSTIFICACAO,a.DATA_ORIGEM "
+						+ ",CASE WHEN EXISTS(SELECT 1 FROM PA_MOV_CAB_HISTORICO h WHERE h.ID_PLANO_CAB = a.ID_PLANO_CAB AND h.TIPO_ALTERACAO = 'DATA_OBJETIVO') THEN 1 ELSE 0 END as TEM_HISTORICO_PLANO "
+						+ ",CASE WHEN EXISTS(SELECT 1 FROM PA_MOV_LINHA_HISTORICO lh WHERE lh.ID_PLANO_LINHA = b.ID_PLANO_LINHA) THEN 1 ELSE 0 END as TEM_HISTORICO_LINHA "
 						+ "from PA_MOV_CAB a " + "left join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
 						+ "left join GT_DIC_TAREFAS c on b.ID_ACCAO = c.ID "
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID "
@@ -177,7 +183,8 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ ",b.DATA_ACCAO,(select NOME_UTILIZADOR from GER_UTILIZADORES y where y.ID_UTILIZADOR = b.RESPONSAVEL) as RESPONSAVEL, c.DESCRICAO_PT,b.DESCRICAO as descricao_acao,d.DESCRICAO as DESCRICAO_PRIORIDADE "
 						+ ",b.ESTADO as ESTADO_ACAO,b.fastresponse ,(select sd.DESCRICAO from PA_DIC_AMBITOS sd where sd.ID_AMBITO = a.AMBITO) as AMBITO_DESC, f.DESCRICAO as TIPO_ACAO_DESC,g.ID_TAREFA,a.ID_PLANO_ESTRATEGICO,ISNULL(g.PERCENTAGEM_CONCLUSAO,0)  PERCENTAGEM_CONCLUSAO,b.EFICACIA_CUMPRIMENTO_OBJETIVO,b.OBJETIVO OBJETIVO_LINHA"
 						+ ",CASE WHEN (select COUNT(ID) from PA_MOV_SEGUIR_LINHA bx where  bx.ID_PLANO_LINHA = b.ID_PLANO_LINHA  AND bx.UTILIZADOR = "+user+" ) > 0 THEN 1 ELSE 0 END SEGUIR_LINHA"
-						+ ",b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA ,(select count(*) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = g.ID_TAREFA ) subtarefas,b.DATA_ACCAO_ORIGINAL,b.JUSTIFICACAO,a.DATA_ORIGEM  "
+						+ ",b.ID_PLANO_LINHA,b.DATA_CRIA DATA_CRIA_LINHA ,(select count(*) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = g.ID_TAREFA ) subtarefas,b.DATA_ACCAO_ORIGINAL,b.JUSTIFICACAO,a.DATA_ORIGEM "
+						+ ",CASE WHEN EXISTS(SELECT 1 FROM PA_MOV_LINHA_HISTORICO lh WHERE lh.ID_PLANO_LINHA = b.ID_PLANO_LINHA) THEN 1 ELSE 0 END AS TEM_HISTORICO_LINHA "
 						+ "from PA_MOV_CAB a " + "left join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
 						+ "left join GT_DIC_TAREFAS c on b.ID_ACCAO = c.ID "
 						+ "left join RC_DIC_GRAU_IMPORTANCIA d on b.PRIORIDADE = d.ID "
@@ -187,10 +194,10 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ " where ((not @fastresponse != 0) or (b.FASTRESPONSE = @fastresponse ))  "  + query_atraso
 						+ " /*and((not @emAtraso != 0) or (b.DATA_ACCAO < GETDATE() and g.ESTADO in ('P','L','E') ))*/ "
 						+ query_where + " "
-						+ "AND ( (a.ESTADO = 'P' AND a.ID_PLANO_CAB in (select pa.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS pa inner join PE_MOV_CAB pb on pa.ID_PLANO_ESTRATEGICO = pb.ID  WHERE pb.ANO_PLANO !=  @ano AND pa.ID_PLANO_ESTRATEGICO != @id_plano))"
-						+ " or ((select count(xa.ID_PLANO_CAB) from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_CAB = a.ID_PLANO_CAB) = 0 ) and a.ESTADO in ('P','EX') )"
-						+ " and a.ID_PLANO_CAB not in (select xa.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_ESTRATEGICO = @id_plano) and a.ESTADO not in ('A','E') "
-						+ "order by a.DATA_CRIA asc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
+						+ "AND ( (a.ESTADO = 'P' AND a.ID_PLANO_CAB in (select pa.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS pa inner join PE_MOV_CAB pb on pa.ID_PLANO_ESTRATEGICO = pb.ID  WHERE pb.ANO_PLANO !=  @ano AND pa.ID_PLANO_ESTRATEGICO != @id_plano AND ISNULL(pa.INATIVO,0) = 0))"
+						+ " or ((select count(xa.ID_PLANO_CAB) from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_CAB = a.ID_PLANO_CAB AND ISNULL(xa.INATIVO,0) = 0) = 0 ) and a.ESTADO in ('P','EX') )"
+						+ " and a.ID_PLANO_CAB not in (select xa.ID_PLANO_CAB from PE_PLANOS_ASSOCIADOS xa where xa.ID_PLANO_ESTRATEGICO = @id_plano AND ISNULL(xa.INATIVO,0) = 0) and a.ESTADO not in ('A','E') "
+						+ "order by a.DATA_CRIA desc,a.ID_PLANO_CAB asc,b.DATA_ACCAO asc ");
 		List<PA_MOV_CAB> data = query.getResultList();
 		return data;
 
@@ -230,6 +237,8 @@ public class PA_MOV_CABDao extends GenericDaoJpaImpl<PA_MOV_CAB, Integer> implem
 						+ ",b.ITEM,b.CAUSA,g.DATA_CONCLUSAO,ISNULL(g.PERCENTAGEM_CONCLUSAO,0) PERCENTAGEM_CONCLUSAO "
 						+ " ,(select count(*) from GT_MOV_TAREFAS x where x.ID_TAREFA_PAI = g.ID_TAREFA ) subtarefas,b.DATA_ACCAO_ORIGINAL,b.JUSTIFICACAO,cast(b.DATA_ACCAO as datetime) + cast(b.HORA_ACCAO as datetime) as datahoraaccao,b.DATA_CRIA datacriaccao ,a.DATA_ORIGEM " 
 						+ "  ,(select c.NOME_UTILIZADOR from GER_UTILIZADORES c where c.ID_UTILIZADOR =  g.UTZ_ENCAMINHADO)  as UTZ_ENCAMINHADO "
+						+ ",b.ID_PLANO_LINHA as ID_PLANO_LINHA_ACC "
+						+ ",CASE WHEN EXISTS(SELECT 1 FROM PA_MOV_LINHA_HISTORICO lh WHERE lh.ID_PLANO_LINHA = b.ID_PLANO_LINHA AND lh.TIPO_ALTERACAO = 'ALTERACAO_DATA') THEN 1 ELSE 0 END as TEM_HISTORICO "
 						+ "from PA_MOV_CAB a "
 						+ "inner join PA_MOV_LINHA b on a.ID_PLANO_CAB = b.ID_PLANO_CAB "
 						+ "left join GT_DIC_TAREFAS c on b.ID_ACCAO = c.ID "

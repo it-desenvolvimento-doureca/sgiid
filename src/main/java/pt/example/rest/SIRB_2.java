@@ -104,6 +104,8 @@ import pt.example.dao.MAN_MOV_MANUTENCAO_PLANOSDao;
 import pt.example.dao.MAN_MOV_MAQUINAS_PARADASDao;
 import pt.example.dao.MAN_MOV_PEDIDOSDao;
 import pt.example.dao.MAN_MOV_PEDIDOS_DOCUMENTOSDao;
+import pt.example.dao.PA_MOV_CAB_HISTORICODao;
+import pt.example.dao.PA_MOV_LINHA_HISTORICODao;
 import pt.example.dao.PE_MOV_CABDao;
 import pt.example.dao.PE_MOV_CAB_HISTORICODao;
 import pt.example.dao.PE_MOV_FICHEIROSDao;
@@ -199,6 +201,8 @@ import pt.example.entity.MAN_MOV_MANUTENCAO_PLANOS;
 import pt.example.entity.MAN_MOV_MAQUINAS_PARADAS;
 import pt.example.entity.MAN_MOV_PEDIDOS;
 import pt.example.entity.MAN_MOV_PEDIDOS_DOCUMENTOS;
+import pt.example.entity.PA_MOV_CAB_HISTORICO;
+import pt.example.entity.PA_MOV_LINHA_HISTORICO;
 import pt.example.entity.PE_MOV_CAB;
 import pt.example.entity.PE_MOV_CAB_HISTORICO;
 import pt.example.entity.PE_MOV_FICHEIROS;
@@ -398,6 +402,10 @@ public class SIRB_2 {
 	private PE_MOV_FICHEIROSDao dao76;
 	@Inject
 	private PE_MOV_CAB_HISTORICODao dao77;
+	@Inject
+	private PA_MOV_CAB_HISTORICODao dao95;
+	@Inject
+	private PA_MOV_LINHA_HISTORICODao dao96;
 	@Inject
 	private MAN_MOV_MAQUINAS_PARADASDao dao78;
 	@Inject
@@ -6641,6 +6649,40 @@ public class SIRB_2 {
 		PE_MOV_CAB_HISTORICO PE_MOV_CAB_HISTORICO = new PE_MOV_CAB_HISTORICO();
 		PE_MOV_CAB_HISTORICO.setID(id);
 		dao77.delete(PE_MOV_CAB_HISTORICO);
+	}
+
+	/************************************ PA_MOV_CAB_HISTORICO */
+
+	@POST
+	@Path("/createPA_MOV_CAB_HISTORICO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PA_MOV_CAB_HISTORICO insertPA_MOV_CAB_HISTORICO(final PA_MOV_CAB_HISTORICO data) {
+		return dao95.create(data);
+	}
+
+	@GET
+	@Path("/getPA_MOV_CAB_HISTORICObyPlano/{id}")
+	@Produces("application/json")
+	public List<PA_MOV_CAB_HISTORICO> getPA_MOV_CAB_HISTORICObyPlano(@PathParam("id") Integer id) {
+		return dao95.getbyPlano(id);
+	}
+
+	/************************************ PA_MOV_LINHA_HISTORICO */
+
+	@POST
+	@Path("/createPA_MOV_LINHA_HISTORICO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PA_MOV_LINHA_HISTORICO insertPA_MOV_LINHA_HISTORICO(final PA_MOV_LINHA_HISTORICO data) {
+		return dao96.create(data);
+	}
+
+	@GET
+	@Path("/getPA_MOV_LINHA_HISTORICObyPlano/{id}")
+	@Produces("application/json")
+	public List<PA_MOV_LINHA_HISTORICO> getPA_MOV_LINHA_HISTORICObyPlano(@PathParam("id") Integer id) {
+		return dao96.getbyPlano(id);
 	}
 
 	@POST
