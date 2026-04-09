@@ -4560,6 +4560,30 @@ public class SIRB_2 {
 		dao49.delete(MAN_MOV_MANUTENCAO_PLANOS);
 	}
 
+	@POST
+	@Path("/simularPeriodicidade/{n}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<String> simularPeriodicidade(final MAN_MOV_MANUTENCAO_PLANOS data, @PathParam("n") int n) {
+		List<String> datas = new ArrayList<>();
+		if (data.getDATA_INICIO() == null || data.getTIPO_REPETICAO() == null || data.getREPETIR() == null) return datas;
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String diasParam = (data.getDIAS_SEMANA() == null || data.getDIAS_SEMANA().equals("null")) ? "NULL" : "'" + data.getDIAS_SEMANA() + "'";
+		String dataInicio = sdf.format(data.getDATA_INICIO());
+
+		try {
+			Query q = entityManager.createNativeQuery(
+				"EXEC MAN_SIMULAR_PERIODICIDADE '" + dataInicio + "', " + data.getREPETIR() + ", '" + data.getTIPO_REPETICAO() + "', " + diasParam + ", " + n);
+			List<?> results = q.getResultList();
+			for (Object r : results) {
+				if (r != null) datas.add(r.toString().substring(0, 10));
+			}
+		} catch (Exception e) { }
+
+		return datas;
+	}
+
 	/************************************ MAN_DIC_EQUIPAS_UTILIZADORES */
 
 	@POST
