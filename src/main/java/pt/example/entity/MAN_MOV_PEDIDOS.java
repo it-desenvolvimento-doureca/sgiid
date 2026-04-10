@@ -1,9 +1,7 @@
 package pt.example.entity;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -65,7 +63,27 @@ public class MAN_MOV_PEDIDOS {
 	private String EMAIL_FORNECEDOR;
 	@JsonProperty( "AMBITO_MANUTENCAO")
 	private Integer AMBITO_MANUTENCAO;
-	
+
+	// --- Campos de Classificação de Pedido IT (Controlos Segurança Informação) ---
+	@JsonProperty("TIPO_CLASSIFICACAO_PEDIDO")
+	private String TIPO_CLASSIFICACAO_PEDIDO;         // 'IN', 'PI', 'PM', 'EV'
+	@JsonProperty("PRIORIDADE_INTERVENCAO")
+	private Integer PRIORIDADE_INTERVENCAO;            // Para PI: 1=Alto, 2=Médio, 3=Baixo
+	@JsonProperty("NIVEL_IMPACTO")
+	private Integer NIVEL_IMPACTO;                     // Para IN: 1=Alto, 2=Médio, 3=Baixo
+	@JsonProperty("NIVEL_URGENCIA")
+	private Integer NIVEL_URGENCIA;                    // Para IN: 1=Alto, 2=Médio, 3=Baixo
+	@JsonProperty("PRIORIDADE_INCIDENTE")
+	private Integer PRIORIDADE_INCIDENTE;              // Auto-calculada: NIVEL_IMPACTO + NIVEL_URGENCIA - 1
+	@JsonProperty("TEMPO_RESPOSTA_HORAS")
+	private Integer TEMPO_RESPOSTA_HORAS;              // SLA resposta (horas úteis)
+	@JsonProperty("TEMPO_RESOLUCAO_HORAS")
+	private Integer TEMPO_RESOLUCAO_HORAS;             // SLA resolução (horas úteis)
+	@JsonProperty("DATA_HORA_RESPOSTA")
+	private Timestamp DATA_HORA_RESPOSTA;              // Quando DTSI respondeu
+	@JsonProperty("DATA_HORA_RESOLUCAO_REAL")
+	private Timestamp DATA_HORA_RESOLUCAO_REAL;        // Quando efetivamente resolvido
+
 	public String getSTATUS_MAQUINA() {
 		return STATUS_MAQUINA;
 	}
@@ -257,5 +275,32 @@ public class MAN_MOV_PEDIDOS {
 	public void setAMBITO_MANUTENCAO(Integer aMBITO_MANUTENCAO) {
 		AMBITO_MANUTENCAO = aMBITO_MANUTENCAO;
 	}
+
+	public String getTIPO_CLASSIFICACAO_PEDIDO() { return TIPO_CLASSIFICACAO_PEDIDO; }
+	public void setTIPO_CLASSIFICACAO_PEDIDO(String v) { TIPO_CLASSIFICACAO_PEDIDO = v; }
+
+	public Integer getPRIORIDADE_INTERVENCAO() { return PRIORIDADE_INTERVENCAO; }
+	public void setPRIORIDADE_INTERVENCAO(Integer v) { PRIORIDADE_INTERVENCAO = v; }
+
+	public Integer getNIVEL_IMPACTO() { return NIVEL_IMPACTO; }
+	public void setNIVEL_IMPACTO(Integer v) { NIVEL_IMPACTO = v; }
+
+	public Integer getNIVEL_URGENCIA() { return NIVEL_URGENCIA; }
+	public void setNIVEL_URGENCIA(Integer v) { NIVEL_URGENCIA = v; }
+
+	public Integer getPRIORIDADE_INCIDENTE() { return PRIORIDADE_INCIDENTE; }
+	public void setPRIORIDADE_INCIDENTE(Integer v) { PRIORIDADE_INCIDENTE = v; }
+
+	public Integer getTEMPO_RESPOSTA_HORAS() { return TEMPO_RESPOSTA_HORAS; }
+	public void setTEMPO_RESPOSTA_HORAS(Integer v) { TEMPO_RESPOSTA_HORAS = v; }
+
+	public Integer getTEMPO_RESOLUCAO_HORAS() { return TEMPO_RESOLUCAO_HORAS; }
+	public void setTEMPO_RESOLUCAO_HORAS(Integer v) { TEMPO_RESOLUCAO_HORAS = v; }
+
+	public Timestamp getDATA_HORA_RESPOSTA() { return DATA_HORA_RESPOSTA; }
+	public void setDATA_HORA_RESPOSTA(Timestamp v) { DATA_HORA_RESPOSTA = v; }
+
+	public Timestamp getDATA_HORA_RESOLUCAO_REAL() { return DATA_HORA_RESOLUCAO_REAL; }
+	public void setDATA_HORA_RESOLUCAO_REAL(Timestamp v) { DATA_HORA_RESOLUCAO_REAL = v; }
 
 }

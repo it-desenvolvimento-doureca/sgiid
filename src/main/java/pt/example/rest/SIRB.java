@@ -1358,25 +1358,65 @@ public class SIRB {
 	@Path("/getPedidosProducao")
 	@Produces("application/json")
 	public List<Object[]> getPedidosProducao(final List<HashMap<String, String>> dados) {
-		HashMap<String, String> firstMap = dados.get(0);
-		String LIECOD = firstMap.get("ARMAZENS");
+	    HashMap<String, String> firstMap = dados.get(0);
+	    String LIECOD = firstMap.get("ARMAZENS");
 
-		String LIECOD_ = firstMap.get("ARMAZENS") == null ? null : "LIECOD";
+	    String LIECOD_ = firstMap.get("ARMAZENS") == null ? null : "LIECOD";
 
-		Query query_folder = entityManager.createNativeQuery(
-				"SELECT e.proref CodRef, a.prodes1 DesRef,e.etqorilot1 Lote, e.etqnum NumEtiq, e.etqembqte QuantEtiq, e.liecod Armazem, e.empcod Localiz,"
-						+ "b.UTZ_CRIA,c.NOME 'OPERARIO',d.COD_SECTOR,d.DES_SECTOR 'SECTOR', b.DATA_CRIA,CONCAT(b.COD_SECTOR_OF, + ' - ' + b.DES_SECTOR_OF) 'SECTOR_OF',p.DESCRICAO 'POSTO' "
-						+ "FROM (select * from ST_PEDIDOS where ID_PEDIDO in (select MAX(ID_PEDIDO) from ST_PEDIDOS GROUP BY ETQNUM)) b INNER JOIN SILVER.dbo.SETQDE e on b.ETQNUM = e.ETQNUM "
-						+ "LEFT JOIN SILVER.dbo.SDTPRA a on a.proref=e.proref "
-						+ "LEFT JOIN RH_FUNCIONARIOS c on b.UTZ_CRIA = c.COD_FUNCIONARIO "
-						+ "LEFT JOIN RH_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
-						+ "LEFT JOIN GER_POSTOS p on p.IP_IMPRESSORA = b.IP_POSTO "
-						+ "WHERE e.etqsitsto=2 AND e.etqetat=1 AND ((not " + LIECOD_
-						+ " is not null) or (e.LIECOD  in (" + LIECOD + ") )) ORDER BY b.DATA_CRIA,e.etqnum");
+	    Query query_folder = entityManager.createNativeQuery(
+	            "SELECT e.proref CodRef, a.prodes1 DesRef,e.etqorilot1 Lote, e.etqnum NumEtiq, e.etqembqte QuantEtiq, e.liecod Armazem, e.empcod Localiz,"
+	                    + "b.UTZ_CRIA,c.NOME 'OPERARIO',b.IMPRESSO,d.COD_SECTOR,d.DES_SECTOR 'SECTOR', b.DATA_CRIA,CONCAT(b.COD_SECTOR_OF, + ' - ' + b.DES_SECTOR_OF) 'SECTOR_OF',p.DESCRICAO 'POSTO',b.ID_PEDIDO "
+	                    + "FROM (select * from ST_PEDIDOS where ID_PEDIDO in (select MAX(ID_PEDIDO) from ST_PEDIDOS GROUP BY ETQNUM)) b INNER JOIN SILVER.dbo.SETQDE e on b.ETQNUM = e.ETQNUM "
+	                    + "LEFT JOIN SILVER.dbo.SDTPRA a on a.proref=e.proref "
+	                    + "LEFT JOIN RH_FUNCIONARIOS c on b.UTZ_CRIA = c.COD_FUNCIONARIO "
+	                    + "LEFT JOIN RH_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
+	                    + "LEFT JOIN GER_POSTOS p on p.IP_IMPRESSORA = b.IP_POSTO "
+	                    + "WHERE e.etqsitsto=2 AND e.etqetat=1 AND ((not " + LIECOD_
+	                    + " is not null) or (e.LIECOD  in (" + LIECOD + ") )) ORDER BY b.DATA_CRIA,e.etqnum");
 
-		List<Object[]> dados_folder = query_folder.getResultList();
+	    List<Object[]> dados_folder = query_folder.getResultList();
 
-		return dados_folder;
+	    return dados_folder;
+	}
+	
+	@POST
+	@Path("/updatePedidosProducao")
+	@Produces("application/json")
+	public String updatePedidosProducao(final List<HashMap<String, Object>> dados) {
+	    try {
+	        HashMap<String, Object> firstMap = dados.get(0);
+	        @SuppressWarnings("unchecked")
+	        List<Integer> ids = (List<Integer>) firstMap.get("ids");
+	        Boolean impresso = (Boolean) firstMap.get("impresso");
+	        
+	        if (ids == null || ids.isEmpty()) {
+	            return "{\"success\": false, \"message\": \"No IDs provided\"}";
+	        }
+	        
+	        // Build IN clause for IDs
+	        StringBuilder inClause = new StringBuilder();
+	        for (int i = 0; i < ids.size(); i++) {
+	            if (i > 0) inClause.append(",");
+	            inClause.append("?");
+	        }
+	        
+	        String sql = "UPDATE ST_PEDIDOS SET IMPRESSO = ? WHERE ID_PEDIDO IN (" + inClause.toString() + ")";
+	        
+	        Query query = entityManager.createNativeQuery(sql);
+	        query.setParameter(1, impresso ? 1 : 0);
+	        
+	        for (int i = 0; i < ids.size(); i++) {
+	            query.setParameter(i + 2, ids.get(i));
+	        }
+	        
+	        int updatedRows = query.executeUpdate();
+	        
+	        return "{\"success\": true, \"message\": \"Updated " + updatedRows + " records\", \"updatedCount\": " + updatedRows + "}";
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "{\"success\": false, \"message\": \"Error updating records: " + e.getMessage() + "\"}";
+	    }
 	}
 
 	@POST

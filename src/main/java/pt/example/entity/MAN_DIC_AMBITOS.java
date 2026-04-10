@@ -32,6 +32,8 @@ public class MAN_DIC_AMBITOS {
 	private Boolean ATIVO;
 	@JsonProperty("OBRIGA_DOCUMENTOS")
 	private Boolean OBRIGA_DOCUMENTOS;
+	@JsonProperty("AMBITO_IT")
+	private Boolean AMBITO_IT;
 
 	public Integer getID() {
 		return ID;
@@ -95,6 +97,14 @@ public class MAN_DIC_AMBITOS {
 
 	public void setOBRIGA_DOCUMENTOS(Boolean oBRIGA_DOCUMENTOS) {
 		OBRIGA_DOCUMENTOS = oBRIGA_DOCUMENTOS;
+	}
+
+	public Boolean getAMBITO_IT() {
+		return AMBITO_IT;
+	}
+
+	public void setAMBITO_IT(Boolean aMBITO_IT) {
+		AMBITO_IT = aMBITO_IT;
 	}
 
 }

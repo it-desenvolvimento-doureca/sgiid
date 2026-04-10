@@ -79,6 +79,11 @@ import pt.example.dao.GER_REFERENCIAS_FASTRESPONSE_REJEICOESDao;
 import pt.example.dao.LG_ANALISE_ENVIOSDao;
 import pt.example.dao.MAN_DIC_AMBITOSDao;
 import pt.example.dao.MAN_DIC_AMBITO_UTILIZADORESDao;
+import pt.example.dao.MAN_DIC_NIVEL_IMPACTO_INCIDENTEDao;
+import pt.example.dao.MAN_DIC_NIVEL_URGENCIA_INCIDENTEDao;
+import pt.example.dao.MAN_DIC_PRIORIDADE_INCIDENTEDao;
+import pt.example.dao.MAN_DIC_PRIORIDADE_INTERVENCAODao;
+import pt.example.dao.MAN_DIC_TIPO_CLASSIFICACAO_PEDIDODao;
 import pt.example.dao.MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSDao;
 import pt.example.dao.MAN_DIC_DIVISOESDao;
 import pt.example.dao.MAN_DIC_EDIFICIOSDao;
@@ -176,6 +181,11 @@ import pt.example.entity.GER_UTILIZADORES;
 import pt.example.entity.LG_ANALISE_ENVIOS;
 import pt.example.entity.MAN_DIC_AMBITOS;
 import pt.example.entity.MAN_DIC_AMBITO_UTILIZADORES;
+import pt.example.entity.MAN_DIC_NIVEL_IMPACTO_INCIDENTE;
+import pt.example.entity.MAN_DIC_NIVEL_URGENCIA_INCIDENTE;
+import pt.example.entity.MAN_DIC_PRIORIDADE_INCIDENTE;
+import pt.example.entity.MAN_DIC_PRIORIDADE_INTERVENCAO;
+import pt.example.entity.MAN_DIC_TIPO_CLASSIFICACAO_PEDIDO;
 import pt.example.entity.MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS;
 import pt.example.entity.MAN_DIC_DIVISOES;
 import pt.example.entity.MAN_DIC_EDIFICIOS;
@@ -440,6 +450,16 @@ public class SIRB_2 {
 	private PR_WINROBOT_CABDao dao93;
 	@Inject
 	private MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOSDao dao94;
+	@Inject
+	private MAN_DIC_TIPO_CLASSIFICACAO_PEDIDODao dao95b;
+	@Inject
+	private MAN_DIC_PRIORIDADE_INTERVENCAODao dao96b;
+	@Inject
+	private MAN_DIC_NIVEL_IMPACTO_INCIDENTEDao dao97;
+	@Inject
+	private MAN_DIC_NIVEL_URGENCIA_INCIDENTEDao dao98;
+	@Inject
+	private MAN_DIC_PRIORIDADE_INCIDENTEDao dao99;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -9674,6 +9694,99 @@ public class SIRB_2 {
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
+	}
+
+	/************************************ MAN_DIC_TIPO_CLASSIFICACAO_PEDIDO */
+
+	@GET
+	@Path("/getMAN_DIC_TIPO_CLASSIFICACAO_PEDIDO")
+	@Produces("application/json")
+	public List<MAN_DIC_TIPO_CLASSIFICACAO_PEDIDO> getMAN_DIC_TIPO_CLASSIFICACAO_PEDIDO() {
+		return dao95b.getall();
+	}
+
+	@GET
+	@Path("/getMAN_DIC_TIPO_CLASSIFICACAO_PEDIDObyid/{id}")
+	@Produces("application/json")
+	public List<MAN_DIC_TIPO_CLASSIFICACAO_PEDIDO> getMAN_DIC_TIPO_CLASSIFICACAO_PEDIDObyid(@PathParam("id") Integer id) {
+		return dao95b.getbyid(id);
+	}
+
+	/************************************ MAN_DIC_PRIORIDADE_INTERVENCAO */
+
+	@GET
+	@Path("/getMAN_DIC_PRIORIDADE_INTERVENCAO")
+	@Produces("application/json")
+	public List<MAN_DIC_PRIORIDADE_INTERVENCAO> getMAN_DIC_PRIORIDADE_INTERVENCAO() {
+		return dao96b.getall();
+	}
+
+	@GET
+	@Path("/getMAN_DIC_PRIORIDADE_INTERVENCAObyid/{id}")
+	@Produces("application/json")
+	public List<MAN_DIC_PRIORIDADE_INTERVENCAO> getMAN_DIC_PRIORIDADE_INTERVENCAObyid(@PathParam("id") Integer id) {
+		return dao96b.getbyid(id);
+	}
+
+	/************************************ MAN_DIC_NIVEL_IMPACTO_INCIDENTE */
+
+	@GET
+	@Path("/getMAN_DIC_NIVEL_IMPACTO_INCIDENTE")
+	@Produces("application/json")
+	public List<MAN_DIC_NIVEL_IMPACTO_INCIDENTE> getMAN_DIC_NIVEL_IMPACTO_INCIDENTE() {
+		return dao97.getall();
+	}
+
+	/************************************ MAN_DIC_NIVEL_URGENCIA_INCIDENTE */
+
+	@GET
+	@Path("/getMAN_DIC_NIVEL_URGENCIA_INCIDENTE")
+	@Produces("application/json")
+	public List<MAN_DIC_NIVEL_URGENCIA_INCIDENTE> getMAN_DIC_NIVEL_URGENCIA_INCIDENTE() {
+		return dao98.getall();
+	}
+
+	/************************************ MAN_DIC_PRIORIDADE_INCIDENTE */
+
+	@GET
+	@Path("/getMAN_DIC_PRIORIDADE_INCIDENTE")
+	@Produces("application/json")
+	public List<MAN_DIC_PRIORIDADE_INCIDENTE> getMAN_DIC_PRIORIDADE_INCIDENTE() {
+		return dao99.getall();
+	}
+
+	@GET
+	@Path("/getMAN_DIC_PRIORIDADE_INCIDENTEbyprioridade/{prioridade}")
+	@Produces("application/json")
+	public List<MAN_DIC_PRIORIDADE_INCIDENTE> getMAN_DIC_PRIORIDADE_INCIDENTEbyprioridade(
+			@PathParam("prioridade") Integer prioridade) {
+		return dao99.getbyprioridade(prioridade);
+	}
+
+	/************************************ VW_MAN_PEDIDOS_SLA_STATUS */
+
+	@GET
+	@Path("/getMAN_PEDIDOS_SLA_STATUS/{idPedido}")
+	@Produces("application/json")
+	public List<Object[]> getMAN_PEDIDOS_SLA_STATUS(@PathParam("idPedido") Integer idPedido) {
+		Query query = entityManager.createNativeQuery(
+				"SELECT ID_MANUTENCAO_CAB, TIPO_CLASSIFICACAO_PEDIDO, DATA_HORA_PEDIDO, ESTADO, "
+				+ "NIVEL_IMPACTO, NIVEL_URGENCIA, PRIORIDADE_INCIDENTE, PRIORIDADE_INTERVENCAO, "
+				+ "TEMPO_RESPOSTA_HORAS, TEMPO_RESOLUCAO_HORAS, DATA_HORA_RESPOSTA, DATA_HORA_RESOLUCAO_REAL, "
+				+ "ESTADO_SLA_RESPOSTA, ESTADO_SLA_RESOLUCAO, HORAS_UTEIS_DECORRIDAS "
+				+ "FROM VW_MAN_PEDIDOS_SLA_STATUS WHERE ID_MANUTENCAO_CAB = :id")
+				.setParameter("id", idPedido);
+		return query.getResultList();
+	}
+
+	@GET
+	@Path("/getMAN_PEDIDOS_SLA_LISTA")
+	@Produces("application/json")
+	public List<Object[]> getMAN_PEDIDOS_SLA_LISTA() {
+		Query query = entityManager.createNativeQuery(
+				"SELECT ID_MANUTENCAO_CAB, ESTADO_SLA_RESPOSTA, ESTADO_SLA_RESOLUCAO "
+				+ "FROM VW_MAN_PEDIDOS_SLA_STATUS");
+		return query.getResultList();
 	}
 
 }

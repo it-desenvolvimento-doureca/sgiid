@@ -90,6 +90,26 @@ public class MAN_MOV_MANUTENCAO_CAB {
 	@JsonProperty("NIVEL")
 	private Integer NIVEL;
 
+	// ===== Classificação de Pedido IT =====
+	@JsonProperty("TIPO_CLASSIFICACAO_PEDIDO")
+	private String TIPO_CLASSIFICACAO_PEDIDO;
+	@JsonProperty("PRIORIDADE_INTERVENCAO")
+	private Integer PRIORIDADE_INTERVENCAO;
+	@JsonProperty("NIVEL_IMPACTO")
+	private Integer NIVEL_IMPACTO;
+	@JsonProperty("NIVEL_URGENCIA")
+	private Integer NIVEL_URGENCIA;
+	@JsonProperty("PRIORIDADE_INCIDENTE")
+	private Integer PRIORIDADE_INCIDENTE;
+	@JsonProperty("TEMPO_RESPOSTA_HORAS")
+	private Integer TEMPO_RESPOSTA_HORAS;
+	@JsonProperty("TEMPO_RESOLUCAO_HORAS")
+	private Integer TEMPO_RESOLUCAO_HORAS;
+	@JsonProperty("DATA_HORA_RESPOSTA")
+	private Timestamp DATA_HORA_RESPOSTA;
+	@JsonProperty("DATA_HORA_RESOLUCAO_REAL")
+	private Timestamp DATA_HORA_RESOLUCAO_REAL;
+
 	public String getCOD_FORNECEDOR() {
 		return COD_FORNECEDOR;
 	}
@@ -370,5 +390,76 @@ public class MAN_MOV_MANUTENCAO_CAB {
 		NIVEL = nIVEL;
 	}
 
-	
+	public String getTIPO_CLASSIFICACAO_PEDIDO() {
+		return TIPO_CLASSIFICACAO_PEDIDO;
+	}
+
+	public void setTIPO_CLASSIFICACAO_PEDIDO(String tIPO_CLASSIFICACAO_PEDIDO) {
+		TIPO_CLASSIFICACAO_PEDIDO = tIPO_CLASSIFICACAO_PEDIDO;
+	}
+
+	public Integer getPRIORIDADE_INTERVENCAO() {
+		return PRIORIDADE_INTERVENCAO;
+	}
+
+	public void setPRIORIDADE_INTERVENCAO(Integer pRIORIDADE_INTERVENCAO) {
+		PRIORIDADE_INTERVENCAO = pRIORIDADE_INTERVENCAO;
+	}
+
+	public Integer getNIVEL_IMPACTO() {
+		return NIVEL_IMPACTO;
+	}
+
+	public void setNIVEL_IMPACTO(Integer nIVEL_IMPACTO) {
+		NIVEL_IMPACTO = nIVEL_IMPACTO;
+	}
+
+	public Integer getNIVEL_URGENCIA() {
+		return NIVEL_URGENCIA;
+	}
+
+	public void setNIVEL_URGENCIA(Integer nIVEL_URGENCIA) {
+		NIVEL_URGENCIA = nIVEL_URGENCIA;
+	}
+
+	public Integer getPRIORIDADE_INCIDENTE() {
+		return PRIORIDADE_INCIDENTE;
+	}
+
+	public void setPRIORIDADE_INCIDENTE(Integer pRIORIDADE_INCIDENTE) {
+		PRIORIDADE_INCIDENTE = pRIORIDADE_INCIDENTE;
+	}
+
+	public Integer getTEMPO_RESPOSTA_HORAS() {
+		return TEMPO_RESPOSTA_HORAS;
+	}
+
+	public void setTEMPO_RESPOSTA_HORAS(Integer tEMPO_RESPOSTA_HORAS) {
+		TEMPO_RESPOSTA_HORAS = tEMPO_RESPOSTA_HORAS;
+	}
+
+	public Integer getTEMPO_RESOLUCAO_HORAS() {
+		return TEMPO_RESOLUCAO_HORAS;
+	}
+
+	public void setTEMPO_RESOLUCAO_HORAS(Integer tEMPO_RESOLUCAO_HORAS) {
+		TEMPO_RESOLUCAO_HORAS = tEMPO_RESOLUCAO_HORAS;
+	}
+
+	public Timestamp getDATA_HORA_RESPOSTA() {
+		return DATA_HORA_RESPOSTA;
+	}
+
+	public void setDATA_HORA_RESPOSTA(Timestamp dATA_HORA_RESPOSTA) {
+		DATA_HORA_RESPOSTA = dATA_HORA_RESPOSTA;
+	}
+
+	public Timestamp getDATA_HORA_RESOLUCAO_REAL() {
+		return DATA_HORA_RESOLUCAO_REAL;
+	}
+
+	public void setDATA_HORA_RESOLUCAO_REAL(Timestamp dATA_HORA_RESOLUCAO_REAL) {
+		DATA_HORA_RESOLUCAO_REAL = dATA_HORA_RESOLUCAO_REAL;
+	}
+
 }
