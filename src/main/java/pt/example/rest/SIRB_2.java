@@ -5098,6 +5098,36 @@ public class SIRB_2 {
 	}
 
 	@POST
+	@Path("/MAN_GET_PLANOS_BY_IDS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public List<HashMap<String, Object>> MAN_GET_PLANOS_BY_IDS(final List<HashMap<String, String>> dados) {
+		HashMap<String, String> firstMap = dados.get(0);
+		String ids = firstMap.get("ids");
+		if (ids == null || ids.isEmpty() || !ids.matches("[0-9,]+"))
+			return new ArrayList<>();
+
+		Query query = entityManager.createNativeQuery(
+			"SELECT p.ID, t.DESCRICAO_PT, CONVERT(VARCHAR(5), p.TEMPO_ESTIMADO, 108) AS TEMPO_ESTIMADO, p.DATA_PROXIMA_REALIZADA " +
+			"FROM MAN_MOV_MANUTENCAO_PLANOS p " +
+			"LEFT JOIN GT_DIC_TAREFAS t ON p.ID_ACAO = t.ID " +
+			"WHERE p.ID IN (" + ids + ") " +
+			"ORDER BY t.DESCRICAO_PT");
+
+		List<Object[]> rows = query.getResultList();
+		List<HashMap<String, Object>> result = new ArrayList<>();
+		for (Object[] row : rows) {
+			HashMap<String, Object> map = new HashMap<>();
+			map.put("ID", row[0]);
+			map.put("DESCRICAO_ACAO", row[1]);
+			map.put("TEMPO_ESTIMADO", row[2]);
+			map.put("DATA_PROXIMA_REALIZADA", row[3]);
+			result.add(map);
+		}
+		return result;
+	}
+
+	@POST
 	@Path("/MAN_GET_EQUIPAMENTOS_CRITICOS")
 	@Produces("application/json")
 	public List<Object[]> MAN_GET_EQUIPAMENTOS_CRITICOS(final List<HashMap<String, String>> dados) {

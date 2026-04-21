@@ -593,15 +593,22 @@ public class SIRB_3 {
 		String TIPO_UTILIZADOR = firstMap.get("TIPO_UTILIZADOR");
 		String ID = firstMap.get("ID");
 
-		if (DATA_FIM != null)
+		String sql;
+		if (DATA_FIM == null || DATA_FIM.isEmpty()) {
+			// Remover do calendário: limpar só as datas, preservar TIPO_RESPONSAVEL e UTILIZADOR
+			sql = "UPDATE MAN_MOV_MANUTENCAO_CAB SET "
+					+ "DATA_HORA_PEDIDO = NULL, DATA_REALIZACAO = NULL "
+					+ "WHERE ID_MANUTENCAO_CAB = " + ID;
+		} else {
 			DATA_FIM = "'" + DATA_FIM + "'";
+			sql = "UPDATE MAN_MOV_MANUTENCAO_CAB SET TIPO_RESPONSAVEL = '" + TIPO_UTILIZADOR + "', UTILIZADOR = "
+					+ UTILIZADOR + ", DATA_HORA_PEDIDO = case when DATA_HORA_PEDIDO is null then null else "
+					+ DATA_FIM + " end, "
+					+ "DATA_REALIZACAO = case when DATA_HORA_PEDIDO is null then " + DATA_FIM
+					+ " else DATA_REALIZACAO end WHERE ID_MANUTENCAO_CAB = " + ID;
+		}
 
-		Query query_folder = entityManager.createNativeQuery(
-				"UPDATE MAN_MOV_MANUTENCAO_CAB SET TIPO_RESPONSAVEL = '" + TIPO_UTILIZADOR + "',UTILIZADOR = "
-						+ UTILIZADOR + ", DATA_HORA_PEDIDO = case when DATA_HORA_PEDIDO is null then null else "
-						+ DATA_FIM + " end, " + "DATA_REALIZACAO = case when DATA_HORA_PEDIDO is null then " + DATA_FIM
-						+ " else DATA_REALIZACAO end WHERE ID_MANUTENCAO_CAB = " + ID);
-
+		Query query_folder = entityManager.createNativeQuery(sql);
 		int dados_folder = query_folder.executeUpdate();
 
 		return dados_folder;

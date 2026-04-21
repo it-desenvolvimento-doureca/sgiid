@@ -31,6 +31,12 @@ public class PA_MOV_LINHA_HISTORICO {
 	@JsonProperty("DESCRICAO")
 	private String DESCRICAO;
 
+	@JsonProperty("VALOR_ANTERIOR")
+	private String VALOR_ANTERIOR;
+
+	@JsonProperty("VALOR_NOVO")
+	private String VALOR_NOVO;
+
 	@JsonProperty("ESTADO_PLANO_MOMENTO")
 	private String ESTADO_PLANO_MOMENTO;
 
@@ -54,6 +60,12 @@ public class PA_MOV_LINHA_HISTORICO {
 
 	public String getDESCRICAO() { return DESCRICAO; }
 	public void setDESCRICAO(String v) { DESCRICAO = v; }
+
+	public String getVALOR_ANTERIOR() { return VALOR_ANTERIOR; }
+	public void setVALOR_ANTERIOR(String v) { VALOR_ANTERIOR = v; }
+
+	public String getVALOR_NOVO() { return VALOR_NOVO; }
+	public void setVALOR_NOVO(String v) { VALOR_NOVO = v; }
 
 	public String getESTADO_PLANO_MOMENTO() { return ESTADO_PLANO_MOMENTO; }
 	public void setESTADO_PLANO_MOMENTO(String v) { ESTADO_PLANO_MOMENTO = v; }

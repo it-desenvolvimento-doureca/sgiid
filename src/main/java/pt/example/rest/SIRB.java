@@ -1358,65 +1358,67 @@ public class SIRB {
 	@Path("/getPedidosProducao")
 	@Produces("application/json")
 	public List<Object[]> getPedidosProducao(final List<HashMap<String, String>> dados) {
-	    HashMap<String, String> firstMap = dados.get(0);
-	    String LIECOD = firstMap.get("ARMAZENS");
+		HashMap<String, String> firstMap = dados.get(0);
+		String LIECOD = firstMap.get("ARMAZENS");
 
-	    String LIECOD_ = firstMap.get("ARMAZENS") == null ? null : "LIECOD";
+		String LIECOD_ = firstMap.get("ARMAZENS") == null ? null : "LIECOD";
 
-	    Query query_folder = entityManager.createNativeQuery(
-	            "SELECT e.proref CodRef, a.prodes1 DesRef,e.etqorilot1 Lote, e.etqnum NumEtiq, e.etqembqte QuantEtiq, e.liecod Armazem, e.empcod Localiz,"
-	                    + "b.UTZ_CRIA,c.NOME 'OPERARIO',b.IMPRESSO,d.COD_SECTOR,d.DES_SECTOR 'SECTOR', b.DATA_CRIA,CONCAT(b.COD_SECTOR_OF, + ' - ' + b.DES_SECTOR_OF) 'SECTOR_OF',p.DESCRICAO 'POSTO',b.ID_PEDIDO "
-	                    + "FROM (select * from ST_PEDIDOS where ID_PEDIDO in (select MAX(ID_PEDIDO) from ST_PEDIDOS GROUP BY ETQNUM)) b INNER JOIN SILVER.dbo.SETQDE e on b.ETQNUM = e.ETQNUM "
-	                    + "LEFT JOIN SILVER.dbo.SDTPRA a on a.proref=e.proref "
-	                    + "LEFT JOIN RH_FUNCIONARIOS c on b.UTZ_CRIA = c.COD_FUNCIONARIO "
-	                    + "LEFT JOIN RH_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
-	                    + "LEFT JOIN GER_POSTOS p on p.IP_IMPRESSORA = b.IP_POSTO "
-	                    + "WHERE e.etqsitsto=2 AND e.etqetat=1 AND ((not " + LIECOD_
-	                    + " is not null) or (e.LIECOD  in (" + LIECOD + ") )) ORDER BY b.DATA_CRIA,e.etqnum");
+		Query query_folder = entityManager.createNativeQuery(
+				"SELECT e.proref CodRef, a.prodes1 DesRef,e.etqorilot1 Lote, e.etqnum NumEtiq, e.etqembqte QuantEtiq, e.liecod Armazem, e.empcod Localiz,"
+						+ "b.UTZ_CRIA,c.NOME 'OPERARIO',b.IMPRESSO,d.COD_SECTOR,d.DES_SECTOR 'SECTOR', b.DATA_CRIA,CONCAT(b.COD_SECTOR_OF, + ' - ' + b.DES_SECTOR_OF) 'SECTOR_OF',p.DESCRICAO 'POSTO',b.ID_PEDIDO "
+						+ "FROM (select * from ST_PEDIDOS where ISNULL(ESTADO,'P') = 'P') b INNER JOIN SILVER.dbo.SETQDE e on b.ETQNUM = e.ETQNUM "
+						+ "LEFT JOIN SILVER.dbo.SDTPRA a on a.proref=e.proref "
+						+ "LEFT JOIN RH_FUNCIONARIOS c on b.UTZ_CRIA = c.COD_FUNCIONARIO "
+						+ "LEFT JOIN RH_SECTORES d on c.COD_SECTOR = d.COD_SECTOR "
+						+ "LEFT JOIN GER_POSTOS p on p.IP_IMPRESSORA = b.IP_POSTO "
+						+ "WHERE e.etqsitsto=2 AND e.etqetat=1 AND ((not " + LIECOD_ + " is not null) or (e.LIECOD  in (" + LIECOD + ") )) "
+						+ "ORDER BY b.DATA_CRIA,e.etqnum");
 
-	    List<Object[]> dados_folder = query_folder.getResultList();
+		List<Object[]> dados_folder = query_folder.getResultList();
 
-	    return dados_folder;
+		return dados_folder;
 	}
-	
+
 	@POST
 	@Path("/updatePedidosProducao")
 	@Produces("application/json")
 	public String updatePedidosProducao(final List<HashMap<String, Object>> dados) {
-	    try {
-	        HashMap<String, Object> firstMap = dados.get(0);
-	        @SuppressWarnings("unchecked")
-	        List<Integer> ids = (List<Integer>) firstMap.get("ids");
-	        Boolean impresso = (Boolean) firstMap.get("impresso");
-	        
-	        if (ids == null || ids.isEmpty()) {
-	            return "{\"success\": false, \"message\": \"No IDs provided\"}";
-	        }
-	        
-	        // Build IN clause for IDs
-	        StringBuilder inClause = new StringBuilder();
-	        for (int i = 0; i < ids.size(); i++) {
-	            if (i > 0) inClause.append(",");
-	            inClause.append("?");
-	        }
-	        
-	        String sql = "UPDATE ST_PEDIDOS SET IMPRESSO = ? WHERE ID_PEDIDO IN (" + inClause.toString() + ")";
-	        
-	        Query query = entityManager.createNativeQuery(sql);
-	        query.setParameter(1, impresso ? 1 : 0);
-	        
-	        for (int i = 0; i < ids.size(); i++) {
-	            query.setParameter(i + 2, ids.get(i));
-	        }
-	        
-	        int updatedRows = query.executeUpdate();
-	        
-	        return "{\"success\": true, \"message\": \"Updated " + updatedRows + " records\", \"updatedCount\": " + updatedRows + "}";
-	        
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return "{\"success\": false, \"message\": \"Error updating records: " + e.getMessage() + "\"}";
-	    }
+		try {
+			HashMap<String, Object> firstMap = dados.get(0);
+			@SuppressWarnings("unchecked")
+			List<Integer> ids = (List<Integer>) firstMap.get("ids");
+			Boolean impresso = (Boolean) firstMap.get("impresso");
+
+			if (ids == null || ids.isEmpty()) {
+				return "{\"success\": false, \"message\": \"No IDs provided\"}";
+			}
+
+			// Build IN clause for IDs
+			StringBuilder inClause = new StringBuilder();
+			for (int i = 0; i < ids.size(); i++) {
+				if (i > 0)
+					inClause.append(",");
+				inClause.append("?");
+			}
+
+			String sql = "UPDATE ST_PEDIDOS SET IMPRESSO = ? WHERE ID_PEDIDO IN (" + inClause.toString() + ")";
+
+			Query query = entityManager.createNativeQuery(sql);
+			query.setParameter(1, impresso ? 1 : 0);
+
+			for (int i = 0; i < ids.size(); i++) {
+				query.setParameter(i + 2, ids.get(i));
+			}
+
+			int updatedRows = query.executeUpdate();
+
+			return "{\"success\": true, \"message\": \"Updated " + updatedRows + " records\", \"updatedCount\": "
+					+ updatedRows + "}";
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"success\": false, \"message\": \"Error updating records: " + e.getMessage() + "\"}";
+		}
 	}
 
 	@POST
@@ -4837,16 +4839,14 @@ public class SIRB {
 	@Produces("application/json")
 	public int getPA_MOV_CABAssociarPlanoEstrategico(@PathParam("id") String id,
 			@PathParam("id_plano") String id_plano) {
-		return entityManager.createNativeQuery(
-				"IF EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = " + id
-				+ " AND ID_PLANO_ESTRATEGICO = " + id_plano + " AND INATIVO = 1 )"
+		return entityManager.createNativeQuery("IF EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = "
+				+ id + " AND ID_PLANO_ESTRATEGICO = " + id_plano + " AND INATIVO = 1 )"
 				+ " BEGIN UPDATE PE_PLANOS_ASSOCIADOS SET INATIVO = 0, DATA_ANULA = NULL, UTZ_ANULA = NULL"
 				+ " WHERE ID_PLANO_CAB = " + id + " AND ID_PLANO_ESTRATEGICO = " + id_plano + " END"
 				+ " ELSE IF NOT EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = " + id
 				+ " AND ID_PLANO_ESTRATEGICO = " + id_plano + " )"
-				+ " BEGIN INSERT INTO PE_PLANOS_ASSOCIADOS (ID_PLANO_CAB, ID_PLANO_ESTRATEGICO)"
-				+ " VALUES (" + id + ", " + id_plano + ") END")
-				.executeUpdate();
+				+ " BEGIN INSERT INTO PE_PLANOS_ASSOCIADOS (ID_PLANO_CAB, ID_PLANO_ESTRATEGICO)" + " VALUES (" + id
+				+ ", " + id_plano + ") END").executeUpdate();
 	}
 
 	@GET
@@ -4861,11 +4861,11 @@ public class SIRB {
 	@GET
 	@Path("/getPA_MOV_CABAnularAssociacao/{id_plano}/{id}/{utz}")
 	@Produces("application/json")
-	public int getPA_MOV_CABAnularAssociacao(@PathParam("id") String id,
-			@PathParam("id_plano") String id_plano, @PathParam("utz") String utz) {
-		return entityManager.createNativeQuery(
-				"UPDATE PE_PLANOS_ASSOCIADOS SET INATIVO = 1, DATA_ANULA = GETDATE(), UTZ_ANULA = " + utz
-				+ " WHERE ID_PLANO_CAB = " + id + " AND ID_PLANO_ESTRATEGICO = " + id_plano)
+	public int getPA_MOV_CABAnularAssociacao(@PathParam("id") String id, @PathParam("id_plano") String id_plano,
+			@PathParam("utz") String utz) {
+		return entityManager
+				.createNativeQuery("UPDATE PE_PLANOS_ASSOCIADOS SET INATIVO = 1, DATA_ANULA = GETDATE(), UTZ_ANULA = "
+						+ utz + " WHERE ID_PLANO_CAB = " + id + " AND ID_PLANO_ESTRATEGICO = " + id_plano)
 				.executeUpdate();
 	}
 
@@ -5081,17 +5081,14 @@ public class SIRB {
 				+ "inner join PA_MOV_LINHA b on a.ID_CAMPO = b.ID_PLANO_LINHA and a.ID_MODULO = 13 "
 				+ "AND a.ESTADO != b.ESTADO and a.ESTADO != 'A' AND a.ESTADO in ('C') AND a.ID_TAREFA_PAI is null AND b.ESTADO in ('P') AND b.ID_PLANO_CAB = "
 				+ id).executeUpdate();
-		return entityManager.createNativeQuery(
-				"DECLARE @TOTAL int = (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = "
-						+ id + " AND ESTADO != 'D') "
-						+ "IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = "
-						+ id + " AND ESTADO = 'I') = @TOTAL AND @TOTAL > 0 BEGIN "
-						+ "	UPDATE PA_MOV_CAB SET ESTADO = 'C' WHERE ID_PLANO_CAB = "
-						+ id + " END "
-						+ "ELSE IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = "
-						+ id + " AND ESTADO IN ('V','R')) = @TOTAL AND @TOTAL > 0 BEGIN "
-						+ "	UPDATE PA_MOV_CAB SET ESTADO = 'V' WHERE ID_PLANO_CAB = "
-						+ id + " END "
+		return entityManager
+				.createNativeQuery("DECLARE @TOTAL int = (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
+						+ " AND ESTADO != 'D') " + "IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
+						+ " AND ESTADO = 'I') = @TOTAL AND @TOTAL > 0 BEGIN "
+						+ "	UPDATE PA_MOV_CAB SET ESTADO = 'C' WHERE ID_PLANO_CAB = " + id + " END "
+						+ "ELSE IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
+						+ " AND ESTADO IN ('V','R')) = @TOTAL AND @TOTAL > 0 BEGIN "
+						+ "	UPDATE PA_MOV_CAB SET ESTADO = 'V' WHERE ID_PLANO_CAB = " + id + " END "
 						+ "ELSE IF EXISTS (SELECT 1 FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
 						+ ") BEGIN UPDATE PA_MOV_CAB SET ESTADO = 'P' WHERE ID_PLANO_CAB = " + id
 						+ " AND ESTADO != 'E' END")
