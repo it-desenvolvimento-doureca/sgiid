@@ -4840,7 +4840,7 @@ public class SIRB {
 	public int getPA_MOV_CABAssociarPlanoEstrategico(@PathParam("id") String id,
 			@PathParam("id_plano") String id_plano) {
 		return entityManager.createNativeQuery("IF EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = "
-				+ id + " AND ID_PLANO_ESTRATEGICO = " + id_plano + " AND INATIVO = 1 )"
+				+ id + " AND ID_PLANO_ESTRATEGICO = " + id_plano + " AND ISNULL(INATIVO,0) != 1 )"
 				+ " BEGIN UPDATE PE_PLANOS_ASSOCIADOS SET INATIVO = 0, DATA_ANULA = NULL, UTZ_ANULA = NULL"
 				+ " WHERE ID_PLANO_CAB = " + id + " AND ID_PLANO_ESTRATEGICO = " + id_plano + " END"
 				+ " ELSE IF NOT EXISTS ( SELECT * FROM PE_PLANOS_ASSOCIADOS WHERE ID_PLANO_CAB = " + id

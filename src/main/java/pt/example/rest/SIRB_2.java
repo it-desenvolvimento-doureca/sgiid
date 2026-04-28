@@ -2967,10 +2967,25 @@ public class SIRB_2 {
 	    HashMap<String, String> firstMap = dados.get(0);
 
 	    String DATA_MES = firstMap.get("data_mes");
+	    String DATA_INI = firstMap.get("data_ini");
+	    String DATA_FIM = firstMap.get("data_fim");
 	    String ID_UTZ = firstMap.get("id_utz");
 	    String ETIQUETA = firstMap.get("etiqueta");
 
+	    boolean filtrarPorMes = DATA_MES != null && !DATA_MES.equals("null") && !DATA_MES.isEmpty();
+	    boolean filtrarPorData = !filtrarPorMes
+	            && DATA_INI != null && !DATA_INI.equals("null") && !DATA_INI.isEmpty()
+	            && DATA_FIM != null && !DATA_FIM.equals("null") && !DATA_FIM.isEmpty();
 	    boolean filtrarPorUtz = ID_UTZ != null && !ID_UTZ.equals("null") && !ID_UTZ.isEmpty();
+
+	    String dataFiltroSql;
+	    if (filtrarPorMes) {
+	        dataFiltroSql = "AND FORMAT(a.DATA_HORA_CRIA, 'yyyy-MM') = :DATA_MES ";
+	    } else if (filtrarPorData) {
+	        dataFiltroSql = "AND a.DATA_HORA_CRIA BETWEEN CAST(:DATA_INI AS DATETIME) AND DATEADD(SECOND, 86399, CAST(:DATA_FIM AS DATETIME)) ";
+	    } else {
+	        dataFiltroSql = "";
+	    }
 
 	    String sql = "SELECT a.TESTE_DIMENSIONAL, a.OPERARIO_FORMACAO, a.ORIGEM_RECLAMACAO, a.DATA_ORIGEM_RECLAMACAO, "
 	            + "a.STOCK_ETIQUETA_30, a.DEFEITOS_INJECAO, a.DEVOLUCAO_CLIENTE, a.GAMA_EMBALAGEM_INCORRETA, "
@@ -2981,7 +2996,7 @@ public class SIRB_2 {
 	            + "FROM RP_OF_CAB a "
 	            + "LEFT JOIN RP_OF_OPERARIOS_CAIXA x ON x.ID_OF_CAB = a.ID_OF_CAB "
 	            + "WHERE a.ESTADO NOT IN ('A') "
-	            + "AND FORMAT(a.DATA_HORA_CRIA, 'yyyy-MM') = :DATA_MES "
+	            + dataFiltroSql
 	            + "AND a.OP_COD_ORIGEM = '100' "
 	            + "AND a.ETIQUETA = :ETIQUETA "
 	            + (filtrarPorUtz ? "AND a.ID_OF_CAB IN (SELECT ID_OF_CAB FROM RP_OF_OPERARIOS_CAIXA WHERE ID_UTZ = :ID_UTZ) " : "")
@@ -2992,7 +3007,12 @@ public class SIRB_2 {
 	            + "ORDER BY a.ID_OF_CAB";
 
 	    javax.persistence.Query query = entityManager.createNativeQuery(sql);
-	    query.setParameter("DATA_MES", DATA_MES);
+	    if (filtrarPorMes) {
+	        query.setParameter("DATA_MES", DATA_MES);
+	    } else if (filtrarPorData) {
+	        query.setParameter("DATA_INI", DATA_INI);
+	        query.setParameter("DATA_FIM", DATA_FIM);
+	    }
 	    query.setParameter("ETIQUETA", ETIQUETA);
 	    if (filtrarPorUtz) {
 	        query.setParameter("ID_UTZ", ID_UTZ);
@@ -3078,7 +3098,84 @@ public class SIRB_2 {
 		List<Object[]> result = query.getResultList();
 		return result;
 	}
-	
+
+	@POST
+	@Path("/getQUA_MURO_QUALIDADE_ANALISE_CADENCIAS")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MURO_QUALIDADE_ANALISE_CADENCIAS(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+
+		String DATA_INI = firstMap.get("data_ini");
+		String DATA_FIM = firstMap.get("data_fim");
+		String UNIDADE = firstMap.get("unidade");
+		String SECTOR = firstMap.get("sector");
+		String FUNCIONARIO = firstMap.get("funcionario");
+		String FAMILIA_DEFEITO = firstMap.get("familiaDefeito");
+		String REFERENCIA = firstMap.get("referencia");
+		String ETIQUETA = firstMap.get("etiqueta");
+
+		Integer TESTE_DIMENSIONAL = toTriState(firstMap.get("teste_dimensional"));
+		Integer OPERARIO_FORMACAO = toTriState(firstMap.get("operario_formacao"));
+		Integer ORIGEM_RECLAMACAO = toTriState(firstMap.get("origem_reclamacao"));
+		Integer STOCK_ETIQUETA_30 = toTriState(firstMap.get("stock_etiqueta_30"));
+		Integer DEFEITOS_INJECAO = toTriState(firstMap.get("defeitos_injecao"));
+		Integer DEVOLUCAO_CLIENTE = toTriState(firstMap.get("devolucao_cliente"));
+		Integer GAMA_EMBALAGEM_INCORRETA = toTriState(firstMap.get("gama_embalagem_incorreta"));
+		Integer MODO_DEGRADADO = toTriState(firstMap.get("modo_degradado"));
+		Integer ENSAIO_DIA = toTriState(firstMap.get("ensaio_dia"));
+		Integer VERIFICACAO_QUANT_EMBALAGEM = toTriState(firstMap.get("verificacao_quant_embalagem"));
+
+		String DATA_ORIGEM_RECLAMACAO_INI = firstMap.get("data_origem_reclamacao_ini");
+		String DATA_ORIGEM_RECLAMACAO_FIM = firstMap.get("data_origem_reclamacao_fim");
+		String DATA_DEVOLUCAO_CLIENTE_INI = firstMap.get("data_devolucao_cliente_ini");
+		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
+		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
+
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
+				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+
+		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_CADENCIAS "
+				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO, :REFERENCIA, :ETIQUETA, "
+				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
+				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
+				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
+
+		javax.persistence.Query query = entityManager.createNativeQuery(sql);
+
+		query.setParameter("DATA_INI", DATA_INI);
+		query.setParameter("DATA_FIM", DATA_FIM);
+		query.setParameter("UNIDADE", UNIDADE);
+		query.setParameter("SECTOR", SECTOR);
+		query.setParameter("FUNCIONARIO", FUNCIONARIO);
+		query.setParameter("FAMILIA_DEFEITO", FAMILIA_DEFEITO);
+		query.setParameter("REFERENCIA", REFERENCIA);
+		query.setParameter("ETIQUETA", ETIQUETA);
+
+		query.setParameter("TESTE_DIMENSIONAL", TESTE_DIMENSIONAL);
+		query.setParameter("OPERARIO_FORMACAO", OPERARIO_FORMACAO);
+		query.setParameter("ORIGEM_RECLAMACAO", ORIGEM_RECLAMACAO);
+		query.setParameter("STOCK_ETIQUETA_30", STOCK_ETIQUETA_30);
+		query.setParameter("DEFEITOS_INJECAO", DEFEITOS_INJECAO);
+		query.setParameter("DEVOLUCAO_CLIENTE", DEVOLUCAO_CLIENTE);
+		query.setParameter("GAMA_EMBALAGEM_INCORRETA", GAMA_EMBALAGEM_INCORRETA);
+		query.setParameter("MODO_DEGRADADO", MODO_DEGRADADO);
+		query.setParameter("ENSAIO_DIA", ENSAIO_DIA);
+		query.setParameter("VERIFICACAO_QUANT_EMBALAGEM", VERIFICACAO_QUANT_EMBALAGEM);
+		query.setParameter("MOTIVO_MODO_DEGRADADO", MOTIVO_MODO_DEGRADADO);
+
+		List<Object[]> result = query.getResultList();
+		return result;
+	}
+
 	@GET
 	@Path("/getGER_EVENTObyidOrigem/{id}/{campo}")
 	@Produces("application/json")
