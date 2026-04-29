@@ -256,6 +256,8 @@ public class SIRB_3 {
 	private PIN_PLANO_DIARIO_PINTURADao dao102;
 	@Inject
 	private PIN_PLANO_DIARIO_PINTURA_LINHASDao dao103;
+	@Inject
+	private PIN_DIC_PARAM_PLANO_PINTURADao dao104;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -7964,5 +7966,44 @@ public class SIRB_3 {
 			}
 		}
 		return result;
+	}
+
+	/************************************* PIN_DIC_PARAM_PLANO_PINTURA */
+	@POST
+	@Path("/createPIN_DIC_PARAM_PLANO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_PARAM_PLANO_PINTURA createPIN_DIC_PARAM_PLANO_PINTURA(final PIN_DIC_PARAM_PLANO_PINTURA data) {
+		return dao104.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_DIC_PARAM_PLANO_PINTURA")
+	@Produces("application/json")
+	public List<PIN_DIC_PARAM_PLANO_PINTURA> getPIN_DIC_PARAM_PLANO_PINTURA() {
+		return dao104.getall();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_PARAM_PLANO_PINTURAbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_DIC_PARAM_PLANO_PINTURA> getPIN_DIC_PARAM_PLANO_PINTURAbyid(@PathParam("id") Integer id) {
+		return dao104.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deletePIN_DIC_PARAM_PLANO_PINTURA/{id}")
+	public void deletePIN_DIC_PARAM_PLANO_PINTURA(@PathParam("id") Integer id) {
+		PIN_DIC_PARAM_PLANO_PINTURA obj = new PIN_DIC_PARAM_PLANO_PINTURA();
+		obj.setID(id);
+		dao104.delete(obj);
+	}
+
+	@PUT
+	@Path("/updatePIN_DIC_PARAM_PLANO_PINTURA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_DIC_PARAM_PLANO_PINTURA updatePIN_DIC_PARAM_PLANO_PINTURA(final PIN_DIC_PARAM_PLANO_PINTURA data) {
+		return dao104.update(data);
 	}
 }
