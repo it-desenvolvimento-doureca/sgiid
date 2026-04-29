@@ -2970,6 +2970,7 @@ public class SIRB_2 {
 	    String DATA_INI = firstMap.get("data_ini");
 	    String DATA_FIM = firstMap.get("data_fim");
 	    String ID_UTZ = firstMap.get("id_utz");
+	    String ID_UTZ_TRABALHO = firstMap.get("id_utz_trabalho");
 	    String ETIQUETA = firstMap.get("etiqueta");
 
 	    boolean filtrarPorMes = DATA_MES != null && !DATA_MES.equals("null") && !DATA_MES.isEmpty();
@@ -2977,6 +2978,7 @@ public class SIRB_2 {
 	            && DATA_INI != null && !DATA_INI.equals("null") && !DATA_INI.isEmpty()
 	            && DATA_FIM != null && !DATA_FIM.equals("null") && !DATA_FIM.isEmpty();
 	    boolean filtrarPorUtz = ID_UTZ != null && !ID_UTZ.equals("null") && !ID_UTZ.isEmpty();
+	    boolean filtrarPorUtzTrabalho = ID_UTZ_TRABALHO != null && !ID_UTZ_TRABALHO.equals("null") && !ID_UTZ_TRABALHO.isEmpty();
 
 	    String dataFiltroSql;
 	    if (filtrarPorMes) {
@@ -3000,6 +3002,7 @@ public class SIRB_2 {
 	            + "AND a.OP_COD_ORIGEM = '100' "
 	            + "AND a.ETIQUETA = :ETIQUETA "
 	            + (filtrarPorUtz ? "AND a.ID_OF_CAB IN (SELECT ID_OF_CAB FROM RP_OF_OPERARIOS_CAIXA WHERE ID_UTZ = :ID_UTZ) " : "")
+	            + (filtrarPorUtzTrabalho ? "AND a.ID_OF_CAB IN (SELECT ID_OF_CAB FROM RP_OF_OP_CAB ax inner join RP_OF_OP_FUNC bx on ax.ID_OP_CAB = bx.ID_OP_CAB WHERE bx.ID_UTZ_CRIA = :ID_UTZ_TRABALHO) " : "")
 	            + "GROUP BY a.TESTE_DIMENSIONAL, a.OPERARIO_FORMACAO, a.ORIGEM_RECLAMACAO, a.DATA_ORIGEM_RECLAMACAO, "
 	            + "a.STOCK_ETIQUETA_30, a.DEFEITOS_INJECAO, a.DEVOLUCAO_CLIENTE, a.GAMA_EMBALAGEM_INCORRETA, "
 	            + "a.MODO_DEGRADADO, a.VERIFICACAO_QUANT_EMBALAGEM, a.DATA_DEVOLUCAO_CLIENTE, a.ENSAIO_DIA, "
@@ -3016,6 +3019,10 @@ public class SIRB_2 {
 	    query.setParameter("ETIQUETA", ETIQUETA);
 	    if (filtrarPorUtz) {
 	        query.setParameter("ID_UTZ", ID_UTZ);
+	    }
+	    
+	    if (filtrarPorUtzTrabalho) {
+	        query.setParameter("ID_UTZ_TRABALHO", ID_UTZ_TRABALHO);
 	    }
 
 	    return query.getResultList();
