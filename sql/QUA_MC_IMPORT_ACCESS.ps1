@@ -122,12 +122,13 @@ function Import-Mapped($accTable, $sqlTable, [hashtable[]]$colMap, $idCol, [stri
         }
 
         # Salta linhas onde FKs obrigatórias são NULL (dados em branco na fonte Access)
-        $skipRow = $false
+        $skipRow = $false; $skipFld = $null
         foreach ($fkFld in $skipNullFKs) {
             $fkVal = try { $rs.Fields[$fkFld].Value } catch { $null }
-            if ($fkVal -eq $null -or $fkVal -is [System.DBNull]) { $skipRow = $true; break }
+            if ($fkVal -eq $null -or $fkVal -is [System.DBNull]) { $skipRow = $true; $skipFld = $fkFld; break }
         }
         if ($skipRow) {
+            if ($erros -lt 3) { Write-Warning "`n  Linha ignorada (FK nula ou campo inexistente: '$skipFld')" }
             $erros++
             try { $rs.MoveNext() } catch { break }
             continue
@@ -346,7 +347,7 @@ Import-Mapped "T - REGISTO INDIVIDUAL CALIB EQUIP" "QUA_MC_MOV_CALIB_EQUIP" @(
 # 14. QUA_MC_MOV_CALIB_EQUIP_DET
 Import-Mapped "T - SUB FORM - REG CALIB EQUIP" "QUA_MC_MOV_CALIB_EQUIP_DET" @(
     @{ ID_CALIB_EQUIP_DET          = "ID_SUBFORM_REG_IND_CALIB_EQUIP" },
-    @{ ID_CALIB_EQUIP              = "ID_REGIST_IND_CALIBRACAO" },
+    @{ ID_CALIB_EQUIP              = "ID_REGIST_IND_CALBRICAO" },
     @{ NUM                         = "NUM" },
     @{ ID_TIPO_CALIBRACAO          = "TIPO_CALIB_EQUP" },
     @{ ID_TIPO_ACEITACAO           = "TIPO_ACEIT_CALIB_EQUIP" },
@@ -361,7 +362,7 @@ Import-Mapped "T - SUB FORM - REG CALIB EQUIP" "QUA_MC_MOV_CALIB_EQUIP_DET" @(
     @{ PERIODO_INTERCALIB_ANTERIOR = "PER_INTERCA_ANTE" },
     @{ OBSERVACOES                 = "OBSERVACOES_SUB_CALIB" },
     @{ ATIVO                       = "LITERAL:1" }
-) "ID_CALIB_EQUIP_DET" @("ID_REGIST_IND_CALIBRACAO")
+) "ID_CALIB_EQUIP_DET" @("ID_REGIST_IND_CALBRICAO")
 
 # 15. QUA_MC_MOV_VERIF_GABARITO
 Import-Mapped "T - SUB FORM LISTA GABARIT" "QUA_MC_MOV_VERIF_GABARITO" @(
@@ -377,7 +378,7 @@ Import-Mapped "T - SUB FORM LISTA GABARIT" "QUA_MC_MOV_VERIF_GABARITO" @(
     @{ ID_TIPO_ACEITACAO     = "TIPO_ACEIT_CALIB_EQUIP" },
     @{ PERC_R_R              = "PERC_RR" },
     @{ ATIVO                 = "LITERAL:1" }
-) "ID_VERIF_GABARITO"
+) "ID_VERIF_GABARITO" @("ID_LISTA GABARITS")
 
 # 16. QUA_MC_MOV_VERIF_MAQUINA
 Import-Mapped "T - SUB_FORM HISTOR MAQ" "QUA_MC_MOV_VERIF_MAQUINA" @(
