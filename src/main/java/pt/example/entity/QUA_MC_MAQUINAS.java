@@ -8,54 +8,56 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "QUA_MC_MAQUINAS")
 public class QUA_MC_MAQUINAS {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_MAQUINA")
+	@JsonProperty("ID_MAQUINA")
 	private Integer ID_MAQUINA;
-	@Column(name = "DESIGNACAO")
+	@JsonProperty("DESIGNACAO")
 	private String DESIGNACAO;
-	@Column(name = "NUM_MAQUINA")
+	@JsonProperty("NUM_MAQUINA")
 	private String NUM_MAQUINA;
-	@Column(name = "ID_SECCAO")
+	@JsonProperty("ID_SECCAO")
 	private Integer ID_SECCAO;
-	@Column(name = "PARAMETROS")
+	@JsonProperty("PARAMETROS")
 	private String PARAMETROS;
-	@Column(name = "TOLERANCIA")
+	@JsonProperty("TOLERANCIA")
 	private String TOLERANCIA;
-	@Column(name = "FREQ_VERIFICACAO")
+	@JsonProperty("FREQ_VERIFICACAO")
 	private Integer FREQ_VERIFICACAO;
-	@Column(name = "REL_ANEXO")
+	@JsonProperty("REL_ANEXO")
 	private String REL_ANEXO;
-	@Column(name = "VALOR_EXIGIDO")
+	@JsonProperty("VALOR_EXIGIDO")
 	private String VALOR_EXIGIDO;
-	@Column(name = "JAN") private Boolean JAN;
-	@Column(name = "FEV") private Boolean FEV;
-	@Column(name = "MAR") private Boolean MAR;
-	@Column(name = "ABR") private Boolean ABR;
-	@Column(name = "MAI") private Boolean MAI;
-	@Column(name = "JUN") private Boolean JUN;
-	@Column(name = "JUL") private Boolean JUL;
-	@Column(name = "AGO") private Boolean AGO;
-	@Column(name = "SET") private Boolean SET;
-	@Column(name = "OUT") private Boolean OUT;
-	@Column(name = "NOV") private Boolean NOV;
-	@Column(name = "DEZ") private Boolean DEZ;
-	@Column(name = "UTZ_CRIA")
+	@JsonProperty("JAN") private Boolean JAN;
+	@JsonProperty("FEV") private Boolean FEV;
+	@JsonProperty("MAR") private Boolean MAR;
+	@JsonProperty("ABR") private Boolean ABR;
+	@JsonProperty("MAI") private Boolean MAI;
+	@JsonProperty("JUN") private Boolean JUN;
+	@JsonProperty("JUL") private Boolean JUL;
+	@JsonProperty("AGO") private Boolean AGO;
+	@Column(name = "`SET`") @JsonProperty("SET") private Boolean SET;
+	@Column(name = "`OUT`") @JsonProperty("OUT") private Boolean OUT;
+	@JsonProperty("NOV") private Boolean NOV;
+	@JsonProperty("DEZ") private Boolean DEZ;
+	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
-	@Column(name = "DATA_CRIA")
+	@JsonProperty("DATA_CRIA")
 	private Date DATA_CRIA;
-	@Column(name = "UTZ_MODIF")
+	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
-	@Column(name = "DATA_MODIF")
+	@JsonProperty("DATA_MODIF")
 	private Date DATA_MODIF;
-	@Column(name = "UTZ_ANULA")
+	@JsonProperty("UTZ_ANULA")
 	private Integer UTZ_ANULA;
-	@Column(name = "DATA_ANULA")
+	@JsonProperty("DATA_ANULA")
 	private Date DATA_ANULA;
-	@Column(name = "ATIVO")
+	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
 
 	public Integer getID_MAQUINA() { return ID_MAQUINA; }

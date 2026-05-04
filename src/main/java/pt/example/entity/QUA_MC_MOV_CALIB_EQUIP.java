@@ -1,41 +1,42 @@
 package pt.example.entity;
 
 import java.sql.Date;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "QUA_MC_MOV_CALIB_EQUIP")
 public class QUA_MC_MOV_CALIB_EQUIP {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_CALIB_EQUIP")
+	@JsonProperty("ID_CALIB_EQUIP")
 	private Integer ID_CALIB_EQUIP;
-	@Column(name = "ID_EQUIPAMENTO")
+	@JsonProperty("ID_EQUIPAMENTO")
 	private Integer ID_EQUIPAMENTO;
-	@Column(name = "IT_METODO_OPERACIONAL")
+	@JsonProperty("IT_METODO_OPERACIONAL")
 	private String IT_METODO_OPERACIONAL;
-	@Column(name = "IT_CALIBRACAO")
+	@JsonProperty("IT_CALIBRACAO")
 	private String IT_CALIBRACAO;
-	@Column(name = "IT_VERIFICACAO_INTERNA")
+	@JsonProperty("IT_VERIFICACAO_INTERNA")
 	private String IT_VERIFICACAO_INTERNA;
-	@Column(name = "UTZ_CRIA")
+	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
-	@Column(name = "DATA_CRIA")
+	@JsonProperty("DATA_CRIA")
 	private Date DATA_CRIA;
-	@Column(name = "UTZ_MODIF")
+	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
-	@Column(name = "DATA_MODIF")
+	@JsonProperty("DATA_MODIF")
 	private Date DATA_MODIF;
-	@Column(name = "UTZ_ANULA")
+	@JsonProperty("UTZ_ANULA")
 	private Integer UTZ_ANULA;
-	@Column(name = "DATA_ANULA")
+	@JsonProperty("DATA_ANULA")
 	private Date DATA_ANULA;
-	@Column(name = "ATIVO")
+	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
 
 	public Integer getID_CALIB_EQUIP() { return ID_CALIB_EQUIP; }

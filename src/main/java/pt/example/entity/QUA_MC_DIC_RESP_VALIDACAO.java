@@ -1,37 +1,38 @@
 package pt.example.entity;
 
 import java.sql.Date;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "QUA_MC_DIC_RESP_VALIDACAO")
 public class QUA_MC_DIC_RESP_VALIDACAO {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_RESP_VALIDACAO")
+	@JsonProperty("ID_RESP_VALIDACAO")
 	private Integer ID_RESP_VALIDACAO;
-	@Column(name = "RESP_VALIDACAO")
+	@JsonProperty("RESP_VALIDACAO")
 	private String RESP_VALIDACAO;
-	@Column(name = "DEPARTAMENTO")
+	@JsonProperty("DEPARTAMENTO")
 	private String DEPARTAMENTO;
-	@Column(name = "UTZ_CRIA")
+	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
-	@Column(name = "DATA_CRIA")
+	@JsonProperty("DATA_CRIA")
 	private Date DATA_CRIA;
-	@Column(name = "UTZ_MODIF")
+	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
-	@Column(name = "DATA_MODIF")
+	@JsonProperty("DATA_MODIF")
 	private Date DATA_MODIF;
-	@Column(name = "UTZ_ANULA")
+	@JsonProperty("UTZ_ANULA")
 	private Integer UTZ_ANULA;
-	@Column(name = "DATA_ANULA")
+	@JsonProperty("DATA_ANULA")
 	private Date DATA_ANULA;
-	@Column(name = "ATIVO")
+	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
 
 	public Integer getID_RESP_VALIDACAO() { return ID_RESP_VALIDACAO; }

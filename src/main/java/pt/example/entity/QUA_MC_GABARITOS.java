@@ -9,72 +9,74 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "QUA_MC_GABARITOS")
 public class QUA_MC_GABARITOS {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_GABARITO")
+	@JsonProperty("ID_GABARITO")
 	private Integer ID_GABARITO;
-	@Column(name = "NOME_GABARITO")
+	@JsonProperty("NOME_GABARITO")
 	private String NOME_GABARITO;
-	@Column(name = "CODIGO_GABARITO")
+	@JsonProperty("CODIGO_GABARITO")
 	private String CODIGO_GABARITO;
-	@Column(name = "COD_DESENHO_TECNICO")
+	@JsonProperty("COD_DESENHO_TECNICO")
 	private String COD_DESENHO_TECNICO;
-	@Column(name = "REFERENCIA")
+	@JsonProperty("REFERENCIA")
 	private Integer REFERENCIA;
-	@Column(name = "ID_SECCAO")
+	@JsonProperty("ID_SECCAO")
 	private Integer ID_SECCAO;
-	@Column(name = "DATA_ENTRADA")
+	@JsonProperty("DATA_ENTRADA")
 	private Date DATA_ENTRADA;
-	@Column(name = "ID_RESP_ENTRADA")
+	@JsonProperty("ID_RESP_ENTRADA")
 	private Integer ID_RESP_ENTRADA;
-	@Column(name = "EM_UTILIZACAO")
+	@JsonProperty("EM_UTILIZACAO")
 	private Boolean EM_UTILIZACAO;
-	@Column(name = "OBSOLETO")
+	@JsonProperty("OBSOLETO")
 	private Boolean OBSOLETO;
-	@Column(name = "OBSERVACOES")
+	@JsonProperty("OBSERVACOES")
 	private String OBSERVACOES;
-	@Column(name = "FOTOGRAFIA")
+	@JsonProperty("FOTOGRAFIA")
 	private String FOTOGRAFIA;
-	@Column(name = "G_DIMENSIONAL")
+	@JsonProperty("G_DIMENSIONAL")
 	private Boolean G_DIMENSIONAL;
-	@Column(name = "G_CONTROLO")
+	@JsonProperty("G_CONTROLO")
 	private Boolean G_CONTROLO;
-	@Column(name = "G_ISOSTATICO")
+	@JsonProperty("G_ISOSTATICO")
 	private Boolean G_ISOSTATICO;
-	@Column(name = "FREQ_VERIFICACAO_MESES")
+	@JsonProperty("FREQ_VERIFICACAO_MESES")
 	private Integer FREQ_VERIFICACAO_MESES;
-	@Column(name = "TOLERANCIA")
+	@JsonProperty("TOLERANCIA")
 	private BigDecimal TOLERANCIA;
-	@Column(name = "UNID_MEDIDA_TOLERANCIA")
+	@JsonProperty("UNID_MEDIDA_TOLERANCIA")
 	private String UNID_MEDIDA_TOLERANCIA;
-	@Column(name = "JAN") private Boolean JAN;
-	@Column(name = "FEV") private Boolean FEV;
-	@Column(name = "MAR") private Boolean MAR;
-	@Column(name = "ABR") private Boolean ABR;
-	@Column(name = "MAI") private Boolean MAI;
-	@Column(name = "JUN") private Boolean JUN;
-	@Column(name = "JUL") private Boolean JUL;
-	@Column(name = "AGO") private Boolean AGO;
-	@Column(name = "SET") private Boolean SET;
-	@Column(name = "OUT") private Boolean OUT;
-	@Column(name = "NOV") private Boolean NOV;
-	@Column(name = "DEZ") private Boolean DEZ;
-	@Column(name = "UTZ_CRIA")
+	@JsonProperty("JAN") private Boolean JAN;
+	@JsonProperty("FEV") private Boolean FEV;
+	@JsonProperty("MAR") private Boolean MAR;
+	@JsonProperty("ABR") private Boolean ABR;
+	@JsonProperty("MAI") private Boolean MAI;
+	@JsonProperty("JUN") private Boolean JUN;
+	@JsonProperty("JUL") private Boolean JUL;
+	@JsonProperty("AGO") private Boolean AGO;
+	@Column(name = "`SET`") @JsonProperty("SET") private Boolean SET;
+	@Column(name = "`OUT`") @JsonProperty("OUT") private Boolean OUT;
+	@JsonProperty("NOV") private Boolean NOV;
+	@JsonProperty("DEZ") private Boolean DEZ;
+	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
-	@Column(name = "DATA_CRIA")
+	@JsonProperty("DATA_CRIA")
 	private Date DATA_CRIA;
-	@Column(name = "UTZ_MODIF")
+	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
-	@Column(name = "DATA_MODIF")
+	@JsonProperty("DATA_MODIF")
 	private Date DATA_MODIF;
-	@Column(name = "UTZ_ANULA")
+	@JsonProperty("UTZ_ANULA")
 	private Integer UTZ_ANULA;
-	@Column(name = "DATA_ANULA")
+	@JsonProperty("DATA_ANULA")
 	private Date DATA_ANULA;
-	@Column(name = "ATIVO")
+	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
 
 	public Integer getID_GABARITO() { return ID_GABARITO; }

@@ -1,61 +1,62 @@
 package pt.example.entity;
 
 import java.sql.Date;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "QUA_MC_MOV_CALIB_EQUIP_DET")
 public class QUA_MC_MOV_CALIB_EQUIP_DET {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_CALIB_EQUIP_DET")
+	@JsonProperty("ID_CALIB_EQUIP_DET")
 	private Integer ID_CALIB_EQUIP_DET;
-	@Column(name = "ID_CALIB_EQUIP")
+	@JsonProperty("ID_CALIB_EQUIP")
 	private Integer ID_CALIB_EQUIP;
-	@Column(name = "NUM")
+	@JsonProperty("NUM")
 	private Integer NUM;
-	@Column(name = "ID_TIPO_CALIBRACAO")
+	@JsonProperty("ID_TIPO_CALIBRACAO")
 	private Integer ID_TIPO_CALIBRACAO;
-	@Column(name = "ID_TIPO_ACEITACAO")
+	@JsonProperty("ID_TIPO_ACEITACAO")
 	private Integer ID_TIPO_ACEITACAO;
-	@Column(name = "NUM_CERTIF_EXTERNO")
+	@JsonProperty("NUM_CERTIF_EXTERNO")
 	private String NUM_CERTIF_EXTERNO;
-	@Column(name = "ANEXO_CERTIF_EXTERNO")
+	@JsonProperty("ANEXO_CERTIF_EXTERNO")
 	private String ANEXO_CERTIF_EXTERNO;
-	@Column(name = "ID_ENTIDADE_CALIBRACAO")
+	@JsonProperty("ID_ENTIDADE_CALIBRACAO")
 	private Integer ID_ENTIDADE_CALIBRACAO;
-	@Column(name = "DATA_CALIBRACAO")
+	@JsonProperty("DATA_CALIBRACAO")
 	private Date DATA_CALIBRACAO;
-	@Column(name = "VALIDADE_CALIBRACAO")
+	@JsonProperty("VALIDADE_CALIBRACAO")
 	private String VALIDADE_CALIBRACAO;
-	@Column(name = "NUM_VALIDADE_CALIBRACAO")
+	@JsonProperty("NUM_VALIDADE_CALIBRACAO")
 	private String NUM_VALIDADE_CALIBRACAO;
-	@Column(name = "ID_RESP_VALIDACAO")
+	@JsonProperty("ID_RESP_VALIDACAO")
 	private Integer ID_RESP_VALIDACAO;
-	@Column(name = "ID_RESULTADO_VALIDACAO")
+	@JsonProperty("ID_RESULTADO_VALIDACAO")
 	private Integer ID_RESULTADO_VALIDACAO;
-	@Column(name = "PERIODO_INTERCALIB_ANTERIOR")
+	@JsonProperty("PERIODO_INTERCALIB_ANTERIOR")
 	private String PERIODO_INTERCALIB_ANTERIOR;
-	@Column(name = "OBSERVACOES")
+	@JsonProperty("OBSERVACOES")
 	private String OBSERVACOES;
-	@Column(name = "UTZ_CRIA")
+	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
-	@Column(name = "DATA_CRIA")
+	@JsonProperty("DATA_CRIA")
 	private Date DATA_CRIA;
-	@Column(name = "UTZ_MODIF")
+	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
-	@Column(name = "DATA_MODIF")
+	@JsonProperty("DATA_MODIF")
 	private Date DATA_MODIF;
-	@Column(name = "UTZ_ANULA")
+	@JsonProperty("UTZ_ANULA")
 	private Integer UTZ_ANULA;
-	@Column(name = "DATA_ANULA")
+	@JsonProperty("DATA_ANULA")
 	private Date DATA_ANULA;
-	@Column(name = "ATIVO")
+	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
 
 	public Integer getID_CALIB_EQUIP_DET() { return ID_CALIB_EQUIP_DET; }

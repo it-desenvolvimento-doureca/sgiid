@@ -2,47 +2,48 @@ package pt.example.entity;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "QUA_MC_MOV_VERIF_INT_GABARITO")
 public class QUA_MC_MOV_VERIF_INT_GABARITO {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_VERIF_INT_GABARITO")
+	@JsonProperty("ID_VERIF_INT_GABARITO")
 	private Integer ID_VERIF_INT_GABARITO;
-	@Column(name = "ID_VERIF_GABARITO")
+	@JsonProperty("ID_VERIF_GABARITO")
 	private Integer ID_VERIF_GABARITO;
-	@Column(name = "NUM_MEDIDA")
+	@JsonProperty("NUM_MEDIDA")
 	private Integer NUM_MEDIDA;
-	@Column(name = "TIPO_MEDIDA")
+	@JsonProperty("TIPO_MEDIDA")
 	private Integer TIPO_MEDIDA;
-	@Column(name = "VALOR")
+	@JsonProperty("VALOR")
 	private BigDecimal VALOR;
-	@Column(name = "UNIDADES")
+	@JsonProperty("UNIDADES")
 	private String UNIDADES;
-	@Column(name = "TOLERANCIA")
+	@JsonProperty("TOLERANCIA")
 	private BigDecimal TOLERANCIA;
-	@Column(name = "REF_SUBFORM")
+	@JsonProperty("REF_SUBFORM")
 	private BigDecimal REF_SUBFORM;
-	@Column(name = "UTZ_CRIA")
+	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
-	@Column(name = "DATA_CRIA")
+	@JsonProperty("DATA_CRIA")
 	private Date DATA_CRIA;
-	@Column(name = "UTZ_MODIF")
+	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
-	@Column(name = "DATA_MODIF")
+	@JsonProperty("DATA_MODIF")
 	private Date DATA_MODIF;
-	@Column(name = "UTZ_ANULA")
+	@JsonProperty("UTZ_ANULA")
 	private Integer UTZ_ANULA;
-	@Column(name = "DATA_ANULA")
+	@JsonProperty("DATA_ANULA")
 	private Date DATA_ANULA;
-	@Column(name = "ATIVO")
+	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
 
 	public Integer getID_VERIF_INT_GABARITO() { return ID_VERIF_INT_GABARITO; }

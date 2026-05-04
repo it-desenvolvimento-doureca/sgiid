@@ -1,35 +1,36 @@
 package pt.example.entity;
 
 import java.sql.Date;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "QUA_MC_DIC_TIPO_ACEITACAO")
 public class QUA_MC_DIC_TIPO_ACEITACAO {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_TIPO_ACEITACAO")
+	@JsonProperty("ID_TIPO_ACEITACAO")
 	private Integer ID_TIPO_ACEITACAO;
-	@Column(name = "TIPO_ACEIT_CALIB_EQUIP")
+	@JsonProperty("TIPO_ACEIT_CALIB_EQUIP")
 	private String TIPO_ACEIT_CALIB_EQUIP;
-	@Column(name = "UTZ_CRIA")
+	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
-	@Column(name = "DATA_CRIA")
+	@JsonProperty("DATA_CRIA")
 	private Date DATA_CRIA;
-	@Column(name = "UTZ_MODIF")
+	@JsonProperty("UTZ_MODIF")
 	private Integer UTZ_MODIF;
-	@Column(name = "DATA_MODIF")
+	@JsonProperty("DATA_MODIF")
 	private Date DATA_MODIF;
-	@Column(name = "UTZ_ANULA")
+	@JsonProperty("UTZ_ANULA")
 	private Integer UTZ_ANULA;
-	@Column(name = "DATA_ANULA")
+	@JsonProperty("DATA_ANULA")
 	private Date DATA_ANULA;
-	@Column(name = "ATIVO")
+	@JsonProperty("ATIVO")
 	private Boolean ATIVO;
 
 	public Integer getID_TIPO_ACEITACAO() { return ID_TIPO_ACEITACAO; }
