@@ -737,7 +737,7 @@ public class ConnectProgress {
 		 * + "	WHERE t.zpacod='ACAB' AND zpavallib IS NOT NULL and zpaval like '"
 		 * +tipo+"%' " + "	GROUP BY zpavallib,zpaval " + "	ORDER BY zpavallib";
 		 */
-		String query = "select t.zpavallib TipoAcabamento,zpavalcod zpaval from SILVER_BI.dbo.SPAZPL t  "
+		String query = "select t.zpavallib TipoAcabamento,zpavalcod zpaval,COR from SILVER_BI.dbo.SPAZPL t  "
 				+ "WHERE t.zpacod='ACAB' AND t.zpavalcod like '" + tipo + "%' ";
 
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
@@ -750,6 +750,7 @@ public class ConnectProgress {
 				HashMap<String, String> x = new HashMap<>();
 				x.put("TipoAcabamento", rs.getString("TipoAcabamento"));
 				x.put("zpaval", rs.getString("zpaval"));
+				x.put("COR", rs.getString("COR"));
 				list.add(x);
 			}
 			stmt.close();

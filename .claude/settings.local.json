@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/work/Workspace/app/src/main/**)",
+      "Read(//c/work/Workspace/app/src/main/webapp/**)"
+    ]
+  }
+}
