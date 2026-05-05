@@ -3404,13 +3404,57 @@ public class SIRB {
 	@GET
 	@Path("/getTiposAcabamento/{tipo}")
 	@Produces("application/json")
+	@SuppressWarnings("unchecked")
 	public List<HashMap<String, String>> getTiposAcabamento(@PathParam("tipo") String tipo)
 			throws SQLException, ClassNotFoundException {
 
 		ConnectProgress connectionProgress = new ConnectProgress();
-
 		List<HashMap<String, String>> dados = connectionProgress.getTiposAcabamento(getURLSILVER(), tipo);
+
+		List<Object[]> coresLocais = entityManager
+				.createNativeQuery("SELECT NOME, COR FROM PIN_DIC_TIPO_ACABAMENTO WHERE ATIVO = 1")
+				.getResultList();
+		Map<String, String> mapaCores = new HashMap<>();
+		for (Object[] row : coresLocais) {
+			if (row[0] != null) {
+				mapaCores.put((String) row[0], row[1] != null ? (String) row[1] : "");
+			}
+		}
+		for (HashMap<String, String> d : dados) {
+			d.put("COR", mapaCores.getOrDefault(d.get("zpaval"), ""));
+		}
+
 		return dados;
+	}
+
+	@PUT
+	@Path("/updateAspetoCorPorZpaval")
+	@Consumes("application/json")
+	@Produces("application/json")
+	@SuppressWarnings("unchecked")
+	public Response updateAspetoCorPorZpaval(HashMap<String, Object> data) {
+		String zpaval = (String) data.get("zpaval");
+		String cor = "#" + ((String) data.get("COR")).replace("#", "");
+		Integer utz = ((Number) data.get("UTZ_ULT_MODIF")).intValue();
+		Timestamp agora = new Timestamp(System.currentTimeMillis());
+
+		List<Object> existente = entityManager
+				.createNativeQuery("SELECT ID FROM PIN_DIC_TIPO_ACABAMENTO WHERE NOME = :nome AND ATIVO = 1")
+				.setParameter("nome", zpaval).getResultList();
+
+		if (!existente.isEmpty()) {
+			entityManager
+					.createNativeQuery("UPDATE PIN_DIC_TIPO_ACABAMENTO SET COR = :cor, UTZ_ULT_MODIF = :utz, DATA_ULT_MODIF = :data WHERE NOME = :nome AND ATIVO = 1")
+					.setParameter("cor", cor).setParameter("utz", utz).setParameter("data", agora)
+					.setParameter("nome", zpaval).executeUpdate();
+		} else {
+			entityManager
+					.createNativeQuery("INSERT INTO PIN_DIC_TIPO_ACABAMENTO (NOME, COR, ATIVO, UTZ_CRIA, DATA_CRIA, UTZ_ULT_MODIF, DATA_ULT_MODIF) VALUES (:nome, :cor, 1, :utz, :data, :utz, :data)")
+					.setParameter("nome", zpaval).setParameter("cor", cor).setParameter("utz", utz)
+					.setParameter("data", agora).executeUpdate();
+		}
+
+		return Response.ok().build();
 	}
 
 	@GET
