@@ -5091,25 +5091,19 @@ public class SIRB {
 	@Produces("application/json")
 	public int getPA_MOV_LINHAAtualizaESTADOS(@PathParam("id") Integer id) {
 
-		entityManager.createNativeQuery("UPDATE a SET a.OBSERVACOES = b.DESCRICAO from GT_MOV_TAREFAS   a "
-				+ "inner join PA_MOV_LINHA b on a.ID_CAMPO = b.ID_PLANO_LINHA and a.ID_MODULO = 13 AND b.ID_PLANO_CAB = "
-				+ id).executeUpdate();
-
-		entityManager.createNativeQuery("UPDATE b SET b.ESTADO = 'I' from GT_MOV_TAREFAS a "
-				+ "inner join PA_MOV_LINHA b on a.ID_CAMPO = b.ID_PLANO_LINHA and a.ID_MODULO = 13 "
-				+ "AND a.ESTADO != b.ESTADO and a.ESTADO != 'A' AND a.ESTADO in ('C') AND a.ID_TAREFA_PAI is null AND b.ESTADO in ('P') AND b.ID_PLANO_CAB = "
-				+ id).executeUpdate();
-		return entityManager
-				.createNativeQuery("DECLARE @TOTAL int = (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
-						+ " AND ESTADO != 'D') " + "IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
-						+ " AND ESTADO = 'I') = @TOTAL AND @TOTAL > 0 BEGIN "
-						+ "	UPDATE PA_MOV_CAB SET ESTADO = 'C' WHERE ID_PLANO_CAB = " + id + " END "
-						+ "ELSE IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
-						+ " AND ESTADO IN ('V','R')) = @TOTAL AND @TOTAL > 0 BEGIN "
-						+ "	UPDATE PA_MOV_CAB SET ESTADO = 'V' WHERE ID_PLANO_CAB = " + id + " END "
-						+ "ELSE IF EXISTS (SELECT 1 FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id
-						+ ") BEGIN UPDATE PA_MOV_CAB SET ESTADO = 'P' WHERE ID_PLANO_CAB = " + id
-						+ " AND ESTADO != 'E' END")
+		return entityManager.createNativeQuery(
+				"UPDATE a SET a.OBSERVACOES = b.DESCRICAO FROM GT_MOV_TAREFAS a "
+				+ "INNER JOIN PA_MOV_LINHA b WITH (UPDLOCK) ON a.ID_CAMPO = b.ID_PLANO_LINHA AND a.ID_MODULO = 13 AND b.ID_PLANO_CAB = " + id + "; "
+				+ "UPDATE b SET b.ESTADO = 'I' FROM GT_MOV_TAREFAS a "
+				+ "INNER JOIN PA_MOV_LINHA b ON a.ID_CAMPO = b.ID_PLANO_LINHA AND a.ID_MODULO = 13 "
+				+ "AND a.ESTADO != b.ESTADO AND a.ESTADO != 'A' AND a.ESTADO IN ('C') AND a.ID_TAREFA_PAI IS NULL AND b.ESTADO IN ('P') AND b.ID_PLANO_CAB = " + id + "; "
+				+ "DECLARE @TOTAL int = (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id + " AND ESTADO != 'D') "
+				+ "IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id + " AND ESTADO = 'I') = @TOTAL AND @TOTAL > 0 BEGIN "
+				+ "UPDATE PA_MOV_CAB SET ESTADO = 'C' WHERE ID_PLANO_CAB = " + id + " END "
+				+ "ELSE IF (SELECT COUNT(*) FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id + " AND ESTADO IN ('V','R')) = @TOTAL AND @TOTAL > 0 BEGIN "
+				+ "UPDATE PA_MOV_CAB SET ESTADO = 'V' WHERE ID_PLANO_CAB = " + id + " END "
+				+ "ELSE IF EXISTS (SELECT 1 FROM PA_MOV_LINHA WHERE ID_PLANO_CAB = " + id + ") BEGIN "
+				+ "UPDATE PA_MOV_CAB SET ESTADO = 'P' WHERE ID_PLANO_CAB = " + id + " AND ESTADO != 'E' END")
 				.executeUpdate();
 	}
 
@@ -10145,8 +10139,8 @@ public class SIRB {
 				datahorapreparacao = content[22].toString() + " " + content[23].toString().substring(0, 8);
 			}
 
-			String vv = (content[3] != null) ? content[3].toString() : "0";
-			String tt = (content[6] != null) ? content[6].toString() : "0";
+			String vv = (content[3] != null && !content[3].toString().isEmpty()) ? content[3].toString() : "0";
+			String tt = (content[6] != null && !content[6].toString().isEmpty()) ? content[6].toString() : "0";
 			Double valor2 = Double.valueOf(vv.replace(",", "."));
 			Double total2 = Double.valueOf(tt.replace(",", "."));
 			valor = decimalFormat.format(valor2);
@@ -10165,14 +10159,14 @@ public class SIRB {
 			nome_aditivo = (content[19] != null) ? content[19].toString() : "";
 			ref_aditivo = (content[20] != null) ? content[20].toString() : "";
 
-			String cc = (content[2] != null) ? content[2].toString() : "0";
+			String cc = (content[2] != null && !content[2].toString().isEmpty()) ? content[2].toString() : "0";
 			Double total3 = Double.valueOf(cc.replace(",", "."));
-			String qq = (content[15] != null) ? content[15].toString() : "0";
+			String qq = (content[15] != null && !content[15].toString().isEmpty()) ? content[15].toString() : "0";
 			Double total4 = Double.valueOf(qq.replace(",", "."));
-			String dd = (content[17] != null) ? content[17].toString() : "0";
+			String dd = (content[17] != null && !content[17].toString().isEmpty()) ? content[17].toString() : "0";
 			Double total5 = Double.valueOf(dd.replace(",", "."));
-			Double factor = Double.valueOf(((content[18] != null) ? content[18].toString() : "0").replace(",", "."));
-			String qf = (content[21] != null) ? content[21].toString() : "0";
+			Double factor = Double.valueOf(((content[18] != null && !content[18].toString().isEmpty()) ? content[18].toString() : "0").replace(",", "."));
+			String qf = (content[21] != null && !content[21].toString().isEmpty()) ? content[21].toString() : "0";
 			Double qtdfinal = Double.valueOf(qf.replace(",", "."));
 
 			factor = (factor == 0 || factor == null) ? 1 : factor;
