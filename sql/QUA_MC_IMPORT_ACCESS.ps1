@@ -13,7 +13,7 @@ if (-not $AccessFile) { Write-Error "Ficheiro .accdb não encontrado em Download
 Write-Host "Ficheiro Access: $AccessFile"
 
 # -- Ajusta estas variáveis conforme o teu servidor --
-$SqlServer  = "192.168.40.126,1433"
+$SqlServer  = "192.168.40.101,1433"
 $SqlDb      = "SGIID"
 $SqlUser    = "sa"
 $SqlPass    = "DourecA2@"

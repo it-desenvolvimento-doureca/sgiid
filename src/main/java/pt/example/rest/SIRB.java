@@ -3,6 +3,7 @@ package pt.example.rest;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9235,18 +9236,32 @@ public class SIRB {
 		Session session = Session.getDefaultInstance(props, null);
 		MimeMessage message = new MimeMessage(session, is);
 
-		String from = InternetAddress.toString(message.getFrom());
-		String to = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.TO));
-		String cc = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.CC));
-		String bcc = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.BCC));
+		String from    = InternetAddress.toString(message.getFrom());
+		String to      = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.TO));
+		String cc      = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.CC));
+		String bcc     = InternetAddress.toString(message.getRecipients(javax.mail.Message.RecipientType.BCC));
 		String subject = Optional.ofNullable(message.getSubject()).orElse("");
 
-		String body = getTextFromMessage(message); // mesma função auxiliar
+		Map<String, String> cidMap = new HashMap<>();
+		List<String> attachmentNames = new ArrayList<>();
+		collectEMLParts(message, cidMap, attachmentNames);
+
+		String body = getHtmlBodyFromMessage(message);
+
+		for (Map.Entry<String, String> entry : cidMap.entrySet())
+			body = body.replace("cid:" + entry.getKey(), entry.getValue());
 
 		StringBuilder html = new StringBuilder();
-		html.append("<div class=\"MsoNormal\">").append("<b>De</b>: ").append(from).append("<br>")
-				.append("<b>Para</b>: ").append(to).append("<br>").append("<b>Cc</b>: ").append(cc).append("<br>")
-				.append("<b>Bcc</b>: ").append(bcc).append("<br>").append("<b>Assunto</b>: ").append(subject)
+		html.append("<div class=\"MsoNormal\">")
+				.append("<b>Anexos</b> - ").append(attachmentNames.size()).append("<br>");
+		for (String name : attachmentNames)
+			html.append("<i>").append(name).append("</i><br>");
+		html.append("------------------------------ <br>")
+				.append("<b>De</b>: ").append(from).append("<br>")
+				.append("<b>Para</b>: ").append(to).append("<br>")
+				.append("<b>Cc</b>: ").append(cc).append("<br>")
+				.append("<b>Bcc</b>: ").append(bcc).append("<br>")
+				.append("<b>Assunto</b>: ").append(subject)
 				.append("<br><br>").append("<b>Mensagem</b>:<br></div>").append(body);
 
 		byte[] htmlBytes = html.toString().getBytes(StandardCharsets.UTF_8);
@@ -9256,21 +9271,60 @@ public class SIRB {
 				.type(MediaType.TEXT_HTML).build();
 	}
 
-	// Função auxiliar para extrair texto/HTML do corpo do EML
-	private String getTextFromMessage(Part p) throws Exception {
-		if (p.isMimeType("text/*")) {
-			return p.getContent().toString().replace("\r\n", "<br>").replace("\n", "<br>");
+	private String getHtmlBodyFromMessage(Part p) throws Exception {
+		if (p.isMimeType("text/html"))
+			return (String) p.getContent();
+		if (p.isMimeType("text/plain"))
+			return ((String) p.getContent()).replace("\r\n", "<br>").replace("\n", "<br>");
+		if (p.isMimeType("multipart/alternative")) {
+			Multipart mp = (Multipart) p.getContent();
+			String plain = null;
+			for (int i = 0; i < mp.getCount(); i++) {
+				BodyPart bp = mp.getBodyPart(i);
+				if (bp.isMimeType("text/html"))
+					return (String) bp.getContent();
+				if (bp.isMimeType("text/plain") && plain == null)
+					plain = ((String) bp.getContent()).replace("\r\n", "<br>").replace("\n", "<br>");
+			}
+			return plain != null ? plain : "";
 		}
 		if (p.isMimeType("multipart/*")) {
 			Multipart mp = (Multipart) p.getContent();
-			StringBuilder result = new StringBuilder();
 			for (int i = 0; i < mp.getCount(); i++) {
-				BodyPart bp = mp.getBodyPart(i);
-				result.append(getTextFromMessage(bp));
+				String result = getHtmlBodyFromMessage(mp.getBodyPart(i));
+				if (result != null && !result.isEmpty())
+					return result;
 			}
-			return result.toString();
 		}
 		return "";
+	}
+
+	private void collectEMLParts(Part p, Map<String, String> cidMap, List<String> attachmentNames) throws Exception {
+		if (p.isMimeType("multipart/*")) {
+			Multipart mp = (Multipart) p.getContent();
+			for (int i = 0; i < mp.getCount(); i++)
+				collectEMLParts(mp.getBodyPart(i), cidMap, attachmentNames);
+			return;
+		}
+		String disposition = p.getDisposition();
+		if (p.isMimeType("image/*")) {
+			String[] cidHeaders = p.getHeader("Content-ID");
+			if (cidHeaders != null && cidHeaders.length > 0) {
+				String cid = cidHeaders[0].replaceAll("[<>]", "").trim();
+				String mimeType = p.getContentType().split(";")[0].trim();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				byte[] buf = new byte[4096];
+				int len;
+				InputStream imgStream = p.getInputStream();
+				while ((len = imgStream.read(buf)) != -1)
+					baos.write(buf, 0, len);
+				cidMap.put(cid, "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(baos.toByteArray()));
+			}
+		} else if (Part.ATTACHMENT.equalsIgnoreCase(disposition)) {
+			String fname = p.getFileName();
+			if (fname != null && !fname.isEmpty())
+				attachmentNames.add(fname);
+		}
 	}
 
 	private static String getFileExtension(FileAttachment file) {

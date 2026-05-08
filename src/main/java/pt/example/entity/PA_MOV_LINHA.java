@@ -109,6 +109,8 @@ public class PA_MOV_LINHA {
 	private Timestamp DATA_ANULA;
 	@Column(name = "UTZ_ANULA")
 	private Integer UTZ_ANULA; 
+	@Column(name = "METODO_AVALIACAO_EFICACIA")
+	private String METODO_AVALIACAO_EFICACIA; 
 
 	public Timestamp getDATA_CRIA() {
 		return DATA_CRIA;
@@ -436,6 +438,14 @@ public class PA_MOV_LINHA {
 
 	public void setUTZ_ANULA(Integer uTZ_ANULA) {
 		UTZ_ANULA = uTZ_ANULA;
+	}
+	
+	public String getMETODO_AVALIACAO_EFICACIA() {
+		return METODO_AVALIACAO_EFICACIA;
+	}
+	
+	public void setMETODO_AVALIACAO_EFICACIA(String mETODO_AVALIACAO_EFICACIA) {
+		METODO_AVALIACAO_EFICACIA = mETODO_AVALIACAO_EFICACIA;
 	}
 
 }
