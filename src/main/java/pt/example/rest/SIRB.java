@@ -3036,6 +3036,26 @@ public class SIRB {
 	}
 
 	@POST
+	@Path("/getRH_FUNCIONARIOSOPERACOESSGIID")
+	@Produces("application/json")
+	public List<RH_FUNCIONARIOS> getRH_FUNCIONARIOSOPERACOESSGIID(final List<HashMap<String, String>> datas) {
+	    HashMap<String, String> firstMap = datas.get(0);
+	    String data1 = firstMap.get("DATA1");
+	    String data2 = firstMap.get("DATA2");
+	    String hora1 = firstMap.get("HORA1");
+	    String hora2 = firstMap.get("HORA2");
+	    String Ativo = firstMap.get("ATIVO");
+	    String OPERARIO = firstMap.get("OPERARIO");
+	    String SECTOR_ACESSO = firstMap.get("SECTOR_ACESSO");
+	    String tipo_cadencia = firstMap.get("TIPO_CADENCIA");
+	    String SECTOR = firstMap.get("SECTOR");
+	    if (OPERARIO.isEmpty()) OPERARIO = null;
+	    Boolean ADMIN = firstMap.get("ADMIN").equals("true");
+	    return dao63.getOperacoesSGIID(data1, data2, Ativo, OPERARIO, SECTOR_ACESSO, ADMIN, tipo_cadencia, SECTOR, hora1, hora2);
+	}
+
+	
+	@POST
 	@Path("/getRH_FUNCIONARIOSOPERACOES")
 	@Produces("application/json")
 	public List<RH_FUNCIONARIOS> getRH_FUNCIONARIOSOPERACOES(final List<HashMap<String, String>> datas) {

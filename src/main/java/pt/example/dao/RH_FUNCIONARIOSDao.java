@@ -293,6 +293,19 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 
 		return data;
 	}
+	
+	public List<RH_FUNCIONARIOS> getOperacoesSGIID(String data1, String data2, String Ativo, String Operario,
+		    String SECTOR_ACESSO, Boolean ADMIN, String tipo_cadencia, String Sector, String hora1, String hora2) {
+		    return entityManager
+		        .createNativeQuery("EXEC RH_GET_OPERACOES_SGIID "
+		            + ":DATA, :DATA2, :Ativo, :tipo_cadencia, :Sector, :Operario, :ADMIN, :SECTOR_ACESSO, :hora1, :hora2")
+		        .setParameter("DATA", data1).setParameter("DATA2", data2).setParameter("Ativo", Ativo)
+		        .setParameter("tipo_cadencia", tipo_cadencia).setParameter("Sector", Sector)
+		        .setParameter("Operario", Operario).setParameter("ADMIN", ADMIN ? 1 : 0)
+		        .setParameter("hora1", hora1).setParameter("hora2", hora2)
+		        .setParameter("SECTOR_ACESSO", SECTOR_ACESSO).getResultList();
+		}
+
 
 	public List<RH_FUNCIONARIOS> getOperacoes(String data1, String data2, String Ativo, String Operario,
 			String SECTOR_ACESSO, Boolean ADMIN, String tipo_cadencia, String Sector) {
