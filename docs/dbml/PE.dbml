@@ -1,0 +1,64 @@
+﻿// Module: PE
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table PE_MOV_CAB {
+  ID int
+  ESTADO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  DEPARTAMENTO int
+  RESPONSAVEL int
+  ANO_PLANO int
+  TIPO varchar(255)
+  DATA_FECHA datetime
+  UTZ_FECHA int
+
+}
+
+Table PE_MOV_CAB_HISTORICO {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ID_PLANO_ESTRATEGICO int
+  OBSERVACOES varchar(255)
+
+}
+
+Table PE_MOV_FICHEIROS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_PLANO_ESTRATEGICO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+Table PE_PLANOS_ASSOCIADOS {
+  ID int [pk, increment]
+  ID_PLANO_ESTRATEGICO int
+  ID_PLANO_CAB int
+  INATIVO bit
+
+}
+
+// References
+Ref: PE_MOV_CAB_HISTORICO.ID_PLANO_ESTRATEGICO > PE_MOV_CAB.ID
+Ref: PE_MOV_FICHEIROS.ID_PLANO_ESTRATEGICO > PE_MOV_CAB.ID
+Ref: PE_PLANOS_ASSOCIADOS.ID_PLANO_ESTRATEGICO > PE_MOV_CAB.ID
+

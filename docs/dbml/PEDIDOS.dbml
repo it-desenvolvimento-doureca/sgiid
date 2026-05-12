@@ -1,0 +1,20 @@
+﻿// Module: PEDIDOS
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table PEDIDOS_APP {
+  ID_PEDIDO int [pk, increment]
+  ASSUNTO varchar(255)
+  PRIORIDADE int
+  DESCRICAO varchar(255)
+  DATA_HORA_PEDIDO datetime
+  UTZ_PEDIDO int
+  DATA_FECHO datetime
+  UTZ_FECHO int
+  ESTADO varchar(255)
+  TIPO_PEDIDO varchar(255)
+  EMAIL_CONTACTO varchar(255)
+  TELEFONE_CONTACTO varchar(255)
+
+
+}

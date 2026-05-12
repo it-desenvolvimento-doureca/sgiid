@@ -1,0 +1,39 @@
+﻿// Module: PLANEAMENTO
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table PLANEAMENTO_CAB {
+  ID_PLANEAMENTO int [pk, increment]
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  ESTADO varchar(255)
+  INATIVO bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  ANO int
+  SEMANA int
+  LINHA int
+
+}
+
+Table PLANEAMENTO_LINHAS {
+  ID_LINHA int [pk, increment]
+  ID_PLANEAMENTO int
+  DATA date
+  PLANEADAS_TURNO_1 int
+  PLANEADAS_TURNO_2 int
+  PLANEADAS_TURNO_3 int
+  PROD_PLANEADAS_TURNO_1 int
+  PROD_PLANEADAS_TURNO_2 int
+  PROD_PLANEADAS_TURNO_3 int
+  BARRAS_PROD_TURNO_1 int
+  BARRAS_PROD_TURNO_2 int
+  BARRAS_PROD_TURNO_3 int
+  BARRAS_INTROD_TURNO_1 int
+  BARRAS_INTROD_TURNO_2 int
+  BARRAS_INTROD_TURNO_3 int
+
+
+}

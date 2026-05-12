@@ -1,0 +1,102 @@
+﻿// Module: FIN
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table FIN_DIC_CLIENTES {
+  ID int
+  ID_CLIENTE varchar(255)
+  FUNCAO_1 varchar(255)
+  NOME_1 varchar(255)
+  EMAIL_1 varchar(255)
+  TLM_1 varchar(255)
+  FUNCAO_2 varchar(255)
+  NOME_2 varchar(255)
+  EMAIL_2 varchar(255)
+  TLM_2 varchar(255)
+  UTZ_MODIF int
+  DATA_MODIF datetime
+  BLOQUEADO bit
+
+}
+
+Table FIN_DIC_FILTROS {
+  ID int
+  TIPO_ANALISE int
+  DESCRICAO varchar(255)
+  PROTYPCOD varchar(255)
+  ACHFAMCOD varchar(255)
+
+}
+
+Table FIN_DIC_OBJETIVOS {
+  ID_OBJETIVO int
+  MES int
+  ANO int
+  VALOR_OBJETIVO float
+  N_DIAS_UTEIS int
+  VALOR_OBJETIVO_ANUAL float
+  VALOR_OBJETIVO_TOOLS float
+
+}
+
+Table FIN_DIC_PARAMETROS_SEGUIMENTO {
+  ID_ANALISE int
+  DESCRICAO varchar(255)
+  TIPOS_DOCUMENTO varchar(255)
+  TIPO_ARTIGO varchar(255)
+
+}
+
+Table FIN_DIC_TIPO_DOC {
+  ID int
+  TIPO_DOCUMENTO varchar(255)
+  NOME_DOCUMENTO varchar(255)
+  TIPO_FICHEIRO_1 varchar(255)
+  TIPO_FICHEIRO_2 varchar(255)
+
+}
+
+Table FIN_DIC_TIPO_MOVIMENTO_STOCK {
+  ID int
+  TIPO_MOVIMENTO varchar(255)
+  DESCRICAO varchar(255)
+
+}
+
+Table FIN_DIVIDAS_ATIVIDADE {
+  ID int
+  ID_CLIENTE varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DESCRICAO varchar(255)
+
+}
+
+Table FIN_DOC_ACORDO {
+  ID int
+  ID_CLIENTE varchar(255)
+  DOCUMENTO varchar(255)
+
+}
+
+Table FIN_REGISTO_ACOES {
+  ID_ACAO int
+  ID_CLIENTE varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  CONTACTO varchar(255)
+  GERAR_ALERTA datetime
+  ALERTA_GERADO bit
+  ORIGEM varchar(255)
+  DESCRICAO varchar(255)
+  TAMANHO_FICHEIRO float
+  NOME_FICHEIRO varchar(255)
+  DATATYPE_FICHEIRO varchar(255)
+  TYPE_FICHEIRO varchar(255)
+  FICHEIRO varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+// References
+

@@ -1,0 +1,21 @@
+﻿// Module: VERSAO
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table VERSAO_APP {
+  ID_MANUTENCAO_OPERARIOS int
+  ID_MANUTENCAO_CAB int
+  ID_OPERARIO int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  TEMP_EXEC varchar(255)
+  TEMP_PAUSA varchar(255)
+  TEMP_TOTAL varchar(255)
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+
+
+}

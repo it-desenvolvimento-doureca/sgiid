@@ -1,0 +1,38 @@
+﻿// Module: LG
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table LG_ANALISE_ENVIOS {
+  ID int
+  CONSIGN_NO varchar(255)
+  ACCOUNT_KEY varchar(255)
+  CUSTOMER_REF varchar(255)
+  CON_CREATE_DATE date
+  CON_DELIVERED_DATE date
+  STATUS_DESC varchar(255)
+  SUMMARY_STAT varchar(255)
+  STATUS_CODE varchar(255)
+  SIGNED_BY varchar(255)
+  EVENT_DATE_LOCAL datetime
+  EVENT_TIME_LOCAL varchar(255)
+  EVENT_DATE_GMT date
+  EVENT_TIME_GMT varchar(255)
+  SENDER_NAME varchar(255)
+  RECEIVER_NAME varchar(255)
+  RECEIVER_CITY varchar(255)
+  RECEIVER_POSTCODE varchar(255)
+  RECEIVER_CNTRYCDE varchar(255)
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+
+}
+
+Table LG_DIC_OBJETIVOS {
+  ID int
+  OBJETIVO_FORNECEDORES float
+  UTZ_MODIF int
+  DATA_MODIF datetime
+  OBJETIVO_CLIENTES float
+
+
+}

@@ -1,0 +1,101 @@
+﻿// Module: GT
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table GT_DIC_TAREFAS {
+  ID int [pk, increment]
+  DESCRICAO_PT varchar(255)
+  DESCRICAO_ENG varchar(255)
+  DESCRICAO_FR varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TIPO_TAREFA varchar(255)
+
+}
+
+Table GT_DIC_TIPO_ACAO {
+  ID_TIPO_ACAO int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table GT_LOGS {
+  ID int [pk, increment]
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DESCRICAO varchar(255)
+  ID_TAREFA int
+  JUSTIFICACAO varchar(255)
+
+}
+
+Table GT_MOV_FICHEIROS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_TAREFA int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+Table GT_MOV_TAREFAS {
+  ID_TAREFA int [pk, increment]
+  ID_MODULO int
+  ID_CAMPO int
+  ESTADO varchar(255)
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  DATA_CONCLUSAO datetime
+  UTZ_CONCLUSAO int
+  OBSERVACOES varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  UTZ_ID int
+  UTZ_TIPO varchar(255)
+  ID_ACCAO int
+  UTZ_ENCAMINHADO int
+  SUB_MODULO varchar(255)
+  DATA_ENCAMINHADO datetime
+  UTZ_ENCAMINHOU int
+  PRIORIDADE int
+  PERCENTAGEM_CONCLUSAO float
+  DESCRICAO varchar(255)
+  TEMPO_GASTO float
+  DATA_REJEITA datetime
+  UTZ_REJEITA int
+  MOTIVO_REJEICAO varchar(255)
+  DATA_VALIDA datetime
+  UTZ_VALIDA int
+  DATA_CONTROLA datetime
+  UTZ_CONTROLA int
+  JUSTIFICACAO_ALTERACAO_ESTADO varchar(255)
+  ID_TAREFA_PAI int
+  JUSTIFICACAO_DATA_FIM varchar(255)
+  DATA_FIM_ANTIGA datetime
+  JUSTIFICACAO_RESPONSAVEL varchar(255)
+
+}
+
+// References
+Ref: GT_MOV_FICHEIROS.ID_TAREFA > GT_MOV_TAREFAS.ID_TAREFA
+

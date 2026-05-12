@@ -1,0 +1,22 @@
+﻿// Module: FICHEIROS
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table FICHEIROS_PAGINAS {
+  ID_FICHEIRO int [pk, increment]
+  TAMANHO float
+  NOME varchar(255)
+  ID_UTZ_CRIA int
+  DATA_CRIA datetime
+  DATATYPE varchar(255)
+  FICHEIRO varchar(255)
+  ID_PAGINA int
+  PAGINA varchar(255)
+  DESCRICAO varchar(255)
+  ID_CONTRATO varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+// References
+

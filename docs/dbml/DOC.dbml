@@ -1,0 +1,133 @@
+﻿// Module: DOC
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table DOC_DIC_POSTOS {
+  ID int
+  NOME varchar(255)
+  IP_POSTO varchar(255)
+  SECTOR varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  LINHA int
+  TIPO_POSTO varchar(255)
+  IMPRESSORA varchar(255)
+  ID_MAQUINA int
+  MULTIPOSTO bit
+  POSTO_ATUAL varchar(255)
+  SECCOD varchar(255)
+  SECLIB varchar(255)
+
+}
+
+Table DOC_DIC_TIPOS_DOCUMENTO {
+  ID int
+  NOME varchar(255)
+  DOCUMENTO_PREDEFINIDO bit
+  ALERTA bit
+  COR_ABA varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+
+}
+
+Table DOC_DIC_TIPOS_DOCUMENTO_UTZ {
+  ID int
+  ID_TIPO_DOCUMENTO int
+  ID_UTZ int
+
+}
+
+Table DOC_DOCUMENTOS {
+  ID int
+  COD_DOCUMENTO varchar(255)
+  NOME_DOCUMENTO varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  ID_FICHEIRO varchar(255)
+  ID_PASTA varchar(255)
+  CAMINHO varchar(255)
+  NOME_FICHEIRO varchar(255)
+  TIPO_FICHEIRO varchar(255)
+  VERSAO varchar(255)
+  ID_CAMINHO int
+  TIPO_DOCUMENTO int
+
+}
+
+Table DOC_DOCUMENTOS_VERSOES {
+  ID int
+  COD_DOCUMENTO varchar(255)
+  NOME_DOCUMENTO varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  ID_FICHEIRO varchar(255)
+  ID_PASTA varchar(255)
+  CAMINHO varchar(255)
+  NOME_FICHEIRO varchar(255)
+  TIPO_FICHEIRO varchar(255)
+  VERSAO varchar(255)
+  ID_CAMINHO int
+  TIPO_DOCUMENTO int
+  ID_ORIGEM int
+
+}
+
+Table DOC_FICHA_DOCUMENTOS {
+  ID int
+  SECTOR varchar(255)
+  DESC_MAQUINA varchar(255)
+  COD_MAQUINA varchar(255)
+  REFERENCIA varchar(255)
+  DESC_REFERENCIA varchar(255)
+  NOME_ABA varchar(255)
+  TIPO_DOCUMENTO int
+  ORDEM int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  ID_FICHEIRO int
+  DATA_INICIO date
+  DATA_FIM date
+
+}
+
+Table DOC_GESTAO_PASTAS {
+  ID int
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  ID_PASTA varchar(255)
+
+}
+
+// References
+Ref: DOC_FICHA_DOCUMENTOS.ID_FICHEIRO > DOC_DOCUMENTOS.ID
+

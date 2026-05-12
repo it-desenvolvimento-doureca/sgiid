@@ -1,0 +1,16 @@
+﻿// Module: CAPACIDADE
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table CAPACIDADE_LINHA {
+  ID_CAPACIDADE int [pk, increment]
+  DATA date
+  LINHA int
+  VALOR float
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+
+}

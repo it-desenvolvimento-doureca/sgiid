@@ -1,0 +1,6042 @@
+﻿// SGIID - Diagrama Completo
+// 343 tabelas | 174 FKs (src+dst validadas)
+// https://dbdiagram.io -> paste content here
+
+// === AB ===
+Table AB_DIC_BANHO {
+  ID_BANHO int [pk, increment]
+  ID_LINHA int
+  ID_ZONA int
+  NOME_BANHO varchar(255)
+  ESTADO bit
+  ID_TINA int
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  CELULAHULL bit
+  EMAIL_PARA varchar(255)
+  MANUTENCAOREPOSICAO bit
+  MANUTENCAONAOPROGRAMADA bit
+  DOSE1 varchar(255)
+  DOSE2 varchar(255)
+  DOSE3 varchar(255)
+  DOSE4 varchar(255)
+  DOSE5 varchar(255)
+  DOSE6 varchar(255)
+
+}
+
+Table AB_DIC_BANHO_ADITIVO {
+  ID_BANHO_ADITIVO int [pk, increment]
+  ID_BANHO int
+  ID_ADITIVO int
+  ID_UNIDADE1 int
+  ID_UNIDADE2 int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  MANUTENCAONAOPROGRAMADA bit
+  VALOR_DOSE1 float
+  VALOR_DOSE2 float
+  VALOR_DOSE3 float
+  VALOR_DOSE4 float
+  VALOR_DOSE5 float
+  VALOR_DOSE6 float
+  QUANTIDADE_DEFEITO float
+  OBSERVACOES varchar(255)
+
+}
+
+Table AB_DIC_BANHO_COMPONENTE {
+  ID_BANHO_COMP int [pk, increment]
+  ID_BANHO int
+  ID_COMPONENTE int
+  DATA_INICIO date
+  DATA_FIM date
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  LIMITE_AMARELO_INF float
+  LIMITE_AMARELO_SUP float
+  LIMITE_VERDE_INF float
+  LIMITE_VERDE_SUP float
+  QUANTIDADE int
+  ID_FORNECEDOR int
+  OBS varchar(255)
+  ID_UNIDADE_COMPONENTE int
+
+}
+
+Table AB_DIC_COMPONENTE {
+  ID_COMPONENTE int [pk, increment]
+  COD_REF varchar(255)
+  NOME_REF varchar(255)
+  NOME_COMPONENTE varchar(255)
+  ID_UNIDADE_COMPONENTE varchar(255)
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  ID_UNIDADE_ADITIVO int
+  ID_FORNECEDOR int
+  TIPO varchar(255)
+  OBRIGATORIO varchar(255)
+  FACTOR_MULTIPLICACAO_AGUA float
+  FACTOR_CONVERSAO float
+  UNISTO varchar(255)
+  CISTERNA bit
+  COD_REF_SUBSTITUTA varchar(255)
+  NOME_REF_SUBSTITUTA varchar(255)
+
+}
+
+Table AB_DIC_COMPONENTE_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_COMPONENTE int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+
+}
+
+Table AB_DIC_DOSIFICACAO {
+  ID int
+  INTERVALO_AMPERES int
+  HORA_MANUTENCAO_ARRANQUE varchar(255)
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ID_LINHA int
+  ATIVO bit
+
+}
+
+Table AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAO {
+  ID int
+  ID_DOSIFICACAO int
+  HORA varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+
+}
+
+Table AB_DIC_LINHA {
+  ID_LINHA int [pk, increment]
+  NOME_LINHA varchar(255)
+  COR varchar(255)
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  SECCAO varchar(255)
+  SUBSECCAO varchar(255)
+  REF_COMPOSTO varchar(255)
+  PASTA varchar(255)
+  UTILIZADOR varchar(255)
+  SENHA varchar(255)
+  DOMINIO varchar(255)
+  DESATIVA bit
+  DATA_INICIO date
+  DATA_FIM date
+
+}
+
+Table AB_DIC_LINHA_OF {
+  ID_LINHA_OF int [pk, increment]
+  ID_LINHA int
+  OF_NUM varchar(255)
+  DATA date
+
+}
+
+Table AB_DIC_TINA {
+  ID_TINA int [pk, increment]
+  ID_LINHA int
+  ID_ZONA int
+  COD_TINA varchar(255)
+  CAPACIDADE int
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  ID_TIPO_TIPOLOGIA_DOSIFICADORES int
+
+}
+
+Table AB_DIC_TIPO_ADICAO {
+  ID_TIPO_ADICAO int [pk, increment]
+  NOME_TIPO_ADICAO varchar(255)
+  ID_TIPO_OPERACAO varchar(255)
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  CLASSIF varchar(255)
+
+}
+
+Table AB_DIC_TIPO_MANUTENCAO {
+  ID_TIPO_MANUTENCAO int [pk, increment]
+  NOME_TIPO_MANUTENCAO varchar(255)
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  CLASSIF varchar(255)
+  COR varchar(255)
+
+}
+
+Table AB_DIC_TIPO_OPERACAO {
+  ID_TIPO_OPERACAO int [pk, increment]
+  NOME_TIPO_OPERACAO varchar(255)
+  ID195 bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  CLASSIF varchar(255)
+
+}
+
+Table AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES {
+  ID int
+  NOME varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+
+}
+
+Table AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES_OBJETIVOS {
+  ID int
+  ID_TIPO_TIPOLOGIA_DOSIFICADORES int
+  VALOR_MINIMO int
+  VALOR_MAXIMO int
+  COR varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+
+}
+
+Table AB_DIC_TURNO {
+  ID_TURNO int [pk, increment]
+  NOME_TURNO varchar(255)
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+
+}
+
+Table AB_DIC_UNIDADE_MEDIDA {
+  ID_MEDIDA int [pk, increment]
+  MEDIDA varchar(255)
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+
+}
+
+Table AB_DIC_ZONA {
+  ID_ZONA int [pk, increment]
+  NOME_ZONA varchar(255)
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+
+}
+
+Table AB_MOV_ANALISE {
+  ID_ANALISE int [pk, increment]
+  ID_BANHO int
+  ID_LINHA int
+  DATA_ANALISE date
+  HORA_ANALISE varchar(255)
+  ANALISE_INT_EXT varchar(255)
+  CELULAHULL bit
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  ESTADO varchar(255)
+  DATA_VALIDA datetime
+  UTZ_VALIDA int
+  COR_LIMITES varchar(255)
+  PLANEADA bit
+  MENSAGEM varchar(255)
+
+}
+
+Table AB_MOV_ANALISE_LINHA {
+  ID_ANALISE_LIN int [pk, increment]
+  ID_ANALISE int
+  ID_COMPONENTE int
+  RESULTADO float
+  CALCULO float
+  SINAL varchar(255)
+  LIMITE_AMARELO_INF float
+  LIMITE_AMARELO_SUP float
+  LIMITE_VERDE_INF float
+  LIMITE_VERDE_SUP float
+
+}
+
+Table AB_MOV_MANUTENCAO {
+  ID_MANUTENCAO int [pk, increment]
+  ID_TIPO_MANUTENCAO int
+  ID_LINHA int
+  ID_TURNO int
+  DATA_PLANEAMENTO date
+  HORA_PLANEAMENTO varchar(255)
+  UTZ_PLANEAMENTO int
+  ESTADO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  DATA_ULT_IMPRES datetime
+  UTZ_ULT_IMPRES int
+  IMPRESSO bit
+  CLASSIF varchar(255)
+  ID_TIPO_TIPOLOGIA_DOSIFICADORES int
+
+}
+
+Table AB_MOV_MANUTENCAO_CAB {
+  ID_MANUTENCAO_CAB int [pk, increment]
+  ID_MANUTENCAO int
+  ID_BANHO int
+  ID_TINA int
+  ID_ANALISE int
+  ID_TIPO_OPERACAO int
+  ID_TIPO_ADICAO int
+  DATA_PREVISTA date
+  HORA_PREVISTA varchar(255)
+  DATA_EXECUCAO date
+  HORA_EXECUCAO varchar(255)
+  OBS_EXECUCAO varchar(255)
+  OBS_PLANEAMENTO varchar(255)
+  OBS_PREPARACAO varchar(255)
+  DATA_PREPARACAO date
+  HORA_PREPARACAO varchar(255)
+  UTZ_PREPARACAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  UTZ_EXECUCAO int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  DATA_ULT_IMPRES datetime
+  UTZ_ULT_IMPRES int
+  IMPRESSO bit
+  DOSEADOR varchar(255)
+
+}
+
+Table AB_MOV_MANUTENCAO_DOSIFICADORES {
+  ID int
+  ID_MANUTENCAO int
+  ID_TINA int
+  INTERVALO_AMPERES int
+  DATA_PREVISTA date
+  HORA_PREVISTA varchar(255)
+  DATA_EXECUCAO date
+  HORA_EXECUCAO varchar(255)
+  UTZ_EXECUCAO int
+  DOSEADOR_AB_NIVEL decimal(18,4)
+  DOSEADOR_AB_REPOSICAO decimal(18,4)
+  DOSEADOR_NIV_NIVEL decimal(18,4)
+  DOSEADOR_NIV_REPOSICAO decimal(18,4)
+  AMPERES int
+  OBSERVACOES varchar(255)
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DOSEADOR_3_NIVEL decimal(18,4)
+  DOSEADOR_3_REPOSICAO decimal(18,4)
+  DOSEADOR_4_NIVEL decimal(18,4)
+  DOSEADOR_4_REPOSICAO decimal(18,4)
+
+}
+
+Table AB_MOV_MANUTENCAO_ETIQ {
+  ID_MOV_MANU_ETIQUETA int [pk, increment]
+  ID_MANUTENCAO_LIN int
+  ETQNUM varchar(255)
+  QUANT float
+  CONSUMIR float
+  QUANT_FINAL float
+  UNISTO varchar(255)
+  INDREF varchar(255)
+  VA1REF varchar(255)
+  VA2REF varchar(255)
+  PROREF varchar(255)
+  UNICOD varchar(255)
+  LIECOD varchar(255)
+  EMPCOD varchar(255)
+  ETQORILOT1 varchar(255)
+  ETQNUMENR int
+  LOTNUMENR int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  INDNUMENR int
+  DATCRE date
+  PRODES varchar(255)
+  ETQORIQTE1 int
+  SINAL varchar(255)
+  OBSERVACAO varchar(255)
+  LINHA int
+  UNIDADE_CONSUMO varchar(255)
+  FACTOR_CONVERSAO float
+
+}
+
+Table AB_MOV_MANUTENCAO_LINHA {
+  ID_MANUTENCAO_LIN int [pk, increment]
+  ID_MANUTENCAO_CAB int
+  ID_ADITIVO int
+  ID_UNIDADE1 int
+  COD_REF varchar(255)
+  NOME_REF varchar(255)
+  ID_UNIDADE2 int
+  VALOR1 varchar(255)
+  VALOR2 varchar(255)
+  HORA_PREVISTA varchar(255)
+  OBS_PLANEAMENTO varchar(255)
+  STOCK float
+  VALOR_AGUA float
+  STKUNIT varchar(255)
+  LIECOD varchar(255)
+
+}
+
+Table AB_MOV_REG_PARAM_OPERACAO {
+  ID_REG_PARAM_OPERA int [pk, increment]
+  ID_MANUTENCAO_CAB int
+  DECISAO varchar(255)
+  PARAM_INCORRETO varchar(255)
+  VALOR_OTIMO varchar(255)
+  CAUSA varchar(255)
+  EFEITO varchar(255)
+  ACAO_CORRETIVA varchar(255)
+  ACAO_PREVENTIVA varchar(255)
+  SEGUIMENTO varchar(255)
+  OBS varchar(255)
+  DISTRIBUICAO varchar(255)
+  DISTRIBUICAO_OUTROS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_VALIDA datetime
+  UTZ_VALIDA int
+  IMPRESSO bit
+  DATA_ULT_IMPRES datetime
+  UTZ_ULT_IMPRES int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  PARAM_INCORRETO_2 varchar(255)
+  VALOR_OTIMO_2 varchar(255)
+  PARAM_INCORRETO_3 varchar(255)
+  VALOR_OTIMO_3 varchar(255)
+
+}
+
+// === AT ===
+Table AT_ACCOES {
+  ID_ACCAO int [pk, increment]
+  DESCRICAO_ACCAO varchar(255)
+  RESPONSAVEL varchar(255)
+  DATA_IMPLEMENTACAO varchar(255)
+  RECURSOS varchar(255)
+  ID_OCORRENCIA int
+
+}
+
+Table AT_DIC_CAUSAS_ACIDENTE {
+  ID_CAUSAS_ACIDENTE int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table AT_ENTREVISTAS {
+  ID_ENTREVISTA int [pk, increment]
+  ID_OCORRENCIA int
+  NOME varchar(255)
+  FUNCAO varchar(255)
+  TESTEMUNHO varchar(255)
+
+}
+
+Table AT_ENTREVISTAS_RESPONSAVEL {
+  ID_ENTREVISTA int [pk, increment]
+  ID_OCORRENCIA int
+  NOME varchar(255)
+  FUNCAO varchar(255)
+  OBSERVACOES varchar(255)
+
+}
+
+Table AT_OCORRENCIAS {
+  ID_OCORRENCIA int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  NOME_PESSOA varchar(255)
+  NUMERO_PESSOA varchar(255)
+  IDADE_PESSOA int
+  NACIONALIDADE varchar(255)
+  FUNCAO_PESSOA varchar(255)
+  DEPARTAMENTO varchar(255)
+  TIPO_RELATORIO varchar(255)
+  COM_BAIXA bit
+  TIPO_ACIDENTE varchar(255)
+  NOTIFICOU_SEGURADORA bit
+  COMPANHIA varchar(255)
+  N_APOLICE varchar(255)
+  DATA_ACIDENTE date
+  HORA_ACIDENTE varchar(255)
+  LOCAL_ACIDENTE varchar(255)
+  NUMERO_PESSOAS_ENVOLVIDAS int
+  NUMERO_VITIMAS int
+  DESCRICAO_ACIDENTE varchar(255)
+  GRAU_LESAO varchar(255)
+  GEROU_IT bit
+  GEROU_IP bit
+  DANOS_MATERIAS varchar(255)
+  TRABALHADORES_SIMILARES bit
+  PA_CABECA bit
+  PA_OLHOS bit
+  PA_PESCOCO bit
+  PA_COSTAS bit
+  PA_TORAX bit
+  PA_ABDOMEN bit
+  PA_OMBRO bit
+  PA_ANTEBRACO bit
+  PA_PE bit
+  PA_DEDOS_PE bit
+  PA_LOCALIZACOES_MULTIPLAS bit
+  PA_ANCA bit
+  PA_JOELHO bit
+  PA_MAO bit
+  PA_OUTRO bit
+  PA_OUTRO_TEXTO varchar(255)
+  RECOLHA_EVIDENCIAS varchar(255)
+  TESTEMUNHAS bit
+  NUMERO_TESTEMUNHAS int
+  MEDIDAS_FORMACAO varchar(255)
+  MEDIDAS_ORGANIZACAO varchar(255)
+  MEDIDAS_PROTECAO_COL varchar(255)
+  MEDIDAS_PROTECAO_IND varchar(255)
+  MEDIDAS_OUTRAS varchar(255)
+  DIAGRAMA_TOP_ESQ varchar(255)
+  DIAGRAMA_TOP_DIR varchar(255)
+  DIAGRAMA_DIR varchar(255)
+  DIAGRAMA_BT_ESQ varchar(255)
+  DIAGRAMA_BT_DIR varchar(255)
+  DESCRICAO_CAUSAS varchar(255)
+  ANALISE_EFICACIA varchar(255)
+  EFICAZ bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  ESTADO varchar(255)
+  INATIVO bit
+  VINCULO bit
+  DIAS_PERDIDOS int
+  CL_CORTE bit
+  CL_FERIDA bit
+  CL_CONTUSAO bit
+  CL_FRATURA bit
+  CL_HEMATOMA bit
+  CL_LESAO_MUSCULO_ESQUELETICA bit
+  CL_INTOXICACAO_ENVENENAMENTO bit
+  CL_ENTORSE_LUXACAO bit
+  CL_LESAO_OCULAR bit
+  CL_ESMAGAMENTO bit
+  CL_PERFURACAO bit
+  CL_ENTATALAMENTO bit
+  CL_AMPUTACAO bit
+  CL_QUEIMADURA bit
+  CL_OUTRO bit
+  CL_OUTRO_TEXTO varchar(255)
+  NUMERADOR_OCORRENCIAS varchar(255)
+
+}
+
+Table AT_TESTEMUNHAS {
+  ID_TESTEMUNHA int [pk, increment]
+  ID_OCORRENCIA int
+  NOME varchar(255)
+  NUMERO varchar(255)
+
+}
+
+// === CAPACIDADE ===
+Table CAPACIDADE_LINHA {
+  ID_CAPACIDADE int [pk, increment]
+  DATA date
+  LINHA int
+  VALOR float
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+// === CO ===
+Table CO_ANALISE_CLIENTES {
+  ID int
+  CLICOD varchar(255)
+  ETSNUM varchar(255)
+  PROREF varchar(255)
+  ID_LINHA int
+  STOCK_CLIENTE decimal(18,4)
+  DATA_STOCK_CLIENTE date
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+}
+
+Table CO_ANALISE_CLIENTES_ACCOES {
+  ID int
+  CLICOD varchar(255)
+  ETSNUM varchar(255)
+  PROREF varchar(255)
+  DESCRICAO varchar(255)
+  QUEM varchar(255)
+  DATA date
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+}
+
+Table CO_ANALISE_CLIENTES_OBSERVACOES {
+  ID int
+  CLICOD varchar(255)
+  ETSNUM varchar(255)
+  PROREF varchar(255)
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+}
+
+Table CO_ANALISE_CLIENTES_QUANTIDADE {
+  ID int
+  CLICOD varchar(255)
+  ETSNUM varchar(255)
+  PROREF varchar(255)
+  QUANTIDADE decimal(18,4)
+  ANO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+}
+
+// === COM ===
+Table COM_ACORDOS {
+  ID int
+  VERSAO int
+  ID_REFERENCIA int
+  OBSERVACOES varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  ID_CONTRATO int
+  SOP date
+  EOP date
+  PRECO_BASE decimal(18,4)
+  DATA_FECHO datetime
+  UTZ_FECHO int
+  ESTADO varchar(255)
+  DATA_FECHO_LTA datetime
+  UTZ_FECHO_LTA int
+  DATA_FECHO_AMORTIZACOES datetime
+  UTZ_FECHO_AMORTIZACOES int
+
+}
+
+Table COM_ACORDOS_ACTIVIDADES {
+  ID int
+  ID_ACORDO int
+  DATA_ATIVIDADE datetime
+  UTILIZADOR int
+  DESCRICAO varchar(255)
+  OBSERVACAO varchar(255)
+  PRECO decimal(18,4)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TAMANHO_FICHEIRO float
+  NOME_FICHEIRO varchar(255)
+  DATATYPE_FICHEIRO varchar(255)
+  FICHEIRO varchar(255)
+  FICHEIRO_2 varchar(255)
+  TYPE_FICHEIRO varchar(255)
+  GERAR_ALERTA datetime
+  ALERTA_GERADO bit
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_AMORTIZACOES {
+  ID_ACORDO int
+  DATA_INICIO date
+  QUANTIDADE int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  OBSERVACAO varchar(255)
+  VALOR decimal(18,4)
+  DATA_FIM_ESTIMADA date
+  ID int
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_ANEXOS {
+  ID int
+  ID_ACORDO int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  TAMANHO_FICHEIRO float
+  NOME_FICHEIRO varchar(255)
+  DATATYPE_FICHEIRO varchar(255)
+  FICHEIRO varchar(255)
+  FICHEIRO_2 varchar(255)
+  TYPE_FICHEIRO varchar(255)
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_HISTORICO {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ID_ACORDO int
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_LTA {
+  ID int
+  ID_ACORDO int
+  DATA_INICIO date
+  DATA_FIM date
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  VALOR_LTA decimal(18,4)
+  OBSERVACAO varchar(255)
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_PRECOS {
+  ID int
+  ID_ACORDO int
+  DATA_INICIO date
+  DATA_FIM date
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  OBSERVACAO varchar(255)
+  PRECO decimal(18,4)
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_VOLUMES {
+  ID int
+  ANO varchar(255)
+  VALOR decimal(18,4)
+  ID_ACORDO int
+  VERSAO int
+
+}
+
+Table COM_BUDGETS {
+  ID int
+  VERSAO int
+  VERSAO_ATIVA bit
+  ANO int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  DATA_ANULA datetime
+  UTZ_CRIA int
+  UTZ_MODIF int
+  UTZ_ANULA int
+  ATIVO bit
+  ESTADO varchar(255)
+
+}
+
+Table COM_BUDGETS_ANALISES {
+  ID int
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table COM_BUDGETS_LINHAS {
+  ID int
+  ID_BUDGET int
+  REFERENCE_SALES varchar(255)
+  CUSTOMER_GROUP int
+  CUSTOMER_ID varchar(255)
+  CUSTOMER_NAME varchar(255)
+  LOCATION_REFERENCE varchar(255)
+  LOCATION_NAME varchar(255)
+  REFERENCE_INTERNAL varchar(255)
+  REFERENCE_CUSTOMER varchar(255)
+  REFERENCE_NAME_SALES varchar(255)
+  REFERENCE_NAME_INTERNAL varchar(255)
+  BUDGET_YEAR decimal(18,4)
+  TOTAL_CONTRACT_YEAR decimal(18,4)
+  QUANTITY_YEAR decimal(18,4)
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_CRIA int
+  UTZ_MODIF int
+  SOP_DATE datetime
+  VERSAO_BUDGET int
+
+}
+
+Table COM_CONTRATOS {
+  ID int
+  N_CONTRATO varchar(255)
+  DATA_CONTRATO date
+  N_CLIENTE int
+  NOME_CLIENTE varchar(255)
+  MORADA_CLIENTE varchar(255)
+  COD_MORADA varchar(255)
+  OBSERVACOES varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  CONTRATO_SILVER varchar(255)
+  DESC_CONTRATO_SILVER varchar(255)
+  CONTRIBUINTE varchar(255)
+
+}
+
+Table COM_CUSTOMER_GROUPS {
+  ID int
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table COM_CUSTOMERS_GROUPS {
+  ID int
+  ID_CLIENTE varchar(255)
+  NOME_CLIENTE varchar(255)
+  ID_CUSTOMER_GROUP varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table COM_REFERENCIAS {
+  ID int
+  COD_REFERENCIA varchar(255)
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  OBSERVACOES varchar(255)
+
+}
+
+Table COM_REFERENCIAS_SILVER {
+  ID int
+  ID_REFERENCIA int
+  COD_REFERENCIA_SILVER varchar(255)
+  DESC_REFERENCIA_SILVER varchar(255)
+
+}
+
+// === COMU ===
+Table COMU_DIC_CATEGORIAS {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table COMU_FICHEIROS {
+  ID int
+  NOME_FICHEIRO varchar(255)
+  ORIGINAL_NAME varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  ID_FICHEIRO varchar(255)
+  ID_PASTA varchar(255)
+  TIPO_FICHEIRO varchar(255)
+  DATA_INICIO date
+  DATA_FIM date
+  TEMPO int
+
+}
+
+Table COMU_TICKERS {
+  ID int
+  ID_CATEGORIA int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  DATA_INICIO date
+  DATA_FIM date
+
+}
+
+// === DOC ===
+Table DOC_DIC_POSTOS {
+  ID int
+  NOME varchar(255)
+  IP_POSTO varchar(255)
+  SECTOR varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  LINHA int
+  TIPO_POSTO varchar(255)
+  IMPRESSORA varchar(255)
+  ID_MAQUINA int
+  MULTIPOSTO bit
+  POSTO_ATUAL varchar(255)
+  SECCOD varchar(255)
+  SECLIB varchar(255)
+
+}
+
+Table DOC_DIC_TIPOS_DOCUMENTO {
+  ID int
+  NOME varchar(255)
+  DOCUMENTO_PREDEFINIDO bit
+  ALERTA bit
+  COR_ABA varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+
+}
+
+Table DOC_DIC_TIPOS_DOCUMENTO_UTZ {
+  ID int
+  ID_TIPO_DOCUMENTO int
+  ID_UTZ int
+
+}
+
+Table DOC_DOCUMENTOS {
+  ID int
+  COD_DOCUMENTO varchar(255)
+  NOME_DOCUMENTO varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  ID_FICHEIRO varchar(255)
+  ID_PASTA varchar(255)
+  CAMINHO varchar(255)
+  NOME_FICHEIRO varchar(255)
+  TIPO_FICHEIRO varchar(255)
+  VERSAO varchar(255)
+  ID_CAMINHO int
+  TIPO_DOCUMENTO int
+
+}
+
+Table DOC_DOCUMENTOS_VERSOES {
+  ID int
+  COD_DOCUMENTO varchar(255)
+  NOME_DOCUMENTO varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  ID_FICHEIRO varchar(255)
+  ID_PASTA varchar(255)
+  CAMINHO varchar(255)
+  NOME_FICHEIRO varchar(255)
+  TIPO_FICHEIRO varchar(255)
+  VERSAO varchar(255)
+  ID_CAMINHO int
+  TIPO_DOCUMENTO int
+  ID_ORIGEM int
+
+}
+
+Table DOC_FICHA_DOCUMENTOS {
+  ID int
+  SECTOR varchar(255)
+  DESC_MAQUINA varchar(255)
+  COD_MAQUINA varchar(255)
+  REFERENCIA varchar(255)
+  DESC_REFERENCIA varchar(255)
+  NOME_ABA varchar(255)
+  TIPO_DOCUMENTO int
+  ORDEM int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  ID_FICHEIRO int
+  DATA_INICIO date
+  DATA_FIM date
+
+}
+
+Table DOC_GESTAO_PASTAS {
+  ID int
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  ID_PASTA varchar(255)
+
+}
+
+// === FICHEIROS ===
+Table FICHEIROS_PAGINAS {
+  ID_FICHEIRO int [pk, increment]
+  TAMANHO float
+  NOME varchar(255)
+  ID_UTZ_CRIA int
+  DATA_CRIA datetime
+  DATATYPE varchar(255)
+  FICHEIRO varchar(255)
+  ID_PAGINA int
+  PAGINA varchar(255)
+  DESCRICAO varchar(255)
+  ID_CONTRATO varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+// === FIN ===
+Table FIN_DIC_CLIENTES {
+  ID int
+  ID_CLIENTE varchar(255)
+  FUNCAO_1 varchar(255)
+  NOME_1 varchar(255)
+  EMAIL_1 varchar(255)
+  TLM_1 varchar(255)
+  FUNCAO_2 varchar(255)
+  NOME_2 varchar(255)
+  EMAIL_2 varchar(255)
+  TLM_2 varchar(255)
+  UTZ_MODIF int
+  DATA_MODIF datetime
+  BLOQUEADO bit
+
+}
+
+Table FIN_DIC_FILTROS {
+  ID int
+  TIPO_ANALISE int
+  DESCRICAO varchar(255)
+  PROTYPCOD varchar(255)
+  ACHFAMCOD varchar(255)
+
+}
+
+Table FIN_DIC_OBJETIVOS {
+  ID_OBJETIVO int
+  MES int
+  ANO int
+  VALOR_OBJETIVO float
+  N_DIAS_UTEIS int
+  VALOR_OBJETIVO_ANUAL float
+  VALOR_OBJETIVO_TOOLS float
+
+}
+
+Table FIN_DIC_PARAMETROS_SEGUIMENTO {
+  ID_ANALISE int
+  DESCRICAO varchar(255)
+  TIPOS_DOCUMENTO varchar(255)
+  TIPO_ARTIGO varchar(255)
+
+}
+
+Table FIN_DIC_TIPO_DOC {
+  ID int
+  TIPO_DOCUMENTO varchar(255)
+  NOME_DOCUMENTO varchar(255)
+  TIPO_FICHEIRO_1 varchar(255)
+  TIPO_FICHEIRO_2 varchar(255)
+
+}
+
+Table FIN_DIC_TIPO_MOVIMENTO_STOCK {
+  ID int
+  TIPO_MOVIMENTO varchar(255)
+  DESCRICAO varchar(255)
+
+}
+
+Table FIN_DIVIDAS_ATIVIDADE {
+  ID int
+  ID_CLIENTE varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DESCRICAO varchar(255)
+
+}
+
+Table FIN_DOC_ACORDO {
+  ID int
+  ID_CLIENTE varchar(255)
+  DOCUMENTO varchar(255)
+
+}
+
+Table FIN_REGISTO_ACOES {
+  ID_ACAO int
+  ID_CLIENTE varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  CONTACTO varchar(255)
+  GERAR_ALERTA datetime
+  ALERTA_GERADO bit
+  ORIGEM varchar(255)
+  DESCRICAO varchar(255)
+  TAMANHO_FICHEIRO float
+  NOME_FICHEIRO varchar(255)
+  DATATYPE_FICHEIRO varchar(255)
+  TYPE_FICHEIRO varchar(255)
+  FICHEIRO varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+// === GER ===
+Table GER_ANALISES {
+  ID int [pk, increment]
+  ID_PAI int
+  LINK varchar(255)
+  DESCRICAO varchar(255)
+  ATIVO bit
+  MODULO int
+
+}
+
+Table GER_ARMAZEM {
+  ID_ARMAZEM int [pk, increment]
+  COD_ARMAZEM varchar(255)
+  NOME_ARMAZEM varchar(255)
+
+}
+
+Table GER_ATUALIZACAO_SILVER_BI_TABELAS {
+  ID int [pk, increment]
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  TABELA varchar(255)
+  DIAS varchar(255)
+  TOTAL bit
+  ATIVO bit
+  BASE_DE_DADOS varchar(255)
+  DIA_DA_SEMANA int
+  HORAS varchar(255)
+  TIPO_OCORRENCIA int
+  DATA_INICIAL date
+  DATA_ATUALIZACAO datetime
+
+}
+
+Table GER_CAIXAS_EMAIL {
+  ID int
+  EMAIL varchar(255)
+  UTILIZADOR varchar(255)
+  PALAVRA_CHAVE varchar(255)
+  ATIVA bit
+  PROCESSA_INBOX_INICIAL bit
+  MOVE_PARA_PASTA_LIDAS bit
+  NOME_PASTA_LIDAS varchar(255)
+
+}
+
+Table GER_CAMPOS_DISP {
+  ID int [pk, increment]
+  ID_EVENTO_CONF int
+  DESCRICAO_CAMPO varchar(255)
+  NOME_CAMPO varchar(255)
+
+}
+
+Table GER_CONF_CONSUMOS_SILVER {
+  ID_CONF int [pk, increment]
+  SECCAO_MANUTENCAO varchar(255)
+  SUBSECCAO_MANUTENCAO varchar(255)
+  REF_COMPOSTO_MANUTENCAO varchar(255)
+
+}
+
+Table GER_CONF_CONSUMOS_SILVER_OF {
+  ID_CONF_OF int [pk, increment]
+  ID_CONF int
+  OF_NUM varchar(255)
+  TIPO varchar(255)
+  DATA date
+
+}
+
+Table GER_DEPARTAMENTO {
+  ID int [pk, increment]
+  ID_UTZ int
+  DESCRICAO varchar(255)
+  INATIVO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_APAGA datetime
+  UTZ_APAGA int
+  MODULO varchar(255)
+  LOCAL int
+
+}
+
+Table GER_DEPARTAMENTOS_SECTORES {
+  ID_DEPARTAMENTOS_SECTORES int [pk, increment]
+  ID_DEPARTAMENTO int
+  COD_SECTOR int
+
+}
+
+Table GER_DIC_FABRICA {
+  ID_FABRICA int
+  NOME varchar(255)
+
+}
+
+Table GER_DIC_LIMITES_ENCOMENDA {
+  ID_LIMITE int
+  PROREF varchar(255)
+  PRODES varchar(255)
+  CLICOD int
+  ETSNUM varchar(255)
+  ADRNOM varchar(255)
+  QUANT_MIN float
+  QUANT_MAX_SEMANA float
+  DATAINSERT datetime
+
+}
+
+Table GER_DIC_OEM {
+  ID_OEM int
+  NOME varchar(255)
+
+}
+
+Table GER_DIC_PROGRAMA {
+  ID_PROGRAMA int
+  ID_VEICULO int
+  NOME varchar(255)
+
+}
+
+Table GER_DIC_PROJ_CAB {
+  ID_PROJ_CAB int
+  ID_PROGRAMA int
+
+}
+
+Table GER_DIC_PROJ_FAB {
+  ID_PROJ_FAB int
+  ID_PROJ_CAB int
+  ID_FABRICA int
+  PERCENTAGEM float
+
+}
+
+Table GER_DIC_PROJ_REF {
+  ID_PROJ_REF int
+  ID_PROJ_CAB int
+  ID_REF varchar(255)
+  PV bit
+  DESC_REF varchar(255)
+
+}
+
+Table GER_DIC_VEICULO {
+  ID_VEICULO int
+  ID_OEM int
+  NOME varchar(255)
+
+}
+
+Table GER_EVENTOS_CONF {
+  ID_EVENTO int [pk, increment]
+  MODULO int
+  MOMENTO varchar(255)
+  PAGINA varchar(255)
+  ESTADO bit
+  EMAIL_PARA varchar(255)
+  EMAIL_DE varchar(255)
+  EMAIL_ANEXO bit
+  EMAIL_ASSUNTO varchar(255)
+  EMAIL_MENSAGEM varchar(255)
+  OBS varchar(255)
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  EMAIL_ASSUNTO_ENG varchar(255)
+  EMAIL_MENSAGEM_ENG varchar(255)
+  EMAIL_ASSUNTO_FR varchar(255)
+  EMAIL_MENSAGEM_FR varchar(255)
+
+}
+
+Table GER_EVENTOS_DESTINATARIOS {
+  ID int
+  ID_EVENTO int
+  EMAIL_PARA varchar(255)
+  TYPOF varchar(255)
+
+}
+
+Table GER_EVENTOS_PROGRAMADOS {
+  ID int [pk, increment]
+  MODULO int
+  PAGINA varchar(255)
+  MOMENTO varchar(255)
+  ESTADO bit
+  DATA_INICIAL date
+  HORA varchar(255)
+  TIPO_FIM int
+  OCORRENCIAS int
+  TOTAL_OCORRENCIAS int
+  DATA_FINAL date
+  TIPO_REPETICAO int
+  REPETIR int
+  DIAS_SEMANA varchar(255)
+  ENVIA_EMAIL bit
+  EMAIL_PARA varchar(255)
+  EMAIL_ASSUNTO varchar(255)
+  EMAIL_MENSAGEM varchar(255)
+  CRIAR_FICHEIRO bit
+  NOME_RELATORIO varchar(255)
+  QUERY varchar(255)
+  PASTA_DESTINO varchar(255)
+  UTZ_MODIFICACAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  DATA_MODIFICACAO datetime
+  DATA_ULT_OCORRENCIA date
+  DATA_PROX_OCORRENCIA date
+  OBSERVACOES varchar(255)
+  ANEXA_FICHEIROS bit
+  UTZ_APAGA int
+  DATA_APAGA datetime
+  INATIVO bit
+  UTILIZADOR varchar(255)
+  SENHA varchar(255)
+  DOMINIO varchar(255)
+
+}
+
+Table GER_FAVORITOS {
+  ID_FAVORITO int
+  DESCRICAO varchar(255)
+  URL varchar(255)
+  ORDEM int
+  ID_UTILIZADOR int
+  DATA_CRIA datetime
+
+}
+
+Table GER_FERIADOS {
+  ID_FERIADO int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA date
+  CONTA_FATURACAO bit
+
+}
+
+Table GER_FORNECEDOR {
+  ID_FORNECEDOR int [pk, increment]
+  NUM_FORNECEDOR int
+  NOME_FORNECEDOR varchar(255)
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+
+}
+
+Table GER_GRUPO {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  INATIVO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_APAGA datetime
+  UTZ_APAGA int
+
+}
+
+Table GER_GRUPO_UTZ {
+  ID int [pk, increment]
+  ID_GRUPO int
+  ID_UTZ int
+
+}
+
+Table GER_INFO_PAGINAS {
+  ID int
+  DESCRICAO varchar(255)
+  URL varchar(255)
+  ID_UTILIZADOR int
+  DATA_CRIA datetime
+
+}
+
+Table GER_LOCAIS {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  INATIVO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_APAGA datetime
+  UTZ_APAGA int
+  MORADA varchar(255)
+
+}
+
+Table GER_LOG_EVENTOS {
+  ID_LOG_EVENTOS int [pk, increment]
+  ID_EVENTO int
+  UTZ_ENVIO int
+  TEXTO varchar(255)
+  DATA_ENVIO datetime
+
+}
+
+Table GER_MODULO {
+  ID_MODULO int [pk, increment]
+  NOME_MODULO varchar(255)
+  INATIVO bit
+
+}
+
+Table GER_PARAMETROS {
+  ID int [pk, increment]
+  PASTA_FICHEIRO varchar(255)
+  URL_SILVER varchar(255)
+  URL_JASPER varchar(255)
+  PASTA_ETIQUETAS varchar(255)
+  MODELO_REPORT varchar(255)
+  PASTA_JASPERREPORT varchar(255)
+  TEMPO_PLANEADAS int
+  TEMPO_MAX_PLANEADAS int
+  CARTELAS_ATIVO bit
+  TEMPO_SINCRO_CARTELAS int
+  CAMINHO_LOGS_SILVER varchar(255)
+  TEMPO_SINCRO_LOGS_SILVER int
+  LOGS_SILVER_ATIVO bit
+  UTILIZADOR_LOGS_SILVER varchar(255)
+  DOMINIO_LOGS_SILVER varchar(255)
+  SENHA_LOGS_SILVER varchar(255)
+  PASTA_DESTINO_ERRO varchar(255)
+  ATUALIZACAO_SILVER_BI_ATIVO bit
+  TEMPO_PAUSA_TURNOS_CONTINUOS varchar(255)
+  MODELO_REPORT_PRODUCAO varchar(255)
+  SECTORES_ABSENTISMO varchar(255)
+  TAXA_ABSENTISMO float
+  TAXA_REJEICAO float
+  OBJETIVO_AUDITORIAS decimal(18,4)
+  NUMERO_MANUTENCOES_INICIAR int
+  PRECO_HORA_MANUTENCAO decimal(18,4)
+  PASTA_FICHEIRO_2 varchar(255)
+  CAMINHO_FICHEIRO_PINTURA varchar(255)
+  TEMPO_PLANEADAS_PINTURA int
+  TEMPO_MAX_PLANEADAS_PINTURA int
+
+}
+
+Table GER_PERFIL_CAB {
+  ID_PERFIL_CAB int [pk, increment]
+  ID_MODULO int
+  NOME_PERFIL varchar(255)
+  INATIVO bit
+
+}
+
+Table GER_PERFIL_LIN {
+  ID_PERFIL_LIN int [pk, increment]
+  ID_PERFIL_CAB int
+  ID_CAMPO varchar(255)
+  PARTIALSELECTED bit
+
+}
+
+Table GER_POSTOS {
+  ID_POSTO int [pk, increment]
+  DESCRICAO varchar(255)
+  IMPRESSORA varchar(255)
+  IP_POSTO varchar(255)
+  IP_IMPRESSORA varchar(255)
+  NOME_IMPRESSORA varchar(255)
+  NOME_IMPRESSORA_SILVER varchar(255)
+
+}
+
+Table GER_REFERENCIAS_FASTRESPONSE_REJEICOES {
+  ID int
+  DATA date
+  REFERENCIA varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+
+}
+
+Table GER_REGRAS_EMAIL {
+  ID int
+  ID_CAIXA int
+  TIPO varchar(255)
+  TEXTO varchar(255)
+
+}
+
+Table GER_SECCAO {
+  ID int [pk, increment]
+  ID_DEPARTAMENTO int
+  DESCRICAO varchar(255)
+  INATIVO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_APAGA datetime
+  UTZ_APAGA int
+
+}
+
+Table GER_SECCAO_CHEFES {
+  ID int [pk, increment]
+  ID_SECCAO int
+  ID_UTZ int
+
+}
+
+Table GER_SECCAO_UTZ {
+  ID int [pk, increment]
+  ID_SECCAO int
+  ID_UTZ int
+
+}
+
+Table GER_UTILIZADORES {
+  ID_UTILIZADOR int [pk, increment]
+  LOGIN varchar(255)
+  NOME_UTILIZADOR varchar(255)
+  PASSWORD varchar(255)
+  EMAIL varchar(255)
+  COD_UTZ varchar(255)
+  DATA_CRIA datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  ADMIN bit
+  USER_JASPER varchar(255)
+  PASS_JASPER varchar(255)
+  USER_WINDOWS varchar(255)
+  TELEFONE varchar(255)
+  AREA varchar(255)
+  TIPO_LISTA_FAVORITOS varchar(255)
+  BLOQUEADO bit
+
+}
+
+Table GER_UTZ_PERFIL {
+  ID_PERFIL_UTZ int [pk, increment]
+  ID_UTZ int
+  ID_PERFIL int
+
+}
+
+Table GER_VISTAS {
+  ID int [pk, increment]
+  ID_UTZ int
+  COLSTATE varchar(255)
+  FILTERSTATE varchar(255)
+  GROUPSTATE varchar(255)
+  SORTSTATE varchar(255)
+  DESCRICAO varchar(255)
+  FAMILIAS varchar(255)
+  PAGINA int
+
+}
+
+// === GT ===
+Table GT_DIC_TAREFAS {
+  ID int [pk, increment]
+  DESCRICAO_PT varchar(255)
+  DESCRICAO_ENG varchar(255)
+  DESCRICAO_FR varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TIPO_TAREFA varchar(255)
+
+}
+
+Table GT_DIC_TIPO_ACAO {
+  ID_TIPO_ACAO int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table GT_LOGS {
+  ID int [pk, increment]
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DESCRICAO varchar(255)
+  ID_TAREFA int
+  JUSTIFICACAO varchar(255)
+
+}
+
+Table GT_MOV_FICHEIROS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_TAREFA int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+Table GT_MOV_TAREFAS {
+  ID_TAREFA int [pk, increment]
+  ID_MODULO int
+  ID_CAMPO int
+  ESTADO varchar(255)
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  DATA_CONCLUSAO datetime
+  UTZ_CONCLUSAO int
+  OBSERVACOES varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  UTZ_ID int
+  UTZ_TIPO varchar(255)
+  ID_ACCAO int
+  UTZ_ENCAMINHADO int
+  SUB_MODULO varchar(255)
+  DATA_ENCAMINHADO datetime
+  UTZ_ENCAMINHOU int
+  PRIORIDADE int
+  PERCENTAGEM_CONCLUSAO float
+  DESCRICAO varchar(255)
+  TEMPO_GASTO float
+  DATA_REJEITA datetime
+  UTZ_REJEITA int
+  MOTIVO_REJEICAO varchar(255)
+  DATA_VALIDA datetime
+  UTZ_VALIDA int
+  DATA_CONTROLA datetime
+  UTZ_CONTROLA int
+  JUSTIFICACAO_ALTERACAO_ESTADO varchar(255)
+  ID_TAREFA_PAI int
+  JUSTIFICACAO_DATA_FIM varchar(255)
+  DATA_FIM_ANTIGA datetime
+  JUSTIFICACAO_RESPONSAVEL varchar(255)
+
+}
+
+// === LG ===
+Table LG_ANALISE_ENVIOS {
+  ID int
+  CONSIGN_NO varchar(255)
+  ACCOUNT_KEY varchar(255)
+  CUSTOMER_REF varchar(255)
+  CON_CREATE_DATE date
+  CON_DELIVERED_DATE date
+  STATUS_DESC varchar(255)
+  SUMMARY_STAT varchar(255)
+  STATUS_CODE varchar(255)
+  SIGNED_BY varchar(255)
+  EVENT_DATE_LOCAL datetime
+  EVENT_TIME_LOCAL varchar(255)
+  EVENT_DATE_GMT date
+  EVENT_TIME_GMT varchar(255)
+  SENDER_NAME varchar(255)
+  RECEIVER_NAME varchar(255)
+  RECEIVER_CITY varchar(255)
+  RECEIVER_POSTCODE varchar(255)
+  RECEIVER_CNTRYCDE varchar(255)
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+
+}
+
+Table LG_DIC_OBJETIVOS {
+  ID int
+  OBJETIVO_FORNECEDORES float
+  UTZ_MODIF int
+  DATA_MODIF datetime
+  OBJETIVO_CLIENTES float
+
+}
+
+// === MAN ===
+Table MAN_DIC_AMBITO_UTILIZADORES {
+  ID int
+  ID_UTILIZADOR int
+  ID_EQUIPA int
+
+}
+
+Table MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS {
+  ID int
+  ID_UTILIZADOR int
+  ID_EQUIPA int
+
+}
+
+Table MAN_DIC_AMBITOS {
+  ID int
+  NOME varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+  OBRIGA_DOCUMENTOS bit
+  AMBITO_IT bit
+
+}
+
+Table MAN_DIC_ARTIGOS_TIPOLOGIA {
+  ID int
+  PROREF varchar(255)
+  PROTYPCOD varchar(255)
+  PRODES1 varchar(255)
+  PRODES2 varchar(255)
+  LOTQTE decimal(18,4)
+  STOCK_MINIMO decimal(18,4)
+  DATA_UPDATE datetime
+  DATA_CRIA datetime
+
+}
+
+Table MAN_DIC_DIVISOES {
+  ID int
+  DESCRICAO varchar(255)
+  ID_PISO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+  EMAIL_PARA varchar(255)
+
+}
+
+Table MAN_DIC_EDIFICIOS {
+  ID int
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+  UNIDADE int
+
+}
+
+Table MAN_DIC_EQUIPAS {
+  ID int
+  NOME_EQUIPA varchar(255)
+  ID_RESPONSAVEL int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table MAN_DIC_EQUIPAS_UTILIZADORES {
+  ID int
+  ID_UTILIZADOR int
+  ID_EQUIPA int
+
+}
+
+Table MAN_DIC_FAMILIA_EQUIPAMENTOS {
+  ID int
+  NOME varchar(255)
+  CODIGO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table MAN_DIC_NIVEIS_CRITICIDADE {
+  ID int
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+  NIVEL int
+
+}
+
+Table MAN_DIC_NIVEL_IMPACTO_INCIDENTE {
+  ID int
+  NIVEL int
+  DESCRICAO varchar(255)
+  DESC_CONDICAO varchar(255)
+  ATIVO bit
+
+}
+
+Table MAN_DIC_NIVEL_URGENCIA_INCIDENTE {
+  ID int
+  NIVEL int
+  DESCRICAO varchar(255)
+  DESC_CONDICAO varchar(255)
+  ATIVO bit
+
+}
+
+Table MAN_DIC_PISOS {
+  ID int
+  DESCRICAO varchar(255)
+  ID_EDIFICIO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table MAN_DIC_PRIORIDADE_INCIDENTE {
+  ID int
+  PRIORIDADE int
+  COR varchar(255)
+  DESC_PRIORIDADE varchar(255)
+  TEMPO_RESPOSTA_HORAS int
+  TEMPO_RESOLUCAO_HORAS int
+  ATIVO bit
+
+}
+
+Table MAN_DIC_PRIORIDADE_INTERVENCAO {
+  ID int
+  NIVEL int
+  DESCRICAO varchar(255)
+  DESC_CONDICAO varchar(255)
+  TEMPO_RESPOSTA_HORAS int
+  ATIVO bit
+
+}
+
+Table MAN_DIC_TIPO_CLASSIFICACAO_PEDIDO {
+  ID int
+  CODIGO varchar(255)
+  DESCRICAO varchar(255)
+  ATIVO bit
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+
+}
+
+Table MAN_DIC_TIPOLOGIA_AVARIA {
+  ID int
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table MAN_MOV_MANUTENCAO_ACCOES {
+  ID_MANUTENCAO_ACOES int
+  ID_MANUTENCAO_CAB int
+  ID_ACAO int
+  REALIZADA bit
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  TEMPO varchar(255)
+  TEMPO_ESTIMADO varchar(255)
+
+}
+
+Table MAN_MOV_MANUTENCAO_ANEXOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_MANUTENCAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  SEPARADOR varchar(255)
+  ID_LINHA_SEPARADOR int
+
+}
+
+Table MAN_MOV_MANUTENCAO_CAB {
+  ID_MANUTENCAO_CAB int
+  NUMERO_PEDIDO varchar(255)
+  RESPONSAVEL_PEDIDO int
+  DATA_HORA_PEDIDO datetime
+  LOCALIZACAO int
+  EQUIPAMENTO int
+  COMPONENTE int
+  DESCRICAO_PEDIDO varchar(255)
+  OBSERVACOES varchar(255)
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  ESTADO varchar(255)
+  TIPO_MANUTENCAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  TIPO_LOCALIZACAO varchar(255)
+  TIPO_RESPONSAVEL varchar(255)
+  UTILIZADOR int
+  DATA_REALIZACAO datetime
+  COD_FORNECEDOR varchar(255)
+  NOME_FORNECEDOR varchar(255)
+  EMAIL_FORNECEDOR varchar(255)
+  AMBITO_MANUTENCAO int
+  NOTAS_PLANEAMENTO varchar(255)
+  STATUS_MAQUINA varchar(255)
+  ORDEM int
+  ID_ORIGEM int
+  ID_TIPOLOGIA_AVARIA int
+  SEGURANCA_AMBIENTE bit
+  PRAZO date
+  PERCENTAGEM_CONCLUSAO int
+  ORIGEM varchar(255)
+  NIVEL int
+  TIPO_CLASSIFICACAO_PEDIDO varchar(255)
+  PRIORIDADE_INTERVENCAO int
+  NIVEL_IMPACTO int
+  NIVEL_URGENCIA int
+  PRIORIDADE_INCIDENTE int
+  TEMPO_RESPOSTA_HORAS int
+  TEMPO_RESOLUCAO_HORAS int
+  DATA_HORA_RESPOSTA datetime
+  DATA_HORA_RESOLUCAO_REAL datetime
+
+}
+
+Table MAN_MOV_MANUTENCAO_COMPONENTES {
+  ID int
+  ID_MANUTENCAO int
+  REFERENCIA varchar(255)
+  DESC_REFERENCIA varchar(255)
+  QUANTIDADE int
+  ANEXO varchar(255)
+  LOCALIZACAO int
+  TIPO_LOCALIZACAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ESTADO varchar(255)
+  DATA_VALIDADO datetime
+  UTZ_VALIDA int
+
+}
+
+Table MAN_MOV_MANUTENCAO_CONTRATOS_SUPORTE {
+  ID int
+  ID_MANUTENCAO int
+  FORNECEDOR varchar(255)
+  CONTRATO_SUPORTE bit
+  PERIOCIDADE int
+  DATA_INICIO date
+  DATA_FIM date
+  ANEXO varchar(255)
+
+}
+
+Table MAN_MOV_MANUTENCAO_DADOS_COMPRA {
+  ID int
+  ID_MANUTENCAO int
+  FORNECEDOR varchar(255)
+  ANEXO varchar(255)
+  N_DOCUMENTO varchar(255)
+
+}
+
+Table MAN_MOV_MANUTENCAO_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_MANUTENCAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+
+}
+
+Table MAN_MOV_MANUTENCAO_EQUIPAMENTOS {
+  ID_MANUTENCAO int
+  NOME varchar(255)
+  COD_EQUIPAMENTO_PRINCIPAL varchar(255)
+  LOCALIZACAO int
+  EQUIPA int
+  GARANTIA bit
+  DATA_VALIDADE date
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+  TIPO_LOCALIZACAO varchar(255)
+  TIPO_EQUIPA varchar(255)
+  UTILIZADOR int
+  DESCRICAO_MANUTENCAO varchar(255)
+  NIVEL_CRITICIDADE int
+  AMBITO_MANUTENCAO int
+  COD_FORNECEDOR varchar(255)
+  NOME_FORNECEDOR varchar(255)
+  EMAIL_FORNECEDOR varchar(255)
+  UTZ_OBSOLETO int
+  DATA_OBSOLETO datetime
+  OBSOLETO bit
+  COD_MAQUINA varchar(255)
+  DESC_MAQUINA varchar(255)
+  FABRICANTE varchar(255)
+  MODELO varchar(255)
+  ANO varchar(255)
+  N_SERIE varchar(255)
+  MAQUINA_PRODUTIVA bit
+  CE bit
+  MANUAL bit
+  ATEX bit
+  SEVESO bit
+  ID_FAMILIA int
+  RESPONSAVEL int
+  DEPARTAMENTO int
+  VERSAO_FIRMWARE varchar(255)
+  LICENCA varchar(255)
+  IP varchar(255)
+  HOSTNAME varchar(255)
+  MACADDRESS varchar(255)
+
+}
+
+Table MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA {
+  ID int
+  ID_MANUTENCAO int
+  ID_DEPARTAMENTO varchar(255)
+  NIVEL varchar(255)
+
+}
+
+Table MAN_MOV_MANUTENCAO_LISTA_MATERIAL {
+  ID_MANUTENCAO_LISTA_MATERIAL int
+  ID_MANUTENCAO_CAB int
+  NUMERO_ETIQUETA varchar(255)
+  COD_REFERENCIA varchar(255)
+  DESC_REFERENCIA varchar(255)
+  QUANTIDADE int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  PRECO_MATERIAL decimal(18,4)
+  UNIDADE varchar(255)
+
+}
+
+Table MAN_MOV_MANUTENCAO_NOTAS {
+  ID int
+  DESCRICAO varchar(255)
+  DESCRICAO2 varchar(255)
+  ESTADO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ID_MANUTENCAO_CAB int
+
+}
+
+Table MAN_MOV_MANUTENCAO_PAUSAS {
+  ID_MANUTENCAO_PAUSA int
+  ID_MANUTENCAO_OPERARIO int
+  ID_OPERARIO int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  TIPO_PARAGEM varchar(255)
+  DES_PARAGEM varchar(255)
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+
+}
+
+Table MAN_MOV_MANUTENCAO_PLANOS {
+  ID int
+  ID_MANUTENCAO int
+  ID_ACAO int
+  PERIOCIDADE int
+  ID_EQUIPA int
+  DATA_ULTIMA_REALIZADA datetime
+  DATA_PROXIMA_REALIZADA datetime
+  TIPO_FIM int
+  OCORRENCIAS int
+  TOTAL_OCORRENCIAS int
+  DATA_FINAL date
+  TIPO_REPETICAO int
+  REPETIR int
+  DIAS_SEMANA varchar(255)
+  DATA_INICIO date
+  TIPO_RESPONSAVEL varchar(255)
+  UTILIZADOR int
+  TEMPO_ESTIMADO varchar(255)
+  ANEXO varchar(255)
+  TIPO_MANUTENCAO varchar(255)
+  NIVEL int
+
+}
+
+Table MAN_MOV_MAQUINAS_PARADAS {
+  ID int
+  ID_PEDIDO int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  ESTADO varchar(255)
+  ID_EQUIPAMENTO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+
+}
+
+Table MAN_MOV_PEDIDOS {
+  ID_PEDIDO int
+  ID_RESPONSAVEL int
+  DATA_HORA_PEDIDO datetime
+  EQUIPAMENTO int
+  COMPONENTE int
+  LOCALIZACAO int
+  TIPO_LOCALIZACAO varchar(255)
+  DESCRICAO_PEDIDO varchar(255)
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+  TIPO_RESPONSAVEL varchar(255)
+  UTILIZADOR int
+  ID_EQUIPA int
+  STATUS_MAQUINA varchar(255)
+  NOTAS_PLANEAMENTO varchar(255)
+  CLASSIFICACAO varchar(255)
+  COD_FORNECEDOR varchar(255)
+  NOME_FORNECEDOR varchar(255)
+  EMAIL_FORNECEDOR varchar(255)
+  AMBITO_MANUTENCAO int
+  TIPO_CLASSIFICACAO_PEDIDO varchar(255)
+  PRIORIDADE_INTERVENCAO int
+  NIVEL_IMPACTO int
+  NIVEL_URGENCIA int
+  PRIORIDADE_INCIDENTE int
+  TEMPO_RESPOSTA_HORAS int
+  TEMPO_RESOLUCAO_HORAS int
+  DATA_HORA_RESPOSTA datetime
+  DATA_HORA_RESOLUCAO_REAL datetime
+
+}
+
+Table MAN_MOV_PEDIDOS_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_PEDIDO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+// === PA ===
+Table PA_DIC_AMBITOS {
+  ID_AMBITO int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  EDITAVEL bit
+
+}
+
+Table PA_MOV_CAB {
+  ID_PLANO_CAB int
+  ID_LINHA int
+  DEPARTAMENTO_ORIGEM int
+  REFERENCIA varchar(255)
+  DESIGN_REFERENCIA varchar(255)
+  DESCRICAO varchar(255)
+  ESTADO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  DATA_OBJETIVO date
+  DATA_ORIGEM date
+  AMBITO int
+  ORIGEM varchar(255)
+  UNIDADE int
+  OBJETIVO varchar(255)
+  ID_PLANO_ESTRATEGICO int
+
+}
+
+Table PA_MOV_CAB_HISTORICO {
+  ID int
+  ID_PLANO_CAB int
+  TIPO_ALTERACAO varchar(255)
+  VALOR_ANTERIOR varchar(255)
+  VALOR_NOVO varchar(255)
+  JUSTIFICACAO varchar(255)
+  ESTADO_PE varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+
+}
+
+Table PA_MOV_FICHEIROS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_PLANO_CAB int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+Table PA_MOV_LINHA {
+  ID_PLANO_LINHA int
+  ID_ACCAO int
+  ID_PLANO_CAB int
+  RESPONSAVEL int
+  DESCRICAO varchar(255)
+  DEPARTAMENTO int
+  DATA_ACCAO date
+  HORA_ACCAO varchar(255)
+  FASTRESPONSE bit
+  PRIORIDADE int
+  ESTADO varchar(255)
+  DATA_CONTROLADO datetime
+  DATA_APROVADO datetime
+  DATA_CANCELADO datetime
+  UTZ_CONTROLADO int
+  UTZ_APROVADO int
+  UTZ_CANCELADO int
+  TIPO_ACAO int
+  ITEM varchar(255)
+  UNIDADE int
+  REFERENCIA varchar(255)
+  DESIGN_REFERENCIA varchar(255)
+  CAUSA varchar(255)
+  INVESTIMENTOS varchar(255)
+  EFICACIA_CUMPRIMENTO_OBJETIVO varchar(255)
+  SEGUIR_LINHA bit
+  OBJETIVO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  ORIGEM varchar(255)
+  ORDENACAO varchar(255)
+  DATA_ACCAO_ORIGINAL date
+  HORA_ACCAO_ORIGINAL varchar(255)
+  JUSTIFICACAO varchar(255)
+  DATA_INICIO_ACCAO date
+  HORA_INICIO_ACCAO varchar(255)
+  INATIVO bit
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  METODO_AVALIACAO_EFICACIA varchar(255)
+
+}
+
+Table PA_MOV_LINHA_HISTORICO {
+  ID int
+  ID_PLANO_CAB int
+  ID_PLANO_LINHA int
+  TIPO_ALTERACAO varchar(255)
+  DESCRICAO varchar(255)
+  VALOR_ANTERIOR varchar(255)
+  VALOR_NOVO varchar(255)
+  ESTADO_PLANO_MOMENTO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+
+}
+
+Table PA_MOV_SEGUIR_LINHA {
+  ID int
+  ID_PLANO_LINHA int
+  UTILIZADOR int
+  DATA_CRIA datetime
+
+}
+
+// === PE ===
+Table PE_MOV_CAB {
+  ID int
+  ESTADO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  DEPARTAMENTO int
+  RESPONSAVEL int
+  ANO_PLANO int
+  TIPO varchar(255)
+  DATA_FECHA datetime
+  UTZ_FECHA int
+
+}
+
+Table PE_MOV_CAB_HISTORICO {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ID_PLANO_ESTRATEGICO int
+  OBSERVACOES varchar(255)
+
+}
+
+Table PE_MOV_FICHEIROS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_PLANO_ESTRATEGICO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+// === PEDIDOS ===
+Table PEDIDOS_APP {
+  ID_PEDIDO int [pk, increment]
+  ASSUNTO varchar(255)
+  PRIORIDADE int
+  DESCRICAO varchar(255)
+  DATA_HORA_PEDIDO datetime
+  UTZ_PEDIDO int
+  DATA_FECHO datetime
+  UTZ_FECHO int
+  ESTADO varchar(255)
+  TIPO_PEDIDO varchar(255)
+  EMAIL_CONTACTO varchar(255)
+  TELEFONE_CONTACTO varchar(255)
+
+}
+
+// === PIN ===
+Table PIN_DIC_ARMAZEM {
+  ID_ARMAZEM int
+  COD_ARMAZEM varchar(255)
+  NOME_ARMAZEM varchar(255)
+
+}
+
+Table PIN_DIC_CABINES {
+  ID int
+  NOME_CABINE varchar(255)
+  ID_LINHA int
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  INATIVO bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  COR varchar(255)
+  TIPO varchar(255)
+
+}
+
+Table PIN_DIC_CORES {
+  ID int
+  NOME varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+
+}
+
+Table PIN_DIC_CORES_ACABAMENTOS {
+  ID int
+  CODIGO varchar(255)
+  NOME varchar(255)
+  ID_POTE varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+  ID_TIPO_ACABAMENTO int
+
+}
+
+Table PIN_DIC_PARAM_PLANO_PINTURA {
+  ID int
+  RACKS_LIMPEZA int
+  TEMPO_RACKS_LIMPEZA int
+  TEMPO_FORNO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table PIN_DIC_POTES {
+  ID int
+  ID_LINHA int
+  ID_CABINE int
+  NOME varchar(255)
+  N_VALVULA varchar(255)
+  CAPACIDADE decimal(18,4)
+  ID_TIPO_ACABAMENTO int
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  INATIVO bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  REGISTO_TINTAS bit
+  ORDEM int
+
+}
+
+Table PIN_DIC_PRE_SET {
+  ID int
+  ID_TIPO_ACABAMENTO int
+  NOME varchar(255)
+  CODIGO varchar(255)
+  CAUDAL varchar(255)
+  PRESSAO_ATOMIZACAO varchar(255)
+  PRESSAO_LEQUE varchar(255)
+  VELOCIDADE varchar(255)
+  TAMANHO_BICO varchar(255)
+  VOLTAS_PISTOLA varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+
+}
+
+Table PIN_DIC_PRODUTOS {
+  ID int
+  COD_REF varchar(255)
+  NOME_REF varchar(255)
+  EMPCOD varchar(255)
+  LIECOD varchar(255)
+  ID_UNIDADE int
+  ID_TIPO_ACABAMENTO int
+  ID_FORNECEDOR varchar(255)
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  INATIVO bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  FACTOR_CONVERSAO decimal(18,4)
+  UNISTO varchar(255)
+  CISTERNA bit
+  COD_REF_SUBSTITUTA varchar(255)
+  NOME_REF_SUBSTITUTA varchar(255)
+  TAXA_MISTURA decimal(18,4)
+
+}
+
+Table PIN_DIC_PRODUTOS_RELACIONADOS {
+  ID int
+  ID_PRODUTO int
+  COD_REF varchar(255)
+  NOME_REF varchar(255)
+  OBS varchar(255)
+  PERC_DILUICAO decimal(18,4)
+  ID_REF int
+
+}
+
+Table PIN_DIC_PROGRAMAS {
+  ID int
+  CODIGO varchar(255)
+  NOME_PROGRAMA varchar(255)
+  ID_RECEITA int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  RACK varchar(255)
+  QTD_RACK int
+  DATA_INATIVA datetime
+  UTZ_INATIVA int
+  ANULADO bit
+
+}
+
+Table PIN_DIC_PROGRAMAS_REFERENCIAS {
+  ID int
+  REFERENCIA varchar(255)
+  DESC_REFERENCIA varchar(255)
+  QUANTIDADE decimal(18,4)
+  ID_PROGRAMA int
+  REFERENCIA_INJETADA varchar(255)
+  DESC_REFERENCIA_INJETADA varchar(255)
+
+}
+
+Table PIN_DIC_RACKS {
+  ID int
+  RACK_CODE varchar(255)
+  RACK_TYPE varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table PIN_DIC_REGISTO_BASTIDOR {
+  ID int
+  ID_RECEITA int
+  ID_CABINE int
+  TEMPERATURA decimal(18,4)
+  HUMIDADE decimal(18,4)
+  DATA date
+  HORA varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+  OBSERVACOES varchar(255)
+  ID_CABINE_2 int
+  TEMPERATURA_2 decimal(18,4)
+  HUMIDADE_2 decimal(18,4)
+  ID_CABINE_3 int
+  TEMPERATURA_3 decimal(18,4)
+  HUMIDADE_3 decimal(18,4)
+  VERSAO int
+
+}
+
+Table PIN_DIC_REGISTO_SALAS_MISTURA {
+  ID int
+  ID_RECEITA int
+  ID_CABINE int
+  DATA date
+  HORA varchar(255)
+  TEMPERATURA decimal(18,4)
+  VISCOSIDADE decimal(18,4)
+  ID_REFERENCIA_COR int
+  REFERENCIA_COR varchar(255)
+  VALOR_COR decimal(18,4)
+  REFERENCIA_COR_DESC varchar(255)
+  LOTE_COR varchar(255)
+  ID_REFERENCIA_DILUENTE int
+  REFERENCIA_DILUENTE varchar(255)
+  VALOR_DILUENTE decimal(18,4)
+  REFERENCIA_DILUENTE_DESC varchar(255)
+  LOTE_DILUENTE varchar(255)
+  ID_REFERENCIA_CATALIZADOR int
+  REFERENCIA_CATALIZADOR varchar(255)
+  VALOR_CATALIZADOR decimal(18,4)
+  REFERENCIA_CATALIZADOR_DESC varchar(255)
+  LOTE_CATALIZADOR varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+  OBSERVACOES varchar(255)
+  VERSAO int
+
+}
+
+Table PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS {
+  ID int
+  ID_REGISTO_SALAS_MISTURA int
+  ID_REFERENCIA int
+  REFERENCIA varchar(255)
+  VALOR decimal(18,4)
+  REFERENCIA_DESC varchar(255)
+  LOTE varchar(255)
+
+}
+
+Table PIN_DIC_TIPO_ACABAMENTO {
+  ID int
+  NOME varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+  COR varchar(255)
+
+}
+
+Table PIN_DIC_TIPOS_ACABAMENTO {
+  ID int
+  GAMA varchar(255)
+  NOME varchar(255)
+  ID_POTE varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+
+}
+
+Table PIN_MOV_PREPARACAO {
+  ID_PREPARACAO int
+  ID_LINHA int
+  ID_TURNO int
+  DATA_PLANEAMENTO date
+  HORA_PLANEAMENTO varchar(255)
+  UTZ_PLANEAMENTO int
+  ESTADO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  INATIVO bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  IMPRESSO bit
+  DATA_ULT_IMPRES datetime
+  UTZ_ULT_IMPRES int
+  CLASSIF varchar(255)
+
+}
+
+Table PIN_MOV_PREPARACAO_CAB {
+  ID_PREPARACAO_CAB int
+  ID_PREPARACAO int
+  ID_RECEITA int
+  OBS_PLANEAMENTO varchar(255)
+  OBS_PREPARACAO varchar(255)
+  OBS_EXECUCAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_PREVISTA date
+  HORA_PREVISTA varchar(255)
+  DATA_PREPARACAO date
+  HORA_PREPARACAO varchar(255)
+  UTZ_PREPARACAO int
+  DATA_EXECUCAO date
+  HORA_EXECUCAO varchar(255)
+  UTZ_EXECUCAO int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  INATIVO bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  IMPRESSO bit
+  DATA_ULT_IMPRES datetime
+  UTZ_ULT_IMPRES int
+  VERSAO int
+
+}
+
+Table PIN_MOV_PREPARACAO_ETIQ {
+  ID_MOV_PREP_ETIQUETA int
+  ID_PREPARACAO_LIN int
+  ETQNUM varchar(255)
+  QUANT decimal(18,4)
+  CONSUMIR decimal(18,4)
+  QUANT_FINAL decimal(18,4)
+  INDREF varchar(255)
+  VA1REF varchar(255)
+  VA2REF varchar(255)
+  PROREF varchar(255)
+  UNICOD varchar(255)
+  LIECOD varchar(255)
+  EMPCOD varchar(255)
+  ETQORILOT1 varchar(255)
+  ETQNUMENR int
+  LOTNUMENR int
+  UNISTO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  INDNUMENR int
+  DATCRE date
+  PRODES varchar(255)
+  ETQORIQTE1 decimal(18,4)
+  SINAL varchar(255)
+  OBSERVACAO varchar(255)
+  DATA_PREP_EXEC datetime
+  LINHA int
+  UNIDADE_CONSUMO varchar(255)
+  FACTOR_CONVERSAO decimal(18,4)
+
+}
+
+Table PIN_MOV_PREPARACAO_LINHA {
+  ID_PREPARACAO_LIN int
+  ID_PREPARACAO_CAB int
+  ID_PRODUTO int
+  COD_REF varchar(255)
+  STOCK decimal(18,4)
+  VALOR varchar(255)
+  ID_UNIDADE int
+  HORA_PREVISTA varchar(255)
+  OBS_PLANEAMENTO varchar(255)
+  STKUNIT varchar(255)
+  NOME_REF varchar(255)
+  LIECOD varchar(255)
+  EMPCOD varchar(255)
+  ID_POTE int
+  RELACIONADO bit
+  ID_PRODUTO_PAI int
+  PERC_DILUICAO decimal(18,4)
+  POSITION int
+  UNIDADE_PREPARACAO int
+  VALVULA varchar(255)
+  POTES varchar(255)
+
+}
+
+Table PIN_MOV_RECEITAS {
+  ID int
+  VERSAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  NOME_PROJETO varchar(255)
+  MASTER varchar(255)
+  LIMPEZA_IPA bit
+  CO2 bit
+  CURA int
+  JOB varchar(255)
+  COR varchar(255)
+  LINHA int
+  COD_FORNECEDOR varchar(255)
+  NOME_FORNECEDOR varchar(255)
+  OBSERVACOES varchar(255)
+  FLAMEADO bit
+  REFERENCIA_PINTURA varchar(255)
+  NOME_REFERENCIA_PINTURA varchar(255)
+  ASPETO varchar(255)
+  ACABAMENTOS varchar(255)
+  PRIMARIO int
+  BASE int
+  VERNIZ int
+  CARTELA varchar(255)
+  RACK varchar(255)
+  NOME_COR varchar(255)
+  COD_ASPETO varchar(255)
+  QUANTIDADES_RACK int
+  PECAS_RACK int
+  VERSAO_ATIVA bit
+  RECEITA_INATIVA bit
+  ID_COR int
+  TAXA_REJEICAO float
+  TEMPERATURA_MIN float
+  TEMPERATURA_MAX float
+  TEMPO_FLASHOFF varchar(255)
+  CICLO_PRIMARIO int
+  CICLO_BASE int
+  CICLO_VERNIZ int
+  CLASSIFICACAO varchar(255)
+
+}
+
+Table PIN_MOV_RECEITAS_LINHAS {
+  ID int
+  ID_RECEITA int
+  ID_TIPO_ACABAMENTO int
+  UNIDADE int
+  ID_POTE varchar(255)
+  ID_POTE_CATALISADOR varchar(255)
+  REFERENCIA_A varchar(255)
+  REFERENCIA_B varchar(255)
+  REFERENCIA_C varchar(255)
+  REFERENCIA2_C varchar(255)
+  REFERENCIA3_C varchar(255)
+  REFERENCIA4_C varchar(255)
+  REFERENCIA5_C varchar(255)
+  VALVULA_POTE varchar(255)
+  VALVULA_CATALISADOR varchar(255)
+  COR_A varchar(255)
+  DILUENTE_C varchar(255)
+  DILUENTE2_C varchar(255)
+  DILUENTE3_C varchar(255)
+  DILUENTE4_C varchar(255)
+  DILUENTE5_C varchar(255)
+  ADITIVO varchar(255)
+  TAXA_MISTURA varchar(255)
+  PADRAO_VISCOSIDADE varchar(255)
+  POT_LIFE varchar(255)
+  ARMAZEM_A varchar(255)
+  ARMAZEM_B varchar(255)
+  ARMAZEM_C varchar(255)
+  ARMAZEM_ADITIVO varchar(255)
+  CODIGO_COR varchar(255)
+  ID_REFERENCIA_A int
+  ID_REFERENCIA_B int
+  ID_REFERENCIA_C int
+  ID_REFERENCIA2_C int
+  ID_REFERENCIA3_C int
+  ID_REFERENCIA4_C int
+  ID_REFERENCIA5_C int
+  ESPESSURA varchar(255)
+  BRILHO varchar(255)
+  ID_PRE_SET int
+  CAUDAL varchar(255)
+  PRESSAO_AUTOMATICA varchar(255)
+  PRESSAO_LEQUE varchar(255)
+  VELOCIDADE varchar(255)
+  TAMANHO_BICO varchar(255)
+  VOLTAS_PISTOLA varchar(255)
+  VERSAO int
+  CONSUMO_RACK_COR float
+  CONSUMO_RACK_DILUENTE float
+  QTD_RACK_REFERENCIA_A float
+  QTD_RACK_REFERENCIA_B float
+  QTD_RACK_REFERENCIA_C float
+  QTD_RACK_REFERENCIA2_C float
+  QTD_RACK_REFERENCIA3_C float
+  QTD_RACK_REFERENCIA4_C float
+  QTD_RACK_REFERENCIA5_C float
+  NECESSIDADES_RACK_REFERENCIA_A float
+  NECESSIDADES_RACK_REFERENCIA_B float
+  NECESSIDADES_RACK_REFERENCIA_C float
+  NECESSIDADES_RACK_REFERENCIA2_C float
+  NECESSIDADES_RACK_REFERENCIA3_C float
+  NECESSIDADES_RACK_REFERENCIA4_C float
+  NECESSIDADES_RACK_REFERENCIA5_C float
+  PRESSAO_ENTRADA varchar(255)
+  PRESSAO_RETORNO varchar(255)
+  TEMPERATURA varchar(255)
+
+}
+
+Table PIN_MOV_RECEITAS_REFERENCIAS {
+  ID int
+  VERSAO int
+  ID_RECEITA int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  REFERENCIA_PINTURA varchar(255)
+  NOME_REFERENCIA_PINTURA varchar(255)
+  RACK varchar(255)
+  QUANTIDADES_RACK int
+  PECAS_RACK int
+  TAXA_REJEICAO decimal(18,4)
+
+}
+
+Table PIN_MOV_UV_RADIATION {
+  ID int
+  VERSAO int
+  ID_RECEITA int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  UV_RADIATION varchar(255)
+  RECOMMENDED_VALUE varchar(255)
+
+}
+
+Table PIN_PLANEAMENTO_PINTURA {
+  ID int
+  DATA date
+  HORA varchar(255)
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  UTZ_ANULACAO int
+  DATA_ANULACAO datetime
+  INATIVO bit
+  DATA_CONCLUSAO datetime
+
+}
+
+Table PIN_PLANEAMENTO_PINTURA_LINHAS {
+  ID int
+  ID_CAB int
+  ID_POTE int
+  ID_COR_ACABAMENTO int
+  ORDEM int
+
+}
+
+Table PIN_PLANO_DIARIO_PINTURA {
+  ID_PLANO_DIARIO_PINTURA int
+  ANO int
+  SEMANA int
+  ID_PLANO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+
+}
+
+Table PIN_PLANO_DIARIO_PINTURA_LINHAS {
+  ID_PLANO_DIARIO_PINTURA_LINHA int
+  ID_PLANO_DIARIO_PINTURA int
+  DIA_SEMANA int
+  ORDEM int
+  REFERENCIA varchar(255)
+  JOB varchar(255)
+  PRIMARIO varchar(255)
+  BASE varchar(255)
+  VERNIZ varchar(255)
+  NUM_RACKS int
+  TEMPO_CICLO int
+  TEMPO_TRANSITO int
+  TEMPO_TOTAL int
+  MANUAL bit
+  COD_REFERENCIA varchar(255)
+
+}
+
+// === PLANEAMENTO ===
+Table PLANEAMENTO_CAB {
+  ID_PLANEAMENTO int [pk, increment]
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  ESTADO varchar(255)
+  INATIVO bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  ANO int
+  SEMANA int
+  LINHA int
+
+}
+
+Table PLANEAMENTO_LINHAS {
+  ID_LINHA int [pk, increment]
+  ID_PLANEAMENTO int
+  DATA date
+  PLANEADAS_TURNO_1 int
+  PLANEADAS_TURNO_2 int
+  PLANEADAS_TURNO_3 int
+  PROD_PLANEADAS_TURNO_1 int
+  PROD_PLANEADAS_TURNO_2 int
+  PROD_PLANEADAS_TURNO_3 int
+  BARRAS_PROD_TURNO_1 int
+  BARRAS_PROD_TURNO_2 int
+  BARRAS_PROD_TURNO_3 int
+  BARRAS_INTROD_TURNO_1 int
+  BARRAS_INTROD_TURNO_2 int
+  BARRAS_INTROD_TURNO_3 int
+
+}
+
+// === PR ===
+Table PR_AMOSTRAS_ACCOES {
+  ID_AMOSTRA_ACCAO int
+  ID_ACCAO int
+  ID_AMOSTRA int
+  RESPONSAVEL int
+  TIPO_RESPONSAVEL varchar(255)
+  DATA_ACCAO date
+  HORA_ACCAO varchar(255)
+
+}
+
+Table PR_AMOSTRAS_CAB {
+  ID_AMOSTRA int
+  ID_LINHA int
+  REFERENCIA varchar(255)
+  DESCRICAO varchar(255)
+  QUANT_BARRAS float
+  ID_TIPOLOGIA_ENSAIO int
+  INDICE varchar(255)
+  DATA_LANCAMENTO date
+  DATA_FIM date
+  ESTADO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  UNIDADE int
+  OFNUM bigint
+
+}
+
+Table PR_ANALISE_PRODUTIVIDADE_REFERENCIAS {
+  ID int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  PROREF varchar(255)
+
+}
+
+Table PR_BARRAS_ALERTA {
+  ID int
+  PROREF varchar(255)
+  DESIGN varchar(255)
+  TURNO_1 bit
+  TURNO_2 bit
+  TURNO_3 bit
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  LINHA int
+  DATA date
+
+}
+
+Table PR_DIC_ACOES_PECAS_CRITICAS {
+  ID int
+  DESCRICAO varchar(255)
+  ATIVO bit
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+}
+
+Table PR_DIC_ALERTAS_DESCARGA {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table PR_DIC_CAPACIDADE_ACABAMENTO {
+  ID_CAPACIDADE_ACABAMENTO int
+  TIPO_ACABAMENTO varchar(255)
+  ID_LINHA int
+  N_BARRAS_DIA int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table PR_DIC_CAPACIDADE_RACKS {
+  ID_CAPACIDADE_RACKS int
+  N_VOLTAS_DIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table PR_DIC_MAQUINAS_MATRIX {
+  ID int
+  NOME_MAQUINA varchar(255)
+  IP_MAQUINA varchar(255)
+  USERNAME varchar(255)
+  PASSWORD varchar(255)
+  VARIAVEL_PROGRAMAS varchar(255)
+  VARIAVEL_START varchar(255)
+  VARIAVEL_PROGRAMA_ATUAL varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  TIPO_MAQUINA varchar(255)
+  MAQUINA_SILVER varchar(255)
+  VARIAVEL_AGUARDA_SINAL varchar(255)
+
+}
+
+Table PR_DIC_MOTIVO_CRITICIDADE {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA date
+  UTZ_CRIA int
+  DATA_MODIF date
+  UTZ_MODIF int
+  DATA_ANULA date
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table PR_DIC_OBJETIVOS_PLANOS {
+  ID int [pk, increment]
+  LIMITE_INFERIOR_CUMPRIMENTO float
+  LIMITE_INFERIOR_OCUPACAO float
+  LIMITE_INFERIOR_OCUPACAO_TOTAL float
+  LIMITE_SUPERIOR_OCUPACAO_TOTAL float
+  LIMITE_CROMAGEM_MENOR_10 float
+  LIMITE_CROMAGEM_MAIOR_10 float
+  LIMITE_INJECAO_MENOR_10 float
+  LIMITE_INJECAO_MAIOR_10 float
+  LIMITE_INFERIOR_INDICE_PRODUTIVIDADE float
+  LIMITE_SUPERIOR_INDICE_PRODUTIVIDADE float
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  OBJETIVO_REJEICAO_GLOBAL float
+  LIMITE_PINTURA_MENOR_10 float
+  LIMITE_PINTURA_MAIOR_10 float
+  LIMITE_INJECAO_PINTURA_MENOR_10 float
+  LIMITE_INJECAO_PINTURA_MAIOR_10 float
+  OBJETIVO_REJEICAO_GLOBAL_PINTURA float
+  OBJETIVO_REJEICAO_GLOBAL_INJECAO float
+  LIMITE_INJECAO_INJECAO_MENOR_10 float
+  LIMITE_INJECAO_INJECAO_MAIOR_10 float
+  OBJETIVO_REALIZADAS float
+  OBJETIVO_PECAS_NOK float
+
+}
+
+Table PR_DIC_PRODUCAO_SEMANA {
+  ID_PRODUCAO_SEMANA int
+  SEMANA int
+  N_DIAS_PRODUCAO decimal(18,4)
+  ANO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  ID_LINHA int
+  TIPO varchar(255)
+  SECCAO varchar(255)
+
+}
+
+Table PR_DIC_RELACAO_ETIQUETAS_MATRIX {
+  ID int
+  PROREF_ETIQUETA varchar(255)
+  PROREF_SILVER varchar(255)
+  ID_MAQUINA int
+  PROGRAMA varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table PR_DIC_SECTORES_AGREGADORES {
+  ID_SECTOR_AGREGADOR int
+  NOME varchar(255)
+  OPERACAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table PR_DIC_SECTORES_AGREGADORES_LINHA {
+  ID_SECTOR_AGREGADOR_LINHA int
+  ID_SECTOR_AGREGADOR int
+  LINHA int
+  COD_SECTOR int
+
+}
+
+Table PR_DIC_SECTORES_ANALISE {
+  ID_SECTOR_ANALISE int [pk, increment]
+  COD_SECTOR int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  LOCALIZACAO int
+
+}
+
+Table PR_DIC_SECTORES_PECAS_CRITICAS {
+  ID int
+  SECTOR varchar(255)
+  DESC_SECTOR varchar(255)
+  LOCAL int
+  COR varchar(255)
+  DATA_CRIA date
+  UTZ_CRIA int
+  DATA_MODIF date
+  UTZ_MODIF int
+  DATA_ANULA date
+  UTZ_ANULA int
+  ATIVO bit
+  DESCRICAO varchar(255)
+
+}
+
+Table PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES {
+  ID int
+  ID_UTILIZADOR int
+  ID_SECTORES_PECAS_CRITICAS int
+
+}
+
+Table PR_DIC_SECTORES_SECCAO {
+  ID int
+  COD_SECCAO varchar(255)
+  ID_SECTOR int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table PR_DIC_SEMANAS_ANALISE {
+  ID_SEMANAS_ANALISE int
+  N_SEMANAS int
+  POR_DEFEITO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table PR_DIC_TIPOLOGIA_ENSAIO {
+  ID_TIPOLOGIA_ENSAIO int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table PR_DIC_VALIDACAO_BASTIDOR {
+  ID_VALIDACAO_BASTIDOR int
+  SIMBOLO varchar(255)
+  DESCRICAO varchar(255)
+  COR varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  ATIVO bit
+  DATA_ANULA datetime
+  UTZ_ANULA int
+
+}
+
+Table PR_GESTAO_BARRAS {
+  ID_GESTAO_BARRAS int
+  REF_BASTIDOR varchar(255)
+  ID_LINHA int
+  PLANO_BASTIDOR varchar(255)
+  QUANT_TOTAL_BAST int
+  QUANT_BAST_MONTADOS int
+  QUANT_BAST_DESMONTADOS int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  ID_ORIGEM int
+
+}
+
+Table PR_GESTAO_BARRAS_REFERENCIAS {
+  ID_GESTAO_BARRAS_REFERENCIAS int
+  ID_GESTAO_BARRAS int
+  N_PECAS_BASTIDOR varchar(255)
+  N_PECAS_RACK varchar(255)
+  ROUBA_CORRENTES bit
+  BASTIDOR_LINHA_NOVA bit
+  PECA_TIPO bit
+  REFERENCIA varchar(255)
+  DESIGN_REFERENCIA varchar(255)
+  OBSERVACOES varchar(255)
+  VALIDACAO_BASTIDOR int
+
+}
+
+Table PR_INDICADORES_PECAS_CRITICAS {
+  ID int
+  DATA date
+  ACOES_DATA int
+  ACOES_REALIZADAS int
+  PECAS_NOK int
+  ID_SECTOR_PECAS_CRITICAS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table PR_PECAS_CRITICAS {
+  ID int
+  PROREF varchar(255)
+  DESC_PROREF varchar(255)
+  ID_SECTOR_PECAS_CRITICAS varchar(255)
+  ID_MOTIVO varchar(255)
+  FAST_RESPONSE bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  ID_DEPARTAMENTO varchar(255)
+  ID_ACAO varchar(255)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_ANALISES {
+  ID_PLANEAMENTO_PRODUCAO_ANALISES int
+  ANO int
+  SEMANA int
+  N_SEMANAS int
+  ID_PLANO_LINHA_1 int
+  ID_PLANO_LINHA_2 int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  DATA_MRP date
+  TIPO_ANALISE varchar(255)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_ANALISES_RECURSOS_HUMANOS {
+  ID int
+  ID_PLANEAMENTO_PRODUCAO_ANALISES int
+  ID_SECTOR_AGREGADOR int
+  NOME varchar(255)
+  COD_SECTOR int
+  DES_SECTOR varchar(255)
+  LINHA int
+  ANO int
+  SEMANA int
+  OPERARIOS_DISPONIVEIS int
+  OPERARIOS_NECESSARIOS int
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_CAB {
+  ID_PLANEAMENTO_PRODUCAO_CAB int
+  ESTADO varchar(255)
+  DATA_MRP date
+  N_MRP varchar(255)
+  USER_MRP varchar(255)
+  HORA_MRP varchar(255)
+  ID_LINHA int
+  ID_SEMANAS_ANALISE int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  SEMANAS varchar(255)
+  NUMERO_SEMANAS int
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_LINHAS {
+  ID_PLANEAMENTO_PRODUCAO_LINHA int
+  ID_PLANEAMENTO_PRODUCAO_CAB int
+  SEMANA int
+  ANO int
+  FASE varchar(255)
+  COD_REF varchar(255)
+  DESIGN_REF varchar(255)
+  QUANT_PECAS_BARRA float
+  RACK varchar(255)
+  NUM_BARRAS int
+  ACABAMENTO varchar(255)
+  ANTECEDENCIA float
+  QUANT_MRP float
+  NUM_BARRAS_MRP float
+  QUANT_PLANO float
+  NUM_BARRAS_PLANO float
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  BASE_COR float
+  ID_BASE_COR float
+  DESC_BASE_COR float
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES {
+  ID_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES int
+  ANO int
+  SEMANA int
+  N_SEMANAS int
+  ID_PLANOS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  DATA_MRP date
+  TIPO_ANALISE varchar(255)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_RECURSOS_HUMANOS {
+  ID int
+  ID_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES int
+  ID_SECTOR int
+  NOME varchar(255)
+  COD_SECCAO int
+  DES_SECCAO varchar(255)
+  ANO int
+  SEMANA int
+  OPERARIOS_DISPONIVEIS int
+  OPERARIOS_NECESSARIOS int
+  OPERARIOS_NECESSARIOS_VALOR decimal(18,4)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB {
+  ID_PLANEAMENTO_PRODUCAO_CAB int
+  ESTADO varchar(255)
+  DATA_MRP datetime
+  N_MRP varchar(255)
+  USER_MRP varchar(255)
+  HORA_MRP varchar(255)
+  SECCAO varchar(255)
+  ID_SEMANAS_ANALISE int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  SEMANAS varchar(255)
+  NUMERO_SEMANAS int
+  OPERACAO varchar(255)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS {
+  ID_PLANEAMENTO_PRODUCAO_LINHA int
+  ID_PLANEAMENTO_PRODUCAO_CAB int
+  SEMANA int
+  ANO int
+  CADENCIA int
+  FASE varchar(255)
+  COD_REF varchar(255)
+  DESIGN_REF varchar(255)
+  QUANT_PECAS int
+  MAQUINA varchar(255)
+  NUM_CAIXAS int
+  MOLDE varchar(255)
+  ANTECEDENCIA int
+  QUANT_MRP int
+  NUM_CAIXAS_MRP int
+  QUANT_PLANO int
+  HORAS_PLANO int
+  NUM_CAIXAS_PLANO int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  SECCAO varchar(255)
+  NOME_SECCAO varchar(255)
+  OPERACAO varchar(255)
+  NOME_MAQUINA varchar(255)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES {
+  ID_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES int
+  ANO int
+  SEMANA int
+  N_SEMANAS int
+  ID_PLANOS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  DATA_MRP date
+  TIPO_ANALISE varchar(255)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES_RECURSOS_HUMANOS {
+  ID int
+  ID_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES int
+  ID_SECTOR int
+  NOME varchar(255)
+  COD_SECCAO int
+  DES_SECCAO varchar(255)
+  ANO int
+  SEMANA int
+  OPERARIOS_DISPONIVEIS int
+  OPERARIOS_NECESSARIOS int
+  OPERARIOS_NECESSARIOS_VALOR decimal(18,4)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB {
+  ID_PLANEAMENTO_PRODUCAO_CAB int
+  ESTADO varchar(255)
+  DATA_MRP datetime
+  N_MRP varchar(255)
+  USER_MRP varchar(255)
+  HORA_MRP varchar(255)
+  SECCAO varchar(255)
+  ID_SEMANAS_ANALISE int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  SEMANAS varchar(255)
+  NUMERO_SEMANAS int
+  PROTYPCOD varchar(255)
+
+}
+
+Table PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS {
+  ID_PLANEAMENTO_PRODUCAO_LINHA int
+  ID_PLANEAMENTO_PRODUCAO_CAB int
+  SEMANA int
+  ANO int
+  FASE varchar(255)
+  COD_REF varchar(255)
+  DESIGN_REF varchar(255)
+  QUANT_PECAS int
+  NUM_CAIXAS int
+  ANTECEDENCIA int
+  QUANT_MRP int
+  QUANT_OF int
+  NUM_CAIXAS_MRP int
+  QUANT_PLANO int
+  HORAS_PLANO int
+  NUM_CAIXAS_PLANO int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  SECCAO varchar(255)
+  NOME_SECCAO varchar(255)
+  PROTYPCOD varchar(255)
+
+}
+
+Table PR_PRODUCOES_PRIORITARIAS {
+  ID int
+  PROREF varchar(255)
+  DESIGN varchar(255)
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  LINHA int
+
+}
+
+Table PR_REGISTO_PINTURA {
+  ID int
+  ID_POTE int
+  ID_COR int
+  VALOR varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA varchar(255)
+  NOME_POTE varchar(255)
+  NOME_VALVULA varchar(255)
+  NOME_CABINE varchar(255)
+  ID_CABINE int
+
+}
+
+Table PR_REVISOES_PRIORITARIAS {
+  ID int
+  PROREF varchar(255)
+  DESIGN varchar(255)
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  LINHA int
+
+}
+
+Table PR_WINROBOT_CAB {
+  ID int
+  ID_POSTO int
+  NUMERO_IDENTICACAO_CARGA varchar(255)
+  TIPO_RACK varchar(255)
+  ORDEM varchar(255)
+  ID_PROGRAMA varchar(255)
+  DESIGN_PROGRAMA varchar(255)
+  DATA_HORA_INICIO datetime
+  DATA_HORA_FIM datetime
+  UTZ_PRINCIPAL varchar(255)
+  UTZ_CRIA varchar(255)
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  ESTADO varchar(255)
+  NUM_BARRA int
+  UTZ_MODIF varchar(255)
+  NOME_POSTO varchar(255)
+  RECEITA varchar(255)
+  DESC_RECEITA varchar(255)
+  INFORMACAO_DESCARGA varchar(255)
+  ALERTA_DESCARGA int
+  TIPO_POSTO varchar(255)
+  MAINTENANCE int
+  LINHA int
+  ESTADO_POLL varchar(255)
+  ORDEM_POLL int
+  NUM_CARRO varchar(255)
+  referencias varchar(255)
+  racks varchar(255)
+
+}
+
+Table PR_WINROBOT_ETIQUETAS {
+  ID int
+  ID_ARTIGO int
+  ETIQUETA varchar(255)
+  QUANT decimal(18,4)
+  CONSUMIR decimal(18,4)
+  QUANT_FINAL decimal(18,4)
+  PROREF varchar(255)
+  PRODES varchar(255)
+  UNICOD varchar(255)
+  LIECOD varchar(255)
+  EMPCOD varchar(255)
+  INDREF varchar(255)
+  VA1REF varchar(255)
+  VA2REF varchar(255)
+  ETQORILOT1 varchar(255)
+  ETQORIQTE1 decimal(18,4)
+  ETQNUMENR varchar(255)
+  UNISTO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  INDEX_ORIGEM int
+  LOTNUMENR varchar(255)
+  INDNUMENR varchar(255)
+  DATCRE varchar(255)
+  INATIVO bit
+
+}
+
+Table PR_WINROBOT_PAUSAS {
+  ID int
+  ID_CAB_OPERARIO int
+  ID_OPERARIO varchar(255)
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  TIPO_PARAGEM varchar(255)
+  DES_PARAGEM varchar(255)
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  MOMENTO varchar(255)
+
+}
+
+Table PR_WINROBOT_RACKS {
+  ID int
+  RACK_CODE varchar(255)
+  RACK_TYPE varchar(255)
+  ID_CAB int
+  UTZ_CRIA varchar(255)
+  DATA_CRIA datetime
+
+}
+
+Table PR_WINROBOT_USERS {
+  ID int
+  ID_CAB int
+  ID_UTZ varchar(255)
+  NOME_UTZ varchar(255)
+  DATA_HORA_INICIO datetime
+  DATA_HORA_FIM datetime
+  UTZ_CRIA varchar(255)
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  ESTADO varchar(255)
+  UTZ_MODIF varchar(255)
+  INDEX_ORIGEM int
+  DATA_INICIO_PREP datetime
+  DATA_FIM_PREP datetime
+  DATA_INICIO_EXEC datetime
+  DATA_FIM_EXEC datetime
+  TEMP_EXEC varchar(255)
+  TEMP_TOTAL varchar(255)
+  TEMP_PAUSA varchar(255)
+  TEMP_PREP varchar(255)
+
+}
+
+// === QUA ===
+Table QUA_DERROGACOES {
+  ID_DERROGACAO int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  INTERNA_EXTERNA varchar(255)
+  EMISSOR int
+  UNIDADE int
+  SETOR int
+  ID_CLIENTE int
+  NOME_CLIENTE varchar(255)
+  MORADA_CLIENTE varchar(255)
+  ETSNUM varchar(255)
+  REFERENCIA varchar(255)
+  DESIGNACAO_REF varchar(255)
+  FAMILIA_REF varchar(255)
+  QTD int
+  MOTIVO varchar(255)
+  CAUSA varchar(255)
+  ESTADO varchar(255)
+  UTZ_FECHO int
+  DATA_FECHO datetime
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  PLANO_ACOES bit
+
+}
+
+Table QUA_DERROGACOES_EQUIPA {
+  ID int [pk, increment]
+  ID_UTZ int
+  AREA varchar(255)
+  ID_DERROGACAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  EMAIL varchar(255)
+  TELEFONE varchar(255)
+
+}
+
+Table QUA_DERROGACOES_FICHEIROS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_DERROGACAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+Table QUA_DERROGACOES_PLANOS_ACCOES {
+  ID int
+  RESPONSAVEL int
+  DATA_PREVISTA date
+  DATA_REAL date
+  ID_ACCAO int
+  ID_DERROGACAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  TIPO varchar(255)
+  TIPO_RESPONSAVEL varchar(255)
+  CONCLUIDO_UTZ int
+  CONCLUIDO_DATA datetime
+  ORDEM int
+  OBSERVACOES varchar(255)
+  ESTADO varchar(255)
+  ID_TAREFA int
+  OBRIGA_EVIDENCIAS bit
+  AREA varchar(255)
+
+}
+
+Table QUA_DIC_TIPOS_AUDITORIA {
+  ID_TIPO_AUDITORIA int
+  DESCRICAO varchar(255)
+  DATA_CRIA date
+  DATA_MODIF date
+  DATA_ANULA date
+  UTZ_CRIA int
+  UTZ_MODIF int
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table QUA_DIC_TIPOS_AUDITORIA_QTD_PREVISTA {
+  ID int
+  ID_TIPO_AUDITORIA int
+  ANO int
+  QUANTIDADE_MES_1 int
+  QUANTIDADE_MES_2 int
+  QUANTIDADE_MES_3 int
+  QUANTIDADE_MES_4 int
+  QUANTIDADE_MES_5 int
+  QUANTIDADE_MES_6 int
+  QUANTIDADE_MES_7 int
+  QUANTIDADE_MES_8 int
+  QUANTIDADE_MES_9 int
+  QUANTIDADE_MES_10 int
+  QUANTIDADE_MES_11 int
+  QUANTIDADE_MES_12 int
+
+}
+
+Table QUA_MC_DIC_PECAS_CROMADAS {
+  ID_PECA_CROMADA int
+  REFERENCIA varchar(255)
+  DESIGNACAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_DIC_RESP_VALIDACAO {
+  ID_RESP_VALIDACAO int
+  RESP_VALIDACAO varchar(255)
+  DEPARTAMENTO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_DIC_RESULTADO_VALIDACAO {
+  ID_RESULTADO_VALIDACAO int
+  RESULTADO_VALIDACAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_DIC_SECCOES {
+  ID_SECCAO int
+  LOCAL_SECCAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_DIC_TIPO_ACEITACAO {
+  ID_TIPO_ACEITACAO int
+  TIPO_ACEIT_CALIB_EQUIP varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_DIC_TIPO_CALIBRACAO {
+  ID_TIPO_CALIBRACAO int
+  TIPO_CALIB_EQUP varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_DIC_TIPO_VERIF_GABARIT {
+  ID_TIPO_VERIF_GABARIT int
+  TIPO_VERIF_GABARIT varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_ENTIDADES_CALIBRACAO {
+  ID_ENTIDADE_CALIBRACAO int
+  NOME_ENTIDADE varchar(255)
+  ABREVIATURA varchar(255)
+  MORADA varchar(255)
+  TELEFONE varchar(255)
+  FAX varchar(255)
+  EMAIL varchar(255)
+  TECNICO varchar(255)
+  OBSERVACOES varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_ENTIDADES_CALIBRACAO_CERTIF {
+  ID_CERTIF int
+  ID_ENTIDADE_CALIBRACAO int
+  NUM int
+  DATA_CERTIF date
+  NUM_CERTIF varchar(255)
+  CERTIFICADO varchar(255)
+  TIPO_ENSAIO varchar(255)
+  VALIDADE date
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_EQUIPAMENTOS {
+  ID_EQUIPAMENTO int
+  DESIGNACAO varchar(255)
+  COD_INTERNO varchar(255)
+  N_SERIE varchar(255)
+  MODELO varchar(255)
+  FABRICANTE varchar(255)
+  FORNECEDOR varchar(255)
+  FUNCAO varchar(255)
+  DATA_AQUISICAO date
+  ID_SECCAO int
+  ID_RESP_ENTRADA int
+  CALIBRACAO_SIM bit
+  CALIBRACAO_NAO bit
+  CALIBR_INTERNA bit
+  CALIBR_EXTERNA bit
+  INTERCALIB_INT_MESES int
+  INTERCALIB_EXT_MESES int
+  ESTUDOS_R_R bit
+  FREQ_ESTUDO_R_R int
+  EM_UTILIZACAO bit
+  OBSOLETO bit
+  OBSERVACOES varchar(255)
+  ERRO varchar(255)
+  GAMA_UTILIZACAO varchar(255)
+  NORMAS varchar(255)
+  IMAGEM_IT_OPERACIONAL varchar(255)
+  FOTO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_GABARITOS {
+  ID_GABARITO int
+  NOME_GABARITO varchar(255)
+  CODIGO_GABARITO varchar(255)
+  COD_DESENHO_TECNICO varchar(255)
+  REFERENCIA int
+  ID_SECCAO int
+  DATA_ENTRADA date
+  ID_RESP_ENTRADA int
+  EM_UTILIZACAO bit
+  OBSOLETO bit
+  OBSERVACOES varchar(255)
+  FOTOGRAFIA varchar(255)
+  G_DIMENSIONAL bit
+  G_CONTROLO bit
+  G_ISOSTATICO bit
+  FREQ_VERIFICACAO_MESES int
+  TOLERANCIA decimal(18,4)
+  UNID_MEDIDA_TOLERANCIA varchar(255)
+  JAN bit
+  FEV bit
+  MAR bit
+  ABR bit
+  MAI bit
+  JUN bit
+  JUL bit
+  AGO bit
+  SET bit
+  OUT bit
+  NOV bit
+  DEZ bit
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_MAQUINAS {
+  ID_MAQUINA int
+  DESIGNACAO varchar(255)
+  NUM_MAQUINA varchar(255)
+  ID_SECCAO int
+  PARAMETROS varchar(255)
+  TOLERANCIA varchar(255)
+  FREQ_VERIFICACAO int
+  REL_ANEXO varchar(255)
+  VALOR_EXIGIDO varchar(255)
+  JAN bit
+  FEV bit
+  MAR bit
+  ABR bit
+  MAI bit
+  JUN bit
+  JUL bit
+  AGO bit
+  SET bit
+  OUT bit
+  NOV bit
+  DEZ bit
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_MOV_CALIB_EQUIP {
+  ID_CALIB_EQUIP int
+  ID_EQUIPAMENTO int
+  IT_METODO_OPERACIONAL varchar(255)
+  IT_CALIBRACAO varchar(255)
+  IT_VERIFICACAO_INTERNA varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_MOV_CALIB_EQUIP_DET {
+  ID_CALIB_EQUIP_DET int
+  ID_CALIB_EQUIP int
+  NUM int
+  ID_TIPO_CALIBRACAO int
+  ID_TIPO_ACEITACAO int
+  NUM_CERTIF_EXTERNO varchar(255)
+  ANEXO_CERTIF_EXTERNO varchar(255)
+  ID_ENTIDADE_CALIBRACAO int
+  DATA_CALIBRACAO date
+  VALIDADE_CALIBRACAO varchar(255)
+  NUM_VALIDADE_CALIBRACAO varchar(255)
+  ID_RESP_VALIDACAO int
+  ID_RESULTADO_VALIDACAO int
+  PERIODO_INTERCALIB_ANTERIOR varchar(255)
+  OBSERVACOES varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_MOV_VERIF_GABARITO {
+  ID_VERIF_GABARITO int
+  ID_GABARITO int
+  NUM int
+  DATA_VERIFICACAO date
+  NUM_VERIFICACAO varchar(255)
+  REL_VERIFICACAO varchar(255)
+  ID_RESP_VERIFICACAO int
+  PERIODO_INTERCALIB int
+  ID_TIPO_VERIF_GABARIT int
+  ID_TIPO_ACEITACAO int
+  PERC_R_R float
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_MOV_VERIF_INT_GABARITO {
+  ID_VERIF_INT_GABARITO int
+  ID_VERIF_GABARITO int
+  NUM_MEDIDA int
+  TIPO_MEDIDA int
+  VALOR decimal(18,4)
+  UNIDADES varchar(255)
+  TOLERANCIA decimal(18,4)
+  REF_SUBFORM decimal(18,4)
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_MOV_VERIF_MAQUINA {
+  ID_VERIF_MAQUINA int
+  ID_MAQUINA int
+  NUM int
+  DATA_VERIFICACAO date
+  ID_TIPO_VERIFICACAO int
+  NUM_VERIFICACAO varchar(255)
+  REL_VERIFICACAO varchar(255)
+  FREQUENCIA int
+  ID_RESP_VERIFICACAO int
+  ID_TIPO_ACEITACAO int
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_MOV_VERIF_SALA {
+  ID_VERIF_SALA int
+  ID_SALA int
+  NUM int
+  DATA_VERIFICACAO date
+  ID_TIPO_VERIFICACAO int
+  NUM_VERIFICACAO varchar(255)
+  REL_ANEXO varchar(255)
+  FREQ_VERIFICACAO varchar(255)
+  ID_RESP_VERIFICACAO int
+  ID_TIPO_ACEITACAO int
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MC_SALAS {
+  ID_SALA int
+  DESIGNACAO_ESPACO varchar(255)
+  ID_SECCAO int
+  PARAMETROS varchar(255)
+  RESULTADOS_EXIGIDOS varchar(255)
+  OBSERVACOES varchar(255)
+  FREQ_TEORICA varchar(255)
+  JAN bit
+  FEV bit
+  MAR bit
+  ABR bit
+  MAI bit
+  JUN bit
+  JUL bit
+  AGO bit
+  SET bit
+  OUT bit
+  NOV bit
+  DEZ bit
+  UTZ_CRIA int
+  DATA_CRIA date
+  UTZ_MODIF int
+  DATA_MODIF date
+  UTZ_ANULA int
+  DATA_ANULA date
+  ATIVO bit
+
+}
+
+Table QUA_MOV_AUDITORIAS {
+  ID_AUDITORIA int
+  ID_TIPO_AUDITORIA int
+  ANO int
+  DATA_MODIF date
+  UTZ_MODIF int
+  QUANTIDADE_REALIZADA_MES_1 int
+  QUANTIDADE_REALIZADA_MES_2 int
+  QUANTIDADE_REALIZADA_MES_3 int
+  QUANTIDADE_REALIZADA_MES_4 int
+  QUANTIDADE_REALIZADA_MES_5 int
+  QUANTIDADE_REALIZADA_MES_6 int
+  QUANTIDADE_REALIZADA_MES_7 int
+  QUANTIDADE_REALIZADA_MES_8 int
+  QUANTIDADE_REALIZADA_MES_9 int
+  QUANTIDADE_REALIZADA_MES_10 int
+  QUANTIDADE_REALIZADA_MES_11 int
+  QUANTIDADE_REALIZADA_MES_12 int
+
+}
+
+// === RC ===
+Table RC_DIC_CLASSIFICACAO {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  OBJETIVO int
+
+}
+
+Table RC_DIC_FICHEIROS_ANALISE {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RC_DIC_GRAU_IMPORTANCIA {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RC_DIC_REJEICAO {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  REVISAO_RECLAMACAO bit
+  OBJETIVO int
+
+}
+
+Table RC_DIC_TEMPO_RESPOSTA {
+  ID int [pk, increment]
+  TEMPO_RESPOSTA_STEP1 int
+  TEMPO_RESPOSTA_STEP2 int
+  TEMPO_RESPOSTA_STEP3 int
+  TEMPO_RESPOSTA_STEP4 int
+  TEMPO_RESPOSTA_STEP5 int
+  TEMPO_RESPOSTA_STEP6 int
+  TEMPO_RESPOSTA_STEP7 int
+  TEMPO_RESPOSTA_STEP8 int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TEMPO_REVISAO int
+
+}
+
+Table RC_DIC_TIPO_DEFEITO {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RC_DIC_TIPO_NAO_DETECAO {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  CODIGO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table RC_DIC_TIPO_OCORRENCIA {
+  ID int [pk, increment]
+  CODIGO varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table RC_DIC_TIPO_RECLAMACAO {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RC_DIC_TIPOLOGIA {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RC_MOV_RECLAMACAO {
+  ID_RECLAMACAO int [pk, increment]
+  TITULO varchar(255)
+  NUMERO_RECLAMACAO_CLIENTE varchar(255)
+  DATA_RECLAMACAO datetime
+  REJEICAO int
+  ID_TIPO_RECLAMACAO int
+  UTZ_RESPONSAVEL int
+  GRAU_IMPORTANCIA int
+  ID_CLIENTE int
+  NOME_CLIENTE varchar(255)
+  MORADA_CLIENTE varchar(255)
+  ETSNUM varchar(255)
+  CONTATO_CLIENTE varchar(255)
+  EMAIL_CLIENTE varchar(255)
+  TELEFONE_CLIENTE varchar(255)
+  REFERENCIA varchar(255)
+  DESIGNACAO_REF varchar(255)
+  FAMILIA_REF varchar(255)
+  LOTE varchar(255)
+  TIPO_DEFEITO int
+  RECLAMACAO_REVISTA bit
+  QTD_ENVIADA int
+  QTD_RECUSADA int
+  DEVOLUCAO bit
+  OBSERVACOES_RECLAMACAO varchar(255)
+  STEP1CONCLUIDO bit
+  STEP2CONCLUIDO bit
+  STEP3CONCLUIDO bit
+  STEP4CONCLUIDO bit
+  STEP5CONCLUIDO bit
+  STEP6CONCLUIDO bit
+  STEP7CONCLUIDO bit
+  STEP8CONCLUIDO bit
+  DESCRICAO_PROBLEMA varchar(255)
+  DESCRICAO_PROBLEMA_IDIOMA_CLIENTE varchar(255)
+  PROBLEMA_REPETIDO bit
+  NUMERO_RECLAMACAO_REPETIDA int
+  RECLAMACAO_REPETIDA_ACEITE bit
+  ACCOES_EVITAR bit
+  OBSERVACOES_ACCOES_EVITAR varchar(255)
+  CAUSAS_PROBLEMA varchar(255)
+  CAUSAS_PROBLEMA_IDIOMA_CLIENTE varchar(255)
+  REF_IGUAIS bit
+  RECLAMACAO_ENCERRADA bit
+  DATA_FECHO datetime
+  OBSERVACOES_RESULTADOS varchar(255)
+  TIPO_CAMPO_LOTE varchar(255)
+  CUSTOS_EXTERNA float
+  CUSTOS_INTERNA float
+  CUSTOS_DEVOLUCAO float
+  CUSTOS_OUTROS float
+  CUSTOS_TOTAL float
+  CUSTOS_INTERNA_QTD_CLASSIF float
+  CUSTOS_INTERNA_QTD_REJEITADA float
+  CUSTOS_REJEICAO_INTERNA float
+  CUSTOS_EXTERNA_QTD_CLASSIF float
+  CUSTOS_EXTERNA_QTD_REJEITADA float
+  CUSTOS_REJEICAO_EXTERNA float
+  TIPO_RECLAMACAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  STEP1CONCLUIDO_UTZ int
+  STEP1CONCLUIDO_DATA datetime
+  STEP2CONCLUIDO_UTZ int
+  STEP2CONCLUIDO_DATA datetime
+  STEP3CONCLUIDO_UTZ int
+  STEP3CONCLUIDO_DATA datetime
+  STEP4CONCLUIDO_UTZ int
+  STEP4CONCLUIDO_DATA datetime
+  STEP5CONCLUIDO_UTZ int
+  STEP5CONCLUIDO_DATA datetime
+  STEP6CONCLUIDO_UTZ int
+  STEP6CONCLUIDO_DATA datetime
+  STEP7CONCLUIDO_UTZ int
+  STEP7CONCLUIDO_DATA datetime
+  STEP8CONCLUIDO_UTZ int
+  STEP8CONCLUIDO_DATA datetime
+  STEP1CONCLUIDO_DATA_MOD datetime
+  STEP2CONCLUIDO_DATA_MOD datetime
+  STEP3CONCLUIDO_DATA_MOD datetime
+  STEP4CONCLUIDO_DATA_MOD datetime
+  STEP5CONCLUIDO_DATA_MOD datetime
+  STEP6CONCLUIDO_DATA_MOD datetime
+  STEP7CONCLUIDO_DATA_MOD datetime
+  STEP8CONCLUIDO_DATA_MOD datetime
+  DATA_RECLAMACAO_REVISTA datetime
+  DATA_PRAZO_REVISAO datetime
+  RECLAMACAO_COM_REVISAO bit
+  NUMERO_ENVIOS_GARANTIDOS int
+  ENVIO_GARANTIDO_POR varchar(255)
+  DIAS_ATRASO1 int
+  RESPONSABILIDADE_ATRASO1 varchar(255)
+  RESPONSABILIDADE_ATRASO1_DESCRICAO varchar(255)
+  DIAS_ATRASO2 int
+  RESPONSABILIDADE_ATRASO2 varchar(255)
+  RESPONSABILIDADE_ATRASO2_DESCRICAO varchar(255)
+  DIAS_ATRASO3 int
+  RESPONSABILIDADE_ATRASO3 varchar(255)
+  RESPONSABILIDADE_ATRASO3_DESCRICAO varchar(255)
+  DIAS_ATRASO4 int
+  RESPONSABILIDADE_ATRASO4 varchar(255)
+  RESPONSABILIDADE_ATRASO4_DESCRICAO varchar(255)
+  DIAS_ATRASO5 int
+  RESPONSABILIDADE_ATRASO5 varchar(255)
+  RESPONSABILIDADE_ATRASO5_DESCRICAO varchar(255)
+  DIAS_ATRASO6 int
+  RESPONSABILIDADE_ATRASO6 varchar(255)
+  RESPONSABILIDADE_ATRASO6_DESCRICAO varchar(255)
+  DIAS_ATRASO7 int
+  RESPONSABILIDADE_ATRASO7 varchar(255)
+  RESPONSABILIDADE_ATRASO7_DESCRICAO varchar(255)
+  DIAS_ATRASO8 int
+  RESPONSABILIDADE_ATRASO8 varchar(255)
+  RESPONSABILIDADE_ATRASO8_DESCRICAO varchar(255)
+  ESTADO varchar(255)
+  DATA_CANCELADA datetime
+  UTZ_CANCELADA int
+  UTZ_FECHO int
+  TIPO_OCORRENCIA int
+  TIPO_NAO_DETECAO int
+  STEP1_DATA date
+  STEP2_DATA date
+  STEP3_DATA date
+  STEP4_DATA date
+  STEP5_DATA date
+  STEP6_DATA date
+  STEP7_DATA date
+  STEP8_DATA date
+  CHECK_SR bit
+  REVISTA_MURO bit
+  IMPACTO_SR bit
+  ANALISE_CAUSAS_PROBLEMA varchar(255)
+  ANALISE_CAUSAS_PROBLEMA_IDIOMA_CLIENTE varchar(255)
+  EXISTEM_OUTROS_CLIENTES bit
+  FICHEIRO_PRODUCAO_NOME varchar(255)
+  FICHEIRO_PRODUCAO_1 varchar(255)
+  FICHEIRO_PRODUCAO_2 varchar(255)
+  OPERARIOS_ENVOLVIDOS varchar(255)
+
+}
+
+Table RC_MOV_RECLAMACAO_ARTIGO_SIMILARES {
+  ID int [pk, increment]
+  CODREF varchar(255)
+  DESIGNACAO varchar(255)
+  OFNUM varchar(255)
+  ID_RECLAMACAO int
+  QUANTIDADE int
+  ONDE varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RC_MOV_RECLAMACAO_CLIENTES {
+  ID int
+  NUMERO_CLIENTE int
+  NOME_CLIENTE varchar(255)
+  ID_RECLAMACAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+
+}
+
+Table RC_MOV_RECLAMACAO_ENCOMENDAS {
+  ID int [pk, increment]
+  CDDCHRONO int
+  ADRNOM varchar(255)
+  ETSNUM varchar(255)
+  ADRLIB1 varchar(255)
+  ADRLIB2 varchar(255)
+  CLICOD int
+  QUANTIDADE float
+  CDDDATBES date
+  ID_LINHA_ARTIGO_SIMILAR int
+  ID_RECLAMACAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+
+}
+
+Table RC_MOV_RECLAMACAO_ENVIOS_GARANTIDOS {
+  ID int [pk, increment]
+  ORDEM int
+  ID_RECLAMACAO int
+  QUANTIDADE int
+  NUMERO_GUIA varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  ENVIO bit
+  CLIENTE varchar(255)
+  MORADA varchar(255)
+  DATA_ENTREGA date
+  DATA_ENVIO date
+  PROREF varchar(255)
+
+}
+
+Table RC_MOV_RECLAMACAO_EQUIPA {
+  ID int [pk, increment]
+  ID_UTZ int
+  AREA varchar(255)
+  ID_RECLAMACAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  EMAIL varchar(255)
+  TELEFONE varchar(255)
+
+}
+
+Table RC_MOV_RECLAMACAO_FICHEIROS {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  TAMANHO float
+  CAMINHO varchar(255)
+  NOME varchar(255)
+  TIPO varchar(255)
+  ID_RECLAMACAO int
+  ID_FICHEIRO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  CHECKED bit
+  DATATYPE varchar(255)
+  ID_TAREFA int
+  FICHEIRO varchar(255)
+
+}
+
+Table RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_RECLAMACAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+  ID_FICHEIRO varchar(255)
+
+}
+
+Table RC_MOV_RECLAMACAO_FORNECEDOR {
+  ID_RECLAMACAO int
+  TITULO varchar(255)
+  NUMERO_RECLAMACAO_FORNECEDOR varchar(255)
+  DATA_RECLAMACAO datetime
+  CLASSIFICACAO int
+  TIPOLOGIA int
+  GRAU_IMPORTANCIA int
+  UTZ_RESPONSAVEL int
+  ID_FORNECEDOR int
+  NOME_FORNECEDOR varchar(255)
+  MORADA_FORNECEDOR varchar(255)
+  CONTATO_FORNECEDOR varchar(255)
+  EMAIL_FORNECEDOR varchar(255)
+  TELEFONE_FORNECEDOR varchar(255)
+  REFERENCIA varchar(255)
+  DESIGNACAO_REF varchar(255)
+  LOTE varchar(255)
+  QTD int
+  PROBLEMA_REPETIDO bit
+  NUMERO_RECLAMACAO_REPETIDA int
+  DESCRICAO varchar(255)
+  OBSERVACOES varchar(255)
+  DECISAO_DOURECA varchar(255)
+  ACCAO_1 bit
+  ACCAO_2 bit
+  ACCAO_3 bit
+  DECISAO_FORNECEDOR varchar(255)
+  DECISAO_FORNECEDOR_OUTRO varchar(255)
+  DATA_VERIFICACAO date
+  RESPONSAVEL_QUALIDADE int
+  INATIVO bit
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  ETSNUM varchar(255)
+  DATA_RECEPCAO date
+  DATA_FECHA datetime
+  UTZ_FECHA int
+  DATA_OBJETIVO1 date
+  DATA_OBJETIVO2 date
+  DATA_OBJETIVO3 date
+  DATA_REAL1 date
+  DATA_REAL2 date
+  DATA_REAL3 date
+
+}
+
+Table RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES {
+  ID int [pk, increment]
+  RESPONSAVEL int
+  DATA_PREVISTA date
+  ORDEM int
+  DATA_REAL date
+  ID_ACCAO int
+  ID_RECLAMACAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TIPO varchar(255)
+  TIPO_RESPONSAVEL varchar(255)
+  CONCLUIDO_UTZ int
+  CONCLUIDO_DATA datetime
+  OBSERVACOES varchar(255)
+  ESTADO varchar(255)
+  AREA varchar(255)
+  ID_TAREFA int
+  OBRIGA_EVIDENCIAS bit
+
+}
+
+Table RC_MOV_RECLAMACAO_PLANOS_ACCOES {
+  ID int [pk, increment]
+  RESPONSAVEL int
+  DATA_PREVISTA date
+  ORDEM int
+  DATA_REAL date
+  ID_ACCAO int
+  ID_RECLAMACAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TIPO varchar(255)
+  TIPO_RESPONSAVEL varchar(255)
+  CONCLUIDO_UTZ int
+  CONCLUIDO_DATA datetime
+  OBSERVACOES varchar(255)
+  ESTADO varchar(255)
+  AREA varchar(255)
+  ID_TAREFA int
+  OBRIGA_EVIDENCIAS bit
+
+}
+
+Table RC_MOV_RECLAMACAO_STOCK {
+  ID int [pk, increment]
+  LIECOD varchar(255)
+  STOQTE float
+  ID_RECLAMACAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ID_LINHA_ARTIGO_SIMILAR int
+
+}
+
+// === REU ===
+Table REU_AMBITOS_REUNIOES {
+  ID_AMBITO int
+  DESCRICAO varchar(255)
+  DATA_ULTIMA_REALIZADA datetime
+  DATA_PROXIMA_REALIZADA datetime
+  PRAZO_DISP_ATA int
+  DATA_INICIO date
+  HORA_INICIO varchar(255)
+  TEMPO_ESTIMADO varchar(255)
+  MEIO_REALIZACAO varchar(255)
+  LINK_REUNIAO varchar(255)
+  TIPO_FIM int
+  OCORRENCIAS int
+  TOTAL_OCORRENCIAS int
+  DATA_FINAL date
+  TIPO_REPETICAO int
+  REPETIR int
+  DIAS_SEMANA varchar(255)
+  UTZ_CRIA int
+  UTZ_MODIF int
+  UTZ_ANULA int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  DATA_ANULA datetime
+  INATIVO bit
+
+}
+
+Table REU_AMBITOS_REUNIOES_PARTICIPANTES {
+  ID int
+  ID_AMBITO int
+  ID_UTILIZADOR int
+  EMAIL varchar(255)
+
+}
+
+Table REU_REUNIOES {
+  ID_REUNIAO int
+  ID_AMBITO int
+  ASSUNTO varchar(255)
+  DESCRICAO varchar(255)
+  DURACAO varchar(255)
+  LOCAL int
+  UTZ_CRIA int
+  UTZ_MODIF int
+  UTZ_ANULA int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  DATA_ANULA datetime
+  INATIVO bit
+  HORA_REUNIAO varchar(255)
+  DATA_REUNIAO datetime
+  RESPONSAVEL int
+
+}
+
+Table REU_REUNIOES_FICHEIROS {
+  ID int
+  ID_REUNIAO int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  UTZ_CRIA int
+  UTZ_MODIF int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+Table REU_REUNIOES_PARTICIPANTES {
+  ID int
+  ID_REUNIAO int
+  ID_UTILIZADOR int
+  EMAIL varchar(255)
+  PRESENTE bit
+
+}
+
+Table REU_REUNIOES_PLANOS_ACCOES {
+  ID int
+  RESPONSAVEL int
+  DATA_PREVISTA date
+  DATA_REAL date
+  ID_ACCAO int
+  ID_REUNIAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  TIPO varchar(255)
+  TIPO_RESPONSAVEL varchar(255)
+  CONCLUIDO_UTZ int
+  CONCLUIDO_DATA datetime
+  ORDEM int
+  OBSERVACOES varchar(255)
+  ESTADO varchar(255)
+  ID_TAREFA int
+  OBRIGA_EVIDENCIAS bit
+  AREA varchar(255)
+  TIPO_ACAO int
+  ITEM varchar(255)
+
+}
+
+// === RH ===
+Table RH_AVALIACAO_DESEMPENHO {
+  ID int
+  ANO int
+  DATA_CRIA date
+  UTZ_CRIA int
+  DATA_MODIF date
+  UTZ_MODIF int
+  DATA_ANULA date
+  UTZ_ANULA int
+  ATIVO bit
+  TIPO varchar(255)
+  DATA_INICIO date
+  DATA_FIM date
+
+}
+
+Table RH_AVALIACAO_DESEMPENHO_LINHAS {
+  ID int
+  ID_AVALIACAO_DESEMPENHO int
+  ID_CATEGORIA_PROFISSIONAL varchar(255)
+  GRUPO_COLABORADORES varchar(255)
+  ID_GRUPO_COLABORADORES int
+  NUMERO_FUNCIONARIO varchar(255)
+  NOME varchar(255)
+  SECCAO varchar(255)
+  CHEFIA_DIRETA varchar(255)
+  LOCAL varchar(255)
+  CATEGORIA_PROFISSIONAL varchar(255)
+  DATA_ADMISSAO date
+  DATA_CESSACAO date
+  ESTADO varchar(255)
+  VENCIMENTO_ANUAL decimal(18,4)
+  VENCIMENTO decimal(18,4)
+  PERCENTUAL_VENCIMENTO_ANUAL decimal(18,4)
+  ID_VENCIMENTO_ANUAL int
+  AVALIACAO_DESEMPENHO decimal(18,4)
+  PERCENTUAL_AVALIACAO_DESEMPENHO decimal(18,4)
+  ID_AVALIACAO_DESEMPENHO_CRIT int
+  ASSIDUIDADE decimal(18,4)
+  PERCENTUAL_ASSIDUIDADE decimal(18,4)
+  ID_ASSIDUIDADE int
+  PONTUALIDADE decimal(18,4)
+  PERCENTUAL_PONTUALIDADE decimal(18,4)
+  ID_PONTUALIDADE int
+  POLIVALENCIA decimal(18,4)
+  PERCENTUAL_POLIVALENCIA decimal(18,4)
+  ID_POLIVALENCIA int
+  QUALIDADE_INCIDENTES decimal(18,4)
+  PERCENTUAL_QUALIDADE_INCIDENTES decimal(18,4)
+  ID_QUALIDADE_INCIDENTES int
+  PLANO_FERIAS decimal(18,4)
+  PERCENTUAL_PLANO_FERIAS decimal(18,4)
+  ID_PLANO_FERIAS int
+  HORAS_EXTRA decimal(18,4)
+  PERCENTUAL_HORAS_EXTRA decimal(18,4)
+  ID_HORAS_EXTRA int
+  PONTUACAO_FINAL decimal(18,4)
+  PONTUACAO_FINAL_PERC decimal(18,4)
+  LIMITE_MAXIMO_PREMIO_PCT decimal(18,4)
+  VALOR_MAXIMO_PREMIO decimal(18,4)
+  MESES_TRABALHADOS decimal(18,4)
+  PREMIO_PCT decimal(18,4)
+  VALOR_PREMIO decimal(18,4)
+  VALOR_PREMIO_GRUPO decimal(18,4)
+  VALOR_PREMIO_ANO_ANTERIOR decimal(18,4)
+  VALOR_PREMIO_CORRIGIDO decimal(18,4)
+
+}
+
+Table RH_CANDIDATURAS {
+  ID int
+  NOME varchar(255)
+  EMAIL varchar(255)
+  DATANASCIMENTO varchar(255)
+  GENERO varchar(255)
+  TELEMOVEL varchar(255)
+  DOMICILIO varchar(255)
+  FREGUESIA varchar(255)
+  CONCELHO varchar(255)
+  CODIGOPOSTAL varchar(255)
+  DISTRITO varchar(255)
+  CONTRIBUINTE varchar(255)
+  CARTACONDUCAO varchar(255)
+  TRABALHOUDOURECA varchar(255)
+  CONHECEUDOURECA varchar(255)
+  FUNCOESINTERESSE varchar(255)
+  HABILITACOES varchar(255)
+  AREAFORMACAO varchar(255)
+  ESTABELECIMENTOENSINO varchar(255)
+  ANOCONCLUSAO varchar(255)
+  FORMACOESRELEVANTES varchar(255)
+  CERTIFICADOEMPILHADORES varchar(255)
+  ULTIMAEMPRESA varchar(255)
+  ULTIMAFUNCAO varchar(255)
+  DATAINICIO varchar(255)
+  DATAFIM varchar(255)
+  NOMECV varchar(255)
+  DISPONIBILIDADE varchar(255)
+  CONTEUDOCV_1 varchar(255)
+  CONTEUDOCV_2 varchar(255)
+  DATA_SUBMISSAO datetime
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_CRIA int
+  UTZ_MODIF int
+  ESTADO varchar(255)
+  UTZ_EM_ANALISE int
+  UTZ_REJEITA int
+  UTZ_APROVA int
+  DATA_EM_ANALISE datetime
+  DATA_REJEITA datetime
+  DATA_APROVA datetime
+
+}
+
+Table RH_DADOS_FUNCIONARIO {
+  ID int
+  ID_FUNCIONARIO varchar(255)
+  NOME varchar(255)
+  ESTADO_CIVIL varchar(255)
+  NATURALIDADE varchar(255)
+  NACIONALIDADE varchar(255)
+  SEXO int
+  TELEMOVEL varchar(255)
+  EMAIL varchar(255)
+  DT_ADMISSAO date
+  NIF varchar(255)
+  DT_NASCIMENTO date
+  MORADA varchar(255)
+  CODIGO_POSTAL varchar(255)
+  LOCALIDADE varchar(255)
+  BI_NUM varchar(255)
+  BI_EMISSAO date
+  BI_VALIDADE date
+  NUM_SS varchar(255)
+  ID_SITUACAO int
+  ID_CENTRO_CP varchar(255)
+  ID_PROFISSAO int
+  ID_TP_CONTRATO int
+  ID_HABILITACAO int
+  ID_CAT_PROFISSIONAL varchar(255)
+  ID_CODIGO_POSTAL int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  VENCIMENTO decimal(18,4)
+
+}
+
+Table RH_DIC_AREA_FORMACAO {
+  ID int
+  DESCRICAO varchar(255)
+  DIAS_VALIDADE int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_AVALIACAO_CATEGORIA {
+  ID int
+  VALOR_AVALIACAO_DESEMPENHO decimal(18,4)
+  VALOR_ASSIDUIDADE decimal(18,4)
+  VALOR_PONTUALIDADE decimal(18,4)
+  VALOR_POLIVALENCIA decimal(18,4)
+  VALOR_QUALIDADE decimal(18,4)
+  VALOR_PLANOFERIAS decimal(18,4)
+  VALOR_HORASEXTRA decimal(18,4)
+  DATA_CRIA datetime
+  grupo varchar(255)
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_CACIFOS {
+  ID int [pk, increment]
+  CODIGO varchar(255)
+  TIPO_UTILIZADOR varchar(255)
+  LOCAL int
+  UTILIZADOR int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+  UTZ_APAGA int
+  DATA_APAGA datetime
+  INATIVO bit
+  TIPO_CACIFO int
+
+}
+
+Table RH_DIC_CATEGORIAS_PROFISSIONAIS {
+  ID int
+  NOME varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  PERCENTAGEM_MAX_PREMIO decimal(18,4)
+
+}
+
+Table RH_DIC_CATEGORIAS_PROFISSIONAIS_LINHA {
+  ID int
+  grupoCategorias varchar(255)
+  ID_CATEGORIA varchar(255)
+
+}
+
+Table RH_DIC_CRITERIOS_AVALIACAO {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_CRITERIOS_AVALIACAO_DESEMPENHO {
+  ID int
+  CRITERIO varchar(255)
+  MIN_VALOR int
+  MAX_VALOR int
+  LABEL varchar(255)
+  PONTOS int
+  DATA_MODIF date
+  ID_UTZ int
+
+}
+
+Table RH_DIC_ENTIDADE_FORMADORA {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_ENTIDADE_MEDICA {
+  ID int
+  NOME varchar(255)
+  NIF varchar(255)
+  EMAIL varchar(255)
+  CONTATO varchar(255)
+  OBSERVACOES varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_ENTIDADE_MEDICA_LOCAIS {
+  ID int
+  NOME varchar(255)
+  MORADA varchar(255)
+  LOCALIDADE varchar(255)
+  CODIGO_POSTAL varchar(255)
+  ID_ENTIDADE_MEDICA int
+
+}
+
+Table RH_DIC_EPI {
+  ID_EPI int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table RH_DIC_EXAMES {
+  ID int
+  NOME varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_GRUPOS_COLABORADORES {
+  ID int
+  NOME varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_GRUPOS_COLABORADORES_LINHA {
+  ID int
+  grupoColaboradores varchar(255)
+  COD_FUNC varchar(255)
+
+}
+
+Table RH_DIC_PARAMETROS {
+  ID int
+  PERECENTAGEM_MAX_PREMIO varchar(255)
+  DATA_MODIF date
+  UTZ_MODIF int
+
+}
+
+Table RH_DIC_PERIOCIDADE_ALERTAS {
+  ID int
+  ALERTA_CONSULTA_MEDICA int
+  ALERTA_DASHBOARD int
+
+}
+
+Table RH_DIC_PREMIOS {
+  ID int
+  ANO int
+  VALOR decimal(18,4)
+  DATA_CRIA datetime
+  grupo varchar(255)
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_SECTORES_ABSENTISMO {
+  ID_SECTOR_ABSENTISMO int
+  NOME varchar(255)
+  LOCAL int
+  POSICAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_SECTORES_ABSENTISMO_LINHA {
+  ID_SECTOR_ABSENTISMO_LINHA int
+  ID_SECTOR_ABSENTISMO int
+  COD_SECTOR int
+
+}
+
+Table RH_DIC_TIPO_CACIFO {
+  COD_TIPO int [pk, increment]
+  DESIGNACAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RH_DIC_TIPOS_DOCUMENTO {
+  ID int
+  NOME varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+
+}
+
+Table RH_DIC_TIPOS_DOCUMENTO_UTZ {
+  ID int
+  ID_TIPO_DOCUMENTO int
+  ID_UTZ int
+
+}
+
+Table RH_DIC_TIPOS_FALTAS_LINHA {
+  ID int
+  COD_FALTA varchar(255)
+  DESC_FALTA varchar(255)
+
+}
+
+Table RH_DIC_TIPOS_GRATIFICACOES_LINHA {
+  ID int
+  COD_GRATIFICACAO varchar(255)
+  DESC_GRATIFICACAO varchar(255)
+
+}
+
+Table RH_ESTADOS_FUNC {
+  COD_ESTADO int [pk, increment]
+  DESIGNACAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  FALTA_LONGA_DURACAO bit
+
+}
+
+Table RH_EXCLUSAO_TIPO_EXTRA {
+  ID int [pk, increment]
+  TIPO_EXTRA int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RH_FORMACAO {
+  ID int
+  NOME varchar(255)
+  OBJETIVOS varchar(255)
+  ID_AREA_FORMACAO int
+  MODALIDADE int
+  ID_CRITERIOS_AVALIACAO int
+  INTERMO_EXTERNO int
+  ID_ENTIDADE_FORMADORA int
+  FORMADOR varchar(255)
+  DATA_INICIO date
+  DATA_FIM date
+  DURACAO decimal(18,4)
+  HORARIO varchar(255)
+  VALIDADE date
+  OBSERVACOES varchar(255)
+  AVALIACAO_EFICACIA bit
+  AVALIACAO_TEXTO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  AVALIACAO_SATISFACAO bit
+  LINK_FORMULARIO varchar(255)
+  CUSTO_FORMACAO decimal(18,4)
+
+}
+
+Table RH_FORMACAO_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_FORMACAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+
+}
+
+Table RH_FORMACAO_PARTICIPANTES {
+  ID int
+  ID_FORMACAO int
+  ID_FUNCIONARIO varchar(255)
+  NOME_FUNCIONARIO varchar(255)
+  AVALIACAO_FINAL varchar(255)
+  OBSERVACOES varchar(255)
+  EMAIL varchar(255)
+
+}
+
+Table RH_FUNCIONARIOS {
+  COD_FUNCIONARIO int [pk, increment]
+  NOME varchar(255)
+  EMPRESA varchar(255)
+  DATA_ADMISSAO datetime
+  DATA_DEMISSAO datetime
+  ATIVO bit
+  LOCAL varchar(255)
+  RESPONSAVEL varchar(255)
+  COD_SECTOR int
+  NUM_CACIFO int
+  ESTADO int
+  DATA_PREV_RET date
+  DATA_INICIO date
+  DATA_FIM date
+  COD_FUNC_ORIGEM int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  REGISTA_PONTO bit
+  EXPOSTO_RISCOS bit
+  PERIOCIDADE varchar(255)
+  DIRECAO bit
+
+}
+
+Table RH_MEDICINA_TRABALHO {
+  ID int
+  TIPO_CONSULTA int
+  ID_ENTIDADE_MEDICA int
+  ID_LOCAL int
+  EXAMES varchar(255)
+  DATA date
+  ESTADO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+  ID_FUNCIONARIO varchar(255)
+  OBSERVACOES varchar(255)
+  NOTIFICACAO_ENVIADA bit
+
+}
+
+Table RH_MEDICINA_TRABALHO_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_MEDICINA_TRABALHO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+  TIPO_DOCUMENTO int
+
+}
+
+Table RH_PAUSAS {
+  ID int [pk, increment]
+  ID_PAUSA_SILVER varchar(255)
+  DESCRICAO_PAUSA varchar(255)
+  ID_TIPO_PAUSA int
+
+}
+
+Table RH_REGISTO_ACOES {
+  ID_ACAO int
+  ID_FUNCIONARIO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  CONTACTO varchar(255)
+  GERAR_ALERTA datetime
+  ALERTA_GERADO bit
+  ORIGEM varchar(255)
+  DESCRICAO varchar(255)
+  TAMANHO_FICHEIRO float
+  NOME_FICHEIRO varchar(255)
+  DATATYPE_FICHEIRO varchar(255)
+  FICHEIRO varchar(255)
+  FICHEIRO_2 varchar(255)
+  TYPE_FICHEIRO varchar(255)
+
+}
+
+Table RH_SECTORES {
+  COD_SECTOR int [pk, increment]
+  DES_SECTOR varchar(255)
+  COD_TURNO int
+  LOCAL varchar(255)
+  CHEFE1 int
+  CHEFE2 int
+  DATA_INICIO date
+  DATA_FIM date
+  ESTADO bit
+  RACIO_MIN float
+  RACIO_MAX float
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RH_SUGESTOES {
+  ID int
+  ASSUNTO varchar(255)
+  DESCRICAO varchar(255)
+  OBSERVACOES varchar(255)
+  CODIGO varchar(255)
+  ESTADO varchar(255)
+  MOTIVO_REJEICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  IP varchar(255)
+  DATA_IMPLEMENTADA datetime
+  DATA_PLANEADA datetime
+  DATA_REJEITADA datetime
+  UTZ_IMPLEMENTADA int
+  UTZ_PLANEADA int
+  UTZ_REJEITADA int
+
+}
+
+Table RH_SUGESTOES_ATIVIDADE {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  ID_SUGESTAO int
+
+}
+
+Table RH_SUGESTOES_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_SUGESTAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+
+}
+
+Table RH_SUGESTOES_PLANOS_ACCOES {
+  ID int [pk, increment]
+  RESPONSAVEL int
+  DATA_PREVISTA date
+  ORDEM int
+  DATA_REAL date
+  ID_ACCAO int
+  ID_SUGESTAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TIPO varchar(255)
+  TIPO_RESPONSAVEL varchar(255)
+  CONCLUIDO_UTZ int
+  CONCLUIDO_DATA datetime
+  OBSERVACOES varchar(255)
+  ESTADO varchar(255)
+  AREA varchar(255)
+  ID_TAREFA int
+  OBRIGA_EVIDENCIAS bit
+
+}
+
+Table RH_TIPOS_PAUSA {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+
+}
+
+Table RH_TURNOS {
+  COD_TURNO int [pk, increment]
+  DES_TURNO varchar(255)
+  DATA_INICIO date
+  HORA_INICIO varchar(255)
+  DATA_FIM date
+  HORA_FIM varchar(255)
+  ESTADO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TURNO_CONTINUO bit
+
+}
+
+// === TIPOS ===
+Table TIPOS_OCORRENCIA {
+  ID_TIPO int [pk, increment]
+  DESCRICAO varchar(255)
+  COR varchar(255)
+  GRAU int
+  CODIGO varchar(255)
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+// === VERSAO ===
+Table VERSAO_APP {
+  ID_MANUTENCAO_OPERARIOS int
+  ID_MANUTENCAO_CAB int
+  ID_OPERARIO int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  TEMP_EXEC varchar(255)
+  TEMP_PAUSA varchar(255)
+  TEMP_TOTAL varchar(255)
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+
+}
+
+// ============================================
+// REFERÊNCIAS VALIDADAS (col exists in both tables)
+// ============================================
+Ref: AB_DIC_BANHO_ADITIVO.ID_UNIDADE1 > AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA
+Ref: AB_DIC_BANHO_ADITIVO.ID_UNIDADE2 > AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA
+Ref: AB_DIC_BANHO_COMPONENTE.ID_COMPONENTE > AB_MOV_ANALISE_LINHA.ID_COMPONENTE
+Ref: AB_DIC_BANHO_COMPONENTE.ID_FORNECEDOR > GER_FORNECEDOR.ID_FORNECEDOR
+Ref: AB_DIC_BANHO_COMPONENTE.ID_UNIDADE_COMPONENTE > AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA
+Ref: AB_DIC_LINHA.ID_LINHA > AB_MOV_MANUTENCAO.ID_LINHA
+Ref: AB_DIC_LINHA.ID_LINHA > PIN_MOV_PREPARACAO.ID_LINHA
+Ref: AB_DIC_LINHA.ID_LINHA > PR_PLANEAMENTO_PRODUCAO_CAB.ID_LINHA
+Ref: AB_DIC_TIPO_MANUTENCAO.ID_TIPO_MANUTENCAO > AB_MOV_MANUTENCAO.ID_TIPO_MANUTENCAO
+Ref: AB_MOV_ANALISE.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: AB_MOV_MANUTENCAO.ID_MANUTENCAO > AB_MOV_MANUTENCAO_CAB.ID_MANUTENCAO
+Ref: AB_MOV_MANUTENCAO.ID_TURNO > AB_DIC_TURNO.ID_TURNO
+Ref: AB_MOV_MANUTENCAO.UTZ_PLANEAMENTO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: AB_MOV_MANUTENCAO_CAB.ID_BANHO > AB_DIC_BANHO.ID_BANHO
+Ref: AB_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB > AB_MOV_REG_PARAM_OPERACAO.ID_MANUTENCAO_CAB
+Ref: AB_MOV_MANUTENCAO_CAB.ID_TINA > AB_DIC_TINA.ID_TINA
+Ref: AB_MOV_MANUTENCAO_CAB.UTZ_EXECUCAO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: AB_MOV_MANUTENCAO_CAB.UTZ_PREPARACAO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: AB_MOV_MANUTENCAO_DOSIFICADORES.ID_TINA > AB_DIC_TINA.ID_TINA
+Ref: AB_MOV_MANUTENCAO_DOSIFICADORES.UTZ_EXECUCAO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: AB_MOV_MANUTENCAO_LINHA.ID_ADITIVO > AB_DIC_BANHO_ADITIVO.ID_ADITIVO
+Ref: AB_MOV_MANUTENCAO_LINHA.ID_MANUTENCAO_CAB > AB_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB
+Ref: AB_MOV_MANUTENCAO_LINHA.ID_MANUTENCAO_LIN > AB_MOV_MANUTENCAO_ETIQ.ID_MANUTENCAO_LIN
+Ref: AB_MOV_REG_PARAM_OPERACAO.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: AB_MOV_REG_PARAM_OPERACAO.UTZ_VALIDA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_ACORDOS.ID_CONTRATO > COM_CONTRATOS.ID
+Ref: COM_ACORDOS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_ACORDOS.UTZ_FECHO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_ACORDOS.UTZ_FECHO_AMORTIZACOES > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_ACORDOS.UTZ_FECHO_LTA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_ACORDOS_ACTIVIDADES.UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_ACORDOS_ANEXOS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_BUDGETS.ID > COM_BUDGETS_LINHAS.ID_BUDGET
+Ref: COM_CONTRATOS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_REFERENCIAS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: DOC_FICHA_DOCUMENTOS.ID_FICHEIRO > DOC_DOCUMENTOS.ID
+Ref: FICHEIROS_PAGINAS.ID_UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: FIN_DIVIDAS_ATIVIDADE.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: FIN_REGISTO_ACOES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: GER_DEPARTAMENTOS_SECTORES.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: GER_DEPARTAMENTOS_SECTORES.ID_DEPARTAMENTO > GER_DEPARTAMENTO.ID
+Ref: GER_DIC_PROGRAMA.ID_VEICULO > GER_DIC_VEICULO.ID_VEICULO
+Ref: GER_DIC_PROJ_CAB.ID_PROGRAMA > GER_DIC_PROGRAMA.ID_PROGRAMA
+Ref: GER_DIC_VEICULO.ID_OEM > GER_DIC_OEM.ID_OEM
+Ref: GER_GRUPO.ID > GER_GRUPO_UTZ.ID_GRUPO
+Ref: GER_GRUPO_UTZ.ID_UTZ > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: GER_UTILIZADORES.COD_UTZ > RH_FUNCIONARIOS.COD_FUNC_ORIGEM
+Ref: GT_LOGS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: GT_MOV_FICHEIROS.ID_TAREFA > GT_MOV_TAREFAS.ID_TAREFA
+Ref: GT_MOV_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: GT_MOV_TAREFAS.ID_CAMPO > PA_MOV_LINHA.ID_PLANO_LINHA
+Ref: GT_MOV_TAREFAS.PRIORIDADE > RC_DIC_GRAU_IMPORTANCIA.ID
+Ref: GT_MOV_TAREFAS.UTZ_ENCAMINHADO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: GT_MOV_TAREFAS.UTZ_ID > GER_GRUPO.ID
+Ref: GT_MOV_TAREFAS.UTZ_ID > RH_SECTORES.COD_SECTOR
+Ref: MAN_DIC_AMBITO_UTILIZADORES.ID_UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS.ID_EQUIPA > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.AMBITO_MANUTENCAO
+Ref: MAN_DIC_AMBITOS.ID > MAN_DIC_AMBITO_UTILIZADORES.ID_EQUIPA
+Ref: MAN_DIC_AMBITOS.ID > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.AMBITO_MANUTENCAO
+Ref: MAN_DIC_DIVISOES.ID_PISO > MAN_DIC_PISOS.ID
+Ref: MAN_DIC_PISOS.ID_EDIFICIO > MAN_DIC_EDIFICIOS.ID
+Ref: MAN_MOV_MANUTENCAO_ACCOES.ID_ACAO > GT_DIC_TAREFAS.ID
+Ref: MAN_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB > MAN_MOV_MANUTENCAO_ACCOES.ID_MANUTENCAO_CAB
+Ref: MAN_MOV_MANUTENCAO_COMPONENTES.ID > MAN_MOV_PEDIDOS.COMPONENTE
+Ref: MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA.NIVEL > MAN_DIC_NIVEIS_CRITICIDADE.NIVEL
+Ref: MAN_MOV_MANUTENCAO_NOTAS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: MAN_MOV_PEDIDOS.ID_RESPONSAVEL > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: MAN_MOV_PEDIDOS.UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PA_MOV_CAB.AMBITO > PA_DIC_AMBITOS.ID_AMBITO
+Ref: PA_MOV_CAB.DEPARTAMENTO_ORIGEM > GER_DEPARTAMENTO.ID
+Ref: PA_MOV_CAB.ID_PLANO_CAB > PA_MOV_CAB_HISTORICO.ID_PLANO_CAB
+Ref: PA_MOV_CAB.ID_PLANO_CAB > PA_MOV_LINHA.ID_PLANO_CAB
+Ref: PA_MOV_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PA_MOV_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PA_MOV_LINHA.ID_ACCAO > GT_DIC_TAREFAS.ID
+Ref: PA_MOV_LINHA.ID_PLANO_LINHA > PA_MOV_LINHA_HISTORICO.ID_PLANO_LINHA
+Ref: PA_MOV_LINHA.ID_PLANO_LINHA > PA_MOV_SEGUIR_LINHA.ID_PLANO_LINHA
+Ref: PA_MOV_LINHA.PRIORIDADE > RC_DIC_GRAU_IMPORTANCIA.ID
+Ref: PA_MOV_LINHA.RESPONSAVEL > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PA_MOV_LINHA.TIPO_ACAO > GT_DIC_TIPO_ACAO.ID_TIPO_ACAO
+Ref: PE_MOV_CAB.DEPARTAMENTO > GER_DEPARTAMENTO.ID
+Ref: PE_MOV_CAB.RESPONSAVEL > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PIN_DIC_CORES_ACABAMENTOS.ID_POTE > PIN_DIC_POTES.ID
+Ref: PIN_DIC_POTES.ID_CABINE > PIN_DIC_CABINES.ID
+Ref: PIN_DIC_PRE_SET.ID_TIPO_ACABAMENTO > PIN_DIC_TIPO_ACABAMENTO.ID
+Ref: PIN_DIC_PRODUTOS_RELACIONADOS.ID_PRODUTO > PIN_DIC_PRODUTOS.ID
+Ref: PIN_DIC_PRODUTOS_RELACIONADOS.ID_REF > PIN_DIC_PRODUTOS.ID
+Ref: PIN_DIC_REGISTO_BASTIDOR.ID_CABINE > PIN_DIC_CABINES.ID
+Ref: PIN_DIC_REGISTO_BASTIDOR.ID_CABINE_2 > PIN_DIC_CABINES.ID
+Ref: PIN_DIC_REGISTO_BASTIDOR.ID_CABINE_3 > PIN_DIC_CABINES.ID
+Ref: PIN_DIC_REGISTO_BASTIDOR.ID_RECEITA > PIN_MOV_RECEITAS.ID
+Ref: PIN_DIC_REGISTO_SALAS_MISTURA.ID > PIN_DIC_REGISTO_SALAS_MISTURA_REFERENCIAS.ID_REGISTO_SALAS_MISTURA
+Ref: PIN_DIC_REGISTO_SALAS_MISTURA.ID_CABINE > PIN_DIC_CABINES.ID
+Ref: PIN_DIC_REGISTO_SALAS_MISTURA.ID_RECEITA > PIN_MOV_RECEITAS.ID
+Ref: PIN_DIC_TIPO_ACABAMENTO.ID > PIN_MOV_RECEITAS_LINHAS.ID_TIPO_ACABAMENTO
+Ref: PIN_DIC_TIPOS_ACABAMENTO.ID > PIN_DIC_CORES_ACABAMENTOS.ID_TIPO_ACABAMENTO
+Ref: PIN_DIC_TIPOS_ACABAMENTO.ID_POTE > PIN_DIC_POTES.ID
+Ref: PIN_MOV_PREPARACAO.ID_PREPARACAO > PIN_MOV_PREPARACAO_CAB.ID_PREPARACAO
+Ref: PIN_MOV_PREPARACAO.ID_TURNO > AB_DIC_TURNO.ID_TURNO
+Ref: PIN_MOV_PREPARACAO.UTZ_PLANEAMENTO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PIN_MOV_PREPARACAO_CAB.UTZ_EXECUCAO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PIN_MOV_PREPARACAO_CAB.UTZ_PREPARACAO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PIN_MOV_PREPARACAO_LINHA.ID_POTE > PIN_DIC_POTES.ID
+Ref: PIN_MOV_PREPARACAO_LINHA.ID_PREPARACAO_CAB > PIN_MOV_PREPARACAO_CAB.ID_PREPARACAO_CAB
+Ref: PIN_MOV_PREPARACAO_LINHA.ID_PREPARACAO_LIN > PIN_MOV_PREPARACAO_ETIQ.ID_PREPARACAO_LIN
+Ref: PIN_MOV_PREPARACAO_LINHA.ID_PRODUTO > PIN_DIC_PRODUTOS.ID
+Ref: PIN_MOV_PREPARACAO_LINHA.ID_UNIDADE > AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA
+Ref: PIN_MOV_RECEITAS.ID > PIN_DIC_PROGRAMAS.ID_RECEITA
+Ref: PIN_MOV_RECEITAS.ID > PIN_MOV_RECEITAS_LINHAS.ID_RECEITA
+Ref: PIN_MOV_RECEITAS.ID > PIN_MOV_RECEITAS_REFERENCIAS.ID_RECEITA
+Ref: PIN_MOV_RECEITAS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PIN_MOV_RECEITAS.VERSAO > PIN_DIC_REGISTO_BASTIDOR.VERSAO
+Ref: PIN_MOV_RECEITAS.VERSAO > PIN_DIC_REGISTO_SALAS_MISTURA.VERSAO
+Ref: PIN_MOV_RECEITAS.VERSAO > PIN_MOV_RECEITAS_LINHAS.VERSAO
+Ref: PIN_MOV_RECEITAS.VERSAO > PIN_MOV_RECEITAS_REFERENCIAS.VERSAO
+Ref: PIN_MOV_RECEITAS_LINHAS.ID_REFERENCIA_A > PIN_DIC_PRODUTOS.ID
+Ref: PIN_MOV_RECEITAS_LINHAS.REFERENCIA_A > PIN_DIC_CORES_ACABAMENTOS.NOME
+Ref: PR_AMOSTRAS_ACCOES.ID_AMOSTRA_ACCAO > GT_MOV_TAREFAS.ID_CAMPO
+Ref: PR_AMOSTRAS_CAB.ID_TIPOLOGIA_ENSAIO > PR_DIC_TIPOLOGIA_ENSAIO.ID_TIPOLOGIA_ENSAIO
+Ref: PR_AMOSTRAS_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PR_DIC_CAPACIDADE_ACABAMENTO.ID_LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PR_DIC_PRODUCAO_SEMANA.ID_LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PR_DIC_SECTORES_AGREGADORES_LINHA.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: PR_PLANEAMENTO_PRODUCAO_ANALISES.ID_PLANO_LINHA_1 > PR_PLANEAMENTO_PRODUCAO_CAB.ID_PLANEAMENTO_PRODUCAO_CAB
+Ref: PR_PLANEAMENTO_PRODUCAO_ANALISES.ID_PLANO_LINHA_2 > PR_PLANEAMENTO_PRODUCAO_CAB.ID_PLANEAMENTO_PRODUCAO_CAB
+Ref: PR_PLANEAMENTO_PRODUCAO_ANALISES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PR_PLANEAMENTO_PRODUCAO_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PR_WINROBOT_CAB.ID > PR_WINROBOT_RACKS.ID_CAB
+Ref: QUA_DERROGACOES.EMISSOR > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: QUA_DERROGACOES.SETOR > GER_SECCAO.ID
+Ref: QUA_MC_EQUIPAMENTOS.ID_RESP_ENTRADA > QUA_MC_DIC_RESP_VALIDACAO.ID_RESP_VALIDACAO
+Ref: QUA_MC_EQUIPAMENTOS.ID_SECCAO > QUA_MC_DIC_SECCOES.ID_SECCAO
+Ref: QUA_MC_GABARITOS.ID_SECCAO > QUA_MC_DIC_SECCOES.ID_SECCAO
+Ref: QUA_MC_MAQUINAS.ID_SECCAO > QUA_MC_DIC_SECCOES.ID_SECCAO
+Ref: QUA_MC_SALAS.ID_SECCAO > QUA_MC_DIC_SECCOES.ID_SECCAO
+Ref: RC_MOV_RECLAMACAO_FICHEIROS.ID_TAREFA > GT_MOV_TAREFAS.ID_TAREFA
+Ref: RC_MOV_RECLAMACAO_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR.CLASSIFICACAO > RC_DIC_CLASSIFICACAO.ID
+Ref: RH_DIC_CACIFOS.TIPO_CACIFO > RH_DIC_TIPO_CACIFO.COD_TIPO
+Ref: RH_DIC_SECTORES_ABSENTISMO_LINHA.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: RH_DIC_TIPOS_DOCUMENTO.ID > RH_DIC_TIPOS_DOCUMENTO_UTZ.ID_TIPO_DOCUMENTO
+Ref: RH_FORMACAO.ID > RH_FORMACAO_PARTICIPANTES.ID_FORMACAO
+Ref: RH_FORMACAO.ID_AREA_FORMACAO > RH_DIC_AREA_FORMACAO.ID
+Ref: RH_FORMACAO.ID_CRITERIOS_AVALIACAO > RH_DIC_CRITERIOS_AVALIACAO.ID
+Ref: RH_FORMACAO.ID_ENTIDADE_FORMADORA > RH_DIC_ENTIDADE_FORMADORA.ID
+Ref: RH_FUNCIONARIOS.COD_SECTOR > GER_DEPARTAMENTOS_SECTORES.COD_SECTOR
+Ref: RH_FUNCIONARIOS.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: RH_FUNCIONARIOS.ESTADO > RH_ESTADOS_FUNC.COD_ESTADO
+Ref: RH_MEDICINA_TRABALHO.ID_ENTIDADE_MEDICA > RH_DIC_ENTIDADE_MEDICA.ID
+Ref: RH_MEDICINA_TRABALHO.ID_ENTIDADE_MEDICA > RH_DIC_ENTIDADE_MEDICA_LOCAIS.ID_ENTIDADE_MEDICA
+Ref: RH_MEDICINA_TRABALHO.ID_FUNCIONARIO > RH_FUNCIONARIOS.COD_FUNC_ORIGEM
+Ref: RH_MEDICINA_TRABALHO.ID_LOCAL > RH_DIC_ENTIDADE_MEDICA_LOCAIS.ID
+Ref: RH_REGISTO_ACOES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: RH_SECTORES.CHEFE1 > RH_FUNCIONARIOS.COD_FUNCIONARIO
+Ref: RH_SECTORES.CHEFE2 > RH_FUNCIONARIOS.COD_FUNCIONARIO
+Ref: RH_SECTORES.COD_TURNO > RH_TURNOS.COD_TURNO
+Ref: RH_SECTORES.LOCAL > GER_LOCAIS.ID
+
+Ref: AB_MOV_MANUTENCAO.ID_TIPO_TIPOLOGIA_DOSIFICADORES > AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES.ID
+Ref: AB_MOV_MANUTENCAO_CAB.ID_TIPO_ADICAO > AB_DIC_TIPO_ADICAO.ID_TIPO_ADICAO
+Ref: AB_MOV_MANUTENCAO_CAB.ID_TIPO_OPERACAO > AB_DIC_TIPO_OPERACAO.ID_TIPO_OPERACAO
+Ref: AB_MOV_MANUTENCAO_LINHA.ID_ADITIVO > AB_DIC_COMPONENTE.ID_COMPONENTE
+Ref: COM_ACORDOS.ID_REFERENCIA > COM_REFERENCIAS.ID
+Ref: GT_MOV_TAREFAS.ID_CAMPO > GER_GRUPO.ID
+Ref: MAN_DIC_DIVISOES.ID_PISO > MAN_DIC_EDIFICIOS.ID
+Ref: MAN_MOV_MANUTENCAO_COMPONENTES.ID_MANUTENCAO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
+Ref: MAN_MOV_PEDIDOS.EQUIPAMENTO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
+Ref: PA_MOV_LINHA.ID_ACCAO > GER_DEPARTAMENTO.ID
+Ref: PIN_DIC_PRODUTOS_RELACIONADOS.ID_PRODUTO > PIN_DIC_TIPO_ACABAMENTO.ID
+Ref: PIN_DIC_TIPO_ACABAMENTO.ID > PIN_DIC_PRODUTOS.ID_TIPO_ACABAMENTO
+Ref: PIN_MOV_RECEITAS.LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PIN_MOV_RECEITAS_LINHAS.ID_REFERENCIA_A > PIN_DIC_TIPO_ACABAMENTO.ID
+Ref: PR_AMOSTRAS_ACCOES.ID_AMOSTRA > PR_AMOSTRAS_CAB.ID_AMOSTRA
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.ID_DERROGACAO > QUA_DERROGACOES.ID_DERROGACAO
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO_FORNECEDOR.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO_FORNECEDOR.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_TAREFA > GT_MOV_TAREFAS.ID_TAREFA
+Ref: REU_REUNIOES_PLANOS_ACCOES.ID_REUNIAO > REU_REUNIOES.ID_REUNIAO
+Ref: RH_MEDICINA_TRABALHO_DOCUMENTOS.ID > RH_DIC_TIPOS_DOCUMENTO_UTZ.ID_TIPO_DOCUMENTO
+Ref: RH_SUGESTOES_PLANOS_ACCOES.ID_SUGESTAO > RH_SUGESTOES.ID
+Ref: AB_DIC_TINA.ID_ZONA > AB_DIC_ZONA.ID_ZONA
+Ref: AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA > AB_MOV_MANUTENCAO_LINHA.ID_UNIDADE1
+Ref: AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA > AB_MOV_MANUTENCAO_LINHA.ID_UNIDADE2
+Ref: AB_MOV_ANALISE.ID_ANALISE > AB_MOV_MANUTENCAO_CAB.ID_ANALISE
+Ref: COM_CONTRATOS.ID > COM_ACORDOS.ID
+Ref: COM_REFERENCIAS.ID > COM_ACORDOS.ID
+Ref: GER_FAVORITOS.ID_UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > GT_MOV_TAREFAS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS.ID_UTILIZADOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_DIC_EQUIPAS_UTILIZADORES.ID_UTILIZADOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PE_MOV_CAB.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PIN_MOV_RECEITAS_REFERENCIAS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES.ID_UTILIZADOR
+Ref: PA_MOV_CAB.ID_LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PE_PLANOS_ASSOCIADOS.ID_PLANO_CAB > PA_MOV_CAB.ID_PLANO_CAB
+Ref: PIN_DIC_POTES.ID_TIPO_ACABAMENTO > PIN_DIC_TIPO_ACABAMENTO.ID
+Ref: PIN_DIC_PRODUTOS.ID > PIN_MOV_RECEITAS_LINHAS.ID_TIPO_ACABAMENTO
+Ref: PIN_MOV_RECEITAS.ID > PIN_MOV_RECEITAS_REFERENCIAS.ID
+Ref: RH_DIC_CACIFOS.LOCAL > GER_LOCAIS.ID
+Ref: RH_DIC_CACIFOS.UTILIZADOR > RH_FUNCIONARIOS.COD_FUNCIONARIO

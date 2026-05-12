@@ -1,0 +1,137 @@
+﻿// Module: AT
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table AT_ACCOES {
+  ID_ACCAO int [pk, increment]
+  DESCRICAO_ACCAO varchar(255)
+  RESPONSAVEL varchar(255)
+  DATA_IMPLEMENTACAO varchar(255)
+  RECURSOS varchar(255)
+  ID_OCORRENCIA int
+
+}
+
+Table AT_DIC_CAUSAS_ACIDENTE {
+  ID_CAUSAS_ACIDENTE int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table AT_ENTREVISTAS {
+  ID_ENTREVISTA int [pk, increment]
+  ID_OCORRENCIA int
+  NOME varchar(255)
+  FUNCAO varchar(255)
+  TESTEMUNHO varchar(255)
+
+}
+
+Table AT_ENTREVISTAS_RESPONSAVEL {
+  ID_ENTREVISTA int [pk, increment]
+  ID_OCORRENCIA int
+  NOME varchar(255)
+  FUNCAO varchar(255)
+  OBSERVACOES varchar(255)
+
+}
+
+Table AT_OCORRENCIAS {
+  ID_OCORRENCIA int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  NOME_PESSOA varchar(255)
+  NUMERO_PESSOA varchar(255)
+  IDADE_PESSOA int
+  NACIONALIDADE varchar(255)
+  FUNCAO_PESSOA varchar(255)
+  DEPARTAMENTO varchar(255)
+  TIPO_RELATORIO varchar(255)
+  COM_BAIXA bit
+  TIPO_ACIDENTE varchar(255)
+  NOTIFICOU_SEGURADORA bit
+  COMPANHIA varchar(255)
+  N_APOLICE varchar(255)
+  DATA_ACIDENTE date
+  HORA_ACIDENTE varchar(255)
+  LOCAL_ACIDENTE varchar(255)
+  NUMERO_PESSOAS_ENVOLVIDAS int
+  NUMERO_VITIMAS int
+  DESCRICAO_ACIDENTE varchar(255)
+  GRAU_LESAO varchar(255)
+  GEROU_IT bit
+  GEROU_IP bit
+  DANOS_MATERIAS varchar(255)
+  TRABALHADORES_SIMILARES bit
+  PA_CABECA bit
+  PA_OLHOS bit
+  PA_PESCOCO bit
+  PA_COSTAS bit
+  PA_TORAX bit
+  PA_ABDOMEN bit
+  PA_OMBRO bit
+  PA_ANTEBRACO bit
+  PA_PE bit
+  PA_DEDOS_PE bit
+  PA_LOCALIZACOES_MULTIPLAS bit
+  PA_ANCA bit
+  PA_JOELHO bit
+  PA_MAO bit
+  PA_OUTRO bit
+  PA_OUTRO_TEXTO varchar(255)
+  RECOLHA_EVIDENCIAS varchar(255)
+  TESTEMUNHAS bit
+  NUMERO_TESTEMUNHAS int
+  MEDIDAS_FORMACAO varchar(255)
+  MEDIDAS_ORGANIZACAO varchar(255)
+  MEDIDAS_PROTECAO_COL varchar(255)
+  MEDIDAS_PROTECAO_IND varchar(255)
+  MEDIDAS_OUTRAS varchar(255)
+  DIAGRAMA_TOP_ESQ varchar(255)
+  DIAGRAMA_TOP_DIR varchar(255)
+  DIAGRAMA_DIR varchar(255)
+  DIAGRAMA_BT_ESQ varchar(255)
+  DIAGRAMA_BT_DIR varchar(255)
+  DESCRICAO_CAUSAS varchar(255)
+  ANALISE_EFICACIA varchar(255)
+  EFICAZ bit
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  ESTADO varchar(255)
+  INATIVO bit
+  VINCULO bit
+  DIAS_PERDIDOS int
+  CL_CORTE bit
+  CL_FERIDA bit
+  CL_CONTUSAO bit
+  CL_FRATURA bit
+  CL_HEMATOMA bit
+  CL_LESAO_MUSCULO_ESQUELETICA bit
+  CL_INTOXICACAO_ENVENENAMENTO bit
+  CL_ENTORSE_LUXACAO bit
+  CL_LESAO_OCULAR bit
+  CL_ESMAGAMENTO bit
+  CL_PERFURACAO bit
+  CL_ENTATALAMENTO bit
+  CL_AMPUTACAO bit
+  CL_QUEIMADURA bit
+  CL_OUTRO bit
+  CL_OUTRO_TEXTO varchar(255)
+  NUMERADOR_OCORRENCIAS varchar(255)
+
+}
+
+Table AT_TESTEMUNHAS {
+  ID_TESTEMUNHA int [pk, increment]
+  ID_OCORRENCIA int
+  NOME varchar(255)
+  NUMERO varchar(255)
+
+
+}

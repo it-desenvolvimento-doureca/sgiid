@@ -1,0 +1,114 @@
+﻿// Module: REU
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table REU_AMBITOS_REUNIOES {
+  ID_AMBITO int
+  DESCRICAO varchar(255)
+  DATA_ULTIMA_REALIZADA datetime
+  DATA_PROXIMA_REALIZADA datetime
+  PRAZO_DISP_ATA int
+  DATA_INICIO date
+  HORA_INICIO varchar(255)
+  TEMPO_ESTIMADO varchar(255)
+  MEIO_REALIZACAO varchar(255)
+  LINK_REUNIAO varchar(255)
+  TIPO_FIM int
+  OCORRENCIAS int
+  TOTAL_OCORRENCIAS int
+  DATA_FINAL date
+  TIPO_REPETICAO int
+  REPETIR int
+  DIAS_SEMANA varchar(255)
+  UTZ_CRIA int
+  UTZ_MODIF int
+  UTZ_ANULA int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  DATA_ANULA datetime
+  INATIVO bit
+
+}
+
+Table REU_AMBITOS_REUNIOES_PARTICIPANTES {
+  ID int
+  ID_AMBITO int
+  ID_UTILIZADOR int
+  EMAIL varchar(255)
+
+}
+
+Table REU_REUNIOES {
+  ID_REUNIAO int
+  ID_AMBITO int
+  ASSUNTO varchar(255)
+  DESCRICAO varchar(255)
+  DURACAO varchar(255)
+  LOCAL int
+  UTZ_CRIA int
+  UTZ_MODIF int
+  UTZ_ANULA int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  DATA_ANULA datetime
+  INATIVO bit
+  HORA_REUNIAO varchar(255)
+  DATA_REUNIAO datetime
+  RESPONSAVEL int
+
+}
+
+Table REU_REUNIOES_FICHEIROS {
+  ID int
+  ID_REUNIAO int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  UTZ_CRIA int
+  UTZ_MODIF int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+Table REU_REUNIOES_PARTICIPANTES {
+  ID int
+  ID_REUNIAO int
+  ID_UTILIZADOR int
+  EMAIL varchar(255)
+  PRESENTE bit
+
+}
+
+Table REU_REUNIOES_PLANOS_ACCOES {
+  ID int
+  RESPONSAVEL int
+  DATA_PREVISTA date
+  DATA_REAL date
+  ID_ACCAO int
+  ID_REUNIAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  TIPO varchar(255)
+  TIPO_RESPONSAVEL varchar(255)
+  CONCLUIDO_UTZ int
+  CONCLUIDO_DATA datetime
+  ORDEM int
+  OBSERVACOES varchar(255)
+  ESTADO varchar(255)
+  ID_TAREFA int
+  OBRIGA_EVIDENCIAS bit
+  AREA varchar(255)
+  TIPO_ACAO int
+  ITEM varchar(255)
+
+
+}
+Ref: REU_REUNIOES_PLANOS_ACCOES.ID_REUNIAO > REU_REUNIOES.ID_REUNIAO

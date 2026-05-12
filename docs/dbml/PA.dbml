@@ -1,0 +1,146 @@
+﻿// Module: PA
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table PA_DIC_AMBITOS {
+  ID_AMBITO int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  EDITAVEL bit
+
+}
+
+Table PA_MOV_CAB {
+  ID_PLANO_CAB int
+  ID_LINHA int
+  DEPARTAMENTO_ORIGEM int
+  REFERENCIA varchar(255)
+  DESIGN_REFERENCIA varchar(255)
+  DESCRICAO varchar(255)
+  ESTADO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  DATA_OBJETIVO date
+  DATA_ORIGEM date
+  AMBITO int
+  ORIGEM varchar(255)
+  UNIDADE int
+  OBJETIVO varchar(255)
+  ID_PLANO_ESTRATEGICO int
+
+}
+
+Table PA_MOV_CAB_HISTORICO {
+  ID int
+  ID_PLANO_CAB int
+  TIPO_ALTERACAO varchar(255)
+  VALOR_ANTERIOR varchar(255)
+  VALOR_NOVO varchar(255)
+  JUSTIFICACAO varchar(255)
+  ESTADO_PE varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+
+}
+
+Table PA_MOV_FICHEIROS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_PLANO_CAB int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+
+}
+
+Table PA_MOV_LINHA {
+  ID_PLANO_LINHA int
+  ID_ACCAO int
+  ID_PLANO_CAB int
+  RESPONSAVEL int
+  DESCRICAO varchar(255)
+  DEPARTAMENTO int
+  DATA_ACCAO date
+  HORA_ACCAO varchar(255)
+  FASTRESPONSE bit
+  PRIORIDADE int
+  ESTADO varchar(255)
+  DATA_CONTROLADO datetime
+  DATA_APROVADO datetime
+  DATA_CANCELADO datetime
+  UTZ_CONTROLADO int
+  UTZ_APROVADO int
+  UTZ_CANCELADO int
+  TIPO_ACAO int
+  ITEM varchar(255)
+  UNIDADE int
+  REFERENCIA varchar(255)
+  DESIGN_REFERENCIA varchar(255)
+  CAUSA varchar(255)
+  INVESTIMENTOS varchar(255)
+  EFICACIA_CUMPRIMENTO_OBJETIVO varchar(255)
+  SEGUIR_LINHA bit
+  OBJETIVO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  ORIGEM varchar(255)
+  ORDENACAO varchar(255)
+  DATA_ACCAO_ORIGINAL date
+  HORA_ACCAO_ORIGINAL varchar(255)
+  JUSTIFICACAO varchar(255)
+  DATA_INICIO_ACCAO date
+  HORA_INICIO_ACCAO varchar(255)
+  INATIVO bit
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  METODO_AVALIACAO_EFICACIA varchar(255)
+
+}
+
+Table PA_MOV_LINHA_HISTORICO {
+  ID int
+  ID_PLANO_CAB int
+  ID_PLANO_LINHA int
+  TIPO_ALTERACAO varchar(255)
+  DESCRICAO varchar(255)
+  VALOR_ANTERIOR varchar(255)
+  VALOR_NOVO varchar(255)
+  ESTADO_PLANO_MOMENTO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+
+}
+
+Table PA_MOV_SEGUIR_LINHA {
+  ID int
+  ID_PLANO_LINHA int
+  UTILIZADOR int
+  DATA_CRIA datetime
+
+}
+
+// References
+Ref: PA_MOV_CAB.AMBITO > PA_DIC_AMBITOS.ID_AMBITO
+Ref: PA_MOV_CAB.ID_PLANO_CAB > PA_MOV_CAB_HISTORICO.ID_PLANO_CAB
+Ref: PA_MOV_CAB.ID_PLANO_CAB > PA_MOV_LINHA.ID_PLANO_CAB
+Ref: PA_MOV_LINHA.ID_PLANO_LINHA > PA_MOV_LINHA_HISTORICO.ID_PLANO_LINHA
+Ref: PA_MOV_LINHA.ID_PLANO_LINHA > PA_MOV_SEGUIR_LINHA.ID_PLANO_LINHA
+

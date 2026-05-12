@@ -1,0 +1,743 @@
+﻿// Module: RH
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table RH_AVALIACAO_DESEMPENHO {
+  ID int
+  ANO int
+  DATA_CRIA date
+  UTZ_CRIA int
+  DATA_MODIF date
+  UTZ_MODIF int
+  DATA_ANULA date
+  UTZ_ANULA int
+  ATIVO bit
+  TIPO varchar(255)
+  DATA_INICIO date
+  DATA_FIM date
+
+}
+
+Table RH_AVALIACAO_DESEMPENHO_LINHAS {
+  ID int
+  ID_AVALIACAO_DESEMPENHO int
+  ID_CATEGORIA_PROFISSIONAL varchar(255)
+  GRUPO_COLABORADORES varchar(255)
+  ID_GRUPO_COLABORADORES int
+  NUMERO_FUNCIONARIO varchar(255)
+  NOME varchar(255)
+  SECCAO varchar(255)
+  CHEFIA_DIRETA varchar(255)
+  LOCAL varchar(255)
+  CATEGORIA_PROFISSIONAL varchar(255)
+  DATA_ADMISSAO date
+  DATA_CESSACAO date
+  ESTADO varchar(255)
+  VENCIMENTO_ANUAL decimal(18,4)
+  VENCIMENTO decimal(18,4)
+  PERCENTUAL_VENCIMENTO_ANUAL decimal(18,4)
+  ID_VENCIMENTO_ANUAL int
+  AVALIACAO_DESEMPENHO decimal(18,4)
+  PERCENTUAL_AVALIACAO_DESEMPENHO decimal(18,4)
+  ID_AVALIACAO_DESEMPENHO_CRIT int
+  ASSIDUIDADE decimal(18,4)
+  PERCENTUAL_ASSIDUIDADE decimal(18,4)
+  ID_ASSIDUIDADE int
+  PONTUALIDADE decimal(18,4)
+  PERCENTUAL_PONTUALIDADE decimal(18,4)
+  ID_PONTUALIDADE int
+  POLIVALENCIA decimal(18,4)
+  PERCENTUAL_POLIVALENCIA decimal(18,4)
+  ID_POLIVALENCIA int
+  QUALIDADE_INCIDENTES decimal(18,4)
+  PERCENTUAL_QUALIDADE_INCIDENTES decimal(18,4)
+  ID_QUALIDADE_INCIDENTES int
+  PLANO_FERIAS decimal(18,4)
+  PERCENTUAL_PLANO_FERIAS decimal(18,4)
+  ID_PLANO_FERIAS int
+  HORAS_EXTRA decimal(18,4)
+  PERCENTUAL_HORAS_EXTRA decimal(18,4)
+  ID_HORAS_EXTRA int
+  PONTUACAO_FINAL decimal(18,4)
+  PONTUACAO_FINAL_PERC decimal(18,4)
+  LIMITE_MAXIMO_PREMIO_PCT decimal(18,4)
+  VALOR_MAXIMO_PREMIO decimal(18,4)
+  MESES_TRABALHADOS decimal(18,4)
+  PREMIO_PCT decimal(18,4)
+  VALOR_PREMIO decimal(18,4)
+  VALOR_PREMIO_GRUPO decimal(18,4)
+  VALOR_PREMIO_ANO_ANTERIOR decimal(18,4)
+  VALOR_PREMIO_CORRIGIDO decimal(18,4)
+
+}
+
+Table RH_CANDIDATURAS {
+  ID int
+  NOME varchar(255)
+  EMAIL varchar(255)
+  DATANASCIMENTO varchar(255)
+  GENERO varchar(255)
+  TELEMOVEL varchar(255)
+  DOMICILIO varchar(255)
+  FREGUESIA varchar(255)
+  CONCELHO varchar(255)
+  CODIGOPOSTAL varchar(255)
+  DISTRITO varchar(255)
+  CONTRIBUINTE varchar(255)
+  CARTACONDUCAO varchar(255)
+  TRABALHOUDOURECA varchar(255)
+  CONHECEUDOURECA varchar(255)
+  FUNCOESINTERESSE varchar(255)
+  HABILITACOES varchar(255)
+  AREAFORMACAO varchar(255)
+  ESTABELECIMENTOENSINO varchar(255)
+  ANOCONCLUSAO varchar(255)
+  FORMACOESRELEVANTES varchar(255)
+  CERTIFICADOEMPILHADORES varchar(255)
+  ULTIMAEMPRESA varchar(255)
+  ULTIMAFUNCAO varchar(255)
+  DATAINICIO varchar(255)
+  DATAFIM varchar(255)
+  NOMECV varchar(255)
+  DISPONIBILIDADE varchar(255)
+  CONTEUDOCV_1 varchar(255)
+  CONTEUDOCV_2 varchar(255)
+  DATA_SUBMISSAO datetime
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_CRIA int
+  UTZ_MODIF int
+  ESTADO varchar(255)
+  UTZ_EM_ANALISE int
+  UTZ_REJEITA int
+  UTZ_APROVA int
+  DATA_EM_ANALISE datetime
+  DATA_REJEITA datetime
+  DATA_APROVA datetime
+
+}
+
+Table RH_DADOS_FUNCIONARIO {
+  ID int
+  ID_FUNCIONARIO varchar(255)
+  NOME varchar(255)
+  ESTADO_CIVIL varchar(255)
+  NATURALIDADE varchar(255)
+  NACIONALIDADE varchar(255)
+  SEXO int
+  TELEMOVEL varchar(255)
+  EMAIL varchar(255)
+  DT_ADMISSAO date
+  NIF varchar(255)
+  DT_NASCIMENTO date
+  MORADA varchar(255)
+  CODIGO_POSTAL varchar(255)
+  LOCALIDADE varchar(255)
+  BI_NUM varchar(255)
+  BI_EMISSAO date
+  BI_VALIDADE date
+  NUM_SS varchar(255)
+  ID_SITUACAO int
+  ID_CENTRO_CP varchar(255)
+  ID_PROFISSAO int
+  ID_TP_CONTRATO int
+  ID_HABILITACAO int
+  ID_CAT_PROFISSIONAL varchar(255)
+  ID_CODIGO_POSTAL int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  VENCIMENTO decimal(18,4)
+
+}
+
+Table RH_DIC_AREA_FORMACAO {
+  ID int
+  DESCRICAO varchar(255)
+  DIAS_VALIDADE int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_AVALIACAO_CATEGORIA {
+  ID int
+  VALOR_AVALIACAO_DESEMPENHO decimal(18,4)
+  VALOR_ASSIDUIDADE decimal(18,4)
+  VALOR_PONTUALIDADE decimal(18,4)
+  VALOR_POLIVALENCIA decimal(18,4)
+  VALOR_QUALIDADE decimal(18,4)
+  VALOR_PLANOFERIAS decimal(18,4)
+  VALOR_HORASEXTRA decimal(18,4)
+  DATA_CRIA datetime
+  grupo varchar(255)
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_CACIFOS {
+  ID int [pk, increment]
+  CODIGO varchar(255)
+  TIPO_UTILIZADOR varchar(255)
+  LOCAL int
+  UTILIZADOR int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+  UTZ_APAGA int
+  DATA_APAGA datetime
+  INATIVO bit
+  TIPO_CACIFO int
+
+}
+
+Table RH_DIC_CATEGORIAS_PROFISSIONAIS {
+  ID int
+  NOME varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  PERCENTAGEM_MAX_PREMIO decimal(18,4)
+
+}
+
+Table RH_DIC_CATEGORIAS_PROFISSIONAIS_LINHA {
+  ID int
+  grupoCategorias varchar(255)
+  ID_CATEGORIA varchar(255)
+
+}
+
+Table RH_DIC_CRITERIOS_AVALIACAO {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_CRITERIOS_AVALIACAO_DESEMPENHO {
+  ID int
+  CRITERIO varchar(255)
+  MIN_VALOR int
+  MAX_VALOR int
+  LABEL varchar(255)
+  PONTOS int
+  DATA_MODIF date
+  ID_UTZ int
+
+}
+
+Table RH_DIC_ENTIDADE_FORMADORA {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_ENTIDADE_MEDICA {
+  ID int
+  NOME varchar(255)
+  NIF varchar(255)
+  EMAIL varchar(255)
+  CONTATO varchar(255)
+  OBSERVACOES varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_ENTIDADE_MEDICA_LOCAIS {
+  ID int
+  NOME varchar(255)
+  MORADA varchar(255)
+  LOCALIDADE varchar(255)
+  CODIGO_POSTAL varchar(255)
+  ID_ENTIDADE_MEDICA int
+
+}
+
+Table RH_DIC_EPI {
+  ID_EPI int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+}
+
+Table RH_DIC_EXAMES {
+  ID int
+  NOME varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_GRUPOS_COLABORADORES {
+  ID int
+  NOME varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_GRUPOS_COLABORADORES_LINHA {
+  ID int
+  grupoColaboradores varchar(255)
+  COD_FUNC varchar(255)
+
+}
+
+Table RH_DIC_PARAMETROS {
+  ID int
+  PERECENTAGEM_MAX_PREMIO varchar(255)
+  DATA_MODIF date
+  UTZ_MODIF int
+
+}
+
+Table RH_DIC_PERIOCIDADE_ALERTAS {
+  ID int
+  ALERTA_CONSULTA_MEDICA int
+  ALERTA_DASHBOARD int
+
+}
+
+Table RH_DIC_PREMIOS {
+  ID int
+  ANO int
+  VALOR decimal(18,4)
+  DATA_CRIA datetime
+  grupo varchar(255)
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_SECTORES_ABSENTISMO {
+  ID_SECTOR_ABSENTISMO int
+  NOME varchar(255)
+  LOCAL int
+  POSICAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table RH_DIC_SECTORES_ABSENTISMO_LINHA {
+  ID_SECTOR_ABSENTISMO_LINHA int
+  ID_SECTOR_ABSENTISMO int
+  COD_SECTOR int
+
+}
+
+Table RH_DIC_TIPO_CACIFO {
+  COD_TIPO int [pk, increment]
+  DESIGNACAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RH_DIC_TIPOS_DOCUMENTO {
+  ID int
+  NOME varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+
+}
+
+Table RH_DIC_TIPOS_DOCUMENTO_UTZ {
+  ID int
+  ID_TIPO_DOCUMENTO int
+  ID_UTZ int
+
+}
+
+Table RH_DIC_TIPOS_FALTAS_LINHA {
+  ID int
+  COD_FALTA varchar(255)
+  DESC_FALTA varchar(255)
+
+}
+
+Table RH_DIC_TIPOS_GRATIFICACOES_LINHA {
+  ID int
+  COD_GRATIFICACAO varchar(255)
+  DESC_GRATIFICACAO varchar(255)
+
+}
+
+Table RH_ESTADOS_FUNC {
+  COD_ESTADO int [pk, increment]
+  DESIGNACAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  FALTA_LONGA_DURACAO bit
+
+}
+
+Table RH_EXCLUSAO_TIPO_EXTRA {
+  ID int [pk, increment]
+  TIPO_EXTRA int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RH_FORMACAO {
+  ID int
+  NOME varchar(255)
+  OBJETIVOS varchar(255)
+  ID_AREA_FORMACAO int
+  MODALIDADE int
+  ID_CRITERIOS_AVALIACAO int
+  INTERMO_EXTERNO int
+  ID_ENTIDADE_FORMADORA int
+  FORMADOR varchar(255)
+  DATA_INICIO date
+  DATA_FIM date
+  DURACAO decimal(18,4)
+  HORARIO varchar(255)
+  VALIDADE date
+  OBSERVACOES varchar(255)
+  AVALIACAO_EFICACIA bit
+  AVALIACAO_TEXTO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  AVALIACAO_SATISFACAO bit
+  LINK_FORMULARIO varchar(255)
+  CUSTO_FORMACAO decimal(18,4)
+
+}
+
+Table RH_FORMACAO_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_FORMACAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+
+}
+
+Table RH_FORMACAO_PARTICIPANTES {
+  ID int
+  ID_FORMACAO int
+  ID_FUNCIONARIO varchar(255)
+  NOME_FUNCIONARIO varchar(255)
+  AVALIACAO_FINAL varchar(255)
+  OBSERVACOES varchar(255)
+  EMAIL varchar(255)
+
+}
+
+Table RH_FUNCIONARIOS {
+  COD_FUNCIONARIO int [pk, increment]
+  NOME varchar(255)
+  EMPRESA varchar(255)
+  DATA_ADMISSAO datetime
+  DATA_DEMISSAO datetime
+  ATIVO bit
+  LOCAL varchar(255)
+  RESPONSAVEL varchar(255)
+  COD_SECTOR int
+  NUM_CACIFO int
+  ESTADO int
+  DATA_PREV_RET date
+  DATA_INICIO date
+  DATA_FIM date
+  COD_FUNC_ORIGEM int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  REGISTA_PONTO bit
+  EXPOSTO_RISCOS bit
+  PERIOCIDADE varchar(255)
+  DIRECAO bit
+
+}
+
+Table RH_MEDICINA_TRABALHO {
+  ID int
+  TIPO_CONSULTA int
+  ID_ENTIDADE_MEDICA int
+  ID_LOCAL int
+  EXAMES varchar(255)
+  DATA date
+  ESTADO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  UTZ_ANULA int
+  DATA_ANULA datetime
+  ATIVO bit
+  ID_FUNCIONARIO varchar(255)
+  OBSERVACOES varchar(255)
+  NOTIFICACAO_ENVIADA bit
+
+}
+
+Table RH_MEDICINA_TRABALHO_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_MEDICINA_TRABALHO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+  TIPO_DOCUMENTO int
+
+}
+
+Table RH_PAUSAS {
+  ID int [pk, increment]
+  ID_PAUSA_SILVER varchar(255)
+  DESCRICAO_PAUSA varchar(255)
+  ID_TIPO_PAUSA int
+
+}
+
+Table RH_REGISTO_ACOES {
+  ID_ACAO int
+  ID_FUNCIONARIO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  CONTACTO varchar(255)
+  GERAR_ALERTA datetime
+  ALERTA_GERADO bit
+  ORIGEM varchar(255)
+  DESCRICAO varchar(255)
+  TAMANHO_FICHEIRO float
+  NOME_FICHEIRO varchar(255)
+  DATATYPE_FICHEIRO varchar(255)
+  FICHEIRO varchar(255)
+  FICHEIRO_2 varchar(255)
+  TYPE_FICHEIRO varchar(255)
+
+}
+
+Table RH_SECTORES {
+  COD_SECTOR int [pk, increment]
+  DES_SECTOR varchar(255)
+  COD_TURNO int
+  LOCAL varchar(255)
+  CHEFE1 int
+  CHEFE2 int
+  DATA_INICIO date
+  DATA_FIM date
+  ESTADO bit
+  RACIO_MIN float
+  RACIO_MAX float
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+
+}
+
+Table RH_SUGESTOES {
+  ID int
+  ASSUNTO varchar(255)
+  DESCRICAO varchar(255)
+  OBSERVACOES varchar(255)
+  CODIGO varchar(255)
+  ESTADO varchar(255)
+  MOTIVO_REJEICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+  IP varchar(255)
+  DATA_IMPLEMENTADA datetime
+  DATA_PLANEADA datetime
+  DATA_REJEITADA datetime
+  UTZ_IMPLEMENTADA int
+  UTZ_PLANEADA int
+  UTZ_REJEITADA int
+
+}
+
+Table RH_SUGESTOES_ATIVIDADE {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  ID_SUGESTAO int
+
+}
+
+Table RH_SUGESTOES_DOCUMENTOS {
+  ID int
+  TAMANHO float
+  NOME varchar(255)
+  CAMINHO varchar(255)
+  DESCRICAO varchar(255)
+  TIPO varchar(255)
+  ID_SUGESTAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATATYPE varchar(255)
+  FICHEIRO_1 varchar(255)
+  FICHEIRO_2 varchar(255)
+  ORDEM int
+
+}
+
+Table RH_SUGESTOES_PLANOS_ACCOES {
+  ID int [pk, increment]
+  RESPONSAVEL int
+  DATA_PREVISTA date
+  ORDEM int
+  DATA_REAL date
+  ID_ACCAO int
+  ID_SUGESTAO int
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TIPO varchar(255)
+  TIPO_RESPONSAVEL varchar(255)
+  CONCLUIDO_UTZ int
+  CONCLUIDO_DATA datetime
+  OBSERVACOES varchar(255)
+  ESTADO varchar(255)
+  AREA varchar(255)
+  ID_TAREFA int
+  OBRIGA_EVIDENCIAS bit
+
+}
+
+Table RH_TIPOS_PAUSA {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+
+}
+
+Table RH_TURNOS {
+  COD_TURNO int [pk, increment]
+  DES_TURNO varchar(255)
+  DATA_INICIO date
+  HORA_INICIO varchar(255)
+  DATA_FIM date
+  HORA_FIM varchar(255)
+  ESTADO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TURNO_CONTINUO bit
+
+}
+
+// References
+Ref: RH_DIC_CACIFOS.TIPO_CACIFO > RH_DIC_TIPO_CACIFO.COD_TIPO
+Ref: RH_DIC_SECTORES_ABSENTISMO_LINHA.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: RH_DIC_TIPOS_DOCUMENTO.ID > RH_DIC_TIPOS_DOCUMENTO_UTZ.ID_TIPO_DOCUMENTO
+Ref: RH_FORMACAO.ID > RH_FORMACAO_PARTICIPANTES.ID_FORMACAO
+Ref: RH_FORMACAO.ID_AREA_FORMACAO > RH_DIC_AREA_FORMACAO.ID
+Ref: RH_FORMACAO.ID_CRITERIOS_AVALIACAO > RH_DIC_CRITERIOS_AVALIACAO.ID
+Ref: RH_FORMACAO.ID_ENTIDADE_FORMADORA > RH_DIC_ENTIDADE_FORMADORA.ID
+Ref: RH_FUNCIONARIOS.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: RH_FUNCIONARIOS.ESTADO > RH_ESTADOS_FUNC.COD_ESTADO
+Ref: RH_MEDICINA_TRABALHO.ID_ENTIDADE_MEDICA > RH_DIC_ENTIDADE_MEDICA.ID
+Ref: RH_MEDICINA_TRABALHO.ID_ENTIDADE_MEDICA > RH_DIC_ENTIDADE_MEDICA_LOCAIS.ID_ENTIDADE_MEDICA
+Ref: RH_MEDICINA_TRABALHO.ID_FUNCIONARIO > RH_FUNCIONARIOS.COD_FUNC_ORIGEM
+Ref: RH_MEDICINA_TRABALHO.ID_LOCAL > RH_DIC_ENTIDADE_MEDICA_LOCAIS.ID
+Ref: RH_SECTORES.CHEFE1 > RH_FUNCIONARIOS.COD_FUNCIONARIO
+Ref: RH_SECTORES.CHEFE2 > RH_FUNCIONARIOS.COD_FUNCIONARIO
+Ref: RH_SECTORES.COD_TURNO > RH_TURNOS.COD_TURNO
+
+Ref: RH_MEDICINA_TRABALHO_DOCUMENTOS.ID > RH_DIC_TIPOS_DOCUMENTO_UTZ.ID_TIPO_DOCUMENTO
+Ref: RH_SUGESTOES_PLANOS_ACCOES.ID_SUGESTAO > RH_SUGESTOES.ID
+Ref: RH_DIC_CACIFOS.UTILIZADOR > RH_FUNCIONARIOS.COD_FUNCIONARIO

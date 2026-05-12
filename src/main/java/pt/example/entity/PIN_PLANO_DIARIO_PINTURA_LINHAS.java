@@ -44,6 +44,12 @@ public class PIN_PLANO_DIARIO_PINTURA_LINHAS {
 	private Boolean MANUAL;
 	@JsonProperty("COD_REFERENCIA")
 	private String COD_REFERENCIA;
+	@JsonProperty("NOTA")
+	private String NOTA;
+	@JsonProperty("TIPO_LINHA")
+	private String TIPO_LINHA;
+	@JsonProperty("COR")
+	private String COR;
 
 	public Integer getID_PLANO_DIARIO_PINTURA_LINHA() {
 		return ID_PLANO_DIARIO_PINTURA_LINHA;
@@ -163,5 +169,29 @@ public class PIN_PLANO_DIARIO_PINTURA_LINHAS {
 	
 	public void setCOD_REFERENCIA(String cOD_REFERENCIA) {
 		COD_REFERENCIA = cOD_REFERENCIA;
+	}
+
+	public String getNOTA() {
+		return NOTA;
+	}
+
+	public void setNOTA(String nOTA) {
+		NOTA = nOTA;
+	}
+
+	public String getTIPO_LINHA() {
+		return TIPO_LINHA;
+	}
+
+	public void setTIPO_LINHA(String tIPO_LINHA) {
+		TIPO_LINHA = tIPO_LINHA;
+	}
+
+	public String getCOR() {
+		return COR;
+	}
+
+	public void setCOR(String cOR) {
+		COR = cOR;
 	}
 }

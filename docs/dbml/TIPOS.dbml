@@ -1,0 +1,15 @@
+﻿// Module: TIPOS
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table TIPOS_OCORRENCIA {
+  ID_TIPO int [pk, increment]
+  DESCRICAO varchar(255)
+  COR varchar(255)
+  GRAU int
+  CODIGO varchar(255)
+  DATA_MODIF datetime
+  UTZ_MODIF int
+
+
+}

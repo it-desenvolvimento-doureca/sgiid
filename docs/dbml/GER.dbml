@@ -1,0 +1,480 @@
+﻿// Module: GER
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table GER_ANALISES {
+  ID int [pk, increment]
+  ID_PAI int
+  LINK varchar(255)
+  DESCRICAO varchar(255)
+  ATIVO bit
+  MODULO int
+
+}
+
+Table GER_ARMAZEM {
+  ID_ARMAZEM int [pk, increment]
+  COD_ARMAZEM varchar(255)
+  NOME_ARMAZEM varchar(255)
+
+}
+
+Table GER_ATUALIZACAO_SILVER_BI_TABELAS {
+  ID int [pk, increment]
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  TABELA varchar(255)
+  DIAS varchar(255)
+  TOTAL bit
+  ATIVO bit
+  BASE_DE_DADOS varchar(255)
+  DIA_DA_SEMANA int
+  HORAS varchar(255)
+  TIPO_OCORRENCIA int
+  DATA_INICIAL date
+  DATA_ATUALIZACAO datetime
+
+}
+
+Table GER_CAIXAS_EMAIL {
+  ID int
+  EMAIL varchar(255)
+  UTILIZADOR varchar(255)
+  PALAVRA_CHAVE varchar(255)
+  ATIVA bit
+  PROCESSA_INBOX_INICIAL bit
+  MOVE_PARA_PASTA_LIDAS bit
+  NOME_PASTA_LIDAS varchar(255)
+
+}
+
+Table GER_CAMPOS_DISP {
+  ID int [pk, increment]
+  ID_EVENTO_CONF int
+  DESCRICAO_CAMPO varchar(255)
+  NOME_CAMPO varchar(255)
+
+}
+
+Table GER_CONF_CONSUMOS_SILVER {
+  ID_CONF int [pk, increment]
+  SECCAO_MANUTENCAO varchar(255)
+  SUBSECCAO_MANUTENCAO varchar(255)
+  REF_COMPOSTO_MANUTENCAO varchar(255)
+
+}
+
+Table GER_CONF_CONSUMOS_SILVER_OF {
+  ID_CONF_OF int [pk, increment]
+  ID_CONF int
+  OF_NUM varchar(255)
+  TIPO varchar(255)
+  DATA date
+
+}
+
+Table GER_DEPARTAMENTO {
+  ID int [pk, increment]
+  ID_UTZ int
+  DESCRICAO varchar(255)
+  INATIVO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_APAGA datetime
+  UTZ_APAGA int
+  MODULO varchar(255)
+  LOCAL int
+
+}
+
+Table GER_DEPARTAMENTOS_SECTORES {
+  ID_DEPARTAMENTOS_SECTORES int [pk, increment]
+  ID_DEPARTAMENTO int
+  COD_SECTOR int
+
+}
+
+Table GER_DIC_FABRICA {
+  ID_FABRICA int
+  NOME varchar(255)
+
+}
+
+Table GER_DIC_LIMITES_ENCOMENDA {
+  ID_LIMITE int
+  PROREF varchar(255)
+  PRODES varchar(255)
+  CLICOD int
+  ETSNUM varchar(255)
+  ADRNOM varchar(255)
+  QUANT_MIN float
+  QUANT_MAX_SEMANA float
+  DATAINSERT datetime
+
+}
+
+Table GER_DIC_OEM {
+  ID_OEM int
+  NOME varchar(255)
+
+}
+
+Table GER_DIC_PROGRAMA {
+  ID_PROGRAMA int
+  ID_VEICULO int
+  NOME varchar(255)
+
+}
+
+Table GER_DIC_PROJ_CAB {
+  ID_PROJ_CAB int
+  ID_PROGRAMA int
+
+}
+
+Table GER_DIC_PROJ_FAB {
+  ID_PROJ_FAB int
+  ID_PROJ_CAB int
+  ID_FABRICA int
+  PERCENTAGEM float
+
+}
+
+Table GER_DIC_PROJ_REF {
+  ID_PROJ_REF int
+  ID_PROJ_CAB int
+  ID_REF varchar(255)
+  PV bit
+  DESC_REF varchar(255)
+
+}
+
+Table GER_DIC_VEICULO {
+  ID_VEICULO int
+  ID_OEM int
+  NOME varchar(255)
+
+}
+
+Table GER_EVENTOS_CONF {
+  ID_EVENTO int [pk, increment]
+  MODULO int
+  MOMENTO varchar(255)
+  PAGINA varchar(255)
+  ESTADO bit
+  EMAIL_PARA varchar(255)
+  EMAIL_DE varchar(255)
+  EMAIL_ANEXO bit
+  EMAIL_ASSUNTO varchar(255)
+  EMAIL_MENSAGEM varchar(255)
+  OBS varchar(255)
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  EMAIL_ASSUNTO_ENG varchar(255)
+  EMAIL_MENSAGEM_ENG varchar(255)
+  EMAIL_ASSUNTO_FR varchar(255)
+  EMAIL_MENSAGEM_FR varchar(255)
+
+}
+
+Table GER_EVENTOS_DESTINATARIOS {
+  ID int
+  ID_EVENTO int
+  EMAIL_PARA varchar(255)
+  TYPOF varchar(255)
+
+}
+
+Table GER_EVENTOS_PROGRAMADOS {
+  ID int [pk, increment]
+  MODULO int
+  PAGINA varchar(255)
+  MOMENTO varchar(255)
+  ESTADO bit
+  DATA_INICIAL date
+  HORA varchar(255)
+  TIPO_FIM int
+  OCORRENCIAS int
+  TOTAL_OCORRENCIAS int
+  DATA_FINAL date
+  TIPO_REPETICAO int
+  REPETIR int
+  DIAS_SEMANA varchar(255)
+  ENVIA_EMAIL bit
+  EMAIL_PARA varchar(255)
+  EMAIL_ASSUNTO varchar(255)
+  EMAIL_MENSAGEM varchar(255)
+  CRIAR_FICHEIRO bit
+  NOME_RELATORIO varchar(255)
+  QUERY varchar(255)
+  PASTA_DESTINO varchar(255)
+  UTZ_MODIFICACAO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  DATA_MODIFICACAO datetime
+  DATA_ULT_OCORRENCIA date
+  DATA_PROX_OCORRENCIA date
+  OBSERVACOES varchar(255)
+  ANEXA_FICHEIROS bit
+  UTZ_APAGA int
+  DATA_APAGA datetime
+  INATIVO bit
+  UTILIZADOR varchar(255)
+  SENHA varchar(255)
+  DOMINIO varchar(255)
+
+}
+
+Table GER_FAVORITOS {
+  ID_FAVORITO int
+  DESCRICAO varchar(255)
+  URL varchar(255)
+  ORDEM int
+  ID_UTILIZADOR int
+  DATA_CRIA datetime
+
+}
+
+Table GER_FERIADOS {
+  ID_FERIADO int [pk, increment]
+  DESCRICAO varchar(255)
+  DATA date
+  CONTA_FATURACAO bit
+
+}
+
+Table GER_FORNECEDOR {
+  ID_FORNECEDOR int [pk, increment]
+  NUM_FORNECEDOR int
+  NOME_FORNECEDOR varchar(255)
+  OBS varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+
+}
+
+Table GER_GRUPO {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  INATIVO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_APAGA datetime
+  UTZ_APAGA int
+
+}
+
+Table GER_GRUPO_UTZ {
+  ID int [pk, increment]
+  ID_GRUPO int
+  ID_UTZ int
+
+}
+
+Table GER_INFO_PAGINAS {
+  ID int
+  DESCRICAO varchar(255)
+  URL varchar(255)
+  ID_UTILIZADOR int
+  DATA_CRIA datetime
+
+}
+
+Table GER_LOCAIS {
+  ID int [pk, increment]
+  DESCRICAO varchar(255)
+  INATIVO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_APAGA datetime
+  UTZ_APAGA int
+  MORADA varchar(255)
+
+}
+
+Table GER_LOG_EVENTOS {
+  ID_LOG_EVENTOS int [pk, increment]
+  ID_EVENTO int
+  UTZ_ENVIO int
+  TEXTO varchar(255)
+  DATA_ENVIO datetime
+
+}
+
+Table GER_MODULO {
+  ID_MODULO int [pk, increment]
+  NOME_MODULO varchar(255)
+  INATIVO bit
+
+}
+
+Table GER_PARAMETROS {
+  ID int [pk, increment]
+  PASTA_FICHEIRO varchar(255)
+  URL_SILVER varchar(255)
+  URL_JASPER varchar(255)
+  PASTA_ETIQUETAS varchar(255)
+  MODELO_REPORT varchar(255)
+  PASTA_JASPERREPORT varchar(255)
+  TEMPO_PLANEADAS int
+  TEMPO_MAX_PLANEADAS int
+  CARTELAS_ATIVO bit
+  TEMPO_SINCRO_CARTELAS int
+  CAMINHO_LOGS_SILVER varchar(255)
+  TEMPO_SINCRO_LOGS_SILVER int
+  LOGS_SILVER_ATIVO bit
+  UTILIZADOR_LOGS_SILVER varchar(255)
+  DOMINIO_LOGS_SILVER varchar(255)
+  SENHA_LOGS_SILVER varchar(255)
+  PASTA_DESTINO_ERRO varchar(255)
+  ATUALIZACAO_SILVER_BI_ATIVO bit
+  TEMPO_PAUSA_TURNOS_CONTINUOS varchar(255)
+  MODELO_REPORT_PRODUCAO varchar(255)
+  SECTORES_ABSENTISMO varchar(255)
+  TAXA_ABSENTISMO float
+  TAXA_REJEICAO float
+  OBJETIVO_AUDITORIAS decimal(18,4)
+  NUMERO_MANUTENCOES_INICIAR int
+  PRECO_HORA_MANUTENCAO decimal(18,4)
+  PASTA_FICHEIRO_2 varchar(255)
+  CAMINHO_FICHEIRO_PINTURA varchar(255)
+  TEMPO_PLANEADAS_PINTURA int
+  TEMPO_MAX_PLANEADAS_PINTURA int
+
+}
+
+Table GER_PERFIL_CAB {
+  ID_PERFIL_CAB int [pk, increment]
+  ID_MODULO int
+  NOME_PERFIL varchar(255)
+  INATIVO bit
+
+}
+
+Table GER_PERFIL_LIN {
+  ID_PERFIL_LIN int [pk, increment]
+  ID_PERFIL_CAB int
+  ID_CAMPO varchar(255)
+  PARTIALSELECTED bit
+
+}
+
+Table GER_POSTOS {
+  ID_POSTO int [pk, increment]
+  DESCRICAO varchar(255)
+  IMPRESSORA varchar(255)
+  IP_POSTO varchar(255)
+  IP_IMPRESSORA varchar(255)
+  NOME_IMPRESSORA varchar(255)
+  NOME_IMPRESSORA_SILVER varchar(255)
+
+}
+
+Table GER_REFERENCIAS_FASTRESPONSE_REJEICOES {
+  ID int
+  DATA date
+  REFERENCIA varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+
+}
+
+Table GER_REGRAS_EMAIL {
+  ID int
+  ID_CAIXA int
+  TIPO varchar(255)
+  TEXTO varchar(255)
+
+}
+
+Table GER_SECCAO {
+  ID int [pk, increment]
+  ID_DEPARTAMENTO int
+  DESCRICAO varchar(255)
+  INATIVO bit
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  DATA_APAGA datetime
+  UTZ_APAGA int
+
+}
+
+Table GER_SECCAO_CHEFES {
+  ID int [pk, increment]
+  ID_SECCAO int
+  ID_UTZ int
+
+}
+
+Table GER_SECCAO_UTZ {
+  ID int [pk, increment]
+  ID_SECCAO int
+  ID_UTZ int
+
+}
+
+Table GER_UTILIZADORES {
+  ID_UTILIZADOR int [pk, increment]
+  LOGIN varchar(255)
+  NOME_UTILIZADOR varchar(255)
+  PASSWORD varchar(255)
+  EMAIL varchar(255)
+  COD_UTZ varchar(255)
+  DATA_CRIA datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  ADMIN bit
+  USER_JASPER varchar(255)
+  PASS_JASPER varchar(255)
+  USER_WINDOWS varchar(255)
+  TELEFONE varchar(255)
+  AREA varchar(255)
+  TIPO_LISTA_FAVORITOS varchar(255)
+  BLOQUEADO bit
+
+}
+
+Table GER_UTZ_PERFIL {
+  ID_PERFIL_UTZ int [pk, increment]
+  ID_UTZ int
+  ID_PERFIL int
+
+}
+
+Table GER_VISTAS {
+  ID int [pk, increment]
+  ID_UTZ int
+  COLSTATE varchar(255)
+  FILTERSTATE varchar(255)
+  GROUPSTATE varchar(255)
+  SORTSTATE varchar(255)
+  DESCRICAO varchar(255)
+  FAMILIAS varchar(255)
+  PAGINA int
+
+}
+
+// References
+Ref: GER_DEPARTAMENTOS_SECTORES.ID_DEPARTAMENTO > GER_DEPARTAMENTO.ID
+Ref: GER_DIC_PROGRAMA.ID_VEICULO > GER_DIC_VEICULO.ID_VEICULO
+Ref: GER_DIC_PROJ_CAB.ID_PROGRAMA > GER_DIC_PROGRAMA.ID_PROGRAMA
+Ref: GER_DIC_VEICULO.ID_OEM > GER_DIC_OEM.ID_OEM
+Ref: GER_GRUPO.ID > GER_GRUPO_UTZ.ID_GRUPO
+Ref: GER_GRUPO_UTZ.ID_UTZ > GER_UTILIZADORES.ID_UTILIZADOR
+
+Ref: GER_FAVORITOS.ID_UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR

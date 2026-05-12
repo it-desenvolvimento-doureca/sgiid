@@ -2546,6 +2546,14 @@ public class SIRB_3 {
 		return dao20.getall2();
 	}
 
+	@GET
+	@Path("/getPIN_MOV_RECEITAS_PLANO")
+	@Produces("application/json")
+	@SuppressWarnings("rawtypes")
+	public List getPIN_MOV_RECEITAS_PLANO() {
+		return dao20.getReceitasPlano();
+	}
+
 	@DELETE
 	@Path("/deletePIN_MOV_RECEITAS/{id}/{versao}")
 	public void deletePIN_MOV_RECEITAS(@PathParam("id") Integer id, @PathParam("versao") Integer versao) {

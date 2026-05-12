@@ -1,0 +1,54 @@
+﻿// Module: COMU
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table COMU_DIC_CATEGORIAS {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  ATIVO bit
+
+}
+
+Table COMU_FICHEIROS {
+  ID int
+  NOME_FICHEIRO varchar(255)
+  ORIGINAL_NAME varchar(255)
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  ID_FICHEIRO varchar(255)
+  ID_PASTA varchar(255)
+  TIPO_FICHEIRO varchar(255)
+  DATA_INICIO date
+  DATA_FIM date
+  TEMPO int
+
+}
+
+Table COMU_TICKERS {
+  ID int
+  ID_CATEGORIA int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_MODIF datetime
+  UTZ_MODIF int
+  DATA_ANULA datetime
+  UTZ_ANULA int
+  INATIVO bit
+  DATA_INICIO date
+  DATA_FIM date
+
+
+}

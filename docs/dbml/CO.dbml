@@ -1,0 +1,62 @@
+﻿// Module: CO
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table CO_ANALISE_CLIENTES {
+  ID int
+  CLICOD varchar(255)
+  ETSNUM varchar(255)
+  PROREF varchar(255)
+  ID_LINHA int
+  STOCK_CLIENTE decimal(18,4)
+  DATA_STOCK_CLIENTE date
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+}
+
+Table CO_ANALISE_CLIENTES_ACCOES {
+  ID int
+  CLICOD varchar(255)
+  ETSNUM varchar(255)
+  PROREF varchar(255)
+  DESCRICAO varchar(255)
+  QUEM varchar(255)
+  DATA date
+  ESTADO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+}
+
+Table CO_ANALISE_CLIENTES_OBSERVACOES {
+  ID int
+  CLICOD varchar(255)
+  ETSNUM varchar(255)
+  PROREF varchar(255)
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+}
+
+Table CO_ANALISE_CLIENTES_QUANTIDADE {
+  ID int
+  CLICOD varchar(255)
+  ETSNUM varchar(255)
+  PROREF varchar(255)
+  QUANTIDADE decimal(18,4)
+  ANO int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_MODIF int
+  DATA_MODIF datetime
+
+
+}

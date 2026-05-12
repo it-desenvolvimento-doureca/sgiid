@@ -1,0 +1,263 @@
+﻿// Module: COM
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table COM_ACORDOS {
+  ID int
+  VERSAO int
+  ID_REFERENCIA int
+  OBSERVACOES varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  ID_CONTRATO int
+  SOP date
+  EOP date
+  PRECO_BASE decimal(18,4)
+  DATA_FECHO datetime
+  UTZ_FECHO int
+  ESTADO varchar(255)
+  DATA_FECHO_LTA datetime
+  UTZ_FECHO_LTA int
+  DATA_FECHO_AMORTIZACOES datetime
+  UTZ_FECHO_AMORTIZACOES int
+
+}
+
+Table COM_ACORDOS_ACTIVIDADES {
+  ID int
+  ID_ACORDO int
+  DATA_ATIVIDADE datetime
+  UTILIZADOR int
+  DESCRICAO varchar(255)
+  OBSERVACAO varchar(255)
+  PRECO decimal(18,4)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  DATA_ULT_MODIF datetime
+  UTZ_ULT_MODIF int
+  TAMANHO_FICHEIRO float
+  NOME_FICHEIRO varchar(255)
+  DATATYPE_FICHEIRO varchar(255)
+  FICHEIRO varchar(255)
+  FICHEIRO_2 varchar(255)
+  TYPE_FICHEIRO varchar(255)
+  GERAR_ALERTA datetime
+  ALERTA_GERADO bit
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_AMORTIZACOES {
+  ID_ACORDO int
+  DATA_INICIO date
+  QUANTIDADE int
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  OBSERVACAO varchar(255)
+  VALOR decimal(18,4)
+  DATA_FIM_ESTIMADA date
+  ID int
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_ANEXOS {
+  ID int
+  ID_ACORDO int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  TAMANHO_FICHEIRO float
+  NOME_FICHEIRO varchar(255)
+  DATATYPE_FICHEIRO varchar(255)
+  FICHEIRO varchar(255)
+  FICHEIRO_2 varchar(255)
+  TYPE_FICHEIRO varchar(255)
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_HISTORICO {
+  ID int
+  DESCRICAO varchar(255)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ID_ACORDO int
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_LTA {
+  ID int
+  ID_ACORDO int
+  DATA_INICIO date
+  DATA_FIM date
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  VALOR_LTA decimal(18,4)
+  OBSERVACAO varchar(255)
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_PRECOS {
+  ID int
+  ID_ACORDO int
+  DATA_INICIO date
+  DATA_FIM date
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  OBSERVACAO varchar(255)
+  PRECO decimal(18,4)
+  VERSAO int
+
+}
+
+Table COM_ACORDOS_VOLUMES {
+  ID int
+  ANO varchar(255)
+  VALOR decimal(18,4)
+  ID_ACORDO int
+  VERSAO int
+
+}
+
+Table COM_BUDGETS {
+  ID int
+  VERSAO int
+  VERSAO_ATIVA bit
+  ANO int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  DATA_ANULA datetime
+  UTZ_CRIA int
+  UTZ_MODIF int
+  UTZ_ANULA int
+  ATIVO bit
+  ESTADO varchar(255)
+
+}
+
+Table COM_BUDGETS_ANALISES {
+  ID int
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table COM_BUDGETS_LINHAS {
+  ID int
+  ID_BUDGET int
+  REFERENCE_SALES varchar(255)
+  CUSTOMER_GROUP int
+  CUSTOMER_ID varchar(255)
+  CUSTOMER_NAME varchar(255)
+  LOCATION_REFERENCE varchar(255)
+  LOCATION_NAME varchar(255)
+  REFERENCE_INTERNAL varchar(255)
+  REFERENCE_CUSTOMER varchar(255)
+  REFERENCE_NAME_SALES varchar(255)
+  REFERENCE_NAME_INTERNAL varchar(255)
+  BUDGET_YEAR decimal(18,4)
+  TOTAL_CONTRACT_YEAR decimal(18,4)
+  QUANTITY_YEAR decimal(18,4)
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_CRIA int
+  UTZ_MODIF int
+  SOP_DATE datetime
+  VERSAO_BUDGET int
+
+}
+
+Table COM_CONTRATOS {
+  ID int
+  N_CONTRATO varchar(255)
+  DATA_CONTRATO date
+  N_CLIENTE int
+  NOME_CLIENTE varchar(255)
+  MORADA_CLIENTE varchar(255)
+  COD_MORADA varchar(255)
+  OBSERVACOES varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  CONTRATO_SILVER varchar(255)
+  DESC_CONTRATO_SILVER varchar(255)
+  CONTRIBUINTE varchar(255)
+
+}
+
+Table COM_CUSTOMER_GROUPS {
+  ID int
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table COM_CUSTOMERS_GROUPS {
+  ID int
+  ID_CLIENTE varchar(255)
+  NOME_CLIENTE varchar(255)
+  ID_CUSTOMER_GROUP varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  ATIVO bit
+
+}
+
+Table COM_REFERENCIAS {
+  ID int
+  COD_REFERENCIA varchar(255)
+  DESCRICAO varchar(255)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+  DATA_ANULACAO datetime
+  UTZ_ANULACAO int
+  INATIVO bit
+  OBSERVACOES varchar(255)
+
+}
+
+Table COM_REFERENCIAS_SILVER {
+  ID int
+  ID_REFERENCIA int
+  COD_REFERENCIA_SILVER varchar(255)
+  DESC_REFERENCIA_SILVER varchar(255)
+
+}
+
+// References
+Ref: COM_ACORDOS.ID_CONTRATO > COM_CONTRATOS.ID
+Ref: COM_BUDGETS.ID > COM_BUDGETS_LINHAS.ID_BUDGET
+
+Ref: COM_ACORDOS.ID_REFERENCIA > COM_REFERENCIAS.ID
+Ref: COM_CONTRATOS.ID > COM_ACORDOS.ID
+Ref: COM_REFERENCIAS.ID > COM_ACORDOS.ID
