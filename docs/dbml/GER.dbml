@@ -469,6 +469,49 @@ Table GER_VISTAS {
 
 }
 
+
+
+
+
+Table GER_EMAILS_LIDOS {
+  ID int [pk, increment]
+  ID_CAIXA int
+  ASSUNTO varchar(255)
+  REMETENTE varchar(255)
+  CORPO text
+  DATA_PROCESSAMENTO datetime
+  DATA_RECEBIDO datetime
+  DESTINATARIOS text
+}
+Table GER_EVENTO {
+  ID_EVENTO int [pk, increment]
+  MODULO int
+  CAMPO_ORIGEM varchar(10)
+  ID_ORIGEM int
+  DATA_HORA_CRIA datetime
+  ID_UTZ_CRIA varchar(10)
+  NOME_UTZ_CRIA varchar(35)
+  MENSAGEM text
+  ASSUNTO varchar(100)
+  DATA_HORA_LEITURA datetime
+  ID_UTZ_LEITURA varchar(10)
+  NOME_UTZ_LEITURA varchar(35)
+  ESTADO varchar(2)
+}
+Table GER_LDAP_CONF {
+  NOME_USER varchar(250)
+  PASSWORD_USER varchar(250)
+  ID_USER varchar(250)
+  DOMAIN varchar(250)
+  ldapSearchBase varchar(250)
+  IP_DOMAIN varchar(100)
+}
+Table GER_SEQUENCIA_FICHEIRO {
+  ID_SEQUENCIA int [pk, increment]
+  DATA_SEQUENCIA date
+  NUMERO_SEQUENCIA int
+}
+
 // References
 Ref: GER_DEPARTAMENTOS_SECTORES.ID_DEPARTAMENTO > GER_DEPARTAMENTO.ID
 Ref: GER_DIC_PROGRAMA.ID_VEICULO > GER_DIC_VEICULO.ID_VEICULO

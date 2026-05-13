@@ -1,0 +1,17 @@
+﻿// Module: FR
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table FR_ABSENSENTISMO {
+  CHECKDATE date
+  COD_SECTOR int
+  DES_SECTOR text
+  SECTOR text
+  MORADA text
+  COD_TURNO int
+  TOTAL_HORAS decimal(19, 2)
+  OPERARIOS_TOTAL int
+  OPERARIOS_TRABALHAR int
+}
+
+// References

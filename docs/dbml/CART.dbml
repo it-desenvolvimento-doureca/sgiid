@@ -1,0 +1,68 @@
+﻿// Module: CART
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table CART_CAB {
+  ID_CART_CAB int [pk, increment]
+  TITLE varchar(100)
+  CARREGAR_ID varchar(100)
+  SUPPORT_PROGRAM varchar(100)
+  RECEITA varchar(100)
+  DESCRICAO varchar(100)
+  SUPORTE varchar(100)
+  N_MANUTEN varchar(100)
+  PRETRATTAMENTO varchar(100)
+  COBRE varchar(100)
+  NICHEL varchar(100)
+  NIQUEL_FINITURA varchar(100)
+  CROMAGEM varchar(100)
+  DESMETALLIZACAO varchar(100)
+  PECAS varchar(100)
+  SUPERFICIE varchar(100)
+  DATA_INICIO date
+  HORA_INICIO time
+  DATA_FIM date
+  HORA_FIM time
+  AREATOTAL decimal(19, 4)
+}
+Table CART_LINHA_ARTIGO {
+  ID_CART_LINHA_ARTIGO int [pk, increment]
+  ID_CART_CAB int
+  ID_ARTIGO varchar(100)
+  LOAD_PIECES varchar(100)
+}
+Table CART_LINHA_HISTORICO {
+  ID_CART_LINHA_HISTORICO int [pk, increment]
+  ID_CART_CAB int
+  DESCRICAO varchar(100)
+  SEQUENCIA varchar(100)
+  TINA varchar(100)
+  TEMPO_INICIO time
+  TEMPO_FIM time
+  DURACAO time
+  LIMITE_INCIO time
+  LIMITE_FIM time
+  TEMPERATURA_BANHO varchar(100)
+}
+Table CART_LINHA_RACK {
+  ID_CART_LINHA_RACK int [pk, increment]
+  ID_CART_CAB int
+  RACK_CODE varchar(100)
+  RACK_TYPE varchar(100)
+}
+Table CART_LOAD_RAW {
+  ID_CART_LOAD_RAW int [pk, increment]
+  ID_CART_LINHA_ARTIGO int
+  LOAD_RAW varchar(100)
+}
+Table CART_LOAD_USER {
+  ID_CART_LOAD_USER int [pk, increment]
+  ID_CART_CAB int
+  LOAD_USER varchar(100)
+}
+Table CART_ULTIMO_FICHEIRO {
+  DATA_ULTIMO_FICHEIRO datetime
+  NOME_FICHEIRO varchar(100)
+}
+
+// References

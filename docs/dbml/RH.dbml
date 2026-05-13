@@ -720,6 +720,31 @@ Table RH_TURNOS {
 
 }
 
+
+
+Table RH_DIC_COLETA {
+  Matricula varchar(20)
+  Data datetime
+  Hora varchar(6)
+  Evento varchar(2)
+  Relogio varchar(4)
+  Data_Hora datetime
+  NFuncionario varchar(20)
+  CodErro varchar(50)
+  Situacao varchar(1)
+  INSERTDATE datetime
+}
+Table RH_DIC_PONTO {
+  NFuncionario int
+  CheckDate date
+  Time_In datetime
+  Time_Out datetime
+  Tempo bigint
+  Time_Lunch_In datetime
+  Time_Lunch_Out datetime
+  Tempo_Lunch bigint
+}
+
 // References
 Ref: RH_DIC_CACIFOS.TIPO_CACIFO > RH_DIC_TIPO_CACIFO.COD_TIPO
 Ref: RH_DIC_SECTORES_ABSENTISMO_LINHA.COD_SECTOR > RH_SECTORES.COD_SECTOR

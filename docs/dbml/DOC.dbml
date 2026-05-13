@@ -128,6 +128,79 @@ Table DOC_GESTAO_PASTAS {
 
 }
 
+
+
+
+Table DOC_DOCUMENTOS_LIDOS {
+  ID int [pk, increment]
+  ID_UTZ varchar(10)
+  DATA_CRIA datetime
+  ID_FICHEIRO int
+  VERSAO varchar(200)
+  UTZ_CRIA varchar(10)
+}
+Table DOC_INFORMACAO_POSTO {
+  NumPosto int
+  Posto varchar(60)
+  NumBarra int
+  NumLote varchar(20)
+  CargaDescarga decimal(3, 0)
+  DataHoraChegadaPosto datetime
+  DataHoraInicioTrabalho datetime
+  DataHoraFimTrabalho datetime
+  DataHoraSaidaBarra datetime
+  Receita varchar(20)
+  Alerta varchar(255)
+  USER_1 varchar(20)
+  USER_2 varchar(20)
+  USER_3 varchar(20)
+  USER_4 varchar(20)
+  USER_5 varchar(20)
+  USER_6 varchar(20)
+  Referencia1 varchar(255)
+  NumPecas1 int
+  Referencia2 varchar(255)
+  NumPecas2 int
+  Referencia3 varchar(255)
+  NumPecas3 int
+  Referencia4 varchar(255)
+  NumPecas4 int
+  Referencia5 varchar(255)
+  NumPecas5 int
+}
+Table DOC_TEMP_WINROBOT {
+  NumPosto int
+  Posto text
+  NumBarra int
+  NumLote text
+  CargaDescarga decimal(3, 0)
+  DataHoraChegadaPosto datetime
+  DataHoraInicioTrabalho datetime
+  DataHoraFimTrabalho datetime
+  DataHoraSaidaBarra datetime
+  Receita text
+  Alerta text
+  USER_1 text
+  USER_2 text
+  USER_3 text
+  USER_4 text
+  USER_5 text
+  USER_6 text
+  Referencia1 text
+  NumPecas1 int
+  Referencia2 text
+  NumPecas2 int
+  Referencia3 text
+  NumPecas3 int
+  Referencia4 text
+  NumPecas4 int
+  Referencia5 text
+  NumPecas5 int
+  INSERTED_DATE datetime
+  UPDATED_DATE datetime
+  Linha int
+}
+
 // References
 Ref: DOC_FICHA_DOCUMENTOS.ID_FICHEIRO > DOC_DOCUMENTOS.ID
 

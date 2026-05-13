@@ -1,0 +1,18 @@
+﻿// Module: OUTROS
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table CONTROLO_ETIQUETAS {
+  ID int [pk, increment]
+  ETIQUETA varchar(250)
+  TOTAL int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_CRIA varchar(10)
+  UTZ_MODIF varchar(10)
+  ETIQUETA_CAIXA varchar(250)
+  REFERENCIA varchar(250)
+  ESTADO varchar(2)
+}
+
+// References

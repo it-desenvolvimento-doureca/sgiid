@@ -1,8 +1,10 @@
-﻿// SGIID - Diagrama Completo
-// 343 tabelas | 174 FKs (src+dst validadas)
-// https://dbdiagram.io -> paste content here
+﻿// SGIID — Full Database Schema
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+// 13/05/2026 12:11
 
-// === AB ===
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table AB_DIC_BANHO {
   ID_BANHO int [pk, increment]
   ID_LINHA int
@@ -480,7 +482,10 @@ Table AB_MOV_REG_PARAM_OPERACAO {
 
 }
 
-// === AT ===
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table AT_ACCOES {
   ID_ACCAO int [pk, increment]
   DESCRICAO_ACCAO varchar(255)
@@ -612,9 +617,20 @@ Table AT_TESTEMUNHAS {
   NOME varchar(255)
   NUMERO varchar(255)
 
+
 }
 
-// === CAPACIDADE ===
+Table AT_OCORRENCIAS_CAUSAS_ACIDENTE {
+  ID_OCORRENCIA int
+  ID_CAUSAS_ACIDENTE int
+}
+Table AT_OCORRENCIAS_EPI {
+  ID_OCORRENCIA int
+  ID_EPI int
+}
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table CAPACIDADE_LINHA {
   ID_CAPACIDADE int [pk, increment]
   DATA date
@@ -625,9 +641,77 @@ Table CAPACIDADE_LINHA {
   DATA_MODIF datetime
   UTZ_MODIF int
 
+
+}
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table CART_CAB {
+  ID_CART_CAB int [pk, increment]
+  TITLE varchar(100)
+  CARREGAR_ID varchar(100)
+  SUPPORT_PROGRAM varchar(100)
+  RECEITA varchar(100)
+  DESCRICAO varchar(100)
+  SUPORTE varchar(100)
+  N_MANUTEN varchar(100)
+  PRETRATTAMENTO varchar(100)
+  COBRE varchar(100)
+  NICHEL varchar(100)
+  NIQUEL_FINITURA varchar(100)
+  CROMAGEM varchar(100)
+  DESMETALLIZACAO varchar(100)
+  PECAS varchar(100)
+  SUPERFICIE varchar(100)
+  DATA_INICIO date
+  HORA_INICIO time
+  DATA_FIM date
+  HORA_FIM time
+  AREATOTAL decimal(19, 4)
+}
+Table CART_LINHA_ARTIGO {
+  ID_CART_LINHA_ARTIGO int [pk, increment]
+  ID_CART_CAB int
+  ID_ARTIGO varchar(100)
+  LOAD_PIECES varchar(100)
+}
+Table CART_LINHA_HISTORICO {
+  ID_CART_LINHA_HISTORICO int [pk, increment]
+  ID_CART_CAB int
+  DESCRICAO varchar(100)
+  SEQUENCIA varchar(100)
+  TINA varchar(100)
+  TEMPO_INICIO time
+  TEMPO_FIM time
+  DURACAO time
+  LIMITE_INCIO time
+  LIMITE_FIM time
+  TEMPERATURA_BANHO varchar(100)
+}
+Table CART_LINHA_RACK {
+  ID_CART_LINHA_RACK int [pk, increment]
+  ID_CART_CAB int
+  RACK_CODE varchar(100)
+  RACK_TYPE varchar(100)
+}
+Table CART_LOAD_RAW {
+  ID_CART_LOAD_RAW int [pk, increment]
+  ID_CART_LINHA_ARTIGO int
+  LOAD_RAW varchar(100)
+}
+Table CART_LOAD_USER {
+  ID_CART_LOAD_USER int [pk, increment]
+  ID_CART_CAB int
+  LOAD_USER varchar(100)
+}
+Table CART_ULTIMO_FICHEIRO {
+  DATA_ULTIMO_FICHEIRO datetime
+  NOME_FICHEIRO varchar(100)
 }
 
-// === CO ===
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table CO_ANALISE_CLIENTES {
   ID int
   CLICOD varchar(255)
@@ -684,9 +768,11 @@ Table CO_ANALISE_CLIENTES_QUANTIDADE {
   UTZ_MODIF int
   DATA_MODIF datetime
 
-}
 
-// === COM ===
+}
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table COM_ACORDOS {
   ID int
   VERSAO int
@@ -939,7 +1025,10 @@ Table COM_REFERENCIAS_SILVER {
 
 }
 
-// === COMU ===
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table COMU_DIC_CATEGORIAS {
   ID int
   DESCRICAO varchar(255)
@@ -988,9 +1077,11 @@ Table COMU_TICKERS {
   DATA_INICIO date
   DATA_FIM date
 
-}
 
-// === DOC ===
+}
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table DOC_DIC_POSTOS {
   ID int
   NOME varchar(255)
@@ -1117,7 +1208,83 @@ Table DOC_GESTAO_PASTAS {
 
 }
 
-// === FICHEIROS ===
+
+
+
+Table DOC_DOCUMENTOS_LIDOS {
+  ID int [pk, increment]
+  ID_UTZ varchar(10)
+  DATA_CRIA datetime
+  ID_FICHEIRO int
+  VERSAO varchar(200)
+  UTZ_CRIA varchar(10)
+}
+Table DOC_INFORMACAO_POSTO {
+  NumPosto int
+  Posto varchar(60)
+  NumBarra int
+  NumLote varchar(20)
+  CargaDescarga decimal(3, 0)
+  DataHoraChegadaPosto datetime
+  DataHoraInicioTrabalho datetime
+  DataHoraFimTrabalho datetime
+  DataHoraSaidaBarra datetime
+  Receita varchar(20)
+  Alerta varchar(255)
+  USER_1 varchar(20)
+  USER_2 varchar(20)
+  USER_3 varchar(20)
+  USER_4 varchar(20)
+  USER_5 varchar(20)
+  USER_6 varchar(20)
+  Referencia1 varchar(255)
+  NumPecas1 int
+  Referencia2 varchar(255)
+  NumPecas2 int
+  Referencia3 varchar(255)
+  NumPecas3 int
+  Referencia4 varchar(255)
+  NumPecas4 int
+  Referencia5 varchar(255)
+  NumPecas5 int
+}
+Table DOC_TEMP_WINROBOT {
+  NumPosto int
+  Posto text
+  NumBarra int
+  NumLote text
+  CargaDescarga decimal(3, 0)
+  DataHoraChegadaPosto datetime
+  DataHoraInicioTrabalho datetime
+  DataHoraFimTrabalho datetime
+  DataHoraSaidaBarra datetime
+  Receita text
+  Alerta text
+  USER_1 text
+  USER_2 text
+  USER_3 text
+  USER_4 text
+  USER_5 text
+  USER_6 text
+  Referencia1 text
+  NumPecas1 int
+  Referencia2 text
+  NumPecas2 int
+  Referencia3 text
+  NumPecas3 int
+  Referencia4 text
+  NumPecas4 int
+  Referencia5 text
+  NumPecas5 int
+  INSERTED_DATE datetime
+  UPDATED_DATE datetime
+  Linha int
+}
+
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table FICHEIROS_PAGINAS {
   ID_FICHEIRO int [pk, increment]
   TAMANHO float
@@ -1134,7 +1301,10 @@ Table FICHEIROS_PAGINAS {
 
 }
 
-// === FIN ===
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table FIN_DIC_CLIENTES {
   ID int
   ID_CLIENTE varchar(255)
@@ -1231,7 +1401,124 @@ Table FIN_REGISTO_ACOES {
 
 }
 
-// === GER ===
+
+
+
+
+
+
+
+
+
+
+Table FIN_DADOS_DIVIDAS_DASHBOARD {
+  Valor_Total_Acordos decimal(38, 6)
+  Total_em_Divida decimal(38, 6)
+  Media_atraso_divida decimal(16, 2)
+  Divida_31dias decimal(9, 0)
+  Data_Analise date
+}
+Table FIN_DADOS_DIVIDAS_LISTA_ANALISE {
+  kam varchar(255)
+  ID_ENTIDADE varchar(6)
+  NOME_ENTIDADE varchar(255)
+  valor_divida decimal(38, 6)
+  total_divida_venc decimal(38, 6)
+  nao_vencido decimal(38, 6)
+  vencido_ate_30 decimal(38, 6)
+  vencido_31_60 decimal(38, 6)
+  vencido_61_90 decimal(38, 6)
+  vencido_mais_91 decimal(38, 6)
+  AcordoFin decimal(38, 6)
+  MediaPag decimal(16, 0)
+  MediaAtraso decimal(16, 2)
+  Data_Analise date
+}
+Table FIN_DADOS_DIVIDAS_LISTA_DOCUMENTOS {
+  ID_ENTIDADE varchar(6)
+  NUM_DOC varchar(23)
+  DATA_DOC date
+  DATA_VENC date
+  MORA int
+  valor_divida decimal(36, 6)
+  nao_vencido decimal(36, 6)
+  vencido_ate_30 decimal(36, 6)
+  vencido_31_60 decimal(36, 6)
+  vencido_61_90 decimal(36, 6)
+  vencido_mais_121 decimal(36, 6)
+  AcordoFin decimal(36, 6)
+  Data_Analise date
+  ID_CAB_DOC int
+}
+Table FIN_DIC_AREAS_NEGOCIO {
+  id_area_negocio int
+  descricao varchar(50)
+}
+Table FIN_DIC_LINHAS_RELATORIO {
+  id_linha int
+  descricao varchar(100)
+}
+Table FIN_DIC_MOTIVOS_REGULARIZACAO {
+  id_motivo_regularizacao int
+  descricao varchar(50)
+}
+Table FIN_FATURACAO_TOTAL {
+  MES int
+  ANO int
+  FATURACAO_TOTAL decimal(36, 2)
+}
+Table FIN_LISTA_DOCUMENTOS {
+  NOME_FICHEIRO varchar(250)
+  DATA_UPDATE datetime
+  DATA_INSERT datetime
+}
+Table FIN_PAR_VENDAS {
+  codref varchar(50)
+  desref varchar(200)
+  chave varchar(100)
+  id_area_negocio int
+  percentagem decimal(18, 2)
+  estado bit
+  id_linha_vendas int
+  id_linha_devolucao int
+  id_linha_desconto int
+  id_linha_retificacao int
+  data_ini date
+}
+Table FIN_SEGUIMENTO_FATURACAO {
+  DATA date
+  PRIMEIRO_DIA_MES bit
+  DOMINGO bit
+  ULTIMO_DIA_MES bit
+  REALIZADO decimal(36, 2)
+  ENCOMENDADO decimal(36, 2)
+  ATRASO decimal(36, 2)
+  VALOR_STOCK decimal(36, 2)
+  PREVISAO_VENDAS_M1 varchar(10)
+  DATA_PREVISAO_VENDAS_M1 date
+  PREVISAO_VENDAS_M2 decimal(36, 2)
+  DATA_PREVISAO_VENDAS_M2 date
+}
+
+
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table FR_ABSENSENTISMO {
+  CHECKDATE date
+  COD_SECTOR int
+  DES_SECTOR text
+  SECTOR text
+  MORADA text
+  COD_TURNO int
+  TOTAL_HORAS decimal(19, 2)
+  OPERARIOS_TOTAL int
+  OPERARIOS_TRABALHAR int
+}
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table GER_ANALISES {
   ID int [pk, increment]
   ID_PAI int
@@ -1699,7 +1986,53 @@ Table GER_VISTAS {
 
 }
 
-// === GT ===
+
+
+
+
+Table GER_EMAILS_LIDOS {
+  ID int [pk, increment]
+  ID_CAIXA int
+  ASSUNTO varchar(255)
+  REMETENTE varchar(255)
+  CORPO text
+  DATA_PROCESSAMENTO datetime
+  DATA_RECEBIDO datetime
+  DESTINATARIOS text
+}
+Table GER_EVENTO {
+  ID_EVENTO int [pk, increment]
+  MODULO int
+  CAMPO_ORIGEM varchar(10)
+  ID_ORIGEM int
+  DATA_HORA_CRIA datetime
+  ID_UTZ_CRIA varchar(10)
+  NOME_UTZ_CRIA varchar(35)
+  MENSAGEM text
+  ASSUNTO varchar(100)
+  DATA_HORA_LEITURA datetime
+  ID_UTZ_LEITURA varchar(10)
+  NOME_UTZ_LEITURA varchar(35)
+  ESTADO varchar(2)
+}
+Table GER_LDAP_CONF {
+  NOME_USER varchar(250)
+  PASSWORD_USER varchar(250)
+  ID_USER varchar(250)
+  DOMAIN varchar(250)
+  ldapSearchBase varchar(250)
+  IP_DOMAIN varchar(100)
+}
+Table GER_SEQUENCIA_FICHEIRO {
+  ID_SEQUENCIA int [pk, increment]
+  DATA_SEQUENCIA date
+  NUMERO_SEQUENCIA int
+}
+
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table GT_DIC_TAREFAS {
   ID int [pk, increment]
   DESCRICAO_PT varchar(255)
@@ -1794,7 +2127,10 @@ Table GT_MOV_TAREFAS {
 
 }
 
-// === LG ===
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table LG_ANALISE_ENVIOS {
   ID int
   CONSIGN_NO varchar(255)
@@ -1827,9 +2163,11 @@ Table LG_DIC_OBJETIVOS {
   DATA_MODIF datetime
   OBJETIVO_CLIENTES float
 
-}
 
-// === MAN ===
+}
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table MAN_DIC_AMBITO_UTILIZADORES {
   ID int
   ID_UTILIZADOR int
@@ -2343,7 +2681,109 @@ Table MAN_MOV_PEDIDOS_DOCUMENTOS {
 
 }
 
-// === PA ===
+
+
+
+
+
+
+Table MAN_MOV_MANUTENCAO_EQUIPAMENTOS_INATIVIDADE {
+  ID int [pk, increment]
+  ID_EQUIPAMENTO int
+  ATIVO bit
+  DATA_INATIVO datetime
+  UTZ_INATIVO int
+  DATA_ATIVO datetime
+  UTZ_ATIVO int
+}
+Table MAN_MOV_MANUTENCAO_ETIQ {
+  ID_MANUTENCAO_ETIQUETA int [pk, increment]
+  ID_MANUTENCAO_LISTA_MATERIAL int
+  ID_MANUTENCAO_CAB int
+  ETQNUM varchar(20)
+  QUANT decimal(9, 4)
+  CONSUMIR decimal(9, 4)
+  QUANT_FINAL decimal(9, 4)
+  INDREF varchar(20)
+  VA1REF varchar(20)
+  VA2REF varchar(20)
+  PROREF varchar(20)
+  UNICOD varchar(8)
+  LIECOD varchar(20)
+  EMPCOD varchar(20)
+  ETQORILOT1 varchar(70)
+  ETQNUMENR int
+  LOTNUMENR int
+  UNISTO varchar(8)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  INDNUMENR int
+  DATCRE date
+  PRODES text
+  ETQORIQTE1 decimal(19, 4)
+  SINAL varchar(1)
+  UNIDADE_CONSUMO varchar(15)
+  FACTOR_CONVERSAO decimal(9, 4)
+}
+Table MAN_MOV_MANUTENCAO_HISTORICO {
+  ID int [pk, increment]
+  DESCRICAO text
+  DATA_CRIA datetime
+  ID_MANUTENCAO_CAB int
+}
+Table MAN_MOV_MANUTENCAO_MOTIVOS {
+  ID int [pk, increment]
+  ID_MANUTENCAO_OPERARIOS int
+  TIPO_MOTIVO varchar(50)
+  MOTIVO text
+  DATA_CRIA datetime
+  UTZ_CRIA int
+}
+Table MAN_MOV_MANUTENCAO_OPERARIOS {
+  ID_MANUTENCAO_OPERARIOS int [pk, increment]
+  ID_MANUTENCAO_CAB int
+  ID_OPERARIO int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  TEMP_EXEC text
+  TEMP_PAUSA text
+  TEMP_TOTAL text
+  ESTADO varchar(2)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+}
+Table MAN_TEMPOS_TRABALHO_POR_DIA {
+  ID int [pk, increment]
+  ID_MANUTENCAO_OPERARIOS int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  TEMPO_EXEC decimal(19, 5)
+  TEMPO_PAUSAS decimal(19, 5)
+  TEMPO_SUSPENSO decimal(19, 5)
+}
+
+
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table CONTROLO_ETIQUETAS {
+  ID int [pk, increment]
+  ETIQUETA varchar(250)
+  TOTAL int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_CRIA varchar(10)
+  UTZ_MODIF varchar(10)
+  ETIQUETA_CAIXA varchar(250)
+  REFERENCIA varchar(250)
+  ESTADO varchar(2)
+}
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table PA_DIC_AMBITOS {
   ID_AMBITO int [pk, increment]
   DESCRICAO varchar(255)
@@ -2479,7 +2919,10 @@ Table PA_MOV_SEGUIR_LINHA {
 
 }
 
-// === PE ===
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table PE_MOV_CAB {
   ID int
   ESTADO varchar(255)
@@ -2527,7 +2970,43 @@ Table PE_MOV_FICHEIROS {
 
 }
 
-// === PEDIDOS ===
+Table PE_PLANOS_ASSOCIADOS {
+  ID int [pk, increment]
+  ID_PLANO_ESTRATEGICO int
+  ID_PLANO_CAB int
+  INATIVO bit
+
+}
+
+
+
+Table PE_ANALISE_HISTORICO_CONTADORES {
+  ID int [pk, increment]
+  DATA_SNAPSHOT datetime
+  ANO int
+  PLANEADAS decimal(19, 0)
+  EXECUCAO_PLANEADA decimal(19, 0)
+  EXECUCAO_ATUAL decimal(19, 0)
+  EM_ATRASO decimal(19, 0)
+}
+Table PE_ANALISE_HISTORICO_GRAFICO {
+  ID int [pk, increment]
+  DATA_SNAPSHOT datetime
+  ANO int
+  DEPARTAMENTO varchar(255)
+  TOTAL decimal(19, 2)
+  CONCLUIDAS decimal(19, 2)
+  EM_ATRASO decimal(19, 2)
+  PLANEADAS decimal(19, 2)
+  PERCENTAGEM_PLANEADAS decimal(19, 2)
+  PERCENTAGEM_CONCLUIDAS decimal(19, 2)
+  PERCENTAGEM_EM_ATRASO decimal(19, 2)
+}
+
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table PEDIDOS_APP {
   ID_PEDIDO int [pk, increment]
   ASSUNTO varchar(255)
@@ -2542,9 +3021,11 @@ Table PEDIDOS_APP {
   EMAIL_CONTACTO varchar(255)
   TELEFONE_CONTACTO varchar(255)
 
-}
 
-// === PIN ===
+}
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table PIN_DIC_ARMAZEM {
   ID_ARMAZEM int
   COD_ARMAZEM varchar(255)
@@ -3150,7 +3631,10 @@ Table PIN_PLANO_DIARIO_PINTURA_LINHAS {
 
 }
 
-// === PLANEAMENTO ===
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table PLANEAMENTO_CAB {
   ID_PLANEAMENTO int [pk, increment]
   DATA_CRIA datetime
@@ -3184,9 +3668,11 @@ Table PLANEAMENTO_LINHAS {
   BARRAS_INTROD_TURNO_2 int
   BARRAS_INTROD_TURNO_3 int
 
-}
 
-// === PR ===
+}
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table PR_AMOSTRAS_ACCOES {
   ID_AMOSTRA_ACCAO int
   ID_ACCAO int
@@ -3945,7 +4431,291 @@ Table PR_WINROBOT_USERS {
 
 }
 
-// === QUA ===
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Table PR_ALERTA_ENCOMENDA_PENDENTE {
+  FORNECEDOR varchar(70)
+  ENCOMENDA varchar(20)
+  uticre varchar(20)
+  utinom varchar(70)
+  utinumint varchar(100)
+  DESIGNACAO varchar(140)
+  DATA date
+  QUANTIDADEENC decimal(19, 4)
+  QUANTIDADEPEND decimal(20, 4)
+  UN varchar(8)
+  PRECO decimal(19, 4)
+  proref varchar(34)
+  uticod varchar(20)
+}
+Table PR_ANALISES_ENCOMENDAS_ATRASOS {
+  COD_CLIENTE varchar(50)
+  COD_REF varchar(50)
+  DES_REF varchar(250)
+  ESTADO varchar(250)
+  QUANT decimal(20, 2)
+  STOCK decimal(20, 2)
+  VALOR decimal(20, 2)
+  SEMANA_ORIGEM int
+  ANO_ORIGEM int
+  DATA_CRIA datetime
+  COD_ESTABELECIMENTO varchar(6)
+}
+Table PR_ANALISES_ENCOMENDAS_CLIENTES {
+  COD_CLIENTE varchar(50)
+  ESTABELECIMENTO varchar(250)
+  NOME_CLIENTE varchar(250)
+  DATA_INICIO_SEMANA date
+  DATA_FIM_SEMANA date
+  SEMANA_DESTINO int
+  ANO_DESTINO int
+  SEMANA_ORIGEM int
+  ANO_ORIGEM int
+  PREVISAO decimal(38, 2)
+  VALOR_REAL decimal(38, 2)
+  ATRASO decimal(38, 2)
+  DATA_CRIA datetime
+  COD_ESTABELECIMENTO varchar(6)
+}
+Table PR_ANALISES_ENCOMENDAS_REFERENCIAS {
+  COD_CLIENTE varchar(50)
+  COD_REF varchar(50)
+  DES_REF varchar(250)
+  ESTADO varchar(250)
+  QUANT decimal(20, 2)
+  STOCK decimal(20, 2)
+  VALOR decimal(20, 2)
+  SEMANA_ORIGEM int
+  ANO_ORIGEM int
+  SEMANA_DESTINO int
+  ANO_DESTINO int
+  DATA_CRIA datetime
+  COD_ESTABELECIMENTO varchar(6)
+}
+Table PR_DIC_ACUMULADOS {
+  COD_SECTOR int
+  DES_SECTOR varchar(50)
+  DataHora date
+  RACIO decimal(10, 2)
+  cadencia int
+}
+Table PR_HISTORICO_ALERTAS {
+  DATA datetime
+  ULTIMO_REGISTO datetime
+}
+Table PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_LINHAS {
+  ID_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES int
+  COD_MAQ varchar(250)
+  NOME_MAQ varchar(250)
+  NOME_SECCAO varchar(250)
+  CADENCIA_MAQ_FUNC int
+  NUM_HORAS_PRODUTIVAS_DIA decimal(19, 4)
+  NUM_HORAS_PRODUTIVAS_SEMANA decimal(38, 6)
+  HORAS_PLANEADAS decimal(19, 2)
+  REFERENCIA varchar(250)
+  DESIGNACAO varchar(250)
+  QUANT_PRODUZIR int
+  COEFICIENTE decimal(19, 4)
+  SEMANA int
+  ANO int
+  N_DIAS_PRODUCAO decimal(18, 2)
+  OPERACAO varchar(250)
+}
+Table PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES_LINHAS {
+  ID_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES int
+  COD_MAQ varchar(250)
+  NOME_MAQ varchar(250)
+  NOME_SECCAO varchar(250)
+  CADENCIA_MAQ_FUNC bigint
+  NUM_HORAS_PRODUTIVAS_DIA decimal(19, 4)
+  NUM_HORAS_PRODUTIVAS_SEMANA decimal(38, 6)
+  HORAS_PLANEADAS decimal(19, 2)
+  REFERENCIA varchar(250)
+  DESIGNACAO varchar(250)
+  QUANT_PRODUZIR int
+  COEFICIENTE decimal(19, 4)
+  SEMANA int
+  ANO int
+  N_DIAS_PRODUCAO decimal(18, 2)
+  OPERACAO varchar(250)
+}
+Table PR_PRODUCAO_PLANEADA {
+  ID_PRODUCAO_PLANEADA int [pk, increment]
+  ID_LINHA int
+  SEMANA int
+  MES int
+  ANO int
+  VALOR_PLANEADO decimal(19, 0)
+}
+Table PR_REGISTO_OPERACOES {
+  COD_FUNCIONARIO varchar(125)
+  NOME varchar(200)
+  ATIVO bit
+  LOCAL varchar(100)
+  RESPONSAVEL varchar(150)
+  COD_SECTOR int
+  DES_SECTOR varchar(150)
+  CHEFE varchar(150)
+  DATDEB date
+  PROREF varchar(50)
+  PRODES1 varchar(200)
+  OPECOD varchar(200)
+  OPEDES varchar(200)
+  QUANT decimal(18, 2)
+  TEMPOPREP decimal(18, 6)
+  TEMPOEXEC decimal(18, 6)
+  TEMPOTOTAL decimal(18, 6)
+  HEUDEB time
+  HEUFIN time
+  OFNUM varchar(150)
+  TEMPOPAUSAS decimal(18, 6)
+  OPENUM varchar(25)
+  ofdnumenr int
+}
+Table PR_WINROBOT_ARTICLES {
+  ID int [pk, increment]
+  ID_CAB int
+  COD_REF varchar(50)
+  DESIGN_REF varchar(250)
+  NUMERO_PECAS int
+  UTZ_CRIA varchar(50)
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_MODIF varchar(50)
+  INDEX_ORIGEM int
+  RAWCODE1 varchar(25)
+  RAWCODE2 varchar(25)
+  RAWCODE3 varchar(25)
+  RAWCODE4 varchar(25)
+  RAWCODE5 varchar(25)
+  RAWCODE6 varchar(25)
+  RAWCODE7 varchar(25)
+  RAWCODE8 varchar(25)
+  RAWCODE9 varchar(25)
+  RAWCODE10 varchar(25)
+  OBSERVACAO_DEFEITO text
+  TOTAL_BOAS decimal(19, 0)
+  TOTAL_DEFEITOS decimal(19, 0)
+  OUTRODEF_1 bit
+  OUTRODEF_2 bit
+  OUTRODEF_3 bit
+  OUTRODEF_4 bit
+  COD_REF_INJETADA text
+  DESIGN_REF_INJETADA text
+  OBJETIVO decimal(19, 4)
+}
+Table PR_WINROBOT_CABINES {
+  ID int [pk, increment]
+  Carro int
+  Tipo varchar(255)
+  Cabina varchar(255)
+  Data_Hora_Inicio datetime
+  Data_Hora_Fim datetime
+  Job_Modelo int
+  Atomizacao decimal(23, 2)
+  Leque decimal(23, 2)
+  Codigo_Cor varchar(255)
+  Incidencias varchar(255)
+  Temperatura decimal(23, 2)
+  Humidade int
+  Ciclo int
+  Ciclo_HHMMSS varchar(255)
+  Consumo int
+  Flashoff int
+  Flashoff_HHMMSS varchar(255)
+  Lote varchar(255)
+  ID_ORIGEM int
+  INSERTDATE datetime
+  TempMin int
+  TempMax int
+  TempMedia int
+  Entrada int
+  Saida int
+  IdProd varchar(14)
+}
+Table PR_WINROBOT_CABINES_HISTORICO {
+  ID int [pk, increment]
+  Carro int
+  Tipo varchar(255)
+  Cabina varchar(255)
+  Data_Hora_Inicio datetime
+  Data_Hora_Fim datetime
+  Job_Modelo int
+  Atomizacao decimal(23, 2)
+  Leque decimal(23, 2)
+  Codigo_Cor varchar(255)
+  Incidencias varchar(255)
+  Temperatura decimal(23, 2)
+  Humidade int
+  Ciclo int
+  Ciclo_HHMMSS varchar(255)
+  Consumo int
+  Flashoff int
+  Flashoff_HHMMSS varchar(255)
+  Lote varchar(255)
+  ID_ORIGEM int
+  INSERTDATE datetime
+  TempMin int
+  TempMax int
+  TempMedia int
+  Entrada int
+  Saida int
+  IdProd varchar(14)
+}
+Table PR_WINROBOT_CARROS {
+  ID int [pk, increment]
+  NUM_CARRO varchar(250)
+  ID_CAB int
+  UTZ_CRIA text
+  DATA_CRIA datetime
+  UTZ_MODIF text
+  DATA_MODIF datetime
+}
+Table PR_WINROBOT_CARROS_TEMP {
+  ID int [pk, increment]
+  NUM_CARRO varchar(250)
+  ID_CAB int
+  UTZ_CRIA text
+  DATA_CRIA datetime
+}
+Table PR_WINROBOT_DEF_LIN {
+  ID int [pk, increment]
+  ID_REFERENCIA int
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  COD_DEF varchar(4)
+  DESC_DEF varchar(35)
+  QUANT_DEF int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  OBS_DEF varchar(250)
+}
+Table PR_WINROBOT_HISTORICO {
+  ID int [pk, increment]
+  DESCRICAO text
+  DATA_CRIA datetime
+  ID_CAB int
+}
+
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table QUA_DERROGACOES {
   ID_DERROGACAO int
   DATA_INICIO datetime
@@ -4484,7 +5254,10 @@ Table QUA_MOV_AUDITORIAS {
 
 }
 
-// === RC ===
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table RC_DIC_CLASSIFICACAO {
   ID int [pk, increment]
   DESCRICAO varchar(255)
@@ -4971,7 +5744,17 @@ Table RC_MOV_RECLAMACAO_STOCK {
 
 }
 
-// === REU ===
+
+Table RC_DIC_STEPS {
+  NUM_STEP varchar(10)
+  DESCRICAO varchar(250)
+  COD int
+}
+
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table REU_AMBITOS_REUNIOES {
   ID_AMBITO int
   DESCRICAO varchar(255)
@@ -5079,9 +5862,20 @@ Table REU_REUNIOES_PLANOS_ACCOES {
   TIPO_ACAO int
   ITEM varchar(255)
 
+
 }
 
-// === RH ===
+Table REU_AMBITOS_HISTORICO {
+  ID int [pk, increment]
+  ID_AMBITO int
+  DATA_ULTIMA_REALIZADA datetime
+  DATA_PROXIMA_REALIZADA datetime
+  DATA_CRIA datetime
+  ATIVO bit
+}
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table RH_AVALIACAO_DESEMPENHO {
   ID int
   ANO int
@@ -5800,7 +6594,432 @@ Table RH_TURNOS {
 
 }
 
-// === TIPOS ===
+
+
+Table RH_DIC_COLETA {
+  Matricula varchar(20)
+  Data datetime
+  Hora varchar(6)
+  Evento varchar(2)
+  Relogio varchar(4)
+  Data_Hora datetime
+  NFuncionario varchar(20)
+  CodErro varchar(50)
+  Situacao varchar(1)
+  INSERTDATE datetime
+}
+Table RH_DIC_PONTO {
+  NFuncionario int
+  CheckDate date
+  Time_In datetime
+  Time_Out datetime
+  Tempo bigint
+  Time_Lunch_In datetime
+  Time_Lunch_Out datetime
+  Tempo_Lunch bigint
+}
+
+
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table RP_AUX_OPNUM {
+  ID int [pk, increment]
+  RESCOD varchar(50)
+  DATDEB date
+  PROREF varchar(50)
+  OFNUM varchar(50)
+  OPECOD varchar(50)
+  DATA_CRIACAO datetime
+  DATA_MODIFICACAO datetime
+  ESTADO bit
+  ID_CAMPO int
+  TIPO varchar(4)
+  HEUDEB time
+}
+Table RP_CAIXAS_INCOMPLETAS {
+  ID_CAIXA_INCOMPLETA int [pk, increment]
+  ETQNUM varchar(10)
+  REF_NUM varchar(17)
+  QUANT_ETIQUETA decimal(9, 3)
+  UNIDADE varchar(10)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ID_OF_CAB int
+}
+Table RP_CONF_CHEF_SEC {
+  ID_CONF_CHEF_SEC int [pk, increment]
+  ID_UTZ varchar(10)
+  SEC_NUM varchar(10)
+  NOME_UTZ varchar(35)
+  NOME_SEC varchar(35)
+}
+Table RP_CONF_EQUIP {
+  ID_CONF_EQUIPA varchar(2)
+  HORA_INI time
+  HORA_FIM time
+}
+Table RP_CONF_FAMILIA_COMP {
+  COD_FAMILIA_COMP varchar(4)
+  NOME_FAMILIA_COMP varchar(35)
+}
+Table RP_CONF_FAMILIA_DEF_COMPRADAS {
+  COD_FAMILIA_DEF varchar(4)
+  NOME_FAMILIA_DEF varchar(35)
+}
+Table RP_CONF_OP {
+  ID_CONF_OP int [pk, increment]
+  ID_OP_PRINC varchar(4)
+  ID_OP_SEC varchar(4)
+  NOME_OP_PRINC varchar(35)
+  NOME_OP_SEC varchar(35)
+}
+Table RP_CONF_OP_NPREV {
+  ID_CONF_OP_NPREV int [pk, increment]
+  ID_OP varchar(4)
+  NOME_OP varchar(35)
+  SECNUMENR1_OP varchar(10)
+}
+Table RP_CONF_OP_RECUPERACAO_PECAS {
+  ID int [pk, increment]
+  ID_OP varchar(50)
+  NOME_OP varchar(100)
+  SECNUMENR1_OP varchar(50)
+}
+Table RP_CONF_RELACAO_REF_ETIQUETAS {
+  ID int [pk, increment]
+  REF_PRINCIPAL varchar(250)
+  REF_IMPRIMIR varchar(250)
+  DATA_CRIA datetime
+  UTZ_CRIA varchar(10)
+  DATA_MODIF datetime
+  UTZ_MODIF varchar(10)
+}
+Table RP_CONF_TURNO {
+  ID_TURNO varchar(2)
+  NOME_TURNO varchar(20)
+  HORA_INICIO time
+  HORA_FIM time
+}
+Table RP_CONF_UTZ_PERF {
+  ID_CONF_UTZ_PERF int [pk, increment]
+  ID_UTZ varchar(10)
+  PERFIL varchar(2)
+  NOME_UTZ varchar(35)
+  PASSWORD varchar(30)
+}
+Table RP_DIC_DEF_OUTROS {
+  ID_DEF_OUTRO int [pk, increment]
+  DESC_DEF_OUTRO varchar(35)
+}
+Table RP_GESTAO_ETIQUETAS_MATRIX {
+  ID int [pk, increment]
+  REFERENCIA varchar(250)
+  LOTE varchar(250)
+  QTD int
+  ESTADO varchar(5)
+  NUMERO_IMPRESSOES int
+  DATA_CRIA datetime
+}
+Table RP_HISTORICO_FICHEIRO_MANUAL {
+  ID int [pk, increment]
+  ID_OF_CAB int
+  DATA_CRIA datetime
+  RESPOSTA text
+}
+Table RP_HISTORICO_IMPRESSAO_ETIQUETAS_MATRIX {
+  ID int [pk, increment]
+  ID_ETIQUETA_MATRIX int
+  DESCRICAO text
+  NUMERO_IMPRESSAO int
+  DATA_IMPRESSAO datetime
+  UTZ_IMPRESSAO varchar(10)
+  CHEFE varchar(10)
+}
+Table RP_OF_CAB {
+  ID_OF_CAB int [pk, increment]
+  ID_OF_CAB_ORIGEM int
+  OF_NUM varchar(10)
+  OF_OBS varchar(35)
+  OP_COD varchar(50)
+  OP_NUM varchar(4)
+  OP_DES varchar(35)
+  SEC_NUM varchar(10)
+  SEC_DES varchar(35)
+  MAQ_NUM varchar(10)
+  MAQ_DES varchar(35)
+  ID_UTZ_CRIA varchar(10)
+  NOME_UTZ_CRIA varchar(35)
+  DATA_HORA_CRIA datetime
+  ID_UTZ_MODIF varchar(10)
+  NOME_UTZ_MODIF varchar(35)
+  DATA_HORA_MODIF datetime
+  ESTADO varchar(1)
+  OP_COD_ORIGEM varchar(10)
+  OP_PREVISTA varchar(1)
+  MAQ_NUM_ORIG varchar(10)
+  VERSAO_MODIF int
+  ID_UTZ_EDICAO varchar(10)
+  ESTADO_INICIAL varchar(1)
+  IP_POSTO varchar(25)
+  IP_POSTO_FINAL varchar(25)
+  PRIMEIRA_OPENUM bit
+  ULTIMA_OPENUM bit
+  ETIQUETA varchar(50)
+  TESTE_DIMENSIONAL bit
+  OPERARIO_FORMACAO bit
+  ORIGEM_RECLAMACAO bit
+  STOCK_ETIQUETA_30 bit
+  DEFEITOS_INJECAO bit
+  DEVOLUCAO_CLIENTE bit
+  GAMA_EMBALAGEM_INCORRETA bit
+  MODO_DEGRADADO bit
+  DATA_ORIGEM_RECLAMACAO varchar(10)
+  VERIFICACAO_QUANT_EMBALAGEM bit
+  DATA_DEVOLUCAO_CLIENTE varchar(10)
+  MODO_DEGRADADO_MOTIVO text
+  ENSAIO_DIA bit
+  DATCRE_ETIQUETA date
+}
+Table RP_OF_DEF_LIN {
+  ID_DEF_LIN int [pk, increment]
+  ID_REF_ETIQUETA int
+  ID_OP_LIN int
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  COD_DEF varchar(4)
+  DESC_DEF varchar(35)
+  QUANT_DEF int
+  DATA_HORA_REG datetime
+  OBS_DEF varchar(250)
+  QUANT_DEF_M1 int
+  QUANT_DEF_M2 int
+  VERSAO_MODIF int
+  QUANT_DEF_ORIGINAL int
+  DESC_FAMILIA varchar(250)
+}
+Table RP_OF_LST_DEF {
+  ID_LST_DEF int [pk, increment]
+  ID_OP_LIN int
+  COD_DEF varchar(4)
+  DESC_DEF varchar(35)
+  DATA_HORA_MODIF datetime
+  ID_UTZ_CRIA varchar(10)
+}
+Table RP_OF_OP_CAB {
+  ID_OP_CAB int [pk, increment]
+  ID_OF_CAB int
+  TEMPO_PREP_TOTAL varchar(12)
+  TEMPO_PARA_TOTAL varchar(12)
+  TEMPO_EXEC_TOTAL varchar(12)
+  TEMPO_PREP_TOTAL_M1 varchar(12)
+  TEMPO_EXEC_TOTAL_M1 varchar(12)
+  TEMPO_PARA_TOTAL_M1 varchar(12)
+  TEMPO_PREP_TOTAL_M2 varchar(12)
+  TEMPO_EXEC_TOTAL_M2 varchar(12)
+  TEMPO_PARA_TOTAL_M2 varchar(12)
+}
+Table RP_OF_OP_ETIQUETA {
+  ID_REF_ETIQUETA int [pk, increment]
+  ID_OP_LIN int
+  REF_NUM varchar(17)
+  REF_LOTE varchar(35)
+  REF_ETIQUETA int
+  OF_NUM_ORIGEM varchar(10)
+  OP_COD_ORIGEM varchar(4)
+  QUANT_ETIQUETA int
+  QUANT_BOAS decimal(9, 2)
+  QUANT_DEF int
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  DATA_HORA_MODIF datetime
+  OBS_ETIQ varchar(35)
+  QUANT_BOAS_M1 decimal(9, 2)
+  QUANT_DEF_M1 int
+  QUANT_BOAS_M2 decimal(9, 2)
+  QUANT_DEF_M2 int
+  VERSAO_MODIF int
+  OP_COD_FAM text
+  OP_NUM varchar(4)
+  NOVO bit
+  OFDATFR date
+  ATIVO bit
+  APAGADO bit
+}
+Table RP_OF_OP_ETIQUETA_MATRIX {
+  ID int [pk, increment]
+  ETIQUETA varchar(50)
+  ID_OF_CAB int
+  ID_OP_LIN int
+  ID_REF_ETIQ int
+  IP_POSTO varchar(15)
+  ID_MAQUINA int
+  DATA_CRIA datetime
+  UTZ_CRIA varchar(50)
+  DATA_MODIF datetime
+  UTZ_MODIF varchar(50)
+  PROGRAMA varchar(50)
+  ESTADO varchar(3)
+}
+Table RP_OF_OP_ETIQUETA_MATRIX_HISTORICO {
+  ID int [pk, increment]
+  DATA_CRIA datetime
+  DESCRICAO text
+  ETIQUETA varchar(50)
+  ID_OF_CAB int
+  ID_OP_LIN int
+  ID_REF_ETIQ int
+  IP_POSTO varchar(15)
+  ID_MAQUINA int
+  UTZ_CRIA varchar(50)
+  PROGRAMA varchar(50)
+}
+Table RP_OF_OP_FUNC {
+  ID_OP_FUNC int [pk, increment]
+  ID_OP_CAB int
+  DATA_INI date
+  HORA_INI time
+  DATA_FIM date
+  HORA_FIM time
+  ID_EQUIPA varchar(2)
+  ID_UTZ_CRIA varchar(10)
+  NOME_UTZ_CRIA varchar(35)
+  PERFIL_CRIA varchar(1)
+  ID_UTZ_MODIF varchar(10)
+  NOME_UTZ_MODIF varchar(35)
+  PERFIL_MODIF varchar(1)
+  DATA_HORA_MODIF datetime
+  ESTADO varchar(1)
+  DATA_INI_M1 date
+  HORA_INI_M1 time
+  DATA_FIM_M1 date
+  HORA_FIM_M1 time
+  DATA_INI_M2 date
+  HORA_INI_M2 time
+  DATA_FIM_M2 date
+  HORA_FIM_M2 time
+}
+Table RP_OF_OP_LIN {
+  ID_OP_LIN int [pk, increment]
+  ID_OP_CAB int
+  REF_NUM varchar(17)
+  REF_DES varchar(250)
+  REF_IND varchar(10)
+  REF_VAR1 varchar(10)
+  REF_VAR2 varchar(10)
+  REF_INDNUMENR int
+  QUANT_OF int
+  QUANT_BOAS_TOTAL decimal(19, 2)
+  QUANT_DEF_TOTAL int
+  PERC_DEF decimal(9, 2)
+  PERC_OBJETIV decimal(9, 2)
+  OBS_REF varchar(355)
+  QUANT_BOAS_TOTAL_M1 decimal(19, 2)
+  QUANT_DEF_TOTAL_M1 int
+  QUANT_BOAS_TOTAL_M2 decimal(19, 2)
+  QUANT_DEF_TOTAL_M2 int
+  VERSAO_MODIF int
+  GESCOD varchar(20)
+  PROQTEFMT bit
+  TIPO_PECA varchar(5)
+  NCLQTE decimal(19, 4)
+  CONFIRMAR_ZERO bit
+}
+Table RP_OF_OPERARIOS_CAIXA {
+  ID_OPERARIO_CAIXA int [pk, increment]
+  ID_OF_CAB int
+  ID_UTZ varchar(50)
+  NOME_UTZ varchar(255)
+  DATA_HORA_CRIA datetime
+}
+Table RP_OF_OUTRODEF_LIN {
+  ID_OUTROSDEF_LIN int [pk, increment]
+  ID_OP_LIN int
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  ID_DEF_OUTRO int
+  QUANT_OUTRODEF int
+  RES_OUTRODEF varchar(1)
+  OBS_OUTRODEF varchar(35)
+  QUANT_OUTRODEF_M1 int
+  ID_REF_ETIQUETA int
+}
+Table RP_OF_PARA_LIN {
+  ID_PARA_LIN int [pk, increment]
+  ID_OP_CAB int
+  DATA_INI date
+  HORA_INI time
+  DATA_FIM date
+  HORA_FIM time
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  DATA_HORA_MODIF datetime
+  TIPO_PARAGEM varchar(5)
+  DES_PARAGEM varchar(35)
+  ESTADO varchar(1)
+  MOMENTO_PARAGEM varchar(1)
+  DATA_FIM_M1 date
+  HORA_FIM_M1 time
+  DATA_FIM_M2 date
+  HORA_FIM_M2 time
+  DATA_INI_M1 date
+  HORA_INI_M1 time
+  DATA_INI_M2 date
+  HORA_INI_M2 time
+  MOMENTO_PARAGEM_M1 varchar(1)
+  DES_PARAGEM_M1 varchar(35)
+  TIPO_PARAGEM_M1 varchar(5)
+  MOMENTO_PARAGEM_M2 varchar(1)
+  DES_PARAGEM_M2 varchar(35)
+  TIPO_PARAGEM_M2 varchar(5)
+}
+Table RP_OF_PREP_LIN {
+  ID_PREP_LIN int [pk, increment]
+  ID_OP_CAB int
+  DATA_INI date
+  HORA_INI time
+  DATA_FIM date
+  HORA_FIM time
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  DATA_HORA_MODIF datetime
+  ESTADO varchar(1)
+  DATA_FIM_M1 date
+  HORA_FIM_M1 time
+  DATA_FIM_M2 date
+  HORA_FIM_M2 time
+  DATA_INI_M1 date
+  HORA_INI_M1 time
+  DATA_INI_M2 date
+  HORA_INI_M2 time
+}
+
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table ST_PEDIDOS {
+  ID_PEDIDO int [pk, increment]
+  PROREF varchar(50)
+  ETQNUM varchar(50)
+  QUANT decimal(18, 4)
+  LOTE varchar(50)
+  ARMAZEM varchar(50)
+  DESCRICAO varchar(150)
+  UTZ_CRIA varchar(10)
+  DATA_CRIA datetime
+  COD_SECTOR int
+  DES_SECTOR varchar(50)
+  LOCAL varchar(50)
+  COD_SECTOR_OF int
+  DES_SECTOR_OF varchar(250)
+  IP_POSTO varchar(250)
+  IMPRESSO bit
+  ESTADO varchar(5)
+}
+
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table TIPOS_OCORRENCIA {
   ID_TIPO int [pk, increment]
   DESCRICAO varchar(255)
@@ -5810,9 +7029,11 @@ Table TIPOS_OCORRENCIA {
   DATA_MODIF datetime
   UTZ_MODIF int
 
-}
 
-// === VERSAO ===
+}
+// SGIID Database - Generated from JPA entities + DAO queries
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
 Table VERSAO_APP {
   ID_MANUTENCAO_OPERARIOS int
   ID_MANUTENCAO_CAB int
@@ -5828,93 +7049,65 @@ Table VERSAO_APP {
   UTZ_ULT_MODIF int
   DATA_ULT_MODIF datetime
 
-}
 
-// ============================================
-// REFERÊNCIAS VALIDADAS (col exists in both tables)
-// ============================================
+}
+// References
 Ref: AB_DIC_BANHO_ADITIVO.ID_UNIDADE1 > AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA
 Ref: AB_DIC_BANHO_ADITIVO.ID_UNIDADE2 > AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA
 Ref: AB_DIC_BANHO_COMPONENTE.ID_COMPONENTE > AB_MOV_ANALISE_LINHA.ID_COMPONENTE
-Ref: AB_DIC_BANHO_COMPONENTE.ID_FORNECEDOR > GER_FORNECEDOR.ID_FORNECEDOR
 Ref: AB_DIC_BANHO_COMPONENTE.ID_UNIDADE_COMPONENTE > AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA
 Ref: AB_DIC_LINHA.ID_LINHA > AB_MOV_MANUTENCAO.ID_LINHA
-Ref: AB_DIC_LINHA.ID_LINHA > PIN_MOV_PREPARACAO.ID_LINHA
-Ref: AB_DIC_LINHA.ID_LINHA > PR_PLANEAMENTO_PRODUCAO_CAB.ID_LINHA
 Ref: AB_DIC_TIPO_MANUTENCAO.ID_TIPO_MANUTENCAO > AB_MOV_MANUTENCAO.ID_TIPO_MANUTENCAO
-Ref: AB_MOV_ANALISE.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: AB_MOV_MANUTENCAO.ID_MANUTENCAO > AB_MOV_MANUTENCAO_CAB.ID_MANUTENCAO
 Ref: AB_MOV_MANUTENCAO.ID_TURNO > AB_DIC_TURNO.ID_TURNO
-Ref: AB_MOV_MANUTENCAO.UTZ_PLANEAMENTO > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: AB_MOV_MANUTENCAO_CAB.ID_BANHO > AB_DIC_BANHO.ID_BANHO
 Ref: AB_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB > AB_MOV_REG_PARAM_OPERACAO.ID_MANUTENCAO_CAB
 Ref: AB_MOV_MANUTENCAO_CAB.ID_TINA > AB_DIC_TINA.ID_TINA
-Ref: AB_MOV_MANUTENCAO_CAB.UTZ_EXECUCAO > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: AB_MOV_MANUTENCAO_CAB.UTZ_PREPARACAO > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: AB_MOV_MANUTENCAO_DOSIFICADORES.ID_TINA > AB_DIC_TINA.ID_TINA
-Ref: AB_MOV_MANUTENCAO_DOSIFICADORES.UTZ_EXECUCAO > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: AB_MOV_MANUTENCAO_LINHA.ID_ADITIVO > AB_DIC_BANHO_ADITIVO.ID_ADITIVO
 Ref: AB_MOV_MANUTENCAO_LINHA.ID_MANUTENCAO_CAB > AB_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB
 Ref: AB_MOV_MANUTENCAO_LINHA.ID_MANUTENCAO_LIN > AB_MOV_MANUTENCAO_ETIQ.ID_MANUTENCAO_LIN
-Ref: AB_MOV_REG_PARAM_OPERACAO.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: AB_MOV_REG_PARAM_OPERACAO.UTZ_VALIDA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: AB_MOV_MANUTENCAO.ID_TIPO_TIPOLOGIA_DOSIFICADORES > AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES.ID
+Ref: AB_MOV_MANUTENCAO_CAB.ID_TIPO_ADICAO > AB_DIC_TIPO_ADICAO.ID_TIPO_ADICAO
+Ref: AB_MOV_MANUTENCAO_CAB.ID_TIPO_OPERACAO > AB_DIC_TIPO_OPERACAO.ID_TIPO_OPERACAO
+Ref: AB_MOV_MANUTENCAO_LINHA.ID_ADITIVO > AB_DIC_COMPONENTE.ID_COMPONENTE
+Ref: AB_DIC_TINA.ID_ZONA > AB_DIC_ZONA.ID_ZONA
+Ref: AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA > AB_MOV_MANUTENCAO_LINHA.ID_UNIDADE1
+Ref: AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA > AB_MOV_MANUTENCAO_LINHA.ID_UNIDADE2
+Ref: AB_MOV_ANALISE.ID_ANALISE > AB_MOV_MANUTENCAO_CAB.ID_ANALISE
 Ref: COM_ACORDOS.ID_CONTRATO > COM_CONTRATOS.ID
-Ref: COM_ACORDOS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: COM_ACORDOS.UTZ_FECHO > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: COM_ACORDOS.UTZ_FECHO_AMORTIZACOES > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: COM_ACORDOS.UTZ_FECHO_LTA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: COM_ACORDOS_ACTIVIDADES.UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: COM_ACORDOS_ANEXOS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: COM_BUDGETS.ID > COM_BUDGETS_LINHAS.ID_BUDGET
-Ref: COM_CONTRATOS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: COM_REFERENCIAS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: COM_ACORDOS.ID_REFERENCIA > COM_REFERENCIAS.ID
+Ref: COM_CONTRATOS.ID > COM_ACORDOS.ID
+Ref: COM_REFERENCIAS.ID > COM_ACORDOS.ID
 Ref: DOC_FICHA_DOCUMENTOS.ID_FICHEIRO > DOC_DOCUMENTOS.ID
-Ref: FICHEIROS_PAGINAS.ID_UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: FIN_DIVIDAS_ATIVIDADE.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: FIN_REGISTO_ACOES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: GER_DEPARTAMENTOS_SECTORES.COD_SECTOR > RH_SECTORES.COD_SECTOR
 Ref: GER_DEPARTAMENTOS_SECTORES.ID_DEPARTAMENTO > GER_DEPARTAMENTO.ID
 Ref: GER_DIC_PROGRAMA.ID_VEICULO > GER_DIC_VEICULO.ID_VEICULO
 Ref: GER_DIC_PROJ_CAB.ID_PROGRAMA > GER_DIC_PROGRAMA.ID_PROGRAMA
 Ref: GER_DIC_VEICULO.ID_OEM > GER_DIC_OEM.ID_OEM
 Ref: GER_GRUPO.ID > GER_GRUPO_UTZ.ID_GRUPO
 Ref: GER_GRUPO_UTZ.ID_UTZ > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: GER_UTILIZADORES.COD_UTZ > RH_FUNCIONARIOS.COD_FUNC_ORIGEM
-Ref: GT_LOGS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: GER_FAVORITOS.ID_UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: GT_MOV_FICHEIROS.ID_TAREFA > GT_MOV_TAREFAS.ID_TAREFA
-Ref: GT_MOV_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: GT_MOV_TAREFAS.ID_CAMPO > PA_MOV_LINHA.ID_PLANO_LINHA
-Ref: GT_MOV_TAREFAS.PRIORIDADE > RC_DIC_GRAU_IMPORTANCIA.ID
-Ref: GT_MOV_TAREFAS.UTZ_ENCAMINHADO > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: GT_MOV_TAREFAS.UTZ_ID > GER_GRUPO.ID
-Ref: GT_MOV_TAREFAS.UTZ_ID > RH_SECTORES.COD_SECTOR
-Ref: MAN_DIC_AMBITO_UTILIZADORES.ID_UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS.ID_EQUIPA > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.AMBITO_MANUTENCAO
 Ref: MAN_DIC_AMBITOS.ID > MAN_DIC_AMBITO_UTILIZADORES.ID_EQUIPA
 Ref: MAN_DIC_AMBITOS.ID > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.AMBITO_MANUTENCAO
 Ref: MAN_DIC_DIVISOES.ID_PISO > MAN_DIC_PISOS.ID
 Ref: MAN_DIC_PISOS.ID_EDIFICIO > MAN_DIC_EDIFICIOS.ID
-Ref: MAN_MOV_MANUTENCAO_ACCOES.ID_ACAO > GT_DIC_TAREFAS.ID
 Ref: MAN_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB > MAN_MOV_MANUTENCAO_ACCOES.ID_MANUTENCAO_CAB
 Ref: MAN_MOV_MANUTENCAO_COMPONENTES.ID > MAN_MOV_PEDIDOS.COMPONENTE
 Ref: MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA.NIVEL > MAN_DIC_NIVEIS_CRITICIDADE.NIVEL
-Ref: MAN_MOV_MANUTENCAO_NOTAS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: MAN_MOV_PEDIDOS.ID_RESPONSAVEL > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: MAN_MOV_PEDIDOS.UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: MAN_DIC_DIVISOES.ID_PISO > MAN_DIC_EDIFICIOS.ID
+Ref: MAN_MOV_MANUTENCAO_COMPONENTES.ID_MANUTENCAO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
+Ref: MAN_MOV_PEDIDOS.EQUIPAMENTO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
 Ref: PA_MOV_CAB.AMBITO > PA_DIC_AMBITOS.ID_AMBITO
-Ref: PA_MOV_CAB.DEPARTAMENTO_ORIGEM > GER_DEPARTAMENTO.ID
 Ref: PA_MOV_CAB.ID_PLANO_CAB > PA_MOV_CAB_HISTORICO.ID_PLANO_CAB
 Ref: PA_MOV_CAB.ID_PLANO_CAB > PA_MOV_LINHA.ID_PLANO_CAB
-Ref: PA_MOV_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PA_MOV_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PA_MOV_LINHA.ID_ACCAO > GT_DIC_TAREFAS.ID
 Ref: PA_MOV_LINHA.ID_PLANO_LINHA > PA_MOV_LINHA_HISTORICO.ID_PLANO_LINHA
 Ref: PA_MOV_LINHA.ID_PLANO_LINHA > PA_MOV_SEGUIR_LINHA.ID_PLANO_LINHA
-Ref: PA_MOV_LINHA.PRIORIDADE > RC_DIC_GRAU_IMPORTANCIA.ID
-Ref: PA_MOV_LINHA.RESPONSAVEL > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PA_MOV_LINHA.TIPO_ACAO > GT_DIC_TIPO_ACAO.ID_TIPO_ACAO
-Ref: PE_MOV_CAB.DEPARTAMENTO > GER_DEPARTAMENTO.ID
-Ref: PE_MOV_CAB.RESPONSAVEL > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PE_MOV_CAB_HISTORICO.ID_PLANO_ESTRATEGICO > PE_MOV_CAB.ID
+Ref: PE_MOV_FICHEIROS.ID_PLANO_ESTRATEGICO > PE_MOV_CAB.ID
+Ref: PE_PLANOS_ASSOCIADOS.ID_PLANO_ESTRATEGICO > PE_MOV_CAB.ID
 Ref: PIN_DIC_CORES_ACABAMENTOS.ID_POTE > PIN_DIC_POTES.ID
 Ref: PIN_DIC_POTES.ID_CABINE > PIN_DIC_CABINES.ID
 Ref: PIN_DIC_PRE_SET.ID_TIPO_ACABAMENTO > PIN_DIC_TIPO_ACABAMENTO.ID
@@ -5931,51 +7124,42 @@ Ref: PIN_DIC_TIPO_ACABAMENTO.ID > PIN_MOV_RECEITAS_LINHAS.ID_TIPO_ACABAMENTO
 Ref: PIN_DIC_TIPOS_ACABAMENTO.ID > PIN_DIC_CORES_ACABAMENTOS.ID_TIPO_ACABAMENTO
 Ref: PIN_DIC_TIPOS_ACABAMENTO.ID_POTE > PIN_DIC_POTES.ID
 Ref: PIN_MOV_PREPARACAO.ID_PREPARACAO > PIN_MOV_PREPARACAO_CAB.ID_PREPARACAO
-Ref: PIN_MOV_PREPARACAO.ID_TURNO > AB_DIC_TURNO.ID_TURNO
-Ref: PIN_MOV_PREPARACAO.UTZ_PLANEAMENTO > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PIN_MOV_PREPARACAO_CAB.UTZ_EXECUCAO > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PIN_MOV_PREPARACAO_CAB.UTZ_PREPARACAO > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: PIN_MOV_PREPARACAO_LINHA.ID_POTE > PIN_DIC_POTES.ID
 Ref: PIN_MOV_PREPARACAO_LINHA.ID_PREPARACAO_CAB > PIN_MOV_PREPARACAO_CAB.ID_PREPARACAO_CAB
 Ref: PIN_MOV_PREPARACAO_LINHA.ID_PREPARACAO_LIN > PIN_MOV_PREPARACAO_ETIQ.ID_PREPARACAO_LIN
 Ref: PIN_MOV_PREPARACAO_LINHA.ID_PRODUTO > PIN_DIC_PRODUTOS.ID
-Ref: PIN_MOV_PREPARACAO_LINHA.ID_UNIDADE > AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA
 Ref: PIN_MOV_RECEITAS.ID > PIN_DIC_PROGRAMAS.ID_RECEITA
 Ref: PIN_MOV_RECEITAS.ID > PIN_MOV_RECEITAS_LINHAS.ID_RECEITA
 Ref: PIN_MOV_RECEITAS.ID > PIN_MOV_RECEITAS_REFERENCIAS.ID_RECEITA
-Ref: PIN_MOV_RECEITAS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: PIN_MOV_RECEITAS.VERSAO > PIN_DIC_REGISTO_BASTIDOR.VERSAO
 Ref: PIN_MOV_RECEITAS.VERSAO > PIN_DIC_REGISTO_SALAS_MISTURA.VERSAO
 Ref: PIN_MOV_RECEITAS.VERSAO > PIN_MOV_RECEITAS_LINHAS.VERSAO
 Ref: PIN_MOV_RECEITAS.VERSAO > PIN_MOV_RECEITAS_REFERENCIAS.VERSAO
 Ref: PIN_MOV_RECEITAS_LINHAS.ID_REFERENCIA_A > PIN_DIC_PRODUTOS.ID
 Ref: PIN_MOV_RECEITAS_LINHAS.REFERENCIA_A > PIN_DIC_CORES_ACABAMENTOS.NOME
-Ref: PR_AMOSTRAS_ACCOES.ID_AMOSTRA_ACCAO > GT_MOV_TAREFAS.ID_CAMPO
+Ref: PIN_DIC_PRODUTOS_RELACIONADOS.ID_PRODUTO > PIN_DIC_TIPO_ACABAMENTO.ID
+Ref: PIN_DIC_TIPO_ACABAMENTO.ID > PIN_DIC_PRODUTOS.ID_TIPO_ACABAMENTO
+Ref: PIN_MOV_RECEITAS_LINHAS.ID_REFERENCIA_A > PIN_DIC_TIPO_ACABAMENTO.ID
+Ref: PIN_DIC_POTES.ID_TIPO_ACABAMENTO > PIN_DIC_TIPO_ACABAMENTO.ID
+Ref: PIN_DIC_PRODUTOS.ID > PIN_MOV_RECEITAS_LINHAS.ID_TIPO_ACABAMENTO
+Ref: PIN_MOV_RECEITAS.ID > PIN_MOV_RECEITAS_REFERENCIAS.ID
 Ref: PR_AMOSTRAS_CAB.ID_TIPOLOGIA_ENSAIO > PR_DIC_TIPOLOGIA_ENSAIO.ID_TIPOLOGIA_ENSAIO
-Ref: PR_AMOSTRAS_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PR_DIC_CAPACIDADE_ACABAMENTO.ID_LINHA > AB_DIC_LINHA.ID_LINHA
-Ref: PR_DIC_PRODUCAO_SEMANA.ID_LINHA > AB_DIC_LINHA.ID_LINHA
-Ref: PR_DIC_SECTORES_AGREGADORES_LINHA.COD_SECTOR > RH_SECTORES.COD_SECTOR
 Ref: PR_PLANEAMENTO_PRODUCAO_ANALISES.ID_PLANO_LINHA_1 > PR_PLANEAMENTO_PRODUCAO_CAB.ID_PLANEAMENTO_PRODUCAO_CAB
 Ref: PR_PLANEAMENTO_PRODUCAO_ANALISES.ID_PLANO_LINHA_2 > PR_PLANEAMENTO_PRODUCAO_CAB.ID_PLANEAMENTO_PRODUCAO_CAB
-Ref: PR_PLANEAMENTO_PRODUCAO_ANALISES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PR_PLANEAMENTO_PRODUCAO_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: PR_WINROBOT_CAB.ID > PR_WINROBOT_RACKS.ID_CAB
-Ref: QUA_DERROGACOES.EMISSOR > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: QUA_DERROGACOES.SETOR > GER_SECCAO.ID
+Ref: PR_WINROBOT_RACKS.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_AMOSTRAS_ACCOES.ID_AMOSTRA > PR_AMOSTRAS_CAB.ID_AMOSTRA
 Ref: QUA_MC_EQUIPAMENTOS.ID_RESP_ENTRADA > QUA_MC_DIC_RESP_VALIDACAO.ID_RESP_VALIDACAO
 Ref: QUA_MC_EQUIPAMENTOS.ID_SECCAO > QUA_MC_DIC_SECCOES.ID_SECCAO
 Ref: QUA_MC_GABARITOS.ID_SECCAO > QUA_MC_DIC_SECCOES.ID_SECCAO
 Ref: QUA_MC_MAQUINAS.ID_SECCAO > QUA_MC_DIC_SECCOES.ID_SECCAO
 Ref: QUA_MC_SALAS.ID_SECCAO > QUA_MC_DIC_SECCOES.ID_SECCAO
-Ref: RC_MOV_RECLAMACAO_FICHEIROS.ID_TAREFA > GT_MOV_TAREFAS.ID_TAREFA
-Ref: RC_MOV_RECLAMACAO_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
-Ref: RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.ID_DERROGACAO > QUA_DERROGACOES.ID_DERROGACAO
 Ref: RC_MOV_RECLAMACAO_FORNECEDOR.CLASSIFICACAO > RC_DIC_CLASSIFICACAO.ID
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO_FORNECEDOR.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO_FORNECEDOR.ID_RECLAMACAO
+Ref: REU_REUNIOES_PLANOS_ACCOES.ID_REUNIAO > REU_REUNIOES.ID_REUNIAO
 Ref: RH_DIC_CACIFOS.TIPO_CACIFO > RH_DIC_TIPO_CACIFO.COD_TIPO
 Ref: RH_DIC_SECTORES_ABSENTISMO_LINHA.COD_SECTOR > RH_SECTORES.COD_SECTOR
 Ref: RH_DIC_TIPOS_DOCUMENTO.ID > RH_DIC_TIPOS_DOCUMENTO_UTZ.ID_TIPO_DOCUMENTO
@@ -5983,60 +7167,334 @@ Ref: RH_FORMACAO.ID > RH_FORMACAO_PARTICIPANTES.ID_FORMACAO
 Ref: RH_FORMACAO.ID_AREA_FORMACAO > RH_DIC_AREA_FORMACAO.ID
 Ref: RH_FORMACAO.ID_CRITERIOS_AVALIACAO > RH_DIC_CRITERIOS_AVALIACAO.ID
 Ref: RH_FORMACAO.ID_ENTIDADE_FORMADORA > RH_DIC_ENTIDADE_FORMADORA.ID
-Ref: RH_FUNCIONARIOS.COD_SECTOR > GER_DEPARTAMENTOS_SECTORES.COD_SECTOR
 Ref: RH_FUNCIONARIOS.COD_SECTOR > RH_SECTORES.COD_SECTOR
 Ref: RH_FUNCIONARIOS.ESTADO > RH_ESTADOS_FUNC.COD_ESTADO
 Ref: RH_MEDICINA_TRABALHO.ID_ENTIDADE_MEDICA > RH_DIC_ENTIDADE_MEDICA.ID
 Ref: RH_MEDICINA_TRABALHO.ID_ENTIDADE_MEDICA > RH_DIC_ENTIDADE_MEDICA_LOCAIS.ID_ENTIDADE_MEDICA
 Ref: RH_MEDICINA_TRABALHO.ID_FUNCIONARIO > RH_FUNCIONARIOS.COD_FUNC_ORIGEM
 Ref: RH_MEDICINA_TRABALHO.ID_LOCAL > RH_DIC_ENTIDADE_MEDICA_LOCAIS.ID
-Ref: RH_REGISTO_ACOES.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
 Ref: RH_SECTORES.CHEFE1 > RH_FUNCIONARIOS.COD_FUNCIONARIO
 Ref: RH_SECTORES.CHEFE2 > RH_FUNCIONARIOS.COD_FUNCIONARIO
 Ref: RH_SECTORES.COD_TURNO > RH_TURNOS.COD_TURNO
-Ref: RH_SECTORES.LOCAL > GER_LOCAIS.ID
-
-Ref: AB_MOV_MANUTENCAO.ID_TIPO_TIPOLOGIA_DOSIFICADORES > AB_DIC_TIPO_TIPOLOGIA_DOSIFICADORES.ID
-Ref: AB_MOV_MANUTENCAO_CAB.ID_TIPO_ADICAO > AB_DIC_TIPO_ADICAO.ID_TIPO_ADICAO
-Ref: AB_MOV_MANUTENCAO_CAB.ID_TIPO_OPERACAO > AB_DIC_TIPO_OPERACAO.ID_TIPO_OPERACAO
-Ref: AB_MOV_MANUTENCAO_LINHA.ID_ADITIVO > AB_DIC_COMPONENTE.ID_COMPONENTE
-Ref: COM_ACORDOS.ID_REFERENCIA > COM_REFERENCIAS.ID
-Ref: GT_MOV_TAREFAS.ID_CAMPO > GER_GRUPO.ID
-Ref: MAN_DIC_DIVISOES.ID_PISO > MAN_DIC_EDIFICIOS.ID
-Ref: MAN_MOV_MANUTENCAO_COMPONENTES.ID_MANUTENCAO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
-Ref: MAN_MOV_PEDIDOS.EQUIPAMENTO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
-Ref: PA_MOV_LINHA.ID_ACCAO > GER_DEPARTAMENTO.ID
-Ref: PIN_DIC_PRODUTOS_RELACIONADOS.ID_PRODUTO > PIN_DIC_TIPO_ACABAMENTO.ID
-Ref: PIN_DIC_TIPO_ACABAMENTO.ID > PIN_DIC_PRODUTOS.ID_TIPO_ACABAMENTO
-Ref: PIN_MOV_RECEITAS.LINHA > AB_DIC_LINHA.ID_LINHA
-Ref: PIN_MOV_RECEITAS_LINHAS.ID_REFERENCIA_A > PIN_DIC_TIPO_ACABAMENTO.ID
-Ref: PR_AMOSTRAS_ACCOES.ID_AMOSTRA > PR_AMOSTRAS_CAB.ID_AMOSTRA
-Ref: QUA_DERROGACOES_PLANOS_ACCOES.ID_DERROGACAO > QUA_DERROGACOES.ID_DERROGACAO
-Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO.ID_RECLAMACAO
-Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO_FORNECEDOR.ID_RECLAMACAO
-Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO.ID_RECLAMACAO
-Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO_FORNECEDOR.ID_RECLAMACAO
-Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_TAREFA > GT_MOV_TAREFAS.ID_TAREFA
-Ref: REU_REUNIOES_PLANOS_ACCOES.ID_REUNIAO > REU_REUNIOES.ID_REUNIAO
 Ref: RH_MEDICINA_TRABALHO_DOCUMENTOS.ID > RH_DIC_TIPOS_DOCUMENTO_UTZ.ID_TIPO_DOCUMENTO
 Ref: RH_SUGESTOES_PLANOS_ACCOES.ID_SUGESTAO > RH_SUGESTOES.ID
-Ref: AB_DIC_TINA.ID_ZONA > AB_DIC_ZONA.ID_ZONA
-Ref: AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA > AB_MOV_MANUTENCAO_LINHA.ID_UNIDADE1
-Ref: AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA > AB_MOV_MANUTENCAO_LINHA.ID_UNIDADE2
-Ref: AB_MOV_ANALISE.ID_ANALISE > AB_MOV_MANUTENCAO_CAB.ID_ANALISE
-Ref: COM_CONTRATOS.ID > COM_ACORDOS.ID
-Ref: COM_REFERENCIAS.ID > COM_ACORDOS.ID
-Ref: GER_FAVORITOS.ID_UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: RH_DIC_CACIFOS.UTILIZADOR > RH_FUNCIONARIOS.COD_FUNCIONARIO
+Ref: AB_DIC_DOSIFICACAO.ID_LINHA > AB_DIC_TINA.ID_LINHA
+Ref: AB_DIC_DOSIFICACAO_HORARIOS_VERIFICACAO.ID_DOSIFICACAO > AB_DIC_DOSIFICACAO.ID
+Ref: AB_DIC_LINHA.ID_LINHA > PIN_MOV_PREPARACAO.ID_LINHA
+Ref: AB_DIC_LINHA.ID_LINHA > PR_DIC_CAPACIDADE_ACABAMENTO.ID_LINHA
+Ref: AB_DIC_LINHA.ID_LINHA > PR_DIC_PRODUCAO_SEMANA.ID_LINHA
+Ref: AB_DIC_LINHA.ID_LINHA > PR_PLANEAMENTO_PRODUCAO_CAB.ID_LINHA
+Ref: AB_DIC_LINHA.ID_LINHA > PR_WINROBOT_CAB.LINHA
+Ref: AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA > PIN_MOV_PREPARACAO_LINHA.ID_UNIDADE
+Ref: AB_DIC_UNIDADE_MEDIDA.ID_MEDIDA > PIN_MOV_RECEITAS_LINHAS.UNIDADE
+Ref: AB_MOV_MANUTENCAO_DOSIFICADORES.DATA_PREVISTA > GER_FERIADOS.DATA
+Ref: AB_MOV_MANUTENCAO_DOSIFICADORES.ID_MANUTENCAO > AB_MOV_MANUTENCAO.ID_MANUTENCAO
+Ref: COM_ACORDOS.ID > COM_ACORDOS_VOLUMES.ID_ACORDO
+Ref: COM_ACORDOS.VERSAO > COM_ACORDOS_VOLUMES.VERSAO
+Ref: COM_BUDGETS.VERSAO > COM_BUDGETS_LINHAS.VERSAO_BUDGET
+Ref: COM_BUDGETS_LINHAS.CUSTOMER_GROUP > COM_CUSTOMER_GROUPS.ID
+Ref: COM_CUSTOMER_GROUPS.ID > COM_BUDGETS_LINHAS.ID_BUDGET
+Ref: COM_REFERENCIAS.ID > COM_ACORDOS_VOLUMES.ID_ACORDO
+Ref: COM_REFERENCIAS_SILVER.ID_REFERENCIA > COM_ACORDOS.ID_REFERENCIA
+Ref: DOC_DIC_POSTOS.ID > PR_WINROBOT_CAB.ID_POSTO
+Ref: DOC_DOCUMENTOS.ID > DOC_DOCUMENTOS_VERSOES.ID_ORIGEM
+Ref: DOC_DOCUMENTOS_LIDOS.ID_FICHEIRO > DOC_DOCUMENTOS.ID
+Ref: DOC_DOCUMENTOS_LIDOS.ID_UTZ > RH_FUNCIONARIOS.COD_FUNC_ORIGEM
+Ref: DOC_DOCUMENTOS_LIDOS.VERSAO > DOC_DOCUMENTOS.VERSAO
+Ref: DOC_FICHA_DOCUMENTOS.TIPO_DOCUMENTO > DOC_DIC_TIPOS_DOCUMENTO.ID
+Ref: FIN_DADOS_DIVIDAS_LISTA_DOCUMENTOS.DATA_ANALISE > FIN_DADOS_DIVIDAS_LISTA_ANALISE.DATA_ANALISE
+Ref: FIN_DADOS_DIVIDAS_LISTA_DOCUMENTOS.ID_ENTIDADE > FIN_DADOS_DIVIDAS_LISTA_ANALISE.ID_ENTIDADE
+Ref: FR_ABSENSENTISMO.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: GER_DEPARTAMENTO.ID > PE_MOV_CAB.DEPARTAMENTO
+Ref: GER_DEPARTAMENTOS_SECTORES.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: GER_DIC_PROJ_CAB.ID_PROJ_CAB > GER_DIC_PROJ_REF.ID_PROJ_CAB
+Ref: GER_EVENTO.ID_ORIGEM > PR_WINROBOT_CAB.ID
+Ref: GER_EVENTO.ID_ORIGEM > RP_OF_CAB.ID_OF_CAB
+Ref: GER_FERIADOS.DATA > PLANEAMENTO_LINHAS.DATA
+Ref: GER_FORNECEDOR.ID_FORNECEDOR > AB_DIC_BANHO_COMPONENTE.ID_FORNECEDOR
+Ref: GER_LOCAIS.ID > RH_SECTORES.LOCAL
+Ref: GER_SECCAO.ID > QUA_DERROGACOES.SETOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > AB_MOV_ANALISE.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > AB_MOV_MANUTENCAO.UTZ_PLANEAMENTO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > AB_MOV_MANUTENCAO_CAB.UTZ_EXECUCAO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > AB_MOV_MANUTENCAO_CAB.UTZ_PREPARACAO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > AB_MOV_MANUTENCAO_DOSIFICADORES.UTZ_EXECUCAO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > AB_MOV_REG_PARAM_OPERACAO.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > AB_MOV_REG_PARAM_OPERACAO.UTZ_VALIDA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > CO_ANALISE_CLIENTES_OBSERVACOES.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > COM_ACORDOS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > COM_ACORDOS.UTZ_FECHO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > COM_ACORDOS.UTZ_FECHO_AMORTIZACOES
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > COM_ACORDOS.UTZ_FECHO_LTA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > COM_ACORDOS_ACTIVIDADES.UTILIZADOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > COM_ACORDOS_ANEXOS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > COM_CONTRATOS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > COM_REFERENCIAS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > FICHEIROS_PAGINAS.ID_UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > FIN_DIVIDAS_ATIVIDADE.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > FIN_REGISTO_ACOES.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > GT_LOGS.UTZ_CRIA
 Ref: GER_UTILIZADORES.ID_UTILIZADOR > GT_MOV_TAREFAS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > GT_MOV_TAREFAS.UTZ_ENCAMINHADO
 Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS.ID_UTILIZADOR
 Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_DIC_EQUIPAS_UTILIZADORES.ID_UTILIZADOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_MOV_MANUTENCAO_CAB.RESPONSAVEL_PEDIDO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_MOV_MANUTENCAO_CAB.UTILIZADOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_MOV_MANUTENCAO_NOTAS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_MOV_PEDIDOS.ID_RESPONSAVEL
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > MAN_MOV_PEDIDOS.UTILIZADOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PA_MOV_CAB.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PA_MOV_LINHA.RESPONSAVEL
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PE_MOV_CAB.RESPONSAVEL
 Ref: GER_UTILIZADORES.ID_UTILIZADOR > PE_MOV_CAB.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PIN_MOV_PREPARACAO.UTZ_PLANEAMENTO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PIN_MOV_PREPARACAO_CAB.UTZ_EXECUCAO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PIN_MOV_PREPARACAO_CAB.UTZ_PREPARACAO
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PIN_MOV_RECEITAS.UTZ_CRIA
 Ref: GER_UTILIZADORES.ID_UTILIZADOR > PIN_MOV_RECEITAS_REFERENCIAS.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_AMOSTRAS_CAB.UTZ_CRIA
 Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_DIC_SECTORES_PECAS_CRITICAS_UTILIZADORES.ID_UTILIZADOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_PLANEAMENTO_PRODUCAO_ANALISES.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_PLANEAMENTO_PRODUCAO_CAB.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB.UTZ_CRIA
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > QUA_DERROGACOES.EMISSOR
+Ref: GER_UTILIZADORES.ID_UTILIZADOR > RH_REGISTO_ACOES.UTZ_CRIA
+Ref: GT_DIC_TAREFAS.ID > GT_MOV_TAREFAS.ID_ACCAO
+Ref: GT_MOV_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: GT_MOV_TAREFAS.DATA_FIM > QUA_DERROGACOES_PLANOS_ACCOES.DATA_PREVISTA
+Ref: GT_MOV_TAREFAS.DATA_FIM > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.DATA_PREVISTA
+Ref: GT_MOV_TAREFAS.DATA_FIM > RC_MOV_RECLAMACAO_PLANOS_ACCOES.DATA_PREVISTA
+Ref: GT_MOV_TAREFAS.DATA_FIM > REU_REUNIOES_PLANOS_ACCOES.DATA_PREVISTA
+Ref: GT_MOV_TAREFAS.DATA_FIM > RH_SUGESTOES_PLANOS_ACCOES.DATA_PREVISTA
+Ref: GT_MOV_TAREFAS.DATA_INICIO > QUA_DERROGACOES_PLANOS_ACCOES.DATA_CRIA
+Ref: GT_MOV_TAREFAS.DATA_INICIO > RC_MOV_RECLAMACAO.DATA_CRIA
+Ref: GT_MOV_TAREFAS.DATA_INICIO > RC_MOV_RECLAMACAO_FORNECEDOR.DATA_CRIA
+Ref: GT_MOV_TAREFAS.DATA_INICIO > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.DATA_CRIA
+Ref: GT_MOV_TAREFAS.DATA_INICIO > RC_MOV_RECLAMACAO_PLANOS_ACCOES.DATA_CRIA
+Ref: GT_MOV_TAREFAS.DATA_INICIO > REU_REUNIOES_PLANOS_ACCOES.DATA_CRIA
+Ref: GT_MOV_TAREFAS.DATA_INICIO > RH_SUGESTOES_PLANOS_ACCOES.DATA_CRIA
+Ref: GT_MOV_TAREFAS.ID_ACCAO > QUA_DERROGACOES_PLANOS_ACCOES.ID_ACCAO
+Ref: GT_MOV_TAREFAS.ID_ACCAO > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_ACCAO
+Ref: GT_MOV_TAREFAS.ID_ACCAO > RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_ACCAO
+Ref: GT_MOV_TAREFAS.ID_ACCAO > REU_REUNIOES_PLANOS_ACCOES.ID_ACCAO
+Ref: GT_MOV_TAREFAS.ID_ACCAO > RH_SUGESTOES_PLANOS_ACCOES.ID_ACCAO
+Ref: GT_MOV_TAREFAS.ID_CAMPO > GER_GRUPO.ID
+Ref: GT_MOV_TAREFAS.ID_CAMPO > PA_MOV_LINHA.ID_PLANO_LINHA
+Ref: GT_MOV_TAREFAS.ID_CAMPO > PR_AMOSTRAS_ACCOES.ID_AMOSTRA_ACCAO
+Ref: GT_MOV_TAREFAS.ID_CAMPO > QUA_DERROGACOES_PLANOS_ACCOES.ID
+Ref: GT_MOV_TAREFAS.ID_CAMPO > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID
+Ref: GT_MOV_TAREFAS.ID_CAMPO > RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID
+Ref: GT_MOV_TAREFAS.ID_CAMPO > REU_REUNIOES_PLANOS_ACCOES.ID
+Ref: GT_MOV_TAREFAS.ID_CAMPO > RH_SUGESTOES_PLANOS_ACCOES.ID
+Ref: GT_MOV_TAREFAS.ID_TAREFA > RC_MOV_RECLAMACAO_FICHEIROS.ID_TAREFA
+Ref: GT_MOV_TAREFAS.OBSERVACOES > QUA_DERROGACOES_PLANOS_ACCOES.OBSERVACOES
+Ref: GT_MOV_TAREFAS.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR.OBSERVACOES
+Ref: GT_MOV_TAREFAS.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.OBSERVACOES
+Ref: GT_MOV_TAREFAS.OBSERVACOES > RC_MOV_RECLAMACAO_PLANOS_ACCOES.OBSERVACOES
+Ref: GT_MOV_TAREFAS.OBSERVACOES > REU_REUNIOES_PLANOS_ACCOES.OBSERVACOES
+Ref: GT_MOV_TAREFAS.OBSERVACOES > RH_SUGESTOES_PLANOS_ACCOES.OBSERVACOES
+Ref: GT_MOV_TAREFAS.UTZ_ID > GER_GRUPO.ID
+Ref: GT_MOV_TAREFAS.UTZ_ID > QUA_DERROGACOES_PLANOS_ACCOES.RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_ID > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_ID > RC_MOV_RECLAMACAO_PLANOS_ACCOES.RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_ID > REU_REUNIOES_PLANOS_ACCOES.RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_ID > RH_SUGESTOES_PLANOS_ACCOES.RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_TIPO > QUA_DERROGACOES_PLANOS_ACCOES.TIPO_RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_TIPO > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.TIPO_RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_TIPO > RC_MOV_RECLAMACAO_PLANOS_ACCOES.TIPO_RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_TIPO > REU_REUNIOES_PLANOS_ACCOES.TIPO_RESPONSAVEL
+Ref: GT_MOV_TAREFAS.UTZ_TIPO > RH_SUGESTOES_PLANOS_ACCOES.TIPO_RESPONSAVEL
+Ref: MAN_DIC_AMBITO_UTILIZADORES.ID_EQUIPA > MAN_MOV_MANUTENCAO_CAB.AMBITO_MANUTENCAO
+Ref: MAN_DIC_AMBITO_UTILIZADORES.ID_UTILIZADOR > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: MAN_DIC_AMBITO_UTILIZADORES.ID_UTILIZADOR > MAN_DIC_EQUIPAS_UTILIZADORES.ID_UTILIZADOR
+Ref: MAN_DIC_DIVISOES.ID_PISO > MAN_MOV_MANUTENCAO_PLANOS.ID
+Ref: MAN_DIC_EQUIPAS_UTILIZADORES.ID_EQUIPA > MAN_DIC_EQUIPAS.ID
+Ref: MAN_DIC_EQUIPAS_UTILIZADORES.ID_UTILIZADOR > MAN_MOV_MANUTENCAO_CAB.UTILIZADOR
+Ref: MAN_DIC_PISOS.ID_EDIFICIO > MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA.ID
+Ref: MAN_DIC_PISOS.ID_EDIFICIO > MAN_MOV_MANUTENCAO_PLANOS.ID
+Ref: MAN_MOV_MANUTENCAO_ACCOES.ID_ACAO > GT_DIC_TAREFAS.ID
+Ref: MAN_MOV_MANUTENCAO_CAB.AMBITO_MANUTENCAO > MAN_DIC_AMBITOS.ID
+Ref: MAN_MOV_MANUTENCAO_CAB.EQUIPAMENTO > MAN_MOV_MANUTENCAO_COMPONENTES.ID_MANUTENCAO
+Ref: MAN_MOV_MANUTENCAO_CAB.EQUIPAMENTO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
+Ref: MAN_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB > MAN_MOV_MANUTENCAO_OPERARIOS.ID_MANUTENCAO_CAB
+Ref: MAN_MOV_MANUTENCAO_CAB.ID_TIPOLOGIA_AVARIA > MAN_DIC_TIPOLOGIA_AVARIA.ID
+Ref: MAN_MOV_MANUTENCAO_CAB.UTILIZADOR > MAN_DIC_EQUIPAS.ID
+Ref: MAN_MOV_MANUTENCAO_COMPONENTES.ID > MAN_MOV_MANUTENCAO_CAB.COMPONENTE
+Ref: MAN_MOV_MANUTENCAO_EQUIPAMENTOS.NIVEL_CRITICIDADE > MAN_DIC_NIVEIS_CRITICIDADE.ID
+Ref: MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA.ID_DEPARTAMENTO > GER_DEPARTAMENTO.ID
+Ref: MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA.ID_MANUTENCAO > MAN_MOV_MANUTENCAO_CAB.EQUIPAMENTO
+Ref: MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA.ID_MANUTENCAO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
+Ref: MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA.ID_MANUTENCAO > MAN_MOV_MANUTENCAO_PLANOS.ID_MANUTENCAO
+Ref: MAN_MOV_MANUTENCAO_GRAUS_IMPORTANCIA.NIVEL > MAN_DIC_NIVEIS_CRITICIDADE.ID
+Ref: MAN_MOV_MANUTENCAO_LISTA_MATERIAL.ID_MANUTENCAO_CAB > MAN_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB
+Ref: MAN_MOV_MANUTENCAO_NOTAS.ID_MANUTENCAO_CAB > MAN_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB
+Ref: MAN_MOV_MANUTENCAO_OPERARIOS.ID_MANUTENCAO_OPERARIOS > MAN_MOV_MANUTENCAO_PAUSAS.ID_MANUTENCAO_OPERARIO
+Ref: MAN_MOV_MANUTENCAO_OPERARIOS.ID_MANUTENCAO_OPERARIOS > MAN_TEMPOS_TRABALHO_POR_DIA.ID_MANUTENCAO_OPERARIOS
+Ref: MAN_MOV_MANUTENCAO_OPERARIOS.ID_OPERARIO > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: MAN_MOV_MANUTENCAO_OPERARIOS.ID_OPERARIO > MAN_DIC_EQUIPAS_UTILIZADORES.ID_UTILIZADOR
+Ref: MAN_MOV_MANUTENCAO_PLANOS.ID_ACAO > GT_DIC_TAREFAS.ID
+Ref: MAN_MOV_MANUTENCAO_PLANOS.ID_MANUTENCAO > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.ID_MANUTENCAO
+Ref: MAN_MOV_MAQUINAS_PARADAS.ID_PEDIDO > MAN_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB
+Ref: MAN_MOV_PEDIDOS_DOCUMENTOS.ID_PEDIDO > MAN_MOV_MANUTENCAO_CAB.ID_MANUTENCAO_CAB
+Ref: PA_MOV_CAB.DEPARTAMENTO_ORIGEM > GER_DEPARTAMENTO.ID
 Ref: PA_MOV_CAB.ID_LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PA_MOV_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PA_MOV_LINHA.DEPARTAMENTO > GER_DEPARTAMENTO.ID
+Ref: PA_MOV_LINHA.ID_ACCAO > GER_DEPARTAMENTO.ID
+Ref: PA_MOV_LINHA.ID_ACCAO > GT_DIC_TAREFAS.ID
+Ref: PA_MOV_LINHA.PRIORIDADE > RC_DIC_GRAU_IMPORTANCIA.ID
+Ref: PA_MOV_LINHA.TIPO_ACAO > GT_DIC_TIPO_ACAO.ID_TIPO_ACAO
 Ref: PE_PLANOS_ASSOCIADOS.ID_PLANO_CAB > PA_MOV_CAB.ID_PLANO_CAB
-Ref: PIN_DIC_POTES.ID_TIPO_ACABAMENTO > PIN_DIC_TIPO_ACABAMENTO.ID
-Ref: PIN_DIC_PRODUTOS.ID > PIN_MOV_RECEITAS_LINHAS.ID_TIPO_ACABAMENTO
-Ref: PIN_MOV_RECEITAS.ID > PIN_MOV_RECEITAS_REFERENCIAS.ID
+Ref: PIN_DIC_CORES.ID > PIN_MOV_RECEITAS.ID_COR
+Ref: PIN_DIC_CORES_ACABAMENTOS.ID > PIN_MOV_RECEITAS_LINHAS.ID
+Ref: PIN_DIC_PRODUTOS_RELACIONADOS.ID > PIN_DIC_PRODUTOS.ID
+Ref: PIN_DIC_PROGRAMAS.ID_RECEITA > PR_WINROBOT_CAB.ID
+Ref: PIN_MOV_PREPARACAO.ID_TURNO > AB_DIC_TURNO.ID_TURNO
+Ref: PIN_MOV_RECEITAS.ID > PR_WINROBOT_CAB.RECEITA
+Ref: PIN_MOV_RECEITAS.LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PIN_MOV_RECEITAS.REFERENCIA_PINTURA > PR_PLANEAMENTO_PRODUCAO_LINHAS.COD_REF
+Ref: PIN_MOV_RECEITAS_LINHAS.ID > PIN_DIC_PRODUTOS.ID
+Ref: PIN_MOV_RECEITAS_LINHAS.ID_PRE_SET > PIN_DIC_PRE_SET.ID
+Ref: PIN_MOV_RECEITAS_LINHAS.REFERENCIA_A > PIN_DIC_PRODUTOS.COD_REF
+Ref: PIN_MOV_RECEITAS_LINHAS.REFERENCIA_C > PIN_DIC_PRODUTOS_RELACIONADOS.COD_REF
+Ref: PIN_MOV_RECEITAS_LINHAS.REFERENCIA2_C > PIN_DIC_PRODUTOS_RELACIONADOS.COD_REF
+Ref: PIN_MOV_RECEITAS_LINHAS.REFERENCIA3_C > PIN_DIC_PRODUTOS_RELACIONADOS.COD_REF
+Ref: PIN_MOV_RECEITAS_LINHAS.REFERENCIA4_C > PIN_DIC_PRODUTOS_RELACIONADOS.COD_REF
+Ref: PIN_MOV_RECEITAS_LINHAS.REFERENCIA5_C > PIN_DIC_PRODUTOS_RELACIONADOS.COD_REF
+Ref: PIN_MOV_RECEITAS_REFERENCIAS.ID > PIN_DIC_PRODUTOS.ID
+Ref: PIN_MOV_UV_RADIATION.ID_RECEITA > PIN_MOV_RECEITAS.ID
+Ref: PIN_MOV_UV_RADIATION.VERSAO > PIN_MOV_RECEITAS.VERSAO
+Ref: PIN_PLANEAMENTO_PINTURA.ID > PIN_PLANEAMENTO_PINTURA_LINHAS.ID_CAB
+Ref: PIN_PLANEAMENTO_PINTURA_LINHAS.ID_COR_ACABAMENTO > PIN_DIC_CORES_ACABAMENTOS.ID
+Ref: PIN_PLANEAMENTO_PINTURA_LINHAS.ID_POTE > PIN_DIC_POTES.ID
+Ref: PLANEAMENTO_CAB.ID_PLANEAMENTO > PLANEAMENTO_LINHAS.ID_PLANEAMENTO
+Ref: PR_AMOSTRAS_ACCOES.ID_ACCAO > GT_DIC_TAREFAS.ID
+Ref: PR_AMOSTRAS_CAB.ID_LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PR_ANALISES_ENCOMENDAS_CLIENTES.ANO_DESTINO > PR_ANALISES_ENCOMENDAS_REFERENCIAS.ANO_DESTINO
+Ref: PR_ANALISES_ENCOMENDAS_CLIENTES.COD_CLIENTE > PR_ANALISES_ENCOMENDAS_REFERENCIAS.COD_CLIENTE
+Ref: PR_ANALISES_ENCOMENDAS_CLIENTES.SEMANA_DESTINO > PR_ANALISES_ENCOMENDAS_REFERENCIAS.SEMANA_DESTINO
+Ref: PR_BARRAS_ALERTA.LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PR_DIC_ALERTAS_DESCARGA.ID > PIN_MOV_RECEITAS_LINHAS.ID_RECEITA
+Ref: PR_DIC_ALERTAS_DESCARGA.ID > PR_WINROBOT_CAB.RECEITA
+Ref: PR_DIC_ALERTAS_DESCARGA.ID > PR_WINROBOT_PAUSAS.ID_CAB_OPERARIO
+Ref: PR_DIC_PRODUCAO_SEMANA.ANO > PR_PLANEAMENTO_PRODUCAO_LINHAS.ANO
+Ref: PR_DIC_PRODUCAO_SEMANA.ANO > PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.ANO
+Ref: PR_DIC_PRODUCAO_SEMANA.ANO > PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.ANO
+Ref: PR_DIC_PRODUCAO_SEMANA.ID_LINHA > PR_PLANEAMENTO_PRODUCAO_CAB.ID_LINHA
+Ref: PR_DIC_PRODUCAO_SEMANA.SECCAO > PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.SECCAO
+Ref: PR_DIC_PRODUCAO_SEMANA.SECCAO > PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.SECCAO
+Ref: PR_DIC_PRODUCAO_SEMANA.SEMANA > PR_PLANEAMENTO_PRODUCAO_LINHAS.SEMANA
+Ref: PR_DIC_PRODUCAO_SEMANA.SEMANA > PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.SEMANA
+Ref: PR_DIC_PRODUCAO_SEMANA.SEMANA > PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.SEMANA
+Ref: PR_DIC_SECTORES_AGREGADORES.ID_SECTOR_AGREGADOR > PR_DIC_SECTORES_AGREGADORES_LINHA.ID_SECTOR_AGREGADOR
+Ref: PR_DIC_SECTORES_AGREGADORES_LINHA.COD_SECTOR > RH_FUNCIONARIOS.COD_SECTOR
+Ref: PR_DIC_SECTORES_AGREGADORES_LINHA.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: PR_GESTAO_BARRAS.ID_GESTAO_BARRAS > PR_GESTAO_BARRAS_REFERENCIAS.ID_GESTAO_BARRAS
+Ref: PR_GESTAO_BARRAS.ID_LINHA > PR_PLANEAMENTO_PRODUCAO_CAB.ID_LINHA
+Ref: PR_GESTAO_BARRAS.UTZ_MODIF > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: PR_INDICADORES_PECAS_CRITICAS.ID_SECTOR_PECAS_CRITICAS > PR_DIC_SECTORES_PECAS_CRITICAS.ID
+Ref: PR_PECAS_CRITICAS.ID_ACAO > PR_DIC_ACOES_PECAS_CRITICAS.ID
+Ref: PR_PECAS_CRITICAS.ID_DEPARTAMENTO > GER_SECCAO.ID
+Ref: PR_PECAS_CRITICAS.ID_MOTIVO > PR_DIC_MOTIVO_CRITICIDADE.ID
+Ref: PR_PECAS_CRITICAS.ID_SECTOR_PECAS_CRITICAS > PR_DIC_SECTORES_PECAS_CRITICAS.ID
+Ref: PR_PLANEAMENTO_PRODUCAO_CAB.ID_PLANEAMENTO_PRODUCAO_CAB > PR_PLANEAMENTO_PRODUCAO_LINHAS.ID_PLANEAMENTO_PRODUCAO_CAB
+Ref: PR_PLANEAMENTO_PRODUCAO_LINHAS.ID_PLANEAMENTO_PRODUCAO_CAB > PR_PLANEAMENTO_PRODUCAO_ANALISES.ID_PLANO_LINHA_1
+Ref: PR_PLANEAMENTO_PRODUCAO_LINHAS.ID_PLANEAMENTO_PRODUCAO_CAB > PR_PLANEAMENTO_PRODUCAO_ANALISES.ID_PLANO_LINHA_2
+Ref: PR_PLANEAMENTO_PRODUCAO_OPERACOES_LINHAS.ID_PLANEAMENTO_PRODUCAO_CAB > PR_PLANEAMENTO_PRODUCAO_OPERACOES_CAB.ID_PLANEAMENTO_PRODUCAO_CAB
+Ref: PR_PLANEAMENTO_PRODUCAO_SECCOES_LINHAS.ID_PLANEAMENTO_PRODUCAO_CAB > PR_PLANEAMENTO_PRODUCAO_SECCOES_CAB.ID_PLANEAMENTO_PRODUCAO_CAB
+Ref: PR_PRODUCOES_PRIORITARIAS.LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PR_REGISTO_OPERACOES.COD_SECTOR > RH_SECTORES.COD_SECTOR
+Ref: PR_REVISOES_PRIORITARIAS.LINHA > AB_DIC_LINHA.ID_LINHA
+Ref: PR_WINROBOT_ARTICLES.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_USERS.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_CARROS.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_CARROS_TEMP.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_HISTORICO.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_ETIQUETAS.ID_ARTIGO > PR_WINROBOT_ARTICLES.ID
+Ref: PR_WINROBOT_DEF_LIN.ID_REFERENCIA > PR_WINROBOT_ARTICLES.ID
+Ref: PR_WINROBOT_PAUSAS.ID_CAB_OPERARIO > PR_WINROBOT_USERS.ID
+Ref: PR_WINROBOT_CABINES_HISTORICO.ID_ORIGEM > PR_WINROBOT_CABINES.ID
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.ID_ACCAO > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_ACCAO
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.ID_ACCAO > REU_REUNIOES_PLANOS_ACCOES.ID_ACCAO
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.ID_ACCAO > RH_SUGESTOES_PLANOS_ACCOES.ID_ACCAO
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR.OBSERVACOES
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.OBSERVACOES
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.OBSERVACOES > REU_REUNIOES_PLANOS_ACCOES.OBSERVACOES
+Ref: QUA_DERROGACOES_PLANOS_ACCOES.OBSERVACOES > RH_SUGESTOES_PLANOS_ACCOES.OBSERVACOES
+Ref: QUA_DIC_TIPOS_AUDITORIA.ID_TIPO_AUDITORIA > QUA_DIC_TIPOS_AUDITORIA_QTD_PREVISTA.ID_TIPO_AUDITORIA
+Ref: QUA_DIC_TIPOS_AUDITORIA.ID_TIPO_AUDITORIA > QUA_MOV_AUDITORIAS.ID_TIPO_AUDITORIA
+Ref: QUA_DIC_TIPOS_AUDITORIA_QTD_PREVISTA.ANO > QUA_MOV_AUDITORIAS.ANO
+Ref: RC_DIC_GRAU_IMPORTANCIA.ID > GT_MOV_TAREFAS.PRIORIDADE
+Ref: RC_MOV_RECLAMACAO.ID_RECLAMACAO > RC_MOV_RECLAMACAO_FORNECEDOR.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO.REJEICAO > RC_DIC_CLASSIFICACAO.ID
+Ref: RC_MOV_RECLAMACAO.REJEICAO > RC_DIC_REJEICAO.ID
+Ref: RC_MOV_RECLAMACAO_FICHEIROS.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: RC_MOV_RECLAMACAO_FICHEIROS_FORNECEDOR.UTZ_CRIA > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR.CLASSIFICACAO > RC_DIC_REJEICAO.ID
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_ACCAO > REU_REUNIOES_PLANOS_ACCOES.ID_ACCAO
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_ACCAO > RH_SUGESTOES_PLANOS_ACCOES.ID_ACCAO
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR.OBSERVACOES
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.OBSERVACOES > REU_REUNIOES_PLANOS_ACCOES.OBSERVACOES
+Ref: RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.OBSERVACOES > RH_SUGESTOES_PLANOS_ACCOES.OBSERVACOES
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_ACCAO > GT_DIC_TAREFAS.ID
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_ACCAO > QUA_DERROGACOES_PLANOS_ACCOES.ID_ACCAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_ACCAO > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_ACCAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_ACCAO > REU_REUNIOES_PLANOS_ACCOES.ID_ACCAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_ACCAO > RH_SUGESTOES_PLANOS_ACCOES.ID_ACCAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_RECLAMACAO > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.ID_RECLAMACAO
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.ID_TAREFA > GT_MOV_TAREFAS.ID_TAREFA
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.OBSERVACOES > QUA_DERROGACOES_PLANOS_ACCOES.OBSERVACOES
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR.OBSERVACOES
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES.OBSERVACOES
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.OBSERVACOES > REU_REUNIOES_PLANOS_ACCOES.OBSERVACOES
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.OBSERVACOES > RH_SUGESTOES_PLANOS_ACCOES.OBSERVACOES
+Ref: RC_MOV_RECLAMACAO_PLANOS_ACCOES.RESPONSAVEL > GER_UTILIZADORES.ID_UTILIZADOR
+Ref: REU_AMBITOS_REUNIOES.ID_AMBITO > REU_AMBITOS_HISTORICO.ID_AMBITO
+Ref: REU_REUNIOES.ID_AMBITO > REU_AMBITOS_HISTORICO.ID_AMBITO
+Ref: REU_REUNIOES_PLANOS_ACCOES.ID_ACCAO > RH_SUGESTOES_PLANOS_ACCOES.ID_ACCAO
+Ref: REU_REUNIOES_PLANOS_ACCOES.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR.OBSERVACOES
+Ref: REU_REUNIOES_PLANOS_ACCOES.OBSERVACOES > RH_SUGESTOES_PLANOS_ACCOES.OBSERVACOES
 Ref: RH_DIC_CACIFOS.LOCAL > GER_LOCAIS.ID
-Ref: RH_DIC_CACIFOS.UTILIZADOR > RH_FUNCIONARIOS.COD_FUNCIONARIO
+Ref: RH_DIC_PONTO.CHECKDATE > FR_ABSENSENTISMO.CHECKDATE
+Ref: RH_DIC_PONTO.NFUNCIONARIO > RH_FUNCIONARIOS.COD_FUNC_ORIGEM
+Ref: RH_DIC_SECTORES_ABSENTISMO.ID_SECTOR_ABSENTISMO > RH_DIC_SECTORES_ABSENTISMO_LINHA.ID_SECTOR_ABSENTISMO
+Ref: RH_DIC_SECTORES_ABSENTISMO_LINHA.COD_SECTOR > FR_ABSENSENTISMO.COD_SECTOR
+Ref: RH_FORMACAO.ID_AREA_FORMACAO > RH_DIC_ENTIDADE_FORMADORA.ID
+Ref: RH_FORMACAO.ID_CRITERIOS_AVALIACAO > RH_DIC_AREA_FORMACAO.ID
+Ref: RH_FUNCIONARIOS.COD_FUNC_ORIGEM > GER_UTILIZADORES.COD_UTZ
+Ref: RH_FUNCIONARIOS.COD_FUNCIONARIO > RH_DIC_PONTO.NFUNCIONARIO
+Ref: RH_FUNCIONARIOS.COD_SECTOR > FR_ABSENSENTISMO.COD_SECTOR
+Ref: RH_FUNCIONARIOS.COD_SECTOR > GER_DEPARTAMENTOS_SECTORES.COD_SECTOR
+Ref: RH_FUNCIONARIOS.LOCAL > GER_LOCAIS.ID
+Ref: RH_SECTORES.COD_SECTOR > GT_MOV_TAREFAS.UTZ_ID
+Ref: RH_SECTORES.COD_SECTOR > PR_DIC_SECTORES_ANALISE.COD_SECTOR
+Ref: RH_SECTORES.COD_SECTOR > PR_DIC_SECTORES_SECCAO.ID_SECTOR
+Ref: RH_SECTORES.COD_TURNO > FR_ABSENSENTISMO.COD_TURNO
+Ref: RH_SUGESTOES_PLANOS_ACCOES.OBSERVACOES > RC_MOV_RECLAMACAO_FORNECEDOR.OBSERVACOES
+Ref: RH_TURNOS.COD_TURNO > FR_ABSENSENTISMO.COD_TURNO
+Ref: RP_OF_CAB.IP_POSTO > DOC_DIC_POSTOS.IP_POSTO
+Ref: RP_OF_OP_CAB.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_OF_OP_LIN.ID_OP_CAB > RP_OF_OP_CAB.ID_OP_CAB
+Ref: RP_OF_OP_FUNC.ID_OP_CAB > RP_OF_OP_CAB.ID_OP_CAB
+Ref: RP_OF_PARA_LIN.ID_OP_CAB > RP_OF_OP_CAB.ID_OP_CAB
+Ref: RP_OF_PREP_LIN.ID_OP_CAB > RP_OF_OP_CAB.ID_OP_CAB
+Ref: RP_OF_OP_ETIQUETA.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OP_ETIQUETA_MATRIX.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OP_ETIQUETA_MATRIX.ID_REF_ETIQ > RP_OF_OP_ETIQUETA.ID_REF_ETIQUETA
+Ref: RP_OF_OP_ETIQUETA_MATRIX_HISTORICO.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_OF_OP_ETIQUETA_MATRIX_HISTORICO.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OP_ETIQUETA_MATRIX_HISTORICO.ID_REF_ETIQ > RP_OF_OP_ETIQUETA.ID_REF_ETIQUETA
+Ref: RP_OF_DEF_LIN.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_DEF_LIN.ID_REF_ETIQUETA > RP_OF_OP_ETIQUETA.ID_REF_ETIQUETA
+Ref: RP_OF_LST_DEF.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OUTRODEF_LIN.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OUTRODEF_LIN.ID_REF_ETIQUETA > RP_OF_OP_ETIQUETA.ID_REF_ETIQUETA
+Ref: RP_OF_OUTRODEF_LIN.ID_DEF_OUTRO > RP_DIC_DEF_OUTROS.ID_DEF_OUTRO
+Ref: RP_OF_OPERARIOS_CAIXA.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_CAIXAS_INCOMPLETAS.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_HISTORICO_FICHEIRO_MANUAL.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_HISTORICO_IMPRESSAO_ETIQUETAS_MATRIX.ID_ETIQUETA_MATRIX > RP_GESTAO_ETIQUETAS_MATRIX.ID

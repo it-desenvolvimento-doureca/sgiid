@@ -57,6 +57,31 @@ Table PE_PLANOS_ASSOCIADOS {
 
 }
 
+
+
+Table PE_ANALISE_HISTORICO_CONTADORES {
+  ID int [pk, increment]
+  DATA_SNAPSHOT datetime
+  ANO int
+  PLANEADAS decimal(19, 0)
+  EXECUCAO_PLANEADA decimal(19, 0)
+  EXECUCAO_ATUAL decimal(19, 0)
+  EM_ATRASO decimal(19, 0)
+}
+Table PE_ANALISE_HISTORICO_GRAFICO {
+  ID int [pk, increment]
+  DATA_SNAPSHOT datetime
+  ANO int
+  DEPARTAMENTO varchar(255)
+  TOTAL decimal(19, 2)
+  CONCLUIDAS decimal(19, 2)
+  EM_ATRASO decimal(19, 2)
+  PLANEADAS decimal(19, 2)
+  PERCENTAGEM_PLANEADAS decimal(19, 2)
+  PERCENTAGEM_CONCLUIDAS decimal(19, 2)
+  PERCENTAGEM_EM_ATRASO decimal(19, 2)
+}
+
 // References
 Ref: PE_MOV_CAB_HISTORICO.ID_PLANO_ESTRATEGICO > PE_MOV_CAB.ID
 Ref: PE_MOV_FICHEIROS.ID_PLANO_ESTRATEGICO > PE_MOV_CAB.ID

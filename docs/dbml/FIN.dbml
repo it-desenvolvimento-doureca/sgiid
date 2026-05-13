@@ -98,5 +98,104 @@ Table FIN_REGISTO_ACOES {
 
 }
 
+
+
+
+
+
+
+
+
+
+
+Table FIN_DADOS_DIVIDAS_DASHBOARD {
+  Valor_Total_Acordos decimal(38, 6)
+  Total_em_Divida decimal(38, 6)
+  Media_atraso_divida decimal(16, 2)
+  Divida_31dias decimal(9, 0)
+  Data_Analise date
+}
+Table FIN_DADOS_DIVIDAS_LISTA_ANALISE {
+  kam varchar(255)
+  ID_ENTIDADE varchar(6)
+  NOME_ENTIDADE varchar(255)
+  valor_divida decimal(38, 6)
+  total_divida_venc decimal(38, 6)
+  nao_vencido decimal(38, 6)
+  vencido_ate_30 decimal(38, 6)
+  vencido_31_60 decimal(38, 6)
+  vencido_61_90 decimal(38, 6)
+  vencido_mais_91 decimal(38, 6)
+  AcordoFin decimal(38, 6)
+  MediaPag decimal(16, 0)
+  MediaAtraso decimal(16, 2)
+  Data_Analise date
+}
+Table FIN_DADOS_DIVIDAS_LISTA_DOCUMENTOS {
+  ID_ENTIDADE varchar(6)
+  NUM_DOC varchar(23)
+  DATA_DOC date
+  DATA_VENC date
+  MORA int
+  valor_divida decimal(36, 6)
+  nao_vencido decimal(36, 6)
+  vencido_ate_30 decimal(36, 6)
+  vencido_31_60 decimal(36, 6)
+  vencido_61_90 decimal(36, 6)
+  vencido_mais_121 decimal(36, 6)
+  AcordoFin decimal(36, 6)
+  Data_Analise date
+  ID_CAB_DOC int
+}
+Table FIN_DIC_AREAS_NEGOCIO {
+  id_area_negocio int
+  descricao varchar(50)
+}
+Table FIN_DIC_LINHAS_RELATORIO {
+  id_linha int
+  descricao varchar(100)
+}
+Table FIN_DIC_MOTIVOS_REGULARIZACAO {
+  id_motivo_regularizacao int
+  descricao varchar(50)
+}
+Table FIN_FATURACAO_TOTAL {
+  MES int
+  ANO int
+  FATURACAO_TOTAL decimal(36, 2)
+}
+Table FIN_LISTA_DOCUMENTOS {
+  NOME_FICHEIRO varchar(250)
+  DATA_UPDATE datetime
+  DATA_INSERT datetime
+}
+Table FIN_PAR_VENDAS {
+  codref varchar(50)
+  desref varchar(200)
+  chave varchar(100)
+  id_area_negocio int
+  percentagem decimal(18, 2)
+  estado bit
+  id_linha_vendas int
+  id_linha_devolucao int
+  id_linha_desconto int
+  id_linha_retificacao int
+  data_ini date
+}
+Table FIN_SEGUIMENTO_FATURACAO {
+  DATA date
+  PRIMEIRO_DIA_MES bit
+  DOMINGO bit
+  ULTIMO_DIA_MES bit
+  REALIZADO decimal(36, 2)
+  ENCOMENDADO decimal(36, 2)
+  ATRASO decimal(36, 2)
+  VALOR_STOCK decimal(36, 2)
+  PREVISAO_VENDAS_M1 varchar(10)
+  DATA_PREVISAO_VENDAS_M1 date
+  PREVISAO_VENDAS_M2 decimal(36, 2)
+  DATA_PREVISAO_VENDAS_M2 date
+}
+
 // References
 

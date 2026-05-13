@@ -1,0 +1,25 @@
+﻿// Module: ST
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table ST_PEDIDOS {
+  ID_PEDIDO int [pk, increment]
+  PROREF varchar(50)
+  ETQNUM varchar(50)
+  QUANT decimal(18, 4)
+  LOTE varchar(50)
+  ARMAZEM varchar(50)
+  DESCRICAO varchar(150)
+  UTZ_CRIA varchar(10)
+  DATA_CRIA datetime
+  COD_SECTOR int
+  DES_SECTOR varchar(50)
+  LOCAL varchar(50)
+  COD_SECTOR_OF int
+  DES_SECTOR_OF varchar(250)
+  IP_POSTO varchar(250)
+  IMPRESSO bit
+  ESTADO varchar(5)
+}
+
+// References

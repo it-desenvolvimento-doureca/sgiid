@@ -760,10 +760,301 @@ Table PR_WINROBOT_USERS {
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Table PR_ALERTA_ENCOMENDA_PENDENTE {
+  FORNECEDOR varchar(70)
+  ENCOMENDA varchar(20)
+  uticre varchar(20)
+  utinom varchar(70)
+  utinumint varchar(100)
+  DESIGNACAO varchar(140)
+  DATA date
+  QUANTIDADEENC decimal(19, 4)
+  QUANTIDADEPEND decimal(20, 4)
+  UN varchar(8)
+  PRECO decimal(19, 4)
+  proref varchar(34)
+  uticod varchar(20)
+}
+Table PR_ANALISES_ENCOMENDAS_ATRASOS {
+  COD_CLIENTE varchar(50)
+  COD_REF varchar(50)
+  DES_REF varchar(250)
+  ESTADO varchar(250)
+  QUANT decimal(20, 2)
+  STOCK decimal(20, 2)
+  VALOR decimal(20, 2)
+  SEMANA_ORIGEM int
+  ANO_ORIGEM int
+  DATA_CRIA datetime
+  COD_ESTABELECIMENTO varchar(6)
+}
+Table PR_ANALISES_ENCOMENDAS_CLIENTES {
+  COD_CLIENTE varchar(50)
+  ESTABELECIMENTO varchar(250)
+  NOME_CLIENTE varchar(250)
+  DATA_INICIO_SEMANA date
+  DATA_FIM_SEMANA date
+  SEMANA_DESTINO int
+  ANO_DESTINO int
+  SEMANA_ORIGEM int
+  ANO_ORIGEM int
+  PREVISAO decimal(38, 2)
+  VALOR_REAL decimal(38, 2)
+  ATRASO decimal(38, 2)
+  DATA_CRIA datetime
+  COD_ESTABELECIMENTO varchar(6)
+}
+Table PR_ANALISES_ENCOMENDAS_REFERENCIAS {
+  COD_CLIENTE varchar(50)
+  COD_REF varchar(50)
+  DES_REF varchar(250)
+  ESTADO varchar(250)
+  QUANT decimal(20, 2)
+  STOCK decimal(20, 2)
+  VALOR decimal(20, 2)
+  SEMANA_ORIGEM int
+  ANO_ORIGEM int
+  SEMANA_DESTINO int
+  ANO_DESTINO int
+  DATA_CRIA datetime
+  COD_ESTABELECIMENTO varchar(6)
+}
+Table PR_DIC_ACUMULADOS {
+  COD_SECTOR int
+  DES_SECTOR varchar(50)
+  DataHora date
+  RACIO decimal(10, 2)
+  cadencia int
+}
+Table PR_HISTORICO_ALERTAS {
+  DATA datetime
+  ULTIMO_REGISTO datetime
+}
+Table PR_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES_LINHAS {
+  ID_PLANEAMENTO_PRODUCAO_MAQUINAS_ANALISES int
+  COD_MAQ varchar(250)
+  NOME_MAQ varchar(250)
+  NOME_SECCAO varchar(250)
+  CADENCIA_MAQ_FUNC int
+  NUM_HORAS_PRODUTIVAS_DIA decimal(19, 4)
+  NUM_HORAS_PRODUTIVAS_SEMANA decimal(38, 6)
+  HORAS_PLANEADAS decimal(19, 2)
+  REFERENCIA varchar(250)
+  DESIGNACAO varchar(250)
+  QUANT_PRODUZIR int
+  COEFICIENTE decimal(19, 4)
+  SEMANA int
+  ANO int
+  N_DIAS_PRODUCAO decimal(18, 2)
+  OPERACAO varchar(250)
+}
+Table PR_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES_LINHAS {
+  ID_PLANEAMENTO_PRODUCAO_SECCOES_ANALISES int
+  COD_MAQ varchar(250)
+  NOME_MAQ varchar(250)
+  NOME_SECCAO varchar(250)
+  CADENCIA_MAQ_FUNC bigint
+  NUM_HORAS_PRODUTIVAS_DIA decimal(19, 4)
+  NUM_HORAS_PRODUTIVAS_SEMANA decimal(38, 6)
+  HORAS_PLANEADAS decimal(19, 2)
+  REFERENCIA varchar(250)
+  DESIGNACAO varchar(250)
+  QUANT_PRODUZIR int
+  COEFICIENTE decimal(19, 4)
+  SEMANA int
+  ANO int
+  N_DIAS_PRODUCAO decimal(18, 2)
+  OPERACAO varchar(250)
+}
+Table PR_PRODUCAO_PLANEADA {
+  ID_PRODUCAO_PLANEADA int [pk, increment]
+  ID_LINHA int
+  SEMANA int
+  MES int
+  ANO int
+  VALOR_PLANEADO decimal(19, 0)
+}
+Table PR_REGISTO_OPERACOES {
+  COD_FUNCIONARIO varchar(125)
+  NOME varchar(200)
+  ATIVO bit
+  LOCAL varchar(100)
+  RESPONSAVEL varchar(150)
+  COD_SECTOR int
+  DES_SECTOR varchar(150)
+  CHEFE varchar(150)
+  DATDEB date
+  PROREF varchar(50)
+  PRODES1 varchar(200)
+  OPECOD varchar(200)
+  OPEDES varchar(200)
+  QUANT decimal(18, 2)
+  TEMPOPREP decimal(18, 6)
+  TEMPOEXEC decimal(18, 6)
+  TEMPOTOTAL decimal(18, 6)
+  HEUDEB time
+  HEUFIN time
+  OFNUM varchar(150)
+  TEMPOPAUSAS decimal(18, 6)
+  OPENUM varchar(25)
+  ofdnumenr int
+}
+Table PR_WINROBOT_ARTICLES {
+  ID int [pk, increment]
+  ID_CAB int
+  COD_REF varchar(50)
+  DESIGN_REF varchar(250)
+  NUMERO_PECAS int
+  UTZ_CRIA varchar(50)
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  UTZ_MODIF varchar(50)
+  INDEX_ORIGEM int
+  RAWCODE1 varchar(25)
+  RAWCODE2 varchar(25)
+  RAWCODE3 varchar(25)
+  RAWCODE4 varchar(25)
+  RAWCODE5 varchar(25)
+  RAWCODE6 varchar(25)
+  RAWCODE7 varchar(25)
+  RAWCODE8 varchar(25)
+  RAWCODE9 varchar(25)
+  RAWCODE10 varchar(25)
+  OBSERVACAO_DEFEITO text
+  TOTAL_BOAS decimal(19, 0)
+  TOTAL_DEFEITOS decimal(19, 0)
+  OUTRODEF_1 bit
+  OUTRODEF_2 bit
+  OUTRODEF_3 bit
+  OUTRODEF_4 bit
+  COD_REF_INJETADA text
+  DESIGN_REF_INJETADA text
+  OBJETIVO decimal(19, 4)
+}
+Table PR_WINROBOT_CABINES {
+  ID int [pk, increment]
+  Carro int
+  Tipo varchar(255)
+  Cabina varchar(255)
+  Data_Hora_Inicio datetime
+  Data_Hora_Fim datetime
+  Job_Modelo int
+  Atomizacao decimal(23, 2)
+  Leque decimal(23, 2)
+  Codigo_Cor varchar(255)
+  Incidencias varchar(255)
+  Temperatura decimal(23, 2)
+  Humidade int
+  Ciclo int
+  Ciclo_HHMMSS varchar(255)
+  Consumo int
+  Flashoff int
+  Flashoff_HHMMSS varchar(255)
+  Lote varchar(255)
+  ID_ORIGEM int
+  INSERTDATE datetime
+  TempMin int
+  TempMax int
+  TempMedia int
+  Entrada int
+  Saida int
+  IdProd varchar(14)
+}
+Table PR_WINROBOT_CABINES_HISTORICO {
+  ID int [pk, increment]
+  Carro int
+  Tipo varchar(255)
+  Cabina varchar(255)
+  Data_Hora_Inicio datetime
+  Data_Hora_Fim datetime
+  Job_Modelo int
+  Atomizacao decimal(23, 2)
+  Leque decimal(23, 2)
+  Codigo_Cor varchar(255)
+  Incidencias varchar(255)
+  Temperatura decimal(23, 2)
+  Humidade int
+  Ciclo int
+  Ciclo_HHMMSS varchar(255)
+  Consumo int
+  Flashoff int
+  Flashoff_HHMMSS varchar(255)
+  Lote varchar(255)
+  ID_ORIGEM int
+  INSERTDATE datetime
+  TempMin int
+  TempMax int
+  TempMedia int
+  Entrada int
+  Saida int
+  IdProd varchar(14)
+}
+Table PR_WINROBOT_CARROS {
+  ID int [pk, increment]
+  NUM_CARRO varchar(250)
+  ID_CAB int
+  UTZ_CRIA text
+  DATA_CRIA datetime
+  UTZ_MODIF text
+  DATA_MODIF datetime
+}
+Table PR_WINROBOT_CARROS_TEMP {
+  ID int [pk, increment]
+  NUM_CARRO varchar(250)
+  ID_CAB int
+  UTZ_CRIA text
+  DATA_CRIA datetime
+}
+Table PR_WINROBOT_DEF_LIN {
+  ID int [pk, increment]
+  ID_REFERENCIA int
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  COD_DEF varchar(4)
+  DESC_DEF varchar(35)
+  QUANT_DEF int
+  DATA_CRIA datetime
+  DATA_MODIF datetime
+  OBS_DEF varchar(250)
+}
+Table PR_WINROBOT_HISTORICO {
+  ID int [pk, increment]
+  DESCRICAO text
+  DATA_CRIA datetime
+  ID_CAB int
+}
+
 // References
 Ref: PR_AMOSTRAS_CAB.ID_TIPOLOGIA_ENSAIO > PR_DIC_TIPOLOGIA_ENSAIO.ID_TIPOLOGIA_ENSAIO
 Ref: PR_PLANEAMENTO_PRODUCAO_ANALISES.ID_PLANO_LINHA_1 > PR_PLANEAMENTO_PRODUCAO_CAB.ID_PLANEAMENTO_PRODUCAO_CAB
 Ref: PR_PLANEAMENTO_PRODUCAO_ANALISES.ID_PLANO_LINHA_2 > PR_PLANEAMENTO_PRODUCAO_CAB.ID_PLANEAMENTO_PRODUCAO_CAB
-Ref: PR_WINROBOT_CAB.ID > PR_WINROBOT_RACKS.ID_CAB
+// PR_WINROBOT hierarchy
+Ref: PR_WINROBOT_RACKS.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_ARTICLES.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_USERS.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_CARROS.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_CARROS_TEMP.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_HISTORICO.ID_CAB > PR_WINROBOT_CAB.ID
+Ref: PR_WINROBOT_ETIQUETAS.ID_ARTIGO > PR_WINROBOT_ARTICLES.ID
+Ref: PR_WINROBOT_DEF_LIN.ID_REFERENCIA > PR_WINROBOT_ARTICLES.ID
+Ref: PR_WINROBOT_PAUSAS.ID_CAB_OPERARIO > PR_WINROBOT_USERS.ID
+Ref: PR_WINROBOT_CABINES_HISTORICO.ID_ORIGEM > PR_WINROBOT_CABINES.ID
 
 Ref: PR_AMOSTRAS_ACCOES.ID_AMOSTRA > PR_AMOSTRAS_CAB.ID_AMOSTRA

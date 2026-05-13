@@ -1,0 +1,402 @@
+﻿// Module: RP
+// SGIID Database - from SQL script SGIID
+// SQL Server | DataSource: java:jboss/datasources/SGIID
+
+Table RP_AUX_OPNUM {
+  ID int [pk, increment]
+  RESCOD varchar(50)
+  DATDEB date
+  PROREF varchar(50)
+  OFNUM varchar(50)
+  OPECOD varchar(50)
+  DATA_CRIACAO datetime
+  DATA_MODIFICACAO datetime
+  ESTADO bit
+  ID_CAMPO int
+  TIPO varchar(4)
+  HEUDEB time
+}
+Table RP_CAIXAS_INCOMPLETAS {
+  ID_CAIXA_INCOMPLETA int [pk, increment]
+  ETQNUM varchar(10)
+  REF_NUM varchar(17)
+  QUANT_ETIQUETA decimal(9, 3)
+  UNIDADE varchar(10)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  ID_OF_CAB int
+}
+Table RP_CONF_CHEF_SEC {
+  ID_CONF_CHEF_SEC int [pk, increment]
+  ID_UTZ varchar(10)
+  SEC_NUM varchar(10)
+  NOME_UTZ varchar(35)
+  NOME_SEC varchar(35)
+}
+Table RP_CONF_EQUIP {
+  ID_CONF_EQUIPA varchar(2)
+  HORA_INI time
+  HORA_FIM time
+}
+Table RP_CONF_FAMILIA_COMP {
+  COD_FAMILIA_COMP varchar(4)
+  NOME_FAMILIA_COMP varchar(35)
+}
+Table RP_CONF_FAMILIA_DEF_COMPRADAS {
+  COD_FAMILIA_DEF varchar(4)
+  NOME_FAMILIA_DEF varchar(35)
+}
+Table RP_CONF_OP {
+  ID_CONF_OP int [pk, increment]
+  ID_OP_PRINC varchar(4)
+  ID_OP_SEC varchar(4)
+  NOME_OP_PRINC varchar(35)
+  NOME_OP_SEC varchar(35)
+}
+Table RP_CONF_OP_NPREV {
+  ID_CONF_OP_NPREV int [pk, increment]
+  ID_OP varchar(4)
+  NOME_OP varchar(35)
+  SECNUMENR1_OP varchar(10)
+}
+Table RP_CONF_OP_RECUPERACAO_PECAS {
+  ID int [pk, increment]
+  ID_OP varchar(50)
+  NOME_OP varchar(100)
+  SECNUMENR1_OP varchar(50)
+}
+Table RP_CONF_RELACAO_REF_ETIQUETAS {
+  ID int [pk, increment]
+  REF_PRINCIPAL varchar(250)
+  REF_IMPRIMIR varchar(250)
+  DATA_CRIA datetime
+  UTZ_CRIA varchar(10)
+  DATA_MODIF datetime
+  UTZ_MODIF varchar(10)
+}
+Table RP_CONF_TURNO {
+  ID_TURNO varchar(2)
+  NOME_TURNO varchar(20)
+  HORA_INICIO time
+  HORA_FIM time
+}
+Table RP_CONF_UTZ_PERF {
+  ID_CONF_UTZ_PERF int [pk, increment]
+  ID_UTZ varchar(10)
+  PERFIL varchar(2)
+  NOME_UTZ varchar(35)
+  PASSWORD varchar(30)
+}
+Table RP_DIC_DEF_OUTROS {
+  ID_DEF_OUTRO int [pk, increment]
+  DESC_DEF_OUTRO varchar(35)
+}
+Table RP_GESTAO_ETIQUETAS_MATRIX {
+  ID int [pk, increment]
+  REFERENCIA varchar(250)
+  LOTE varchar(250)
+  QTD int
+  ESTADO varchar(5)
+  NUMERO_IMPRESSOES int
+  DATA_CRIA datetime
+}
+Table RP_HISTORICO_FICHEIRO_MANUAL {
+  ID int [pk, increment]
+  ID_OF_CAB int
+  DATA_CRIA datetime
+  RESPOSTA text
+}
+Table RP_HISTORICO_IMPRESSAO_ETIQUETAS_MATRIX {
+  ID int [pk, increment]
+  ID_ETIQUETA_MATRIX int
+  DESCRICAO text
+  NUMERO_IMPRESSAO int
+  DATA_IMPRESSAO datetime
+  UTZ_IMPRESSAO varchar(10)
+  CHEFE varchar(10)
+}
+Table RP_OF_CAB {
+  ID_OF_CAB int [pk, increment]
+  ID_OF_CAB_ORIGEM int
+  OF_NUM varchar(10)
+  OF_OBS varchar(35)
+  OP_COD varchar(50)
+  OP_NUM varchar(4)
+  OP_DES varchar(35)
+  SEC_NUM varchar(10)
+  SEC_DES varchar(35)
+  MAQ_NUM varchar(10)
+  MAQ_DES varchar(35)
+  ID_UTZ_CRIA varchar(10)
+  NOME_UTZ_CRIA varchar(35)
+  DATA_HORA_CRIA datetime
+  ID_UTZ_MODIF varchar(10)
+  NOME_UTZ_MODIF varchar(35)
+  DATA_HORA_MODIF datetime
+  ESTADO varchar(1)
+  OP_COD_ORIGEM varchar(10)
+  OP_PREVISTA varchar(1)
+  MAQ_NUM_ORIG varchar(10)
+  VERSAO_MODIF int
+  ID_UTZ_EDICAO varchar(10)
+  ESTADO_INICIAL varchar(1)
+  IP_POSTO varchar(25)
+  IP_POSTO_FINAL varchar(25)
+  PRIMEIRA_OPENUM bit
+  ULTIMA_OPENUM bit
+  ETIQUETA varchar(50)
+  TESTE_DIMENSIONAL bit
+  OPERARIO_FORMACAO bit
+  ORIGEM_RECLAMACAO bit
+  STOCK_ETIQUETA_30 bit
+  DEFEITOS_INJECAO bit
+  DEVOLUCAO_CLIENTE bit
+  GAMA_EMBALAGEM_INCORRETA bit
+  MODO_DEGRADADO bit
+  DATA_ORIGEM_RECLAMACAO varchar(10)
+  VERIFICACAO_QUANT_EMBALAGEM bit
+  DATA_DEVOLUCAO_CLIENTE varchar(10)
+  MODO_DEGRADADO_MOTIVO text
+  ENSAIO_DIA bit
+  DATCRE_ETIQUETA date
+}
+Table RP_OF_DEF_LIN {
+  ID_DEF_LIN int [pk, increment]
+  ID_REF_ETIQUETA int
+  ID_OP_LIN int
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  COD_DEF varchar(4)
+  DESC_DEF varchar(35)
+  QUANT_DEF int
+  DATA_HORA_REG datetime
+  OBS_DEF varchar(250)
+  QUANT_DEF_M1 int
+  QUANT_DEF_M2 int
+  VERSAO_MODIF int
+  QUANT_DEF_ORIGINAL int
+  DESC_FAMILIA varchar(250)
+}
+Table RP_OF_LST_DEF {
+  ID_LST_DEF int [pk, increment]
+  ID_OP_LIN int
+  COD_DEF varchar(4)
+  DESC_DEF varchar(35)
+  DATA_HORA_MODIF datetime
+  ID_UTZ_CRIA varchar(10)
+}
+Table RP_OF_OP_CAB {
+  ID_OP_CAB int [pk, increment]
+  ID_OF_CAB int
+  TEMPO_PREP_TOTAL varchar(12)
+  TEMPO_PARA_TOTAL varchar(12)
+  TEMPO_EXEC_TOTAL varchar(12)
+  TEMPO_PREP_TOTAL_M1 varchar(12)
+  TEMPO_EXEC_TOTAL_M1 varchar(12)
+  TEMPO_PARA_TOTAL_M1 varchar(12)
+  TEMPO_PREP_TOTAL_M2 varchar(12)
+  TEMPO_EXEC_TOTAL_M2 varchar(12)
+  TEMPO_PARA_TOTAL_M2 varchar(12)
+}
+Table RP_OF_OP_ETIQUETA {
+  ID_REF_ETIQUETA int [pk, increment]
+  ID_OP_LIN int
+  REF_NUM varchar(17)
+  REF_LOTE varchar(35)
+  REF_ETIQUETA int
+  OF_NUM_ORIGEM varchar(10)
+  OP_COD_ORIGEM varchar(4)
+  QUANT_ETIQUETA int
+  QUANT_BOAS decimal(9, 2)
+  QUANT_DEF int
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  DATA_HORA_MODIF datetime
+  OBS_ETIQ varchar(35)
+  QUANT_BOAS_M1 decimal(9, 2)
+  QUANT_DEF_M1 int
+  QUANT_BOAS_M2 decimal(9, 2)
+  QUANT_DEF_M2 int
+  VERSAO_MODIF int
+  OP_COD_FAM text
+  OP_NUM varchar(4)
+  NOVO bit
+  OFDATFR date
+  ATIVO bit
+  APAGADO bit
+}
+Table RP_OF_OP_ETIQUETA_MATRIX {
+  ID int [pk, increment]
+  ETIQUETA varchar(50)
+  ID_OF_CAB int
+  ID_OP_LIN int
+  ID_REF_ETIQ int
+  IP_POSTO varchar(15)
+  ID_MAQUINA int
+  DATA_CRIA datetime
+  UTZ_CRIA varchar(50)
+  DATA_MODIF datetime
+  UTZ_MODIF varchar(50)
+  PROGRAMA varchar(50)
+  ESTADO varchar(3)
+}
+Table RP_OF_OP_ETIQUETA_MATRIX_HISTORICO {
+  ID int [pk, increment]
+  DATA_CRIA datetime
+  DESCRICAO text
+  ETIQUETA varchar(50)
+  ID_OF_CAB int
+  ID_OP_LIN int
+  ID_REF_ETIQ int
+  IP_POSTO varchar(15)
+  ID_MAQUINA int
+  UTZ_CRIA varchar(50)
+  PROGRAMA varchar(50)
+}
+Table RP_OF_OP_FUNC {
+  ID_OP_FUNC int [pk, increment]
+  ID_OP_CAB int
+  DATA_INI date
+  HORA_INI time
+  DATA_FIM date
+  HORA_FIM time
+  ID_EQUIPA varchar(2)
+  ID_UTZ_CRIA varchar(10)
+  NOME_UTZ_CRIA varchar(35)
+  PERFIL_CRIA varchar(1)
+  ID_UTZ_MODIF varchar(10)
+  NOME_UTZ_MODIF varchar(35)
+  PERFIL_MODIF varchar(1)
+  DATA_HORA_MODIF datetime
+  ESTADO varchar(1)
+  DATA_INI_M1 date
+  HORA_INI_M1 time
+  DATA_FIM_M1 date
+  HORA_FIM_M1 time
+  DATA_INI_M2 date
+  HORA_INI_M2 time
+  DATA_FIM_M2 date
+  HORA_FIM_M2 time
+}
+Table RP_OF_OP_LIN {
+  ID_OP_LIN int [pk, increment]
+  ID_OP_CAB int
+  REF_NUM varchar(17)
+  REF_DES varchar(250)
+  REF_IND varchar(10)
+  REF_VAR1 varchar(10)
+  REF_VAR2 varchar(10)
+  REF_INDNUMENR int
+  QUANT_OF int
+  QUANT_BOAS_TOTAL decimal(19, 2)
+  QUANT_DEF_TOTAL int
+  PERC_DEF decimal(9, 2)
+  PERC_OBJETIV decimal(9, 2)
+  OBS_REF varchar(355)
+  QUANT_BOAS_TOTAL_M1 decimal(19, 2)
+  QUANT_DEF_TOTAL_M1 int
+  QUANT_BOAS_TOTAL_M2 decimal(19, 2)
+  QUANT_DEF_TOTAL_M2 int
+  VERSAO_MODIF int
+  GESCOD varchar(20)
+  PROQTEFMT bit
+  TIPO_PECA varchar(5)
+  NCLQTE decimal(19, 4)
+  CONFIRMAR_ZERO bit
+}
+Table RP_OF_OPERARIOS_CAIXA {
+  ID_OPERARIO_CAIXA int [pk, increment]
+  ID_OF_CAB int
+  ID_UTZ varchar(50)
+  NOME_UTZ varchar(255)
+  DATA_HORA_CRIA datetime
+}
+Table RP_OF_OUTRODEF_LIN {
+  ID_OUTROSDEF_LIN int [pk, increment]
+  ID_OP_LIN int
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  ID_DEF_OUTRO int
+  QUANT_OUTRODEF int
+  RES_OUTRODEF varchar(1)
+  OBS_OUTRODEF varchar(35)
+  QUANT_OUTRODEF_M1 int
+  ID_REF_ETIQUETA int
+}
+Table RP_OF_PARA_LIN {
+  ID_PARA_LIN int [pk, increment]
+  ID_OP_CAB int
+  DATA_INI date
+  HORA_INI time
+  DATA_FIM date
+  HORA_FIM time
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  DATA_HORA_MODIF datetime
+  TIPO_PARAGEM varchar(5)
+  DES_PARAGEM varchar(35)
+  ESTADO varchar(1)
+  MOMENTO_PARAGEM varchar(1)
+  DATA_FIM_M1 date
+  HORA_FIM_M1 time
+  DATA_FIM_M2 date
+  HORA_FIM_M2 time
+  DATA_INI_M1 date
+  HORA_INI_M1 time
+  DATA_INI_M2 date
+  HORA_INI_M2 time
+  MOMENTO_PARAGEM_M1 varchar(1)
+  DES_PARAGEM_M1 varchar(35)
+  TIPO_PARAGEM_M1 varchar(5)
+  MOMENTO_PARAGEM_M2 varchar(1)
+  DES_PARAGEM_M2 varchar(35)
+  TIPO_PARAGEM_M2 varchar(5)
+}
+Table RP_OF_PREP_LIN {
+  ID_PREP_LIN int [pk, increment]
+  ID_OP_CAB int
+  DATA_INI date
+  HORA_INI time
+  DATA_FIM date
+  HORA_FIM time
+  ID_UTZ_CRIA varchar(10)
+  ID_UTZ_MODIF varchar(10)
+  DATA_HORA_MODIF datetime
+  ESTADO varchar(1)
+  DATA_FIM_M1 date
+  HORA_FIM_M1 time
+  DATA_FIM_M2 date
+  HORA_FIM_M2 time
+  DATA_INI_M1 date
+  HORA_INI_M1 time
+  DATA_INI_M2 date
+  HORA_INI_M2 time
+}
+
+// References
+// Core OF hierarchy
+Ref: RP_OF_OP_CAB.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_OF_OP_LIN.ID_OP_CAB > RP_OF_OP_CAB.ID_OP_CAB
+Ref: RP_OF_OP_FUNC.ID_OP_CAB > RP_OF_OP_CAB.ID_OP_CAB
+Ref: RP_OF_PARA_LIN.ID_OP_CAB > RP_OF_OP_CAB.ID_OP_CAB
+Ref: RP_OF_PREP_LIN.ID_OP_CAB > RP_OF_OP_CAB.ID_OP_CAB
+// Etiqueta hierarchy
+Ref: RP_OF_OP_ETIQUETA.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OP_ETIQUETA_MATRIX.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OP_ETIQUETA_MATRIX.ID_REF_ETIQ > RP_OF_OP_ETIQUETA.ID_REF_ETIQUETA
+Ref: RP_OF_OP_ETIQUETA_MATRIX_HISTORICO.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_OF_OP_ETIQUETA_MATRIX_HISTORICO.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OP_ETIQUETA_MATRIX_HISTORICO.ID_REF_ETIQ > RP_OF_OP_ETIQUETA.ID_REF_ETIQUETA
+// Defects
+Ref: RP_OF_DEF_LIN.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_DEF_LIN.ID_REF_ETIQUETA > RP_OF_OP_ETIQUETA.ID_REF_ETIQUETA
+Ref: RP_OF_LST_DEF.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OUTRODEF_LIN.ID_OP_LIN > RP_OF_OP_LIN.ID_OP_LIN
+Ref: RP_OF_OUTRODEF_LIN.ID_REF_ETIQUETA > RP_OF_OP_ETIQUETA.ID_REF_ETIQUETA
+Ref: RP_OF_OUTRODEF_LIN.ID_DEF_OUTRO > RP_DIC_DEF_OUTROS.ID_DEF_OUTRO
+// Other OF children
+Ref: RP_OF_OPERARIOS_CAIXA.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_CAIXAS_INCOMPLETAS.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+Ref: RP_HISTORICO_FICHEIRO_MANUAL.ID_OF_CAB > RP_OF_CAB.ID_OF_CAB
+// Matrix etiquetas
+Ref: RP_HISTORICO_IMPRESSAO_ETIQUETAS_MATRIX.ID_ETIQUETA_MATRIX > RP_GESTAO_ETIQUETAS_MATRIX.ID

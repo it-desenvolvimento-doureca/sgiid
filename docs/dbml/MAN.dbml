@@ -515,6 +515,89 @@ Table MAN_MOV_PEDIDOS_DOCUMENTOS {
 
 }
 
+
+
+
+
+
+
+Table MAN_MOV_MANUTENCAO_EQUIPAMENTOS_INATIVIDADE {
+  ID int [pk, increment]
+  ID_EQUIPAMENTO int
+  ATIVO bit
+  DATA_INATIVO datetime
+  UTZ_INATIVO int
+  DATA_ATIVO datetime
+  UTZ_ATIVO int
+}
+Table MAN_MOV_MANUTENCAO_ETIQ {
+  ID_MANUTENCAO_ETIQUETA int [pk, increment]
+  ID_MANUTENCAO_LISTA_MATERIAL int
+  ID_MANUTENCAO_CAB int
+  ETQNUM varchar(20)
+  QUANT decimal(9, 4)
+  CONSUMIR decimal(9, 4)
+  QUANT_FINAL decimal(9, 4)
+  INDREF varchar(20)
+  VA1REF varchar(20)
+  VA2REF varchar(20)
+  PROREF varchar(20)
+  UNICOD varchar(8)
+  LIECOD varchar(20)
+  EMPCOD varchar(20)
+  ETQORILOT1 varchar(70)
+  ETQNUMENR int
+  LOTNUMENR int
+  UNISTO varchar(8)
+  DATA_CRIA datetime
+  UTZ_CRIA int
+  INDNUMENR int
+  DATCRE date
+  PRODES text
+  ETQORIQTE1 decimal(19, 4)
+  SINAL varchar(1)
+  UNIDADE_CONSUMO varchar(15)
+  FACTOR_CONVERSAO decimal(9, 4)
+}
+Table MAN_MOV_MANUTENCAO_HISTORICO {
+  ID int [pk, increment]
+  DESCRICAO text
+  DATA_CRIA datetime
+  ID_MANUTENCAO_CAB int
+}
+Table MAN_MOV_MANUTENCAO_MOTIVOS {
+  ID int [pk, increment]
+  ID_MANUTENCAO_OPERARIOS int
+  TIPO_MOTIVO varchar(50)
+  MOTIVO text
+  DATA_CRIA datetime
+  UTZ_CRIA int
+}
+Table MAN_MOV_MANUTENCAO_OPERARIOS {
+  ID_MANUTENCAO_OPERARIOS int [pk, increment]
+  ID_MANUTENCAO_CAB int
+  ID_OPERARIO int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  TEMP_EXEC text
+  TEMP_PAUSA text
+  TEMP_TOTAL text
+  ESTADO varchar(2)
+  UTZ_CRIA int
+  DATA_CRIA datetime
+  UTZ_ULT_MODIF int
+  DATA_ULT_MODIF datetime
+}
+Table MAN_TEMPOS_TRABALHO_POR_DIA {
+  ID int [pk, increment]
+  ID_MANUTENCAO_OPERARIOS int
+  DATA_INICIO datetime
+  DATA_FIM datetime
+  TEMPO_EXEC decimal(19, 5)
+  TEMPO_PAUSAS decimal(19, 5)
+  TEMPO_SUSPENSO decimal(19, 5)
+}
+
 // References
 Ref: MAN_DIC_AMBITO_UTILIZADORES_EQUIPAMENTOS.ID_EQUIPA > MAN_MOV_MANUTENCAO_EQUIPAMENTOS.AMBITO_MANUTENCAO
 Ref: MAN_DIC_AMBITOS.ID > MAN_DIC_AMBITO_UTILIZADORES.ID_EQUIPA
