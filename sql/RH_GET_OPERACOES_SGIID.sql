@@ -124,7 +124,7 @@ BEGIN
     RW_TotalTempoPorCab AS (
         SELECT
             ID_CAB,
-            SUM(CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(TEMP_TOTAL, '00:00:00')) AS DECIMAL(19,4))) AS TOTAL_SEGUNDOS
+            SUM(CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(TEMP_EXEC, '00:00:00')) AS DECIMAL(19,4))) AS TOTAL_SEGUNDOS
         FROM PR_WINROBOT_USERS
         WHERE ESTADO NOT IN ('D')
         GROUP BY ID_CAB
@@ -212,18 +212,20 @@ BEGIN
                 WHEN 'DESCARGA' THEN '87'
                 ELSE a.TIPO_POSTO
             END                                                     AS OP_COD_ORIGEM,
-            NULL                                                    AS OP_DES,
+            a.TIPO_POSTO                                            AS OP_DES,
             -- [13] QUANT proporcional ao tempo deste worker
             CAST(ROUND(
-                ISNULL(c.TOTAL_BOAS, 0)
-                * CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_TOTAL, '00:00:00')) AS DECIMAL(19,4))
+                COALESCE(NULLIF(ISNULL(c.TOTAL_BOAS, 0) + ISNULL(c.TOTAL_DEFEITOS, 0), 0), c.NUMERO_PECAS, 0)
+                * CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_EXEC, '00:00:00')) AS DECIMAL(19,4))
                 / NULLIF(rw_tt.TOTAL_SEGUNDOS, 0)
             , 0) AS INT)                                           AS QUANT,
-            CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_PREP,  '00:00:00')) / 3600.0 / ISNULL(NULLIF(rw_lc.NUM_ARTICLES, 0), 1) AS DECIMAL(19,6)) AS TEMPO_PREP,
+            CAST(0.0 AS DECIMAL(19,6))                             AS TEMPO_PREP,
             -- [15] TEMPO_EXEC / nº artigos
-            CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_EXEC,  '00:00:00')) / 3600.0 / ISNULL(NULLIF(rw_lc.NUM_ARTICLES, 0), 1) AS DECIMAL(19,6)) AS TEMPO_EXEC,
-            -- [16] TEMPO_TOTAL / nº artigos
-            CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_TOTAL, '00:00:00')) / 3600.0 / ISNULL(NULLIF(rw_lc.NUM_ARTICLES, 0), 1) AS DECIMAL(19,6)) AS TEMPO_TOTAL,
+            CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_EXEC, '00:00:00')) / 3600.0 / ISNULL(NULLIF(rw_lc.NUM_ARTICLES, 0), 1) AS DECIMAL(19,6)) AS TEMPO_EXEC,
+            -- [16] TEMPO_TOTAL = EXEC + PAUSA (não existe PREP)
+            CAST((dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_EXEC,  '00:00:00'))
+                + dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_PAUSA, '00:00:00')))
+                / 3600.0 / ISNULL(NULLIF(rw_lc.NUM_ARTICLES, 0), 1) AS DECIMAL(19,6)) AS TEMPO_TOTAL,
             LEFT(CONVERT(VARCHAR(8), f.DATA_HORA_INICIO, 108), 5) AS HORA_INI, -- [17]
             LEFT(CONVERT(VARCHAR(8), f.DATA_HORA_FIM,    108), 5) AS HORA_FIM, -- [18]
             CAST(sofa_of.OFNUM AS VARCHAR(10))                     AS OF_NUM,   -- [19]
@@ -241,9 +243,11 @@ BEGIN
         LEFT JOIN  RH_SECTORES          sec   ON rh.COD_SECTOR = sec.COD_SECTOR
         LEFT JOIN  RW_ArticlesPorCab    rw_lc   ON rw_lc.ID_CAB = a.ID
         LEFT JOIN  RW_TotalTempoPorCab  rw_tt   ON rw_tt.ID_CAB = a.ID
-        LEFT JOIN  SILVER.dbo.SOFA      sofa_of ON sofa_of.OFREF = a.NUMERO_IDENTICACAO_CARGA
+         LEFT JOIN  (select distinct OFREF,PROREF,OFNUM FROM SILVER.dbo.SOFA SOFA 
+			INNER JOIN SILVER.dbo.SOFB SOFB ON SOFB.ofanumenr = SOFA.ofanumenr 
+		) sofa_of ON sofa_of.OFREF = a.NUMERO_IDENTICACAO_CARGA and sofa_of.PROREF = c.COD_REF
         WHERE f.ESTADO NOT IN ('D')
-          AND dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_TOTAL, '00:00:00')) > 0
+          AND dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_EXEC, '00:00:00')) > 0
           AND c.COD_REF IS NOT NULL
     )
 
@@ -316,7 +320,7 @@ BEGIN
         TEMPO_PAUSAS
     FROM #ResultBase r
     ' + @joinTipoCadencia + '
-    ORDER BY DATA_INI DESC, HORA_INI DESC, HORA_FIM DESC, COD_FUNCIONARIO desc
+    ORDER BY DATA_INI DESC, HORA_INI DESC, HORA_FIM DESC, COD_FUNCIONARIO desc,REF_NUM
     ';
 
     EXEC sp_executesql @sqlCadencia;
