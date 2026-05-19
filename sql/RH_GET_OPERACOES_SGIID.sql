@@ -126,7 +126,7 @@ BEGIN
             ID_CAB,
             SUM(CAST(dbo.ConvertExceedingTimeToFloat(ISNULL(TEMP_EXEC, '00:00:00')) AS DECIMAL(19,4))) AS TOTAL_SEGUNDOS
         FROM PR_WINROBOT_USERS
-        WHERE ESTADO NOT IN ('D')
+        WHERE ESTADO NOT IN ('D','CANC')
         GROUP BY ID_CAB
     ),
     -- ─── RP_ rows: uma linha por (sessão worker × referência final) ─────────────
@@ -212,7 +212,10 @@ BEGIN
                 WHEN 'DESCARGA' THEN '87'
                 ELSE a.TIPO_POSTO
             END                                                     AS OP_COD_ORIGEM,
-            a.TIPO_POSTO                                            AS OP_DES,
+            CASE a.TIPO_POSTO
+                WHEN 'CARGA'    THEN 'COLOCAÇÃO PEÇAS NO RACK'
+                WHEN 'DESCARGA' THEN 'RETIRAR PEÇAS DO BASTIDOR'
+                ELSE'' end  AS OP_DES,
             -- [13] QUANT proporcional ao tempo deste worker
             CAST(ROUND(
                 COALESCE(NULLIF(ISNULL(c.TOTAL_BOAS, 0) + ISNULL(c.TOTAL_DEFEITOS, 0), 0), c.NUMERO_PECAS, 0)
@@ -246,7 +249,7 @@ BEGIN
          LEFT JOIN  (select distinct OFREF,PROREF,OFNUM FROM SILVER.dbo.SOFA SOFA 
 			INNER JOIN SILVER.dbo.SOFB SOFB ON SOFB.ofanumenr = SOFA.ofanumenr 
 		) sofa_of ON sofa_of.OFREF = a.NUMERO_IDENTICACAO_CARGA and sofa_of.PROREF = c.COD_REF
-        WHERE f.ESTADO NOT IN ('D')
+        WHERE f.ESTADO NOT IN ('D','CANC')
           AND dbo.ConvertExceedingTimeToFloat(ISNULL(f.TEMP_EXEC, '00:00:00')) > 0
           AND c.COD_REF IS NOT NULL
     )
