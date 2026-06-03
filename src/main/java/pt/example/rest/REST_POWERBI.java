@@ -18,9 +18,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,7 +40,20 @@ public class REST_POWERBI {
 	@Produces("application/json")
 	public Map<String, Object> getembedUrl() {
 		try {
-			return getembedUrlPOWERBI();
+			return getembedUrlPOWERBI("ENGENHARIA");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@GET
+	@Path("/getembedUrl/{chave}")
+	@Produces("application/json")
+	public Map<String, Object> getembedUrl(@PathParam("chave") String chave) {
+		try {
+			return getembedUrlPOWERBI(chave);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -58,22 +71,23 @@ public class REST_POWERBI {
 
 	}*/
 
-	public Map<String, Object> getembedUrlPOWERBI() throws JSONException {
+	public Map<String, Object> getembedUrlPOWERBI(String chave) throws JSONException {
 		Query query_folder = entityManager.createNativeQuery(
-				"select tenantId,clientId,clientSecret,username,password,resource,endpoint,report_id, group_id,dataset from BusinessAnalyticsReporting a");
+				"select tenantId,clientId,clientSecret,username,password,resource,endpoint,report_id, group_id,dataset from BusinessAnalyticsReporting a where a.chave = ?1");
+		query_folder.setParameter(1, chave);
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
-		String tenantId = "fbd0b0d4-bb8b-4937-8529-b52340c4d82d";
-		String clientId = "f4627a15-0f72-4c00-862c-59ab8a5d89b7";
-		String clientSecret = "8qFZD0+/FkqZqq4Cb6zrmp0FYtBN2uhta4RJPDnXSME=";
-		String username = "bi@doureca.pt";
-		String password = "*@43TyU7#";
-		String resource = "https://analysis.windows.net/powerbi/api";
-		String endpoint = "https://login.microsoftonline.com/common/oauth2/token";
-		String report_id = "7b627422-2451-4ee5-9ecd-0c0aa4b39f12";
-		String group_id = "94d876e1-2886-4c2b-b658-cb89c54af7dc";
-		String dataset = "dd752bc0-38b7-42c9-ad26-0d3246ca9e6f";
+		String tenantId = null;
+		String clientId = null;
+		String clientSecret = null;
+		String username = null;
+		String password = null;
+		String resource = null;
+		String endpoint = null;
+		String report_id = null;
+		String group_id = null;
+		String dataset = null;
 
 		for (Object[] content : dados_folder) {
 
@@ -160,7 +174,7 @@ public class REST_POWERBI {
 	public static Map<String, Object> getResponse_embed(String accessToken, String group_id, String report_id,
 			String username, String dataset) throws MalformedURLException, IOException, JSONException {
 
-		URL url = new URL("https://api.powerbi.com/v1.0/myorg/groups/" + group_id + "/reports");
+		URL url = new URL("https://api.powerbi.com/v1.0/myorg/groups/" + group_id + "/reports/" + report_id);
 
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
@@ -179,11 +193,9 @@ public class REST_POWERBI {
 		}
 		in.close();
 
+		// GET /reports/{reportId} devolve um unico objeto (sem array "value")
 		JSONObject jsonResponse = new JSONObject(response.toString());
-		JSONArray valueResponse = jsonResponse.getJSONArray("value");
-
-		JSONObject jsonValue = new JSONObject(valueResponse.get(0).toString());
-		String value = jsonValue.getString("embedUrl");
+		String value = jsonResponse.getString("embedUrl");
 		/*
 		 * JsonFactory factory = new JsonFactory(); JsonParser parser =
 		 * factory.createParser(conn.getInputStream());
