@@ -107,7 +107,7 @@ public class PIN_MOV_RECEITASDao extends GenericDaoJpaImpl<PIN_MOV_RECEITAS, Int
 			"LEFT JOIN PIN_DIC_CORES_ACABAMENTOS f2 ON f2.ID = r.BASE AND f2.ATIVO = 1 " +
 			"LEFT JOIN PIN_DIC_CORES_ACABAMENTOS f3 ON f3.ID = r.VERNIZ AND f3.ATIVO = 1 " +
 			"LEFT JOIN SILVER_BI.dbo.SPAZPL z ON z.zpavallib = r.ASPETO " +
-			"WHERE r.VERSAO_ATIVA = 1 AND r.INATIVO = 0"
+			"WHERE r.VERSAO_ATIVA = 1 AND r.INATIVO = 0 and RECEITA_INATIVA = 0"
 		);
 		return query.getResultList();
 	}

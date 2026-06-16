@@ -16,7 +16,8 @@ Write-Host "Ficheiro Access: $AccessFile"
 $SqlServer  = "192.168.40.101,1433"
 $SqlDb      = "SGIID"
 $SqlUser    = "sa"
-$SqlPass    = "DourecA2@"
+$SqlPass    = $env:SGIID_SQL_PASS
+if (-not $SqlPass) { Write-Error "Variável de ambiente SGIID_SQL_PASS não definida."; exit 1 }
 
 # ============================================================
 # Conexões
