@@ -81,6 +81,8 @@ public class SendEmail {
 				return;
 			}
 			
+			para = para.replace(";", ",");
+
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(para));
 			if (bcc != null)
 				message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));

@@ -258,6 +258,10 @@ public class SIRB_3 {
 	private PIN_PLANO_DIARIO_PINTURA_LINHASDao dao103;
 	@Inject
 	private PIN_DIC_PARAM_PLANO_PINTURADao dao104;
+	@Inject
+	private PIN_MOV_CONSUMO_TINTASDao daoConsumoTintas;
+	@Inject
+	private PIN_MOV_CONSUMO_TINTAS_LINHASDao daoConsumoTintasLinhas;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -7871,6 +7875,36 @@ public class SIRB_3 {
 		return query.getResultList();
 	}
 
+	@GET
+	@Path("/getPIN_PLANO_DIARIO_PINTURAbyAnoSemana/{ano}/{semana}")
+	@Produces("application/json")
+	public List<Object[]> getPIN_PLANO_DIARIO_PINTURAbyAnoSemana(@PathParam("ano") Integer ano, @PathParam("semana") Integer semana) {
+		Query query = entityManager.createNativeQuery(
+				"SELECT p.ID_PLANO_DIARIO_PINTURA, p.ANO, p.SEMANA, p.ID_PLANO, p.DATA_CRIA, u.NOME_UTILIZADOR "
+						+ "FROM PIN_PLANO_DIARIO_PINTURA p "
+						+ "LEFT JOIN GER_UTILIZADORES u ON p.UTZ_CRIA = u.ID_UTILIZADOR "
+						+ "WHERE p.ATIVO = 1 AND p.ANO = :ano AND p.SEMANA = :semana "
+						+ "ORDER BY p.ID_PLANO");
+		query.setParameter("ano", ano);
+		query.setParameter("semana", semana);
+		return query.getResultList();
+	}
+
+	@GET
+	@Path("/getDiasByPlanoDiario/{id}")
+	@Produces("application/json")
+	public List<Object[]> getDiasByPlanoDiario(@PathParam("id") Integer id) {
+		Query query = entityManager.createNativeQuery(
+				"SELECT DISTINCT l.DIA_SEMANA, p.ANO, p.SEMANA "
+						+ "FROM PIN_PLANO_DIARIO_PINTURA_LINHAS l "
+						+ "JOIN PIN_PLANO_DIARIO_PINTURA p ON p.ID_PLANO_DIARIO_PINTURA = l.ID_PLANO_DIARIO_PINTURA "
+						+ "WHERE l.ID_PLANO_DIARIO_PINTURA = :id "
+						+ "AND ISNULL(l.TIPO_LINHA, 'REFERENCIA') NOT IN ('TEXTO') "
+						+ "ORDER BY l.DIA_SEMANA");
+		query.setParameter("id", id);
+		return query.getResultList();
+	}
+
 	@DELETE
 	@Path("/deletePIN_PLANO_DIARIO_PINTURA/{id}")
 	public void deletePIN_PLANO_DIARIO_PINTURA(@PathParam("id") Integer id) {
@@ -8013,5 +8047,104 @@ public class SIRB_3 {
 	@Produces("application/json")
 	public PIN_DIC_PARAM_PLANO_PINTURA updatePIN_DIC_PARAM_PLANO_PINTURA(final PIN_DIC_PARAM_PLANO_PINTURA data) {
 		return dao104.update(data);
+	}
+
+	// ----------------------------------------------------------------
+	// PIN_MOV_CONSUMO_TINTAS
+	// ----------------------------------------------------------------
+
+	@POST
+	@Path("/createPIN_MOV_CONSUMO_TINTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_CONSUMO_TINTAS createPIN_MOV_CONSUMO_TINTAS(final PIN_MOV_CONSUMO_TINTAS data) {
+		return daoConsumoTintas.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_CONSUMO_TINTAS")
+	@Produces("application/json")
+	public List<Object[]> getPIN_MOV_CONSUMO_TINTAS_All() {
+		return daoConsumoTintas.getall();
+	}
+
+	@GET
+	@Path("/getPIN_MOV_CONSUMO_TINTAS/{ano}")
+	@Produces("application/json")
+	public List<Object[]> getPIN_MOV_CONSUMO_TINTAS_ByAno(@PathParam("ano") Integer ano) {
+		return daoConsumoTintas.getbyano(ano);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_CONSUMO_TINTASbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_CONSUMO_TINTAS> getPIN_MOV_CONSUMO_TINTASbyid(@PathParam("id") Integer id) {
+		return daoConsumoTintas.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updatePIN_MOV_CONSUMO_TINTAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_CONSUMO_TINTAS updatePIN_MOV_CONSUMO_TINTAS(final PIN_MOV_CONSUMO_TINTAS data) {
+		return daoConsumoTintas.update(data);
+	}
+
+	@DELETE
+	@Path("/deletePIN_MOV_CONSUMO_TINTAS/{id}")
+	public void deletePIN_MOV_CONSUMO_TINTAS(@PathParam("id") Integer id) {
+		List<PIN_MOV_CONSUMO_TINTAS> list = daoConsumoTintas.getbyid(id);
+		if (!list.isEmpty()) {
+			PIN_MOV_CONSUMO_TINTAS obj = list.get(0);
+			obj.setATIVO(false);
+			daoConsumoTintas.update(obj);
+		}
+	}
+
+	// ----------------------------------------------------------------
+	// PIN_MOV_CONSUMO_TINTAS_LINHAS
+	// ----------------------------------------------------------------
+
+	@GET
+	@Path("/getPIN_MOV_CONSUMO_TINTAS_LINHASbyid/{id}")
+	@Produces("application/json")
+	public List<PIN_MOV_CONSUMO_TINTAS_LINHAS> getPIN_MOV_CONSUMO_TINTAS_LINHASbyid(@PathParam("id") Integer id) {
+		return daoConsumoTintasLinhas.getbyidcab(id);
+	}
+
+	@PUT
+	@Path("/updatePIN_MOV_CONSUMO_TINTAS_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_CONSUMO_TINTAS_LINHAS updatePIN_MOV_CONSUMO_TINTAS_LINHAS(final PIN_MOV_CONSUMO_TINTAS_LINHAS data) {
+		return daoConsumoTintasLinhas.update(data);
+	}
+
+	@DELETE
+	@Path("/deletePIN_MOV_CONSUMO_TINTAS_LINHAS/{id}")
+	public void deletePIN_MOV_CONSUMO_TINTAS_LINHAS(@PathParam("id") Integer id) {
+		PIN_MOV_CONSUMO_TINTAS_LINHAS obj = new PIN_MOV_CONSUMO_TINTAS_LINHAS();
+		obj.setID_CONSUMO_TINTAS_LINHA(id);
+		daoConsumoTintasLinhas.delete(obj);
+	}
+
+	@POST
+	@Path("/GRAVAR_CONSUMO_TINTAS_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public void gravarConsumoTintasLinhas(final List<PIN_MOV_CONSUMO_TINTAS_LINHAS> linhas) {
+		daoConsumoTintasLinhas.gravarLinhas(linhas);
+	}
+
+	@POST
+	@Path("/populatePIN_MOV_CONSUMO_TINTAS_LINHAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public void populatePIN_MOV_CONSUMO_TINTAS_LINHAS(final PIN_MOV_CONSUMO_TINTAS data) {
+		daoConsumoTintasLinhas.populateLinhas(
+			data.getID_CONSUMO_TINTAS(),
+			data.getID_PLANO_DIARIO_PINTURA(),
+			data.getDIA()
+		);
 	}
 }
