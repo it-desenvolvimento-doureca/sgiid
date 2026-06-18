@@ -68,6 +68,12 @@ public class PIN_MOV_CONSUMO_TINTAS_LINHAS {
 	@JsonProperty("QUANT_NECESSARIA")
 	private BigDecimal QUANT_NECESSARIA;
 
+	@JsonProperty("QUANTIDADE_CARGAS")
+	private Integer QUANTIDADE_CARGAS;
+
+	@JsonProperty("PERC_DILUICAO")
+	private BigDecimal PERC_DILUICAO;
+
 	@JsonProperty("ORDEM")
 	private Integer ORDEM;
 
@@ -121,6 +127,12 @@ public class PIN_MOV_CONSUMO_TINTAS_LINHAS {
 
 	public BigDecimal getQUANT_NECESSARIA() { return QUANT_NECESSARIA; }
 	public void setQUANT_NECESSARIA(BigDecimal v) { this.QUANT_NECESSARIA = v; }
+
+	public Integer getQUANTIDADE_CARGAS() { return QUANTIDADE_CARGAS; }
+	public void setQUANTIDADE_CARGAS(Integer v) { this.QUANTIDADE_CARGAS = v; }
+
+	public BigDecimal getPERC_DILUICAO() { return PERC_DILUICAO; }
+	public void setPERC_DILUICAO(BigDecimal v) { this.PERC_DILUICAO = v; }
 
 	public Integer getORDEM() { return ORDEM; }
 	public void setORDEM(Integer ordem) { this.ORDEM = ordem; }

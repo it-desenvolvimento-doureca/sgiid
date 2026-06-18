@@ -25,23 +25,29 @@ CREATE TABLE PIN_MOV_CONSUMO_TINTAS_LINHAS (
     ID_CONSUMO_TINTAS           INT NOT NULL,
     CABINE                      NVARCHAR(100) NULL,
     MISTURA                     NVARCHAR(100) NULL,
-    COD_REF                     NVARCHAR(MAX) NULL,   -- STRING_AGG dos COD_REFERENCIA
-    DESC_REF                    NVARCHAR(MAX) NULL,   -- STRING_AGG das descrições REFERENCIA
+    COD_REF                     NVARCHAR(MAX) NULL,
+    DESC_REF                    NVARCHAR(MAX) NULL,
     CONSUMO_COR_A_RACK          DECIMAL(18,4) NULL,
     CONSUMO_COR_B_RACK          DECIMAL(18,4) NULL,
     CONSUMO_CARGA_COR_A         DECIMAL(18,4) NULL,
     CONSUMO_CARGA_CATALIZADOR_B DECIMAL(18,4) NULL,
     NUM_RACKS                   INT NULL,
+    QUANTIDADE_CARGAS           INT NULL DEFAULT 2,
     CONSUMO_MISTURA             DECIMAL(18,4) NULL,
     QUANT_EXISTENTE_COR_A       DECIMAL(18,4) NULL DEFAULT 0,
     CONSUMO_TOTAL_COR_A         DECIMAL(18,4) NULL,
     CONSUMO_TOTAL_CATALIZADOR_B DECIMAL(18,4) NULL,
     QUANTIDADE_ADICIONAL        DECIMAL(18,4) NULL DEFAULT 7,
     QUANT_NECESSARIA            DECIMAL(18,4) NULL,
+    PERC_DILUICAO               DECIMAL(18,4) NULL DEFAULT 0,
     ORDEM                       INT NULL,
     CONSTRAINT FK_CONSUMO_TINTAS_LINHAS FOREIGN KEY (ID_CONSUMO_TINTAS)
         REFERENCES PIN_MOV_CONSUMO_TINTAS(ID_CONSUMO_TINTAS)
 );
+
+-- Se a tabela já existir, adicionar colunas novas:
+-- ALTER TABLE PIN_MOV_CONSUMO_TINTAS_LINHAS ADD QUANTIDADE_CARGAS INT NULL DEFAULT 2;
+-- ALTER TABLE PIN_MOV_CONSUMO_TINTAS_LINHAS ADD PERC_DILUICAO DECIMAL(18,4) NULL DEFAULT 0;
 
 GO
 
@@ -52,8 +58,10 @@ IF OBJECT_ID('PIN_MOV_CONSUMO_TINTAS', 'U') IS NOT NULL DROP TABLE PIN_MOV_CONSU
 GO
 
 -- ============================================================
--- SP: idempotente — uma linha por referência (peça)
--- CABINE e MISTURA agrupadas visualmente no frontend (rowspan)
+-- SP: idempotente — uma linha por peça (COD_REFERENCIA)
+-- CONSUMO_RACK: valor da receita por peça (/ 1000 → L)
+-- CONSUMO_CARGA: média por Mistura (/ 1000 → L), mesmo valor em todas as linhas da mistura
+-- PERC_DILUICAO, QUANTIDADE_CARGAS: por Mistura, igual em todas as linhas da mistura
 -- ============================================================
 CREATE OR ALTER PROCEDURE SP_CREATE_CONSUMO_TINTAS_LINHAS
     @ID_CONSUMO_TINTAS      INT,
@@ -85,46 +93,65 @@ BEGIN
     ),
     Detalhes AS (
         SELECT
-            c.NOME                                          AS CABINE,
-            rl.REFERENCIA_A                                 AS MISTURA,
-            a.COD_REFERENCIA                                AS COD_REF,
-            a.REFERENCIA                                    AS DESC_REF,
-            ISNULL(rl.CONSUMO_RACK_COR, 0)/ 1000.0                                AS CONSUMO_COR_A_RACK,      -- mL/rack
-            ISNULL(rl.CONSUMO_RACK_DILUENTE, 0)/ 1000.0                          AS CONSUMO_COR_B_RACK,      -- mL/rack
-            ISNULL(rl.QTD_RACK_REFERENCIA_A, 0)                          AS CONSUMO_CARGA_COR_A,     -- L/rack
-            ISNULL(rl.QTD_RACK_REFERENCIA_B, 0)                          AS CONSUMO_CARGA_CATALIZADOR_B, -- L/rack
+            c.NOME                                              AS CABINE,
+            rl.REFERENCIA_A                                     AS MISTURA,
+            a.COD_REFERENCIA                                    AS COD_REF,
+            a.REFERENCIA                                        AS DESC_REF,
+            ISNULL(rl.CONSUMO_RACK_COR, 0) / 1000.0            AS CONSUMO_COR_A_RACK,
+            ISNULL(rl.CONSUMO_RACK_DILUENTE, 0) / 1000.0       AS CONSUMO_COR_B_RACK,
+            ISNULL(rl.CONSUMO_CARGA_COR, 0) / 1000.0           AS CONSUMO_CARGA_COR_A_RAW,
+            ISNULL(rl.CONSUMO_CARGA_CATALISADOR, 0) / 1000.0   AS CONSUMO_CARGA_CATALIZADOR_B_RAW,
             a.NUM_RACKS,
             CASE WHEN c.NOME LIKE '%primário%' THEN 1
                  WHEN c.NOME LIKE '%base%'     THEN 2
                  WHEN c.NOME LIKE '%verniz%'   THEN 3
-                 ELSE 4 END                                 AS ORDEM_CABINE
+                 ELSE 4 END                                     AS ORDEM_CABINE
         FROM PlanoLinhas a
         LEFT JOIN ReceitasAtivas r ON r.REFERENCIA_PINTURA = a.COD_REFERENCIA
         LEFT JOIN PIN_MOV_RECEITAS_LINHAS rl ON rl.ID_RECEITA = r.ID AND rl.VERSAO = r.VERSAO
         LEFT JOIN PIN_DIC_TIPO_ACABAMENTO c ON c.ID = rl.ID_TIPO_ACABAMENTO
+    ),
+    MediaCargaPorMistura AS (
+        SELECT
+            CABINE,
+            MISTURA,
+            AVG(CONSUMO_CARGA_COR_A_RAW)         AS CONSUMO_CARGA_COR_A,
+            AVG(CONSUMO_CARGA_CATALIZADOR_B_RAW) AS CONSUMO_CARGA_CATALIZADOR_B
+        FROM Detalhes
+        WHERE CABINE IS NOT NULL AND MISTURA IS NOT NULL
+        GROUP BY CABINE, MISTURA
+    ),
+    DiluicaoPorMistura AS (
+        SELECT p.COD_REF, SUM(ISNULL(pr.PERC_DILUICAO, 0)) AS PERC_DILUICAO
+        FROM PIN_DIC_PRODUTOS p
+        LEFT JOIN PIN_DIC_PRODUTOS_RELACIONADOS pr ON p.ID = pr.ID_PRODUTO
+        WHERE p.INATIVO = 0
+        GROUP BY p.COD_REF
     )
     INSERT INTO PIN_MOV_CONSUMO_TINTAS_LINHAS (
         ID_CONSUMO_TINTAS, CABINE, MISTURA, COD_REF, DESC_REF,
         CONSUMO_COR_A_RACK, CONSUMO_COR_B_RACK, CONSUMO_CARGA_COR_A, CONSUMO_CARGA_CATALIZADOR_B,
-        NUM_RACKS, CONSUMO_MISTURA, QUANT_EXISTENTE_COR_A,
-        CONSUMO_TOTAL_COR_A, CONSUMO_TOTAL_CATALIZADOR_B,
-        QUANTIDADE_ADICIONAL, QUANT_NECESSARIA, ORDEM
+        NUM_RACKS, QUANTIDADE_CARGAS, QUANT_EXISTENTE_COR_A, QUANTIDADE_ADICIONAL,
+        PERC_DILUICAO, ORDEM
     )
     SELECT
         @ID_CONSUMO_TINTAS,
-        CABINE, MISTURA, COD_REF, DESC_REF,
-        CONSUMO_COR_A_RACK * NUM_RACKS,
-        CONSUMO_COR_B_RACK * NUM_RACKS,
-        CONSUMO_CARGA_COR_A,
-        CONSUMO_CARGA_CATALIZADOR_B,
-        NUM_RACKS,
-        CONSUMO_COR_A_RACK  * NUM_RACKS                             AS CONSUMO_MISTURA,
-        0                                                                   AS QUANT_EXISTENTE_COR_A,
-        CONSUMO_COR_A_RACK  + CONSUMO_CARGA_COR_A * NUM_RACKS      AS CONSUMO_TOTAL_COR_A,
-        CONSUMO_COR_B_RACK  + CONSUMO_CARGA_CATALIZADOR_B * NUM_RACKS AS CONSUMO_TOTAL_CATALIZADOR_B,
-        7                                                                   AS QUANTIDADE_ADICIONAL,
-        CONSUMO_COR_A_RACK  + CONSUMO_CARGA_COR_A * NUM_RACKS + 7  AS QUANT_NECESSARIA,
-        ROW_NUMBER() OVER (ORDER BY ORDEM_CABINE, MISTURA, COD_REF) AS ORDEM
-    FROM Detalhes;
+        d.CABINE,
+        d.MISTURA,
+        d.COD_REF,
+        d.DESC_REF,
+        d.CONSUMO_COR_A_RACK,
+        d.CONSUMO_COR_B_RACK,
+        ISNULL(m.CONSUMO_CARGA_COR_A, 0)         AS CONSUMO_CARGA_COR_A,
+        ISNULL(m.CONSUMO_CARGA_CATALIZADOR_B, 0) AS CONSUMO_CARGA_CATALIZADOR_B,
+        d.NUM_RACKS,
+        2                               AS QUANTIDADE_CARGAS,
+        0                               AS QUANT_EXISTENTE_COR_A,
+        7                               AS QUANTIDADE_ADICIONAL,
+        ISNULL(dil.PERC_DILUICAO, 0)   AS PERC_DILUICAO,
+        ROW_NUMBER() OVER (ORDER BY d.ORDEM_CABINE, d.MISTURA, d.COD_REF) AS ORDEM
+    FROM Detalhes d
+    LEFT JOIN MediaCargaPorMistura m ON m.CABINE = d.CABINE AND m.MISTURA = d.MISTURA
+    LEFT JOIN DiluicaoPorMistura dil ON dil.COD_REF = d.MISTURA;
 END;
 GO
