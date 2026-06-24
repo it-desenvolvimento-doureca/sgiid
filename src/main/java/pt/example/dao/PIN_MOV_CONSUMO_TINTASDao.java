@@ -37,7 +37,7 @@ public class PIN_MOV_CONSUMO_TINTASDao extends GenericDaoJpaImpl<PIN_MOV_CONSUMO
 				+ "FROM PIN_MOV_CONSUMO_TINTAS c "
 				+ "LEFT JOIN GER_UTILIZADORES u ON c.UTZ_CRIA = u.ID_UTILIZADOR "
 				+ "WHERE c.ATIVO = 1 "
-				+ "ORDER BY c.ANO DESC, c.SEMANA, c.DIA");
+				+ "ORDER BY c.ANO DESC, c.SEMANA DESC, c.DIA DESC");
 		return query.getResultList();
 	}
 }
