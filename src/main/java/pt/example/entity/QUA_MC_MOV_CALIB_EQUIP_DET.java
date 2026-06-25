@@ -42,6 +42,12 @@ public class QUA_MC_MOV_CALIB_EQUIP_DET {
 	private Integer ID_RESULTADO_VALIDACAO;
 	@JsonProperty("PERIODO_INTERCALIB_ANTERIOR")
 	private String PERIODO_INTERCALIB_ANTERIOR;
+	@JsonProperty("ERRO_MAXIMO")
+	private java.math.BigDecimal ERRO_MAXIMO;
+	@JsonProperty("ID_ESTADO_METROLOGICO")
+	private Integer ID_ESTADO_METROLOGICO;
+	@JsonProperty("ID_MSA")
+	private Integer ID_MSA;
 	@JsonProperty("OBSERVACOES")
 	private String OBSERVACOES;
 	@JsonProperty("UTZ_CRIA")
@@ -87,6 +93,12 @@ public class QUA_MC_MOV_CALIB_EQUIP_DET {
 	public void setID_RESULTADO_VALIDACAO(Integer v) { ID_RESULTADO_VALIDACAO = v; }
 	public String getPERIODO_INTERCALIB_ANTERIOR() { return PERIODO_INTERCALIB_ANTERIOR; }
 	public void setPERIODO_INTERCALIB_ANTERIOR(String v) { PERIODO_INTERCALIB_ANTERIOR = v; }
+	public java.math.BigDecimal getERRO_MAXIMO() { return ERRO_MAXIMO; }
+	public void setERRO_MAXIMO(java.math.BigDecimal v) { ERRO_MAXIMO = v; }
+	public Integer getID_ESTADO_METROLOGICO() { return ID_ESTADO_METROLOGICO; }
+	public void setID_ESTADO_METROLOGICO(Integer v) { ID_ESTADO_METROLOGICO = v; }
+	public Integer getID_MSA() { return ID_MSA; }
+	public void setID_MSA(Integer v) { ID_MSA = v; }
 	public String getOBSERVACOES() { return OBSERVACOES; }
 	public void setOBSERVACOES(String v) { OBSERVACOES = v; }
 	public Integer getUTZ_CRIA() { return UTZ_CRIA; }

@@ -7963,6 +7963,14 @@ public class SIRB_2 {
 			select = "CONCAT(a.FICHEIRO_1,a.FICHEIRO_2) as FICHEIRO";
 		}
 
+		if (tabela.equals("QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS")
+				|| tabela.equals("QUA_MC_EQUIPAMENTOS_FICHEIROS")
+				|| tabela.equals("QUA_MC_GABARITOS_FICHEIROS")
+				|| tabela.equals("QUA_MC_MOV_CALIB_EQUIP_FICHEIROS")
+				|| tabela.equals("QUA_MC_DERROGACOES_FICHEIROS")) {
+			select = "CONCAT(a.FICHEIRO_1,a.FICHEIRO_2) as FICHEIRO";
+		}
+
 		Query query_folder = entityManager
 				.createNativeQuery("select " + select + " ,NOME from " + tabela + " a where " + campo + " = " + id);
 

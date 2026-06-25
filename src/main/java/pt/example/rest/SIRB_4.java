@@ -32,6 +32,16 @@ import pt.example.dao.QUA_MC_MAQUINASDao;
 import pt.example.dao.QUA_MC_MOV_VERIF_MAQUINADao;
 import pt.example.dao.QUA_MC_SALASDao;
 import pt.example.dao.QUA_MC_MOV_VERIF_SALADao;
+import pt.example.dao.QUA_MC_DIC_ESTADO_METROLOGICODao;
+import pt.example.dao.QUA_MC_DIC_MSADao;
+import pt.example.dao.QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROSDao;
+import pt.example.dao.QUA_MC_EQUIPAMENTOS_FICHEIROSDao;
+import pt.example.dao.QUA_MC_GABARITOS_FICHEIROSDao;
+import pt.example.dao.QUA_MC_MOV_CALIB_EQUIP_FICHEIROSDao;
+import pt.example.dao.QUA_MC_DERROGACOESDao;
+import pt.example.dao.QUA_MC_DERROGACOES_ACOESDao;
+import pt.example.dao.QUA_MC_DERROGACOES_FICHEIROSDao_MC;
+import pt.example.dao.QUA_MC_DECLARACOES_NCDao;
 
 import pt.example.entity.QUA_MC_DIC_SECCOES;
 import pt.example.entity.QUA_MC_DIC_RESP_VALIDACAO;
@@ -52,6 +62,16 @@ import pt.example.entity.QUA_MC_MAQUINAS;
 import pt.example.entity.QUA_MC_MOV_VERIF_MAQUINA;
 import pt.example.entity.QUA_MC_SALAS;
 import pt.example.entity.QUA_MC_MOV_VERIF_SALA;
+import pt.example.entity.QUA_MC_DIC_ESTADO_METROLOGICO;
+import pt.example.entity.QUA_MC_DIC_MSA;
+import pt.example.entity.QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS;
+import pt.example.entity.QUA_MC_EQUIPAMENTOS_FICHEIROS;
+import pt.example.entity.QUA_MC_GABARITOS_FICHEIROS;
+import pt.example.entity.QUA_MC_MOV_CALIB_EQUIP_FICHEIROS;
+import pt.example.entity.QUA_MC_DERROGACOES;
+import pt.example.entity.QUA_MC_DERROGACOES_ACOES;
+import pt.example.entity.QUA_MC_DERROGACOES_FICHEIROS;
+import pt.example.entity.QUA_MC_DECLARACOES_NC;
 
 @Stateless
 @Path("/sirb")
@@ -76,6 +96,378 @@ public class SIRB_4 {
 	@Inject private QUA_MC_MOV_VERIF_MAQUINADao dao17;
 	@Inject private QUA_MC_SALASDao dao18;
 	@Inject private QUA_MC_MOV_VERIF_SALADao dao19;
+	@Inject private QUA_MC_DIC_ESTADO_METROLOGICODao dao20;
+	@Inject private QUA_MC_DIC_MSADao dao21;
+	@Inject private QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROSDao dao22;
+	@Inject private QUA_MC_EQUIPAMENTOS_FICHEIROSDao dao23;
+	@Inject private QUA_MC_MOV_CALIB_EQUIP_FICHEIROSDao dao24;
+	@Inject private QUA_MC_DERROGACOESDao dao25;
+	@Inject private QUA_MC_DERROGACOES_ACOESDao dao26;
+	@Inject private QUA_MC_DERROGACOES_FICHEIROSDao_MC dao27;
+	@Inject private QUA_MC_DECLARACOES_NCDao dao28;
+	@Inject private QUA_MC_GABARITOS_FICHEIROSDao dao29;
+
+	/************************************* QUA_MC_DIC_ESTADO_METROLOGICO */
+	@POST
+	@Path("/createQUA_MC_DIC_ESTADO_METROLOGICO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DIC_ESTADO_METROLOGICO insertQUA_MC_DIC_ESTADO_METROLOGICO(final QUA_MC_DIC_ESTADO_METROLOGICO data) {
+		return dao20.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_DIC_ESTADO_METROLOGICO")
+	@Produces("application/json")
+	public List<QUA_MC_DIC_ESTADO_METROLOGICO> getQUA_MC_DIC_ESTADO_METROLOGICO() {
+		return dao20.getall();
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_DIC_ESTADO_METROLOGICO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DIC_ESTADO_METROLOGICO updateQUA_MC_DIC_ESTADO_METROLOGICO(final QUA_MC_DIC_ESTADO_METROLOGICO data) {
+		return dao20.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_DIC_ESTADO_METROLOGICO/{id}")
+	public void deleteQUA_MC_DIC_ESTADO_METROLOGICO(@PathParam("id") Integer id) {
+		QUA_MC_DIC_ESTADO_METROLOGICO e = new QUA_MC_DIC_ESTADO_METROLOGICO();
+		e.setID_ESTADO_METROLOGICO(id);
+		dao20.delete(e);
+	}
+
+	/************************************* QUA_MC_DIC_MSA */
+	@POST
+	@Path("/createQUA_MC_DIC_MSA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DIC_MSA insertQUA_MC_DIC_MSA(final QUA_MC_DIC_MSA data) {
+		return dao21.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_DIC_MSA")
+	@Produces("application/json")
+	public List<QUA_MC_DIC_MSA> getQUA_MC_DIC_MSA() {
+		return dao21.getall();
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_DIC_MSA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DIC_MSA updateQUA_MC_DIC_MSA(final QUA_MC_DIC_MSA data) {
+		return dao21.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_DIC_MSA/{id}")
+	public void deleteQUA_MC_DIC_MSA(@PathParam("id") Integer id) {
+		QUA_MC_DIC_MSA e = new QUA_MC_DIC_MSA();
+		e.setID_MSA(id);
+		dao21.delete(e);
+	}
+
+	/************************************* QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS */
+	@POST
+	@Path("/createQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS insertQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS(final QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS data) {
+		return dao22.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROSbyentidade/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROSbyentidade(@PathParam("id") Integer id) {
+		return dao22.getbyEntidade(id);
+	}
+
+	@GET
+	@Path("/getQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROScontent/{id}")
+	@Produces("text/plain")
+	public String getQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROScontent(@PathParam("id") Integer id) {
+		return dao22.getConteudo(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS updateQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS(final QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS data) {
+		return dao22.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS/{id}")
+	public void deleteQUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS(@PathParam("id") Integer id) {
+		QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS e = new QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS();
+		e.setID(id);
+		dao22.delete(e);
+	}
+
+	/************************************* QUA_MC_EQUIPAMENTOS_FICHEIROS */
+	@POST
+	@Path("/createQUA_MC_EQUIPAMENTOS_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_EQUIPAMENTOS_FICHEIROS insertQUA_MC_EQUIPAMENTOS_FICHEIROS(final QUA_MC_EQUIPAMENTOS_FICHEIROS data) {
+		return dao23.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_EQUIPAMENTOS_FICHEIROSbyequipamento/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MC_EQUIPAMENTOS_FICHEIROSbyequipamento(@PathParam("id") Integer id) {
+		return dao23.getbyEquipamento(id);
+	}
+
+	@GET
+	@Path("/getQUA_MC_EQUIPAMENTOS_FICHEIROScontent/{id}")
+	@Produces("text/plain")
+	public String getQUA_MC_EQUIPAMENTOS_FICHEIROScontent(@PathParam("id") Integer id) {
+		return dao23.getConteudo(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_EQUIPAMENTOS_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_EQUIPAMENTOS_FICHEIROS updateQUA_MC_EQUIPAMENTOS_FICHEIROS(final QUA_MC_EQUIPAMENTOS_FICHEIROS data) {
+		return dao23.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_EQUIPAMENTOS_FICHEIROS/{id}")
+	public void deleteQUA_MC_EQUIPAMENTOS_FICHEIROS(@PathParam("id") Integer id) {
+		QUA_MC_EQUIPAMENTOS_FICHEIROS e = new QUA_MC_EQUIPAMENTOS_FICHEIROS();
+		e.setID(id);
+		dao23.delete(e);
+	}
+
+	/************************************* QUA_MC_GABARITOS_FICHEIROS */
+	@POST
+	@Path("/createQUA_MC_GABARITOS_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_GABARITOS_FICHEIROS insertQUA_MC_GABARITOS_FICHEIROS(final QUA_MC_GABARITOS_FICHEIROS data) {
+		return dao29.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_GABARITOS_FICHEIROSbygabarito/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MC_GABARITOS_FICHEIROSbygabarito(@PathParam("id") Integer id) {
+		return dao29.getbyGabarito(id);
+	}
+
+	@GET
+	@Path("/getQUA_MC_GABARITOS_FICHEIROScontent/{id}")
+	@Produces("text/plain")
+	public String getQUA_MC_GABARITOS_FICHEIROScontent(@PathParam("id") Integer id) {
+		return dao29.getConteudo(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_GABARITOS_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_GABARITOS_FICHEIROS updateQUA_MC_GABARITOS_FICHEIROS(final QUA_MC_GABARITOS_FICHEIROS data) {
+		return dao29.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_GABARITOS_FICHEIROS/{id}")
+	public void deleteQUA_MC_GABARITOS_FICHEIROS(@PathParam("id") Integer id) {
+		QUA_MC_GABARITOS_FICHEIROS e = new QUA_MC_GABARITOS_FICHEIROS();
+		e.setID(id);
+		dao29.delete(e);
+	}
+
+	/************************************* QUA_MC_MOV_CALIB_EQUIP_FICHEIROS */
+	@POST
+	@Path("/createQUA_MC_MOV_CALIB_EQUIP_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_MOV_CALIB_EQUIP_FICHEIROS insertQUA_MC_MOV_CALIB_EQUIP_FICHEIROS(final QUA_MC_MOV_CALIB_EQUIP_FICHEIROS data) {
+		return dao24.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_MOV_CALIB_EQUIP_FICHEIROSbycalibdet/{id}")
+	@Produces("application/json")
+	public List<QUA_MC_MOV_CALIB_EQUIP_FICHEIROS> getQUA_MC_MOV_CALIB_EQUIP_FICHEIROSbycalibdet(@PathParam("id") Integer id) {
+		return dao24.getbyCalibDet(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_MOV_CALIB_EQUIP_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_MOV_CALIB_EQUIP_FICHEIROS updateQUA_MC_MOV_CALIB_EQUIP_FICHEIROS(final QUA_MC_MOV_CALIB_EQUIP_FICHEIROS data) {
+		return dao24.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_MOV_CALIB_EQUIP_FICHEIROS/{id}")
+	public void deleteQUA_MC_MOV_CALIB_EQUIP_FICHEIROS(@PathParam("id") Integer id) {
+		QUA_MC_MOV_CALIB_EQUIP_FICHEIROS e = new QUA_MC_MOV_CALIB_EQUIP_FICHEIROS();
+		e.setID(id);
+		dao24.delete(e);
+	}
+
+	/************************************* QUA_MC_DERROGACOES */
+	@POST
+	@Path("/createQUA_MC_DERROGACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DERROGACOES insertQUA_MC_DERROGACOES(final QUA_MC_DERROGACOES data) {
+		return dao25.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_DERROGACOES")
+	@Produces("application/json")
+	public List<QUA_MC_DERROGACOES> getQUA_MC_DERROGACOES() {
+		return dao25.getall();
+	}
+
+	@GET
+	@Path("/getQUA_MC_DERROGACOESbyid/{id}")
+	@Produces("application/json")
+	public List<QUA_MC_DERROGACOES> getQUA_MC_DERROGACOESbyid(@PathParam("id") Integer id) {
+		return dao25.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_DERROGACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DERROGACOES updateQUA_MC_DERROGACOES(final QUA_MC_DERROGACOES data) {
+		return dao25.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_DERROGACOES/{id}")
+	public void deleteQUA_MC_DERROGACOES(@PathParam("id") Integer id) {
+		QUA_MC_DERROGACOES e = new QUA_MC_DERROGACOES();
+		e.setID_DERROGACAO(id);
+		dao25.delete(e);
+	}
+
+	/************************************* QUA_MC_DERROGACOES_ACOES */
+	@POST
+	@Path("/createQUA_MC_DERROGACOES_ACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DERROGACOES_ACOES insertQUA_MC_DERROGACOES_ACOES(final QUA_MC_DERROGACOES_ACOES data) {
+		return dao26.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_DERROGACOES_ACOESbyderrogacao/{id}")
+	@Produces("application/json")
+	public List<QUA_MC_DERROGACOES_ACOES> getQUA_MC_DERROGACOES_ACOESbyderrogacao(@PathParam("id") Integer id) {
+		return dao26.getbyDerrogacao(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_DERROGACOES_ACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DERROGACOES_ACOES updateQUA_MC_DERROGACOES_ACOES(final QUA_MC_DERROGACOES_ACOES data) {
+		return dao26.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_DERROGACOES_ACOES/{id}")
+	public void deleteQUA_MC_DERROGACOES_ACOES(@PathParam("id") Integer id) {
+		QUA_MC_DERROGACOES_ACOES e = new QUA_MC_DERROGACOES_ACOES();
+		e.setID(id);
+		dao26.delete(e);
+	}
+
+	/************************************* QUA_MC_DERROGACOES_FICHEIROS */
+	@POST
+	@Path("/createQUA_MC_DERROGACOES_FICHEIROS_MC")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DERROGACOES_FICHEIROS insertQUA_MC_DERROGACOES_FICHEIROS_MC(final QUA_MC_DERROGACOES_FICHEIROS data) {
+		return dao27.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_DERROGACOES_FICHEIROSbyderrogacao/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MC_DERROGACOES_FICHEIROSbyderrogacao(@PathParam("id") Integer id) {
+		return dao27.getbyDerrogacao(id);
+	}
+
+	@GET
+	@Path("/getQUA_MC_DERROGACOES_FICHEIROScontent/{id}")
+	@Produces("text/plain")
+	public String getQUA_MC_DERROGACOES_FICHEIROScontent(@PathParam("id") Integer id) {
+		return dao27.getConteudo(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_DERROGACOES_FICHEIROS_MC")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DERROGACOES_FICHEIROS updateQUA_MC_DERROGACOES_FICHEIROS_MC(final QUA_MC_DERROGACOES_FICHEIROS data) {
+		return dao27.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_DERROGACOES_FICHEIROS_MC/{id}")
+	public void deleteQUA_MC_DERROGACOES_FICHEIROS_MC(@PathParam("id") Integer id) {
+		QUA_MC_DERROGACOES_FICHEIROS e = new QUA_MC_DERROGACOES_FICHEIROS();
+		e.setID(id);
+		dao27.delete(e);
+	}
+
+	/************************************* QUA_MC_DECLARACOES_NC */
+	@POST
+	@Path("/createQUA_MC_DECLARACOES_NC")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DECLARACOES_NC insertQUA_MC_DECLARACOES_NC(final QUA_MC_DECLARACOES_NC data) {
+		return dao28.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_DECLARACOES_NC")
+	@Produces("application/json")
+	public List<QUA_MC_DECLARACOES_NC> getQUA_MC_DECLARACOES_NC() {
+		return dao28.getall();
+	}
+
+	@GET
+	@Path("/getQUA_MC_DECLARACOES_NCbyid/{id}")
+	@Produces("application/json")
+	public List<QUA_MC_DECLARACOES_NC> getQUA_MC_DECLARACOES_NCbyid(@PathParam("id") Integer id) {
+		return dao28.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_DECLARACOES_NC")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_DECLARACOES_NC updateQUA_MC_DECLARACOES_NC(final QUA_MC_DECLARACOES_NC data) {
+		return dao28.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_DECLARACOES_NC/{id}")
+	public void deleteQUA_MC_DECLARACOES_NC(@PathParam("id") Integer id) {
+		QUA_MC_DECLARACOES_NC e = new QUA_MC_DECLARACOES_NC();
+		e.setID_DECLARACAO(id);
+		dao28.delete(e);
+	}
 
 	/************************************* QUA_MC_DIC_SECCOES */
 	@POST
@@ -403,6 +795,13 @@ public class SIRB_4 {
 	}
 
 	@GET
+	@Path("/getQUA_MC_EQUIPAMENTOS_LISTA")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MC_EQUIPAMENTOS_LISTA() {
+		return dao10.getlista();
+	}
+
+	@GET
 	@Path("/getQUA_MC_EQUIPAMENTOSbyid/{id}")
 	@Produces("application/json")
 	public List<QUA_MC_EQUIPAMENTOS> getQUA_MC_EQUIPAMENTOSbyid(@PathParam("id") Integer id) {
@@ -510,6 +909,13 @@ public class SIRB_4 {
 	@Produces("application/json")
 	public List<QUA_MC_GABARITOS> getQUA_MC_GABARITOS() {
 		return dao13.getall();
+	}
+
+	@GET
+	@Path("/getQUA_MC_GABARITOS_LISTA")
+	@Produces("application/json")
+	public List<Object[]> getQUA_MC_GABARITOS_LISTA() {
+		return dao13.getlista();
 	}
 
 	@GET

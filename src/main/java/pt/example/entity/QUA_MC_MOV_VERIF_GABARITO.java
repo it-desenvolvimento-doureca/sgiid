@@ -36,6 +36,10 @@ public class QUA_MC_MOV_VERIF_GABARITO {
 	private Integer ID_TIPO_ACEITACAO;
 	@JsonProperty("PERC_R_R")
 	private Double PERC_R_R;
+	@JsonProperty("ID_ESTADO_METROLOGICO")
+	private Integer ID_ESTADO_METROLOGICO;
+	@JsonProperty("ID_MSA")
+	private Integer ID_MSA;
 	@JsonProperty("UTZ_CRIA")
 	private Integer UTZ_CRIA;
 	@JsonProperty("DATA_CRIA")
@@ -73,6 +77,10 @@ public class QUA_MC_MOV_VERIF_GABARITO {
 	public void setID_TIPO_ACEITACAO(Integer v) { ID_TIPO_ACEITACAO = v; }
 	public Double getPERC_R_R() { return PERC_R_R; }
 	public void setPERC_R_R(Double v) { PERC_R_R = v; }
+	public Integer getID_ESTADO_METROLOGICO() { return ID_ESTADO_METROLOGICO; }
+	public void setID_ESTADO_METROLOGICO(Integer v) { ID_ESTADO_METROLOGICO = v; }
+	public Integer getID_MSA() { return ID_MSA; }
+	public void setID_MSA(Integer v) { ID_MSA = v; }
 	public Integer getUTZ_CRIA() { return UTZ_CRIA; }
 	public void setUTZ_CRIA(Integer v) { UTZ_CRIA = v; }
 	public Date getDATA_CRIA() { return DATA_CRIA; }

@@ -7939,6 +7939,26 @@ public class SIRB {
 
 	}
 
+	// Derrogações de Meios de Controlo - cria/atualiza tarefa a partir do plano de ações (sub-módulo 'DMC').
+	// NOTA (fase futura): a materialização da tarefa requer estender a stored procedure
+	// [GT_MOV_TAREFAS_INSERT_UPDATE] e o método enviaEventoTarefa() com um ramo 'DMC' que leia
+	// de QUA_MC_DERROGACOES_ACOES + QUA_MC_DERROGACOES, e a inclusão nas listagens/dashboards de tarefas.
+	// Por agora apenas religa o ID_TAREFA caso já exista a tarefa correspondente.
+	@POST
+	@Path("/getAtualizaTarefaDerrogacoesMC/{id}/{modulo}")
+	@Produces("application/json")
+	public void getAtualizaTarefaDerrogacoesMC(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
+			final String link) {
+
+		String sql = "UPDATE QUA_MC_DERROGACOES_ACOES SET ID_TAREFA = ( SELECT TOP 1 ID_TAREFA "
+				+ " FROM GT_MOV_TAREFAS x WHERE x.ID_MODULO = " + modulo + " AND x.SUB_MODULO = 'DMC' "
+				+ " AND x.ID_CAMPO = ID ) WHERE ID_TAREFA IS NULL AND ID = ?";
+
+		Query query = entityManager.createNativeQuery(sql);
+		query.setParameter(1, id);
+		query.executeUpdate();
+	}
+
 	@POST
 	@Path("/getAtualizaTarefaReunioes/{id}/{modulo}")
 	@Produces("application/json")
