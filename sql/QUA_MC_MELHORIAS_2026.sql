@@ -63,6 +63,34 @@ IF COL_LENGTH('QUA_MC_GABARITOS', 'ID_MSA') IS NOT NULL
     ALTER TABLE QUA_MC_GABARITOS DROP COLUMN ID_MSA;
 GO
 
+-- Fase 1.4 - REFERENCIA do gabarito passa a texto (era INT)
+IF COL_LENGTH('QUA_MC_GABARITOS', 'REFERENCIA') IS NOT NULL
+    ALTER TABLE QUA_MC_GABARITOS ALTER COLUMN REFERENCIA NVARCHAR(250);
+GO
+
+-- Fase 1.5 - Denormalizar a referência da peça cromada no gabarito.
+-- No Access REFERENCIA era um lookup que guardava o ID_PECA_CROMADA;
+-- passamos a guardar o texto da REFERENCIA + a DESIGNACAO, e QUA_MC_DIC_PECAS_CROMADAS deixa de existir.
+IF COL_LENGTH('QUA_MC_GABARITOS', 'REFERENCIA_DESIGNACAO') IS NULL
+    ALTER TABLE QUA_MC_GABARITOS ADD REFERENCIA_DESIGNACAO NVARCHAR(255);
+GO
+
+-- Copiar REFERENCIA (texto) e DESIGNACAO da peça cromada para o gabarito.
+-- Nesta fase REFERENCIA ainda contém o ID_PECA_CROMADA (era lookup no Access).
+IF OBJECT_ID('QUA_MC_DIC_PECAS_CROMADAS', 'U') IS NOT NULL
+    UPDATE g
+       SET g.REFERENCIA_DESIGNACAO = p.DESIGNACAO,
+           g.REFERENCIA            = p.REFERENCIA
+      FROM QUA_MC_GABARITOS g
+      JOIN QUA_MC_DIC_PECAS_CROMADAS p
+        ON TRY_CONVERT(INT, g.REFERENCIA) = p.ID_PECA_CROMADA;
+GO
+
+-- QUA_MC_DIC_PECAS_CROMADAS deixa de existir (dados já denormalizados nos gabaritos)
+IF OBJECT_ID('QUA_MC_DIC_PECAS_CROMADAS', 'U') IS NOT NULL
+    DROP TABLE QUA_MC_DIC_PECAS_CROMADAS;
+GO
+
 -- ============================================================
 -- Fase 2 - Documentos / anexos (BASE64, padrão como nas reclamações)
 -- ============================================================

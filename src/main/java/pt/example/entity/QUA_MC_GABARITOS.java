@@ -25,7 +25,9 @@ public class QUA_MC_GABARITOS {
 	@JsonProperty("COD_DESENHO_TECNICO")
 	private String COD_DESENHO_TECNICO;
 	@JsonProperty("REFERENCIA")
-	private Integer REFERENCIA;
+	private String REFERENCIA;
+	@JsonProperty("REFERENCIA_DESIGNACAO")
+	private String REFERENCIA_DESIGNACAO;
 	@JsonProperty("ID_SECCAO")
 	private Integer ID_SECCAO;
 	@JsonProperty("DATA_ENTRADA")
@@ -87,8 +89,10 @@ public class QUA_MC_GABARITOS {
 	public void setCODIGO_GABARITO(String v) { CODIGO_GABARITO = v; }
 	public String getCOD_DESENHO_TECNICO() { return COD_DESENHO_TECNICO; }
 	public void setCOD_DESENHO_TECNICO(String v) { COD_DESENHO_TECNICO = v; }
-	public Integer getREFERENCIA() { return REFERENCIA; }
-	public void setREFERENCIA(Integer v) { REFERENCIA = v; }
+	public String getREFERENCIA() { return REFERENCIA; }
+	public void setREFERENCIA(String v) { REFERENCIA = v; }
+	public String getREFERENCIA_DESIGNACAO() { return REFERENCIA_DESIGNACAO; }
+	public void setREFERENCIA_DESIGNACAO(String v) { REFERENCIA_DESIGNACAO = v; }
 	public Integer getID_SECCAO() { return ID_SECCAO; }
 	public void setID_SECCAO(Integer v) { ID_SECCAO = v; }
 	public Date getDATA_ENTRADA() { return DATA_ENTRADA; }
