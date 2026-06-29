@@ -13,7 +13,8 @@ public class QUA_MC_DECLARACOES_NCDao extends GenericDaoJpaImpl<QUA_MC_DECLARACO
 	public List<QUA_MC_DECLARACOES_NC> getall() {
 		Query query = entityManager.createQuery(
 			"Select a, " +
-			"(select e.DESIGNACAO from QUA_MC_EQUIPAMENTOS e where e.ID_EQUIPAMENTO = a.ID_EQUIPAMENTO) as EQUIPAMENTO_DES " +
+			"(select e.DESIGNACAO from QUA_MC_EQUIPAMENTOS e where e.ID_EQUIPAMENTO = a.ID_EQUIPAMENTO) as EQUIPAMENTO_DES, " +
+			"(select u.NOME_UTILIZADOR from GER_UTILIZADORES u where u.ID_UTILIZADOR = a.UTZ_CRIA) as EMITIDA_POR_NOME " +
 			"from QUA_MC_DECLARACOES_NC a where a.ATIVO = true order by a.DATA_EMISSAO desc, a.ID_DECLARACAO desc");
 		return query.getResultList();
 	}

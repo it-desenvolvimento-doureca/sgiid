@@ -371,8 +371,15 @@ public class SIRB_4 {
 	@GET
 	@Path("/getQUA_MC_DERROGACOES_ACOESbyderrogacao/{id}")
 	@Produces("application/json")
-	public List<QUA_MC_DERROGACOES_ACOES> getQUA_MC_DERROGACOES_ACOESbyderrogacao(@PathParam("id") Integer id) {
+	public List<Object[]> getQUA_MC_DERROGACOES_ACOESbyderrogacao(@PathParam("id") Integer id) {
 		return dao26.getbyDerrogacao(id);
+	}
+
+	@GET
+	@Path("/getQUA_MC_DERROGACOES_ACOESbyid/{id}")
+	@Produces("application/json")
+	public QUA_MC_DERROGACOES_ACOES getQUA_MC_DERROGACOES_ACOESbyid(@PathParam("id") Integer id) {
+		return dao26.read(id);
 	}
 
 	@PUT

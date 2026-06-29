@@ -30,12 +30,15 @@ public class QUA_MC_DERROGACOES {
 	@JsonProperty("IMPACTO_DESCRICAO") private String IMPACTO_DESCRICAO;
 	@JsonProperty("SEGURANCA") private Boolean SEGURANCA;
 	@JsonProperty("REGULAMENTACAO") private Boolean REGULAMENTACAO;
+	@JsonProperty("IMPACTO_CLIENTE") private Boolean IMPACTO_CLIENTE;
+	@JsonProperty("ACOES_CONTENCAO") private String ACOES_CONTENCAO;
 	@JsonProperty("CLIENTE") private String CLIENTE;
 	@JsonProperty("QTD_PECAS_IMPACTADAS") private Integer QTD_PECAS_IMPACTADAS;
 	@JsonProperty("REPERAGEM") private String REPERAGEM;
 	@JsonProperty("NOMINAL") private String NOMINAL;
 	@JsonProperty("PRIMEIRO_NUM_BL") private String PRIMEIRO_NUM_BL;
 	@JsonProperty("DECISAO_INTERNA") private String DECISAO_INTERNA;
+	@JsonProperty("DECISAO_INTERNA_RESULTADO") private String DECISAO_INTERNA_RESULTADO;
 	@JsonProperty("DECISAO_CLIENTE") private String DECISAO_CLIENTE;
 	@JsonProperty("DATA_INICIO") private Date DATA_INICIO;
 	@JsonProperty("DATA_FIM") private Date DATA_FIM;
@@ -64,12 +67,15 @@ public class QUA_MC_DERROGACOES {
 	public String getIMPACTO_DESCRICAO() { return IMPACTO_DESCRICAO; } public void setIMPACTO_DESCRICAO(String v) { IMPACTO_DESCRICAO = v; }
 	public Boolean getSEGURANCA() { return SEGURANCA; } public void setSEGURANCA(Boolean v) { SEGURANCA = v; }
 	public Boolean getREGULAMENTACAO() { return REGULAMENTACAO; } public void setREGULAMENTACAO(Boolean v) { REGULAMENTACAO = v; }
+	public Boolean getIMPACTO_CLIENTE() { return IMPACTO_CLIENTE; } public void setIMPACTO_CLIENTE(Boolean v) { IMPACTO_CLIENTE = v; }
+	public String getACOES_CONTENCAO() { return ACOES_CONTENCAO; } public void setACOES_CONTENCAO(String v) { ACOES_CONTENCAO = v; }
 	public String getCLIENTE() { return CLIENTE; } public void setCLIENTE(String v) { CLIENTE = v; }
 	public Integer getQTD_PECAS_IMPACTADAS() { return QTD_PECAS_IMPACTADAS; } public void setQTD_PECAS_IMPACTADAS(Integer v) { QTD_PECAS_IMPACTADAS = v; }
 	public String getREPERAGEM() { return REPERAGEM; } public void setREPERAGEM(String v) { REPERAGEM = v; }
 	public String getNOMINAL() { return NOMINAL; } public void setNOMINAL(String v) { NOMINAL = v; }
 	public String getPRIMEIRO_NUM_BL() { return PRIMEIRO_NUM_BL; } public void setPRIMEIRO_NUM_BL(String v) { PRIMEIRO_NUM_BL = v; }
 	public String getDECISAO_INTERNA() { return DECISAO_INTERNA; } public void setDECISAO_INTERNA(String v) { DECISAO_INTERNA = v; }
+	public String getDECISAO_INTERNA_RESULTADO() { return DECISAO_INTERNA_RESULTADO; } public void setDECISAO_INTERNA_RESULTADO(String v) { DECISAO_INTERNA_RESULTADO = v; }
 	public String getDECISAO_CLIENTE() { return DECISAO_CLIENTE; } public void setDECISAO_CLIENTE(String v) { DECISAO_CLIENTE = v; }
 	public Date getDATA_INICIO() { return DATA_INICIO; } public void setDATA_INICIO(Date v) { DATA_INICIO = v; }
 	public Date getDATA_FIM() { return DATA_FIM; } public void setDATA_FIM(Date v) { DATA_FIM = v; }

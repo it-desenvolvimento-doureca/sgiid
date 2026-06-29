@@ -20,6 +20,7 @@ public class QUA_MC_DECLARACOES_NC {
 	@JsonProperty("ID_EQUIPAMENTO") private Integer ID_EQUIPAMENTO;
 	@JsonProperty("COD_EQUIPAMENTO") private String COD_EQUIPAMENTO;
 	@JsonProperty("DEFEITO_CONSTATADO") private String DEFEITO_CONSTATADO;
+	@JsonProperty("DEFEITO_CONSTATADO_POR") private Integer DEFEITO_CONSTATADO_POR;
 	@JsonProperty("DESCRICAO_DEFEITO") private String DESCRICAO_DEFEITO;
 	@JsonProperty("PODE_TRABALHAR_DERROGACAO") private Boolean PODE_TRABALHAR_DERROGACAO;
 	@JsonProperty("DATA_LIMITE_VALIDADE") private Date DATA_LIMITE_VALIDADE;
@@ -41,6 +42,7 @@ public class QUA_MC_DECLARACOES_NC {
 	public Integer getID_EQUIPAMENTO() { return ID_EQUIPAMENTO; } public void setID_EQUIPAMENTO(Integer v) { ID_EQUIPAMENTO = v; }
 	public String getCOD_EQUIPAMENTO() { return COD_EQUIPAMENTO; } public void setCOD_EQUIPAMENTO(String v) { COD_EQUIPAMENTO = v; }
 	public String getDEFEITO_CONSTATADO() { return DEFEITO_CONSTATADO; } public void setDEFEITO_CONSTATADO(String v) { DEFEITO_CONSTATADO = v; }
+	public Integer getDEFEITO_CONSTATADO_POR() { return DEFEITO_CONSTATADO_POR; } public void setDEFEITO_CONSTATADO_POR(Integer v) { DEFEITO_CONSTATADO_POR = v; }
 	public String getDESCRICAO_DEFEITO() { return DESCRICAO_DEFEITO; } public void setDESCRICAO_DEFEITO(String v) { DESCRICAO_DEFEITO = v; }
 	public Boolean getPODE_TRABALHAR_DERROGACAO() { return PODE_TRABALHAR_DERROGACAO; } public void setPODE_TRABALHAR_DERROGACAO(Boolean v) { PODE_TRABALHAR_DERROGACAO = v; }
 	public Date getDATA_LIMITE_VALIDADE() { return DATA_LIMITE_VALIDADE; } public void setDATA_LIMITE_VALIDADE(Date v) { DATA_LIMITE_VALIDADE = v; }

@@ -176,6 +176,16 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO = 8 and SUB_MODULO = 'SUG'  " + query_utilizador + "  and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO AND UTZ_ENCAMINHADO is not null) as TAREFAS_ENCAMINHADAS_SUGESTOES "
 				+ ",(select count(*) from GT_MOV_TAREFAS where DATA_FIM<GETDATE() AND ID_MODULO = 8 and SUB_MODULO = 'SUG'  " + query_utilizador + "  and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO ) as TOTAL_TAREFAS_ATRASO_SUGESTOES "
 
+				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO= 5 and SUB_MODULO = 'DMC'  " + query_utilizador
+				+ " and ESTADO ='P' and ID_ACCAO = a.ID_ACCAO ) as TAREFAS_NAO_LIDAS_DERROGACOES_MC "
+				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO= 5 and SUB_MODULO = 'DMC' " + query_utilizador
+				+ " and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO ) as TOTAL_TAREFAS_DERROGACOES_MC "
+				+ ",(select count(*) from GT_MOV_TAREFAS where ID_MODULO= 5 and SUB_MODULO = 'DMC' " + query_utilizador
+				+ " and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO AND UTZ_ENCAMINHADO is not null) as TAREFAS_ENCAMINHADAS_DERROGACOES_MC "
+				+ ",(select count(*) from GT_MOV_TAREFAS where DATA_FIM<GETDATE() AND ID_MODULO= 5 and SUB_MODULO = 'DMC' "
+				+ query_utilizador
+				+ " and ESTADO in ('P','L','E') and ID_ACCAO = a.ID_ACCAO ) as TOTAL_TAREFAS_ATRASO_DERROGACOES_MC "
+
 				+ "from GT_MOV_TAREFAS a where ESTADO in ('P','L','E') AND INATIVO != 1 " + query_utilizador
 				+ " GROUP BY a.ID_ACCAO ORDER BY accao");
 		// query.setParameter("id", id);
@@ -309,6 +319,9 @@ public class GT_MOV_TAREFASDao extends GenericDaoJpaImpl<GT_MOV_TAREFAS, Integer
 
 						+ " union select e.ID_DERROGACAO,e.NOME_CLIENTE as CLIENTE,e.REFERENCIA as REF,e.DESIGNACAO_REF as NOME_REF,d.ID,e.UTZ_CRIA as RESPONSAVEL,OBRIGA_EVIDENCIAS,d.TIPO,5,null,'D' SUB_MODULO ,null ID_AMBITO,e.ESTADO	"
 						+ "from QUA_DERROGACOES_PLANOS_ACCOES d inner join QUA_DERROGACOES e on d.ID_DERROGACAO = e.ID_DERROGACAO "
+
+						+ " union select e.ID_DERROGACAO,e.CLIENTE as CLIENTE,e.REFERENCIA as REF,e.DESIGNACAO as NOME_REF,d.ID,e.UTZ_CRIA as RESPONSAVEL,d.OBRIGA_EVIDENCIAS,d.TIPO,5,null,'DMC' SUB_MODULO ,null ID_AMBITO,e.ESTADO	"
+						+ "from QUA_MC_DERROGACOES_ACOES d inner join QUA_MC_DERROGACOES e on d.ID_DERROGACAO = e.ID_DERROGACAO "
 
 						+ " union select e.ID_REUNIAO,null as CLIENTE,null as REF,null as NOME_REF,d.ID,e.UTZ_CRIA as RESPONSAVEL,OBRIGA_EVIDENCIAS,d.TIPO,19,null,'R' SUB_MODULO ,e.ID_AMBITO ID_AMBITO,null ESTADO	"
 						+ "from REU_REUNIOES_PLANOS_ACCOES d inner join REU_REUNIOES e on d.ID_REUNIAO = e.ID_REUNIAO "

@@ -7940,23 +7940,28 @@ public class SIRB {
 	}
 
 	// Derrogações de Meios de Controlo - cria/atualiza tarefa a partir do plano de ações (sub-módulo 'DMC').
-	// NOTA (fase futura): a materialização da tarefa requer estender a stored procedure
-	// [GT_MOV_TAREFAS_INSERT_UPDATE] e o método enviaEventoTarefa() com um ramo 'DMC' que leia
-	// de QUA_MC_DERROGACOES_ACOES + QUA_MC_DERROGACOES, e a inclusão nas listagens/dashboards de tarefas.
-	// Por agora apenas religa o ID_TAREFA caso já exista a tarefa correspondente.
+	// Espelha getAtualizaTarefaDerrogacoes ('D'): cria a tarefa via SP e dispara o evento 86.
 	@POST
 	@Path("/getAtualizaTarefaDerrogacoesMC/{id}/{modulo}")
 	@Produces("application/json")
 	public void getAtualizaTarefaDerrogacoesMC(@PathParam("id") Integer id, @PathParam("modulo") Integer modulo,
 			final String link) {
 
-		String sql = "UPDATE QUA_MC_DERROGACOES_ACOES SET ID_TAREFA = ( SELECT TOP 1 ID_TAREFA "
-				+ " FROM GT_MOV_TAREFAS x WHERE x.ID_MODULO = " + modulo + " AND x.SUB_MODULO = 'DMC' "
-				+ " AND x.ID_CAMPO = ID ) WHERE ID_TAREFA IS NULL AND ID = ?";
+		Query query = entityManager.createNativeQuery("select ID,ID_DERROGACAO from QUA_MC_DERROGACOES_ACOES "
+				+ "where ID = " + id
+				+ " and ID_TAREFA is null and NOT EXISTS(select * from GT_MOV_TAREFAS where ID_MODULO = " + modulo
+				+ " and SUB_MODULO = 'DMC' and ID_CAMPO = ID)");
 
-		Query query = entityManager.createNativeQuery(sql);
-		query.setParameter(1, id);
-		query.executeUpdate();
+		List<Object[]> dados = query.getResultList();
+
+		for (Object[] content : dados) {
+			String url = "EXEC [GT_MOV_TAREFAS_INSERT_UPDATE] " + content[0].toString() + "," + modulo + ",'DMC'";
+
+			Query query_tarefa = entityManager.createNativeQuery(url);
+			query_tarefa.executeUpdate();
+
+			enviaEventoTarefa(Integer.parseInt(content[0].toString()), link, "DMC");
+		}
 	}
 
 	@POST
@@ -8041,6 +8046,12 @@ public class SIRB {
 							+ "b.NOME_CLIENTE,b.ID_DERROGACAO,a.DATA_PREVISTA,b.DATA_INICIO "
 							+ "from QUA_DERROGACOES_PLANOS_ACCOES a inner join QUA_DERROGACOES b on b.ID_DERROGACAO = a.ID_DERROGACAO "
 							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
+		} else if (submodulo.equals("DMC")) {
+			query = entityManager.createNativeQuery(
+					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(a.OBSERVACOES,'') ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO, "
+							+ "b.CLIENTE,b.ID_DERROGACAO,a.DATA_PREVISTA,b.DATA_INICIO "
+							+ "from QUA_MC_DERROGACOES_ACOES a inner join QUA_MC_DERROGACOES b on b.ID_DERROGACAO = a.ID_DERROGACAO "
+							+ "inner join GT_DIC_TAREFAS c on a.ID_ACCAO = c.ID where a.ID = " + id);
 		} else if (submodulo.equals("F")) {
 			query = entityManager.createNativeQuery(
 					"select a.ID_TAREFA,a.TIPO_RESPONSAVEL,a.RESPONSAVEL,ISNULL(b.OBSERVACOES,'') ,c.DESCRICAO_PT,b.REFERENCIA,b.DESIGNACAO_REF, "
@@ -8111,6 +8122,9 @@ public class SIRB {
 			if (submodulo.equals("D")) {
 				n.put("MODULO", "5");
 				n.put("PAGINA", "Derrogações");
+			} else if (submodulo.equals("DMC")) {
+				n.put("MODULO", "5");
+				n.put("PAGINA", "Derrogações - Meios de Controlo");
 			} else if (submodulo.equals("F")) {
 				n.put("MODULO", "5");
 				n.put("PAGINA", "Reclamações Fornecedor");
@@ -8128,6 +8142,12 @@ public class SIRB {
 			n.put("EMAIL_PARA", email_para);
 
 			if (submodulo.equals("D")) {
+				n.put("DADOS",
+						"{observacao::" + observacao + "\n/link::" + link + numero_reclamacao + "\n/numero_derrogacao::"
+								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_derrogacao::"
+								+ data_reclamacao + "" + "\n/referencia::" + referencia + "" + "\n/numero_tarefa::"
+								+ numero_tarefa + "\n/accao::" + accao + "\n/data_prevista::" + data_prevista + "}");
+			} else if (submodulo.equals("DMC")) {
 				n.put("DADOS",
 						"{observacao::" + observacao + "\n/link::" + link + numero_reclamacao + "\n/numero_derrogacao::"
 								+ numero_reclamacao + "\n/cliente::" + cliente + "\n/data_derrogacao::"
