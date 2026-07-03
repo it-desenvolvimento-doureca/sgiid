@@ -30,6 +30,32 @@ public class PIN_DIC_REGISTO_SALAS_MISTURADao extends GenericDaoJpaImpl<PIN_DIC_
 
 	}
 	
+	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getanalise(Integer id_receita, Integer id_cabine, String ini, String fim) {
+
+		Query query = entityManager.createNativeQuery("select a.ID, "
+				+ "(select b.NOME_PROJETO from PIN_MOV_RECEITAS b where b.ID = a.ID_RECEITA AND b.VERSAO = a.VERSAO) as NOME_PROJETO, "
+				+ "(select c.NOME_CABINE from PIN_DIC_CABINES c where c.ID = a.ID_CABINE) as NOME_CABINE, "
+				+ "a.DATA, a.HORA, a.TEMPERATURA, a.VISCOSIDADE, "
+				+ "CONCAT(a.REFERENCIA_COR,' - ',a.REFERENCIA_COR_DESC) as REF_COR, "
+				+ "CONCAT(a.REFERENCIA_DILUENTE,' - ',a.REFERENCIA_DILUENTE_DESC) as REF_DILUENTE, "
+				+ "p.LIMITE_INF_VISCOSIDADE, p.LIMITE_SUP_VISCOSIDADE, "
+				+ "a.ID_REFERENCIA_COR, a.ID_CABINE, a.ID_RECEITA "
+				+ "from PIN_DIC_REGISTO_SALAS_MISTURA a "
+				+ "left join PIN_DIC_PRODUTOS p on p.ID = a.ID_REFERENCIA_COR "
+				+ "where a.ATIVO = 1 "
+				+ "and (:id_receita = 0 or a.ID_RECEITA = :id_receita) "
+				+ "and (:id_cabine = 0 or a.ID_CABINE = :id_cabine) "
+				+ "and a.DATA >= CAST(:ini as date) and a.DATA <= CAST(:fim as date) "
+				+ "order by a.ID_REFERENCIA_COR, a.DATA, a.HORA");
+		query.setParameter("id_receita", id_receita);
+		query.setParameter("id_cabine", id_cabine);
+		query.setParameter("ini", ini);
+		query.setParameter("fim", fim);
+		List<PIN_DIC_REGISTO_SALAS_MISTURA> data = query.getResultList();
+		return data;
+
+	}
+
 	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getall2() {
 
 		Query query = entityManager.createNativeQuery("Select a.ID,a.ID_RECEITA,a.ID_CABINE,a.DATA,a.HORA,a.TEMPERATURA,a.VISCOSIDADE,a.ID_REFERENCIA_COR,a.REFERENCIA_COR,a.VALOR_COR,a.REFERENCIA_COR_DESC,a.LOTE_COR,a.ID_REFERENCIA_DILUENTE,a.REFERENCIA_DILUENTE,a.VALOR_DILUENTE,a.REFERENCIA_DILUENTE_DESC,a.LOTE_DILUENTE,a.ID_REFERENCIA_CATALIZADOR,a.REFERENCIA_CATALIZADOR,a.VALOR_CATALIZADOR,a.REFERENCIA_CATALIZADOR_DESC,a.LOTE_CATALIZADOR,a.UTZ_CRIA,a.DATA_CRIA,a.UTZ_ULT_MODIF,a.DATA_ULT_MODIF,a.UTZ_ANULA,a.DATA_ANULA,a.ATIVO,a.OBSERVACOES,a.VERSAO,(select b.NOME_PROJETO from PIN_MOV_RECEITAS b where b.ID = a.ID_RECEITA AND b.VERSAO = a.VERSAO) as NOME_PROJETO, "

@@ -62,6 +62,10 @@ public class PIN_DIC_PRODUTOS {
 	private String NOME_REF_SUBSTITUTA;
 	@JsonProperty("TAXA_MISTURA")
 	private BigDecimal TAXA_MISTURA;
+	@JsonProperty("LIMITE_INF_VISCOSIDADE")
+	private BigDecimal LIMITE_INF_VISCOSIDADE;
+	@JsonProperty("LIMITE_SUP_VISCOSIDADE")
+	private BigDecimal LIMITE_SUP_VISCOSIDADE;
 
 	public BigDecimal getTAXA_MISTURA() {
 		return TAXA_MISTURA;
@@ -69,6 +73,22 @@ public class PIN_DIC_PRODUTOS {
 
 	public void setTAXA_MISTURA(BigDecimal tAXA_MISTURA) {
 		TAXA_MISTURA = tAXA_MISTURA;
+	}
+
+	public BigDecimal getLIMITE_INF_VISCOSIDADE() {
+		return LIMITE_INF_VISCOSIDADE;
+	}
+
+	public void setLIMITE_INF_VISCOSIDADE(BigDecimal lIMITE_INF_VISCOSIDADE) {
+		LIMITE_INF_VISCOSIDADE = lIMITE_INF_VISCOSIDADE;
+	}
+
+	public BigDecimal getLIMITE_SUP_VISCOSIDADE() {
+		return LIMITE_SUP_VISCOSIDADE;
+	}
+
+	public void setLIMITE_SUP_VISCOSIDADE(BigDecimal lIMITE_SUP_VISCOSIDADE) {
+		LIMITE_SUP_VISCOSIDADE = lIMITE_SUP_VISCOSIDADE;
 	}
 
 	public Integer getID() {

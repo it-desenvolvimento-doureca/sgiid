@@ -46,7 +46,8 @@ public class PIN_DIC_CORES_ACABAMENTOSDao extends GenericDaoJpaImpl<PIN_DIC_CORE
 	public List<PIN_DIC_CORES_ACABAMENTOS> getbytipoAll2(){
 
 		Query query = entityManager.createNativeQuery("   select  a.ID,a.NOME,a.CODIGO,c.TIPO , "
-				+ "	STRING_AGG(concat(b.NOME,' - ', c.NOME_CABINE),' | ') NOME_POTE "
+				+ "	STRING_AGG(concat(b.NOME,' - ', c.NOME_CABINE),' | ') NOME_POTE, "
+				+ "	STRING_AGG(convert(varchar(10),b.ID),',') IDS_POTE "
 				+ "  from PIN_DIC_CORES_ACABAMENTOS a  "
 				+ "  left join PIN_DIC_POTES b on  b.ID  in (select value from string_split(a.ID_POTE,',')) "
 				+ "  left join PIN_DIC_CABINES c on b.ID_CABINE = c.ID "

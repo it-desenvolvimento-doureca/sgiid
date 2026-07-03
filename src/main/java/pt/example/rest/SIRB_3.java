@@ -262,6 +262,8 @@ public class SIRB_3 {
 	private PIN_MOV_CONSUMO_TINTASDao daoConsumoTintas;
 	@Inject
 	private PIN_MOV_CONSUMO_TINTAS_LINHASDao daoConsumoTintasLinhas;
+	@Inject
+	private PIN_MOV_RECEITAS_PRESSOESDao daoPressoes;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -2769,6 +2771,14 @@ public class SIRB_3 {
 		return dao23.getall();
 	}
 
+	@GET
+	@Path("/getPIN_DIC_REGISTO_BASTIDOR_ANALISE/{id_produto}/{ini}/{fim}")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_BASTIDOR> getPIN_DIC_REGISTO_BASTIDOR_ANALISE(
+			@PathParam("id_produto") Integer id_produto, @PathParam("ini") String ini, @PathParam("fim") String fim) {
+		return dao23.getanalise(id_produto, ini, fim);
+	}
+
 	@DELETE
 	@Path("/deletePIN_DIC_REGISTO_BASTIDOR/{id}")
 	public void deletePIN_DIC_REGISTO_BASTIDOR(@PathParam("id") Integer id) {
@@ -2808,6 +2818,15 @@ public class SIRB_3 {
 	@Produces("application/json")
 	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getPIN_DIC_REGISTO_SALAS_MISTURALINHA() {
 		return dao24.getall();
+	}
+
+	@GET
+	@Path("/getPIN_DIC_REGISTO_SALAS_MISTURA_ANALISE/{id_receita}/{id_cabine}/{ini}/{fim}")
+	@Produces("application/json")
+	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getPIN_DIC_REGISTO_SALAS_MISTURA_ANALISE(
+			@PathParam("id_receita") Integer id_receita, @PathParam("id_cabine") Integer id_cabine,
+			@PathParam("ini") String ini, @PathParam("fim") String fim) {
+		return dao24.getanalise(id_receita, id_cabine, ini, fim);
 	}
 
 	@GET
@@ -3860,6 +3879,39 @@ public class SIRB_3 {
 		List<Object[]> dados_folder = query_folder.getResultList();
 
 		return dados_folder;
+	}
+
+	/************************************* PIN_MOV_RECEITAS_PRESSOES */
+	@POST
+	@Path("/createPIN_MOV_RECEITAS_PRESSOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_RECEITAS_PRESSOES insertPIN_MOV_RECEITAS_PRESSOES(final PIN_MOV_RECEITAS_PRESSOES data) {
+		return daoPressoes.create(data);
+	}
+
+	@GET
+	@Path("/getPIN_MOV_RECEITAS_PRESSOESyid/{id}/{versao}")
+	@Produces("application/json")
+	public List<PIN_MOV_RECEITAS_PRESSOES> getPIN_MOV_RECEITAS_PRESSOESyid(@PathParam("id") Integer id,
+			@PathParam("versao") Integer versao) {
+		return daoPressoes.getbyid(id, versao);
+	}
+
+	@DELETE
+	@Path("/deletePIN_MOV_RECEITAS_PRESSOES/{id}")
+	public void deletePIN_MOV_RECEITAS_PRESSOES(@PathParam("id") Integer id) {
+		PIN_MOV_RECEITAS_PRESSOES data = new PIN_MOV_RECEITAS_PRESSOES();
+		data.setID(id);
+		daoPressoes.delete(data);
+	}
+
+	@PUT
+	@Path("/updatePIN_MOV_RECEITAS_PRESSOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public PIN_MOV_RECEITAS_PRESSOES updatePIN_MOV_RECEITAS_PRESSOES(final PIN_MOV_RECEITAS_PRESSOES data) {
+		return daoPressoes.update(data);
 	}
 
 	/************************************* PIN_MOV_UV_RADIATION */

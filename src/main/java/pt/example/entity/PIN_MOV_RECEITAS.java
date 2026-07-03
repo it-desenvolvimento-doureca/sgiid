@@ -100,6 +100,12 @@ public class PIN_MOV_RECEITAS implements Serializable {
 	private Float TEMPERATURA_MIN;
 	@JsonProperty("TEMPERATURA_MAX")
 	private Float TEMPERATURA_MAX;
+	@JsonProperty("HUMIDADE_MIN")
+	private Float HUMIDADE_MIN;
+	@JsonProperty("HUMIDADE_MAX")
+	private Float HUMIDADE_MAX;
+	@JsonProperty("COR_IMPRESSAO")
+	private String COR_IMPRESSAO;
 	@JsonProperty("TEMPO_FLASHOFF")
 	private String TEMPO_FLASHOFF;
 
@@ -424,6 +430,22 @@ public class PIN_MOV_RECEITAS implements Serializable {
 		return TEMPERATURA_MAX;
 	}
 
+	public Float getHUMIDADE_MIN() {
+		return HUMIDADE_MIN;
+	}
+
+	public Float getHUMIDADE_MAX() {
+		return HUMIDADE_MAX;
+	}
+
+	public String getCOR_IMPRESSAO() {
+		return COR_IMPRESSAO;
+	}
+
+	public void setCOR_IMPRESSAO(String cOR_IMPRESSAO) {
+		COR_IMPRESSAO = cOR_IMPRESSAO;
+	}
+
 	public String getTEMPO_FLASHOFF() {
 		return TEMPO_FLASHOFF;
 	}
@@ -434,6 +456,14 @@ public class PIN_MOV_RECEITAS implements Serializable {
 
 	public void setTEMPERATURA_MAX(Float tEMPERATURA_MAX) {
 		TEMPERATURA_MAX = tEMPERATURA_MAX;
+	}
+
+	public void setHUMIDADE_MIN(Float hUMIDADE_MIN) {
+		HUMIDADE_MIN = hUMIDADE_MIN;
+	}
+
+	public void setHUMIDADE_MAX(Float hUMIDADE_MAX) {
+		HUMIDADE_MAX = hUMIDADE_MAX;
 	}
 
 	public void setTEMPO_FLASHOFF(String tEMPO_FLASHOFF) {

@@ -43,6 +43,8 @@ public class PIN_MOV_RECEITAS_LINHAS {
 	private String VALVULA_POTE;
 	@JsonProperty("VALVULA_CATALISADOR")
 	private String VALVULA_CATALISADOR;
+	@JsonProperty("FILTRO_ROBOT")
+	private String FILTRO_ROBOT;
 	@JsonProperty("COR_A")
 	private String COR_A;
 	@JsonProperty("DILUENTE_C")
@@ -232,6 +234,14 @@ public class PIN_MOV_RECEITAS_LINHAS {
 
 	public void setVALVULA_POTE(String vALVULA_POTE) {
 		VALVULA_POTE = vALVULA_POTE;
+	}
+
+	public String getFILTRO_ROBOT() {
+		return FILTRO_ROBOT;
+	}
+
+	public void setFILTRO_ROBOT(String fILTRO_ROBOT) {
+		FILTRO_ROBOT = fILTRO_ROBOT;
 	}
 
 	public String getVALVULA_CATALISADOR() {
