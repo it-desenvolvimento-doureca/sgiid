@@ -19,14 +19,17 @@ public class QUA_MC_GABARITOSDao extends GenericDaoJpaImpl<QUA_MC_GABARITOS, Int
 		return query.getResultList();
 	}
 
-	// Lista (nativa, performante): Estado Metrológico/MSA da verificação mais recente via OUTER APPLY
+	// Lista (nativa, performante): Estado Metrológico/MSA da verificação mais recente via OUTER APPLY.
+	// C10 = última verificação; C11 = próxima verificação (última + FREQ_VERIFICACAO_MESES)
 	public List<Object[]> getlista() {
 		String sql =
 			"SELECT a.ID_GABARITO AS C0, a.NOME_GABARITO AS C1, a.CODIGO_GABARITO AS C2, a.EM_UTILIZACAO AS C3, a.OBSOLETO AS C4, " +
-			" s.LOCAL_SECCAO AS C5, em.DESIGNACAO AS C6, em.COR AS C7, msa.DESIGNACAO AS C8, msa.COR AS C9 " +
+			" s.LOCAL_SECCAO AS C5, em.DESIGNACAO AS C6, em.COR AS C7, msa.DESIGNACAO AS C8, msa.COR AS C9, lv.DATA_VERIFICACAO AS C10, " +
+			" CASE WHEN lv.DATA_VERIFICACAO IS NULL OR a.FREQ_VERIFICACAO_MESES IS NULL THEN NULL " +
+			"      ELSE DATEADD(MONTH, a.FREQ_VERIFICACAO_MESES, lv.DATA_VERIFICACAO) END AS C11 " +
 			"FROM QUA_MC_GABARITOS a " +
 			"LEFT JOIN QUA_MC_DIC_SECCOES s ON s.ID_SECCAO = a.ID_SECCAO " +
-			"OUTER APPLY ( SELECT TOP 1 v.ID_ESTADO_METROLOGICO, v.ID_MSA " +
+			"OUTER APPLY ( SELECT TOP 1 v.ID_ESTADO_METROLOGICO, v.ID_MSA, v.DATA_VERIFICACAO " +
 			"  FROM QUA_MC_MOV_VERIF_GABARITO v WHERE v.ID_GABARITO = a.ID_GABARITO " +
 			"  ORDER BY v.DATA_VERIFICACAO DESC, v.ID_VERIF_GABARITO DESC ) lv " +
 			"LEFT JOIN QUA_MC_DIC_ESTADO_METROLOGICO em ON em.ID_ESTADO_METROLOGICO = lv.ID_ESTADO_METROLOGICO " +
