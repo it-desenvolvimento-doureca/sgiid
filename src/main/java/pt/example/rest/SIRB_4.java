@@ -37,6 +37,7 @@ import pt.example.dao.QUA_MC_DIC_MSADao;
 import pt.example.dao.QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROSDao;
 import pt.example.dao.QUA_MC_EQUIPAMENTOS_FICHEIROSDao;
 import pt.example.dao.QUA_MC_GABARITOS_FICHEIROSDao;
+import pt.example.dao.QUA_MC_MOV_VERIF_GABARITO_FICHEIROSDao;
 import pt.example.dao.QUA_MC_MOV_CALIB_EQUIP_FICHEIROSDao;
 import pt.example.dao.QUA_MC_DERROGACOESDao;
 import pt.example.dao.QUA_MC_DERROGACOES_ACOESDao;
@@ -67,6 +68,7 @@ import pt.example.entity.QUA_MC_DIC_MSA;
 import pt.example.entity.QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS;
 import pt.example.entity.QUA_MC_EQUIPAMENTOS_FICHEIROS;
 import pt.example.entity.QUA_MC_GABARITOS_FICHEIROS;
+import pt.example.entity.QUA_MC_MOV_VERIF_GABARITO_FICHEIROS;
 import pt.example.entity.QUA_MC_MOV_CALIB_EQUIP_FICHEIROS;
 import pt.example.entity.QUA_MC_DERROGACOES;
 import pt.example.entity.QUA_MC_DERROGACOES_ACOES;
@@ -106,6 +108,7 @@ public class SIRB_4 {
 	@Inject private QUA_MC_DERROGACOES_FICHEIROSDao_MC dao27;
 	@Inject private QUA_MC_DECLARACOES_NCDao dao28;
 	@Inject private QUA_MC_GABARITOS_FICHEIROSDao dao29;
+	@Inject private QUA_MC_MOV_VERIF_GABARITO_FICHEIROSDao dao30;
 
 	/************************************* QUA_MC_DIC_ESTADO_METROLOGICO */
 	@POST
@@ -318,6 +321,38 @@ public class SIRB_4 {
 		QUA_MC_MOV_CALIB_EQUIP_FICHEIROS e = new QUA_MC_MOV_CALIB_EQUIP_FICHEIROS();
 		e.setID(id);
 		dao24.delete(e);
+	}
+
+	/************************************* QUA_MC_MOV_VERIF_GABARITO_FICHEIROS */
+	@POST
+	@Path("/createQUA_MC_MOV_VERIF_GABARITO_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_MOV_VERIF_GABARITO_FICHEIROS insertQUA_MC_MOV_VERIF_GABARITO_FICHEIROS(final QUA_MC_MOV_VERIF_GABARITO_FICHEIROS data) {
+		return dao30.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_MC_MOV_VERIF_GABARITO_FICHEIROSbyverif/{id}")
+	@Produces("application/json")
+	public List<QUA_MC_MOV_VERIF_GABARITO_FICHEIROS> getQUA_MC_MOV_VERIF_GABARITO_FICHEIROSbyverif(@PathParam("id") Integer id) {
+		return dao30.getbyVerifGabarito(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_MC_MOV_VERIF_GABARITO_FICHEIROS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_MC_MOV_VERIF_GABARITO_FICHEIROS updateQUA_MC_MOV_VERIF_GABARITO_FICHEIROS(final QUA_MC_MOV_VERIF_GABARITO_FICHEIROS data) {
+		return dao30.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_MC_MOV_VERIF_GABARITO_FICHEIROS/{id}")
+	public void deleteQUA_MC_MOV_VERIF_GABARITO_FICHEIROS(@PathParam("id") Integer id) {
+		QUA_MC_MOV_VERIF_GABARITO_FICHEIROS e = new QUA_MC_MOV_VERIF_GABARITO_FICHEIROS();
+		e.setID(id);
+		dao30.delete(e);
 	}
 
 	/************************************* QUA_MC_DERROGACOES */
