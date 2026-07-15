@@ -30,7 +30,7 @@ public class PIN_DIC_REGISTO_SALAS_MISTURADao extends GenericDaoJpaImpl<PIN_DIC_
 
 	}
 	
-	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getanalise(Integer id_receita, Integer id_cabine, String ini, String fim) {
+	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getanalise(Integer id_referencia, String ini, String fim) {
 
 		Query query = entityManager.createNativeQuery("select a.ID, "
 				+ "(select b.NOME_PROJETO from PIN_MOV_RECEITAS b where b.ID = a.ID_RECEITA AND b.VERSAO = a.VERSAO) as NOME_PROJETO, "
@@ -43,12 +43,10 @@ public class PIN_DIC_REGISTO_SALAS_MISTURADao extends GenericDaoJpaImpl<PIN_DIC_
 				+ "from PIN_DIC_REGISTO_SALAS_MISTURA a "
 				+ "left join PIN_DIC_PRODUTOS p on p.ID = a.ID_REFERENCIA_COR "
 				+ "where a.ATIVO = 1 "
-				+ "and (:id_receita = 0 or a.ID_RECEITA = :id_receita) "
-				+ "and (:id_cabine = 0 or a.ID_CABINE = :id_cabine) "
+				+ "and (:id_referencia = 0 or a.ID_REFERENCIA_COR = :id_referencia) "
 				+ "and a.DATA >= CAST(:ini as date) and a.DATA <= CAST(:fim as date) "
 				+ "order by a.ID_REFERENCIA_COR, a.DATA, a.HORA");
-		query.setParameter("id_receita", id_receita);
-		query.setParameter("id_cabine", id_cabine);
+		query.setParameter("id_referencia", id_referencia);
 		query.setParameter("ini", ini);
 		query.setParameter("fim", fim);
 		List<PIN_DIC_REGISTO_SALAS_MISTURA> data = query.getResultList();

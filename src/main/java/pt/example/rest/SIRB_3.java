@@ -2772,11 +2772,12 @@ public class SIRB_3 {
 	}
 
 	@GET
-	@Path("/getPIN_DIC_REGISTO_BASTIDOR_ANALISE/{id_produto}/{ini}/{fim}")
+	@Path("/getPIN_DIC_REGISTO_BASTIDOR_ANALISE/{id_receita}/{id_cabine}/{ini}/{fim}")
 	@Produces("application/json")
 	public List<PIN_DIC_REGISTO_BASTIDOR> getPIN_DIC_REGISTO_BASTIDOR_ANALISE(
-			@PathParam("id_produto") Integer id_produto, @PathParam("ini") String ini, @PathParam("fim") String fim) {
-		return dao23.getanalise(id_produto, ini, fim);
+			@PathParam("id_receita") Integer id_receita, @PathParam("id_cabine") Integer id_cabine,
+			@PathParam("ini") String ini, @PathParam("fim") String fim) {
+		return dao23.getanalise(id_receita, id_cabine, ini, fim);
 	}
 
 	@DELETE
@@ -2821,12 +2822,12 @@ public class SIRB_3 {
 	}
 
 	@GET
-	@Path("/getPIN_DIC_REGISTO_SALAS_MISTURA_ANALISE/{id_receita}/{id_cabine}/{ini}/{fim}")
+	@Path("/getPIN_DIC_REGISTO_SALAS_MISTURA_ANALISE/{id_referencia}/{ini}/{fim}")
 	@Produces("application/json")
 	public List<PIN_DIC_REGISTO_SALAS_MISTURA> getPIN_DIC_REGISTO_SALAS_MISTURA_ANALISE(
-			@PathParam("id_receita") Integer id_receita, @PathParam("id_cabine") Integer id_cabine,
+			@PathParam("id_referencia") Integer id_referencia,
 			@PathParam("ini") String ini, @PathParam("fim") String fim) {
-		return dao24.getanalise(id_receita, id_cabine, ini, fim);
+		return dao24.getanalise(id_referencia, ini, fim);
 	}
 
 	@GET
