@@ -298,3 +298,53 @@ GO
 IF COL_LENGTH('QUA_MC_DERROGACOES', 'DECISAO_INTERNA_RESULTADO') IS NULL
     ALTER TABLE QUA_MC_DERROGACOES ADD DECISAO_INTERNA_RESULTADO NVARCHAR(20); -- 'ACEITE' | 'REJEITADO'
 GO
+
+-- =============================================================
+-- 4. Valores iniciais dos dicionários Estado Metrológico e MSA
+--    (pedido do cliente 2026-07 - "Equipamentos.pdf"; idempotente)
+--    Sem estes valores os dropdowns MSA/Estado Metrológico do
+--    registo de calibração/verificação ficam vazios.
+-- =============================================================
+IF NOT EXISTS (SELECT 1 FROM QUA_MC_DIC_ESTADO_METROLOGICO WHERE DESIGNACAO = N'Calibração Válida')
+    INSERT INTO QUA_MC_DIC_ESTADO_METROLOGICO (DESIGNACAO, COR, DATA_CRIA, ATIVO) VALUES (N'Calibração Válida', '#70ad47', GETDATE(), 1);
+GO
+IF NOT EXISTS (SELECT 1 FROM QUA_MC_DIC_ESTADO_METROLOGICO WHERE DESIGNACAO = N'Calibração Expira Brevemente')
+    INSERT INTO QUA_MC_DIC_ESTADO_METROLOGICO (DESIGNACAO, COR, DATA_CRIA, ATIVO) VALUES (N'Calibração Expira Brevemente', '#ffc000', GETDATE(), 1);
+GO
+IF NOT EXISTS (SELECT 1 FROM QUA_MC_DIC_ESTADO_METROLOGICO WHERE DESIGNACAO = N'Calibração Expirada')
+    INSERT INTO QUA_MC_DIC_ESTADO_METROLOGICO (DESIGNACAO, COR, DATA_CRIA, ATIVO) VALUES (N'Calibração Expirada', '#ff0000', GETDATE(), 1);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM QUA_MC_DIC_MSA WHERE DESIGNACAO = N'Aprovado')
+    INSERT INTO QUA_MC_DIC_MSA (DESIGNACAO, COR, DATA_CRIA, ATIVO) VALUES (N'Aprovado', '#70ad47', GETDATE(), 1);
+GO
+IF NOT EXISTS (SELECT 1 FROM QUA_MC_DIC_MSA WHERE DESIGNACAO = N'Condicionado')
+    INSERT INTO QUA_MC_DIC_MSA (DESIGNACAO, COR, DATA_CRIA, ATIVO) VALUES (N'Condicionado', '#ffc000', GETDATE(), 1);
+GO
+IF NOT EXISTS (SELECT 1 FROM QUA_MC_DIC_MSA WHERE DESIGNACAO = N'Reprovado')
+    INSERT INTO QUA_MC_DIC_MSA (DESIGNACAO, COR, DATA_CRIA, ATIVO) VALUES (N'Reprovado', '#ff0000', GETDATE(), 1);
+GO
+IF NOT EXISTS (SELECT 1 FROM QUA_MC_DIC_MSA WHERE DESIGNACAO = N'Sem Estudo')
+    INSERT INTO QUA_MC_DIC_MSA (DESIGNACAO, COR, DATA_CRIA, ATIVO) VALUES (N'Sem Estudo', '#ffffff', GETDATE(), 1);
+GO
+
+-- =============================================================
+-- 5. Controlo de alertas de calibração/verificação já enviados
+--    (job EVENTOS_DOURECA: getAlertasCalibracaoEquipamentos /
+--     getAlertasVerificacaoGabaritos só alertam novidades;
+--     chave = TIPO + ID_REGISTO + PROXIMA_DATA + ESTADO)
+-- =============================================================
+IF OBJECT_ID('QUA_MC_ALERTAS_ENVIADOS', 'U') IS NULL
+CREATE TABLE QUA_MC_ALERTAS_ENVIADOS (
+    ID              INT IDENTITY(1,1) PRIMARY KEY,
+    TIPO            NVARCHAR(20)  NOT NULL,   -- 'EQUIPAMENTO' | 'GABARITO'
+    ID_REGISTO      INT           NOT NULL,   -- ID_EQUIPAMENTO ou ID_GABARITO
+    PROXIMA_DATA    DATE          NOT NULL,   -- próxima calibração/verificação que originou o alerta
+    ESTADO          NVARCHAR(50)  NOT NULL,   -- 'Calibração expirada', 'Calibração expira brevemente', ...
+    DATA_ENVIO      DATETIME      DEFAULT GETDATE()
+);
+GO
+IF OBJECT_ID('QUA_MC_ALERTAS_ENVIADOS', 'U') IS NOT NULL
+   AND NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_QUA_MC_ALERTAS_ENVIADOS_CHAVE')
+    CREATE INDEX IX_QUA_MC_ALERTAS_ENVIADOS_CHAVE ON QUA_MC_ALERTAS_ENVIADOS (TIPO, ID_REGISTO, PROXIMA_DATA);
+GO
