@@ -2934,6 +2934,13 @@ public class SIRB {
 	public List<RH_FUNCIONARIOS> getRH_FUNCIONARIOSAtivos() {
 		return dao63.getallativos();
 	}
+	
+	@GET
+	@Path("/getRH_FUNCIONARIOSAtivos2")
+	@Produces("application/json")
+	public List<RH_FUNCIONARIOS> getRH_FUNCIONARIOSAtivos2() {
+		return dao63.getallativos2();
+	}
 
 	@GET
 	@Path("/getRH_FUNCIONARIOS")

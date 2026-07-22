@@ -56,6 +56,15 @@ public class RH_FUNCIONARIOSDao extends GenericDaoJpaImpl<RH_FUNCIONARIOS, Integ
 		return data;
 
 	}
+	
+	public List<RH_FUNCIONARIOS> getallativos2() {
+
+		Query query = entityManager.createQuery(
+				"Select a from RH_FUNCIONARIOS a where a.ATIVO = 1 order by CASE WHEN a.COD_FUNCIONARIO >= 0 THEN a.COD_FUNCIONARIO ELSE (a.COD_FUNCIONARIO * -1) END asc");
+		List<RH_FUNCIONARIOS> data = query.getResultList();
+		return data;
+
+	}
 
 	public List<RH_FUNCIONARIOS> getGeral(String datageral, String Ativo, String Operario, String SECTOR_ACESSO,
 			Boolean ADMIN) {
