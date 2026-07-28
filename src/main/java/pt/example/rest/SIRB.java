@@ -11290,11 +11290,15 @@ public class SIRB {
 		for (Object[] content : dadosquery) {
 
 			String email_para = (content[0] == null) ? "" : content[0].toString();
-			String ambito = (content[1] == null) ? "" : content[1].toString();
-			String total = (content[2] == null) ? "" : content[2].toString();
-			String data_criacao = (content[3] == null) ? "" : content[3].toString();
-			String tabela = (content[4] == null) ? "" : content[4].toString();
-			String link = (content[5] == null) ? "" : content[5].toString();
+			String n_manutencao = (content[1] == null) ? "" : content[1].toString();
+			String ambito = (content[2] == null) ? "" : content[2].toString();
+			String localizacao = (content[3] == null) ? "" : content[3].toString();
+			String equipamento = (content[4] == null) ? "" : content[4].toString();
+			String descricao_manutencao = (content[5] == null) ? "" : content[5].toString();
+			String data_realizacao = (content[6] == null) ? "" : content[6].toString();
+			String equipa_utilizador = (content[7] == null) ? "" : content[7].toString();
+			String nivel = (content[8] == null) ? "" : content[8].toString();
+			String link = (content[9] == null) ? "" : content[9].toString();
 
 			if (email_para.isEmpty()) {
 				continue;
@@ -11303,15 +11307,18 @@ public class SIRB {
 			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 			HashMap<String, String> n = new HashMap<String, String>();
 			n.put("MODULO", "14");
-			n.put("MOMENTO", "Alertas Preventivas Criadas");
+			n.put("MOMENTO", "PREVENTIVAS CRIADAS");
 
-			n.put("PAGINA", "Manutenções Preventivas");
+			n.put("PAGINA", "MANUTENCOES PREVENTIVAS");
 
 			n.put("ESTADO", "1");
 			n.put("EMAIL_PARA", email_para);
 
-			n.put("DADOS", "{ambito::" + ambito + "\n/total::" + total + "\n/data::" + data_criacao + "\n/tabela::"
-					+ tabela + "\n/link::" + link + "}");
+			n.put("DADOS",
+					"{N_MANUTENCAO::" + n_manutencao + "\n/AMBITO::" + ambito + "\n/LOCALIZACAO::" + localizacao
+							+ "\n/EQUIPAMENTO::" + equipamento + "\n/DESCRICAO_MANUTENCAO::" + descricao_manutencao
+							+ "\n/DATA_REALIZACAO::" + data_realizacao + "\n/EQUIPA_UTILIZADOR::" + equipa_utilizador
+							+ "\n/NIVEL::" + nivel + "\n/LINK::" + link + "}");
 
 			data.add(n);
 
