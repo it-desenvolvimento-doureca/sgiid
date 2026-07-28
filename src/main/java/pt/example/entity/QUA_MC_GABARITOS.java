@@ -38,6 +38,8 @@ public class QUA_MC_GABARITOS {
 	private Boolean EM_UTILIZACAO;
 	@JsonProperty("OBSOLETO")
 	private Boolean OBSOLETO;
+	@JsonProperty("DATA_OBSOLETO")
+	private Date DATA_OBSOLETO;
 	@JsonProperty("OBSERVACOES")
 	private String OBSERVACOES;
 	@JsonProperty("FOTOGRAFIA")
@@ -103,6 +105,8 @@ public class QUA_MC_GABARITOS {
 	public void setEM_UTILIZACAO(Boolean v) { EM_UTILIZACAO = v; }
 	public Boolean getOBSOLETO() { return OBSOLETO; }
 	public void setOBSOLETO(Boolean v) { OBSOLETO = v; }
+	public Date getDATA_OBSOLETO() { return DATA_OBSOLETO; }
+	public void setDATA_OBSOLETO(Date v) { DATA_OBSOLETO = v; }
 	public String getOBSERVACOES() { return OBSERVACOES; }
 	public void setOBSERVACOES(String v) { OBSERVACOES = v; }
 	public String getFOTOGRAFIA() { return FOTOGRAFIA; }

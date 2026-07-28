@@ -20,14 +20,16 @@ public class QUA_MC_EQUIPAMENTOSDao extends GenericDaoJpaImpl<QUA_MC_EQUIPAMENTO
 		return query.getResultList();
 	}
 
-	// Lista (nativa, performante): Estado Metrológico/MSA da calibração mais recente via OUTER APPLY.
-	// C11 = próxima calibração (última DATA_CALIBRACAO + menor intervalo aplicável em meses)
+	// Lista (nativa, performante): Estado Metrológico/MSA da calibração mais recente via OUTER APPLY (lc).
+	// C10 = última calibração (qualquer tipo); C11 = próxima calibração calculada SÓ a partir da
+	// calibração externa ou verificação interna mais recente (lcp) -- exclui estudos R+R (pedido cliente).
+	// C12 = data em que passou a obsoleto.
 	public List<Object[]> getlista() {
 		String sql =
 			"SELECT a.ID_EQUIPAMENTO AS C0, a.DESIGNACAO AS C1, a.COD_INTERNO AS C2, a.EM_UTILIZACAO AS C3, a.OBSOLETO AS C4, " +
 			" s.LOCAL_SECCAO AS C5, em.DESIGNACAO AS C6, em.COR AS C7, msa.DESIGNACAO AS C8, msa.COR AS C9, lc.DATA_CALIBRACAO AS C10, " +
-			" CASE WHEN a.CALIBRACAO_NAO = 1 OR lc.DATA_CALIBRACAO IS NULL OR itv.MESES IS NULL THEN NULL " +
-			"      ELSE DATEADD(MONTH, itv.MESES, lc.DATA_CALIBRACAO) END AS C11 " +
+			" CASE WHEN a.CALIBRACAO_NAO = 1 OR lcp.DATA_CALIBRACAO IS NULL OR itv.MESES IS NULL THEN NULL " +
+			"      ELSE DATEADD(MONTH, itv.MESES, lcp.DATA_CALIBRACAO) END AS C11, a.DATA_OBSOLETO AS C12 " +
 			"FROM QUA_MC_EQUIPAMENTOS a " +
 			"LEFT JOIN QUA_MC_DIC_SECCOES s ON s.ID_SECCAO = a.ID_SECCAO " +
 			"CROSS APPLY ( SELECT CASE " +
@@ -37,6 +39,12 @@ public class QUA_MC_EQUIPAMENTOSDao extends GenericDaoJpaImpl<QUA_MC_EQUIPAMENTO
 			"OUTER APPLY ( SELECT TOP 1 d.ID_ESTADO_METROLOGICO, d.ID_MSA, d.DATA_CALIBRACAO " +
 			"  FROM QUA_MC_MOV_CALIB_EQUIP_DET d INNER JOIN QUA_MC_MOV_CALIB_EQUIP h ON d.ID_CALIB_EQUIP = h.ID_CALIB_EQUIP " +
 			"  WHERE h.ID_EQUIPAMENTO = a.ID_EQUIPAMENTO ORDER BY d.DATA_CALIBRACAO DESC, d.ID_CALIB_EQUIP_DET DESC ) lc " +
+			"OUTER APPLY ( SELECT TOP 1 d.DATA_CALIBRACAO " +
+			"  FROM QUA_MC_MOV_CALIB_EQUIP_DET d INNER JOIN QUA_MC_MOV_CALIB_EQUIP h ON d.ID_CALIB_EQUIP = h.ID_CALIB_EQUIP " +
+			"  LEFT JOIN QUA_MC_DIC_TIPO_CALIBRACAO tc ON tc.ID_TIPO_CALIBRACAO = d.ID_TIPO_CALIBRACAO " +
+			"  WHERE h.ID_EQUIPAMENTO = a.ID_EQUIPAMENTO " +
+			"    AND ( UPPER(tc.TIPO_CALIB_EQUP) LIKE '%EXTERN%' OR UPPER(tc.TIPO_CALIB_EQUP) LIKE '%INTERN%' ) " +
+			"  ORDER BY d.DATA_CALIBRACAO DESC, d.ID_CALIB_EQUIP_DET DESC ) lcp " +
 			"LEFT JOIN QUA_MC_DIC_ESTADO_METROLOGICO em ON em.ID_ESTADO_METROLOGICO = lc.ID_ESTADO_METROLOGICO " +
 			"LEFT JOIN QUA_MC_DIC_MSA msa ON msa.ID_MSA = lc.ID_MSA " +
 			"ORDER BY a.DESIGNACAO";

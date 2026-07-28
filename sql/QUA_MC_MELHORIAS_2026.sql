@@ -348,3 +348,24 @@ IF OBJECT_ID('QUA_MC_ALERTAS_ENVIADOS', 'U') IS NOT NULL
    AND NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_QUA_MC_ALERTAS_ENVIADOS_CHAVE')
     CREATE INDEX IX_QUA_MC_ALERTAS_ENVIADOS_CHAVE ON QUA_MC_ALERTAS_ENVIADOS (TIPO, ID_REGISTO, PROXIMA_DATA);
 GO
+
+-- =============================================================
+-- 6. Feedback cliente 2026-07-27
+-- =============================================================
+
+-- 6.1 - Data em que o equipamento/gabarito passou a Obsoleto (mostrada na listagem principal)
+IF COL_LENGTH('QUA_MC_EQUIPAMENTOS', 'DATA_OBSOLETO') IS NULL
+    ALTER TABLE QUA_MC_EQUIPAMENTOS ADD DATA_OBSOLETO DATE;
+GO
+IF COL_LENGTH('QUA_MC_GABARITOS', 'DATA_OBSOLETO') IS NULL
+    ALTER TABLE QUA_MC_GABARITOS ADD DATA_OBSOLETO DATE;
+GO
+
+-- 6.2 - Aumentar casas decimais para 6 (Erro Máximo da calibração e Tolerância do gabarito)
+--       Colunas já existentes com dados -> ALTER COLUMN (idempotente; re-executar é inócuo)
+IF COL_LENGTH('QUA_MC_MOV_CALIB_EQUIP_DET', 'ERRO_MAXIMO') IS NOT NULL
+    ALTER TABLE QUA_MC_MOV_CALIB_EQUIP_DET ALTER COLUMN ERRO_MAXIMO DECIMAL(18,6);
+GO
+IF COL_LENGTH('QUA_MC_GABARITOS', 'TOLERANCIA') IS NOT NULL
+    ALTER TABLE QUA_MC_GABARITOS ALTER COLUMN TOLERANCIA DECIMAL(18,6);
+GO

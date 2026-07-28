@@ -34,6 +34,8 @@ public class MAN_DIC_AMBITOS {
 	private Boolean OBRIGA_DOCUMENTOS;
 	@JsonProperty("AMBITO_IT")
 	private Boolean AMBITO_IT;
+	@JsonProperty("NOTIFICA_PREVENTIVAS")
+	private Boolean NOTIFICA_PREVENTIVAS;
 
 	public Integer getID() {
 		return ID;
@@ -105,6 +107,14 @@ public class MAN_DIC_AMBITOS {
 
 	public void setAMBITO_IT(Boolean aMBITO_IT) {
 		AMBITO_IT = aMBITO_IT;
+	}
+
+	public Boolean getNOTIFICA_PREVENTIVAS() {
+		return NOTIFICA_PREVENTIVAS;
+	}
+
+	public void setNOTIFICA_PREVENTIVAS(Boolean nOTIFICA_PREVENTIVAS) {
+		NOTIFICA_PREVENTIVAS = nOTIFICA_PREVENTIVAS;
 	}
 
 }

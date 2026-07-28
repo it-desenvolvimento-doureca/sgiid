@@ -11274,6 +11274,54 @@ public class SIRB {
 		return "OK";
 	}
 
+	@POST
+	@Path("/getAlertasManutencoesPreventivas")
+	@Produces("application/json")
+	public String getAlertasManutencoesPreventivas(final List<HashMap<String, String>> dados) {
+
+		HashMap<String, String> firstMap = dados.get(0);
+		String IDS = firstMap.get("IDS");
+
+		Query query = entityManager
+				.createNativeQuery("EXEC [GET_ALERTA_MANUTENCOES_PREVENTIVAS_CRIADAS] '" + IDS + "'");
+
+		List<Object[]> dadosquery = query.getResultList();
+
+		for (Object[] content : dadosquery) {
+
+			String email_para = (content[0] == null) ? "" : content[0].toString();
+			String ambito = (content[1] == null) ? "" : content[1].toString();
+			String total = (content[2] == null) ? "" : content[2].toString();
+			String data_criacao = (content[3] == null) ? "" : content[3].toString();
+			String tabela = (content[4] == null) ? "" : content[4].toString();
+			String link = (content[5] == null) ? "" : content[5].toString();
+
+			if (email_para.isEmpty()) {
+				continue;
+			}
+
+			List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+			HashMap<String, String> n = new HashMap<String, String>();
+			n.put("MODULO", "14");
+			n.put("MOMENTO", "Alertas Preventivas Criadas");
+
+			n.put("PAGINA", "Manutenções Preventivas");
+
+			n.put("ESTADO", "1");
+			n.put("EMAIL_PARA", email_para);
+
+			n.put("DADOS", "{ambito::" + ambito + "\n/total::" + total + "\n/data::" + data_criacao + "\n/tabela::"
+					+ tabela + "\n/link::" + link + "}");
+
+			data.add(n);
+
+			verficaEventos(data);
+
+		}
+
+		return "OK";
+	}
+
 	/*************************************
 	 * RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOES
 	 */
