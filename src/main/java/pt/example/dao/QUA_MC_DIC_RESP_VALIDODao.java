@@ -15,6 +15,12 @@ public class QUA_MC_DIC_RESP_VALIDODao extends GenericDaoJpaImpl<QUA_MC_DIC_RESP
 		return query.getResultList();
 	}
 
+	// Apenas responsáveis ativos - usado pelos dropdowns das fichas (esconde nomes antigos desativados)
+	public List<QUA_MC_DIC_RESP_VALIDACAO> getativos() {
+		Query query = entityManager.createQuery("Select a from QUA_MC_DIC_RESP_VALIDACAO a where a.ATIVO = true order by a.RESP_VALIDACAO");
+		return query.getResultList();
+	}
+
 	public List<QUA_MC_DIC_RESP_VALIDACAO> getbyid(Integer id) {
 		Query query = entityManager.createQuery("Select a from QUA_MC_DIC_RESP_VALIDACAO a where a.ID_RESP_VALIDACAO = :id");
 		query.setParameter("id", id);

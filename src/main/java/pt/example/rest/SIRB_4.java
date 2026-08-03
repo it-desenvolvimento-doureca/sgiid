@@ -567,6 +567,13 @@ public class SIRB_4 {
 	}
 
 	@GET
+	@Path("/getQUA_MC_DIC_RESP_VALIDACAO_ATIVOS")
+	@Produces("application/json")
+	public List<QUA_MC_DIC_RESP_VALIDACAO> getQUA_MC_DIC_RESP_VALIDACAO_ATIVOS() {
+		return dao2.getativos();
+	}
+
+	@GET
 	@Path("/getQUA_MC_DIC_RESP_VALIDObyid/{id}")
 	@Produces("application/json")
 	public List<QUA_MC_DIC_RESP_VALIDACAO> getQUA_MC_DIC_RESP_VALIDObyid(@PathParam("id") Integer id) {

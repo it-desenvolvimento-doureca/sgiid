@@ -43,6 +43,9 @@ public class QUA_MC_DERROGACOES {
 	@JsonProperty("DATA_INICIO") private Date DATA_INICIO;
 	@JsonProperty("DATA_FIM") private Date DATA_FIM;
 	@JsonProperty("ESTADO") private String ESTADO;
+	@JsonProperty("TIPO_MEIO") private String TIPO_MEIO;
+	@JsonProperty("ID_EQUIPAMENTO") private Integer ID_EQUIPAMENTO;
+	@JsonProperty("ID_GABARITO") private Integer ID_GABARITO;
 	@JsonProperty("UTZ_CRIA") private Integer UTZ_CRIA;
 	@JsonProperty("DATA_CRIA") private Date DATA_CRIA;
 	@JsonProperty("UTZ_MODIF") private Integer UTZ_MODIF;
@@ -80,6 +83,9 @@ public class QUA_MC_DERROGACOES {
 	public Date getDATA_INICIO() { return DATA_INICIO; } public void setDATA_INICIO(Date v) { DATA_INICIO = v; }
 	public Date getDATA_FIM() { return DATA_FIM; } public void setDATA_FIM(Date v) { DATA_FIM = v; }
 	public String getESTADO() { return ESTADO; } public void setESTADO(String v) { ESTADO = v; }
+	public String getTIPO_MEIO() { return TIPO_MEIO; } public void setTIPO_MEIO(String v) { TIPO_MEIO = v; }
+	public Integer getID_EQUIPAMENTO() { return ID_EQUIPAMENTO; } public void setID_EQUIPAMENTO(Integer v) { ID_EQUIPAMENTO = v; }
+	public Integer getID_GABARITO() { return ID_GABARITO; } public void setID_GABARITO(Integer v) { ID_GABARITO = v; }
 	public Integer getUTZ_CRIA() { return UTZ_CRIA; } public void setUTZ_CRIA(Integer v) { UTZ_CRIA = v; }
 	public Date getDATA_CRIA() { return DATA_CRIA; } public void setDATA_CRIA(Date v) { DATA_CRIA = v; }
 	public Integer getUTZ_MODIF() { return UTZ_MODIF; } public void setUTZ_MODIF(Integer v) { UTZ_MODIF = v; }

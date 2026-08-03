@@ -28,6 +28,10 @@ public class QUA_MC_DECLARACOES_NC {
 	@JsonProperty("ACOES_A_TOMAR") private String ACOES_A_TOMAR;
 	@JsonProperty("DEFEITO_A_CONSERTAR") private String DEFEITO_A_CONSERTAR;
 	@JsonProperty("ESTADO") private String ESTADO;
+	@JsonProperty("TIPO_MEIO") private String TIPO_MEIO;
+	@JsonProperty("ID_GABARITO") private Integer ID_GABARITO;
+	@JsonProperty("COD_GABARITO") private String COD_GABARITO;
+	@JsonProperty("ID_DERROGACAO") private Integer ID_DERROGACAO;
 	@JsonProperty("UTZ_CRIA") private Integer UTZ_CRIA;
 	@JsonProperty("DATA_CRIA") private Date DATA_CRIA;
 	@JsonProperty("UTZ_MODIF") private Integer UTZ_MODIF;
@@ -50,6 +54,10 @@ public class QUA_MC_DECLARACOES_NC {
 	public String getACOES_A_TOMAR() { return ACOES_A_TOMAR; } public void setACOES_A_TOMAR(String v) { ACOES_A_TOMAR = v; }
 	public String getDEFEITO_A_CONSERTAR() { return DEFEITO_A_CONSERTAR; } public void setDEFEITO_A_CONSERTAR(String v) { DEFEITO_A_CONSERTAR = v; }
 	public String getESTADO() { return ESTADO; } public void setESTADO(String v) { ESTADO = v; }
+	public String getTIPO_MEIO() { return TIPO_MEIO; } public void setTIPO_MEIO(String v) { TIPO_MEIO = v; }
+	public Integer getID_GABARITO() { return ID_GABARITO; } public void setID_GABARITO(Integer v) { ID_GABARITO = v; }
+	public String getCOD_GABARITO() { return COD_GABARITO; } public void setCOD_GABARITO(String v) { COD_GABARITO = v; }
+	public Integer getID_DERROGACAO() { return ID_DERROGACAO; } public void setID_DERROGACAO(Integer v) { ID_DERROGACAO = v; }
 	public Integer getUTZ_CRIA() { return UTZ_CRIA; } public void setUTZ_CRIA(Integer v) { UTZ_CRIA = v; }
 	public Date getDATA_CRIA() { return DATA_CRIA; } public void setDATA_CRIA(Date v) { DATA_CRIA = v; }
 	public Integer getUTZ_MODIF() { return UTZ_MODIF; } public void setUTZ_MODIF(Integer v) { UTZ_MODIF = v; }
