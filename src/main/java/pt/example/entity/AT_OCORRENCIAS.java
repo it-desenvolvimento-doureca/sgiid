@@ -182,7 +182,35 @@ public class AT_OCORRENCIAS {
 	private String CL_OUTRO_TEXTO;
 	/*@Column(name = "NUMERADOR_OCORRENCIAS")
 	private String NUMERADOR_OCORRENCIAS;*/
-	
+
+	/* Melhorias 2026-08 - Ficha de Aptidao */
+	@Column(name = "FICHA_APTIDAO")
+	private Boolean FICHA_APTIDAO;
+	@Column(name = "DATA_FICHA_APTIDAO")
+	private Date DATA_FICHA_APTIDAO;
+	/* Melhorias 2026-08 - Afastamento e primeiros socorros */
+	@Column(name = "HORA_INICIO_AFASTAMENTO")
+	private Time HORA_INICIO_AFASTAMENTO;
+	@Column(name = "PRIMEIROS_SOCORROS")
+	private Boolean PRIMEIROS_SOCORROS;
+	@Column(name = "AVALIACAO_EQUIPA_SOCORROS")
+	private String AVALIACAO_EQUIPA_SOCORROS;
+	@Column(name = "NR_DIAS_IT")
+	private Integer NR_DIAS_IT;
+	/* Melhorias 2026-08 - Partes do corpo desdobradas */
+	@Column(name = "PA_BRACO")
+	private Boolean PA_BRACO;
+	@Column(name = "PA_COTOVELO")
+	private Boolean PA_COTOVELO;
+	@Column(name = "PA_PERNA")
+	private Boolean PA_PERNA;
+	@Column(name = "PA_TORNOZELO")
+	private Boolean PA_TORNOZELO;
+	@Column(name = "PA_PULSO")
+	private Boolean PA_PULSO;
+	@Column(name = "PA_DEDOS_MAO")
+	private Boolean PA_DEDOS_MAO;
+
 	public Integer getID_OCORRENCIA() {
 		return ID_OCORRENCIA;
 	}
@@ -846,5 +874,103 @@ public class AT_OCORRENCIAS {
 	public void setNUMERADOR_OCORRENCIAS(String nUMERADOR_OCORRENCIAS) {
 		NUMERADOR_OCORRENCIAS = nUMERADOR_OCORRENCIAS;
 	}*/
+
+	/* Melhorias 2026-08 */
+
+	public Boolean getFICHA_APTIDAO() {
+		return FICHA_APTIDAO;
+	}
+
+	public void setFICHA_APTIDAO(Boolean fICHA_APTIDAO) {
+		FICHA_APTIDAO = fICHA_APTIDAO;
+	}
+
+	public Date getDATA_FICHA_APTIDAO() {
+		return DATA_FICHA_APTIDAO;
+	}
+
+	public void setDATA_FICHA_APTIDAO(Date dATA_FICHA_APTIDAO) {
+		DATA_FICHA_APTIDAO = dATA_FICHA_APTIDAO;
+	}
+
+	public Time getHORA_INICIO_AFASTAMENTO() {
+		return HORA_INICIO_AFASTAMENTO;
+	}
+
+	public void setHORA_INICIO_AFASTAMENTO(Time hORA_INICIO_AFASTAMENTO) {
+		HORA_INICIO_AFASTAMENTO = hORA_INICIO_AFASTAMENTO;
+	}
+
+	public Boolean getPRIMEIROS_SOCORROS() {
+		return PRIMEIROS_SOCORROS;
+	}
+
+	public void setPRIMEIROS_SOCORROS(Boolean pRIMEIROS_SOCORROS) {
+		PRIMEIROS_SOCORROS = pRIMEIROS_SOCORROS;
+	}
+
+	public String getAVALIACAO_EQUIPA_SOCORROS() {
+		return AVALIACAO_EQUIPA_SOCORROS;
+	}
+
+	public void setAVALIACAO_EQUIPA_SOCORROS(String aVALIACAO_EQUIPA_SOCORROS) {
+		AVALIACAO_EQUIPA_SOCORROS = aVALIACAO_EQUIPA_SOCORROS;
+	}
+
+	public Integer getNR_DIAS_IT() {
+		return NR_DIAS_IT;
+	}
+
+	public void setNR_DIAS_IT(Integer nR_DIAS_IT) {
+		NR_DIAS_IT = nR_DIAS_IT;
+	}
+
+	public Boolean getPA_BRACO() {
+		return PA_BRACO;
+	}
+
+	public void setPA_BRACO(Boolean pA_BRACO) {
+		PA_BRACO = pA_BRACO;
+	}
+
+	public Boolean getPA_COTOVELO() {
+		return PA_COTOVELO;
+	}
+
+	public void setPA_COTOVELO(Boolean pA_COTOVELO) {
+		PA_COTOVELO = pA_COTOVELO;
+	}
+
+	public Boolean getPA_PERNA() {
+		return PA_PERNA;
+	}
+
+	public void setPA_PERNA(Boolean pA_PERNA) {
+		PA_PERNA = pA_PERNA;
+	}
+
+	public Boolean getPA_TORNOZELO() {
+		return PA_TORNOZELO;
+	}
+
+	public void setPA_TORNOZELO(Boolean pA_TORNOZELO) {
+		PA_TORNOZELO = pA_TORNOZELO;
+	}
+
+	public Boolean getPA_PULSO() {
+		return PA_PULSO;
+	}
+
+	public void setPA_PULSO(Boolean pA_PULSO) {
+		PA_PULSO = pA_PULSO;
+	}
+
+	public Boolean getPA_DEDOS_MAO() {
+		return PA_DEDOS_MAO;
+	}
+
+	public void setPA_DEDOS_MAO(Boolean pA_DEDOS_MAO) {
+		PA_DEDOS_MAO = pA_DEDOS_MAO;
+	}
 
 }

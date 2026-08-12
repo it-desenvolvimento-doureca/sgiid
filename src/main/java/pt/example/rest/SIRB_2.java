@@ -39,6 +39,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -2311,10 +2312,29 @@ public class SIRB_2 {
 	@GET
 	@Path("/getAT_OCORRENCIAS_CAUSAS_ACIDENTE/{id}")
 	@Produces("application/json")
+	/*
+	 * Melhorias 2026-08 - Diagrama de Ishikawa.
+	 *
+	 * Colunas 0..2 mantem-se (ID_CAUSAS_ACIDENTE, ID_OCORRENCIA, DESCRICAO) para
+	 * nao quebrar o frontend; CATEGORIA, ORDEM, PERMITE_TEXTO e TEXTO_OUTRO sao
+	 * acrescentadas no fim.
+	 *
+	 * Devolve as causas do diagrama (CATEGORIA preenchida e nao inativas) mais as
+	 * causas antigas que ja estejam ligadas a esta ocorrencia, para que os
+	 * registos historicos continuem a mostrar e a imprimir o que foi assinalado.
+	 */
 	public List<Object[]> getAT_OCORRENCIAS_CAUSAS_ACIDENTE(@PathParam("id") Integer id) {
 		Query query_folder = entityManager.createNativeQuery(
-				"SELECT a.ID_CAUSAS_ACIDENTE,(SELECT b.ID_OCORRENCIA FROM  AT_OCORRENCIAS_CAUSAS_ACIDENTE b where a.ID_CAUSAS_ACIDENTE = b.ID_CAUSAS_ACIDENTE and b.ID_OCORRENCIA = "
-						+ id + ")  ID_OCORRENCIA,a.DESCRICAO FROM AT_DIC_CAUSAS_ACIDENTE a  order by a.DESCRICAO");
+				"SELECT a.ID_CAUSAS_ACIDENTE, l.ID_OCORRENCIA, a.DESCRICAO,"
+						+ " a.CATEGORIA, a.ORDEM, a.PERMITE_TEXTO, l.TEXTO_OUTRO"
+						+ " FROM AT_DIC_CAUSAS_ACIDENTE a"
+						+ " LEFT JOIN AT_OCORRENCIAS_CAUSAS_ACIDENTE l"
+						+ "   ON l.ID_CAUSAS_ACIDENTE = a.ID_CAUSAS_ACIDENTE"
+						+ "  AND l.ID_OCORRENCIA = :id"
+						+ " WHERE (a.CATEGORIA IS NOT NULL AND ISNULL(a.INATIVO,0) = 0)"
+						+ "    OR l.ID_OCORRENCIA IS NOT NULL"
+						+ " ORDER BY a.CATEGORIA, a.ORDEM, a.DESCRICAO");
+		query_folder.setParameter("id", id);
 		List<Object[]> dados_folder = query_folder.getResultList();
 		return dados_folder;
 	}
@@ -2324,9 +2344,25 @@ public class SIRB_2 {
 	@Produces("application/json")
 	public void insertAT_OCORRENCIAS_CAUSAS_ACIDENTE(@PathParam("id") Integer id,
 			@PathParam("id_causa") Integer id_causa) {
+		insertAT_OCORRENCIAS_CAUSAS_ACIDENTE_TEXTO(id, id_causa, null);
+	}
+
+	/*
+	 * Melhorias 2026-08 - variante que grava o texto livre das opcoes "Outro" de
+	 * cada espinha do Ishikawa. O texto vai em query param (e nao em path param)
+	 * para tolerar barras, acentos e espacos.
+	 */
+	@GET
+	@Path("/insertAT_OCORRENCIAS_CAUSAS_ACIDENTE_TEXTO/{id}/{id_causa}")
+	@Produces("application/json")
+	public void insertAT_OCORRENCIAS_CAUSAS_ACIDENTE_TEXTO(@PathParam("id") Integer id,
+			@PathParam("id_causa") Integer id_causa, @QueryParam("texto") String texto) {
 		Query query = entityManager.createNativeQuery(
-				"INSERT INTO AT_OCORRENCIAS_CAUSAS_ACIDENTE (ID_OCORRENCIA,ID_CAUSAS_ACIDENTE) VALUES(" + id + ","
-						+ id_causa + ")");
+				"INSERT INTO AT_OCORRENCIAS_CAUSAS_ACIDENTE (ID_OCORRENCIA,ID_CAUSAS_ACIDENTE,TEXTO_OUTRO)"
+						+ " VALUES(:id,:id_causa,:texto)");
+		query.setParameter("id", id);
+		query.setParameter("id_causa", id_causa);
+		query.setParameter("texto", texto);
 		query.executeUpdate();
 	}
 
@@ -2335,6 +2371,53 @@ public class SIRB_2 {
 	public void deleteAT_OCORRENCIAS_CAUSAS_ACIDENTE(@PathParam("id") Integer id) {
 		Query query = entityManager
 				.createNativeQuery("DELETE AT_OCORRENCIAS_CAUSAS_ACIDENTE where ID_OCORRENCIA = " + id);
+		query.executeUpdate();
+	}
+
+	/*
+	 * Melhorias 2026-08 - Causas dos INCIDENTES (Diagrama de Ishikawa).
+	 * Reutiliza o dicionario AT_DIC_CAUSAS_ACIDENTE dos acidentes: as espinhas e
+	 * as causas sao as mesmas. Mesma forma e mesmos indices do endpoint dos
+	 * acidentes, para o componente Ishikawa servir os dois casos sem alteracoes.
+	 */
+	@GET
+	@Path("/getAT_INCIDENTES_CAUSAS/{id}")
+	@Produces("application/json")
+	public List<Object[]> getAT_INCIDENTES_CAUSAS(@PathParam("id") Integer id) {
+		Query query = entityManager.createNativeQuery(
+				"SELECT a.ID_CAUSAS_ACIDENTE, l.ID_INCIDENTE, a.DESCRICAO,"
+						+ " a.CATEGORIA, a.ORDEM, a.PERMITE_TEXTO, l.TEXTO_OUTRO"
+						+ " FROM AT_DIC_CAUSAS_ACIDENTE a"
+						+ " LEFT JOIN AT_INCIDENTES_CAUSAS l"
+						+ "   ON l.ID_CAUSAS_ACIDENTE = a.ID_CAUSAS_ACIDENTE"
+						+ "  AND l.ID_INCIDENTE = :id"
+						+ " WHERE (a.CATEGORIA IS NOT NULL AND ISNULL(a.INATIVO,0) = 0)"
+						+ "    OR l.ID_INCIDENTE IS NOT NULL"
+						+ " ORDER BY a.CATEGORIA, a.ORDEM, a.DESCRICAO");
+		query.setParameter("id", id);
+		return query.getResultList();
+	}
+
+	@GET
+	@Path("/insertAT_INCIDENTES_CAUSAS/{id}/{id_causa}")
+	@Produces("application/json")
+	public void insertAT_INCIDENTES_CAUSAS(@PathParam("id") Integer id,
+			@PathParam("id_causa") Integer id_causa, @QueryParam("texto") String texto) {
+		Query query = entityManager.createNativeQuery(
+				"INSERT INTO AT_INCIDENTES_CAUSAS (ID_INCIDENTE,ID_CAUSAS_ACIDENTE,TEXTO_OUTRO)"
+						+ " VALUES(:id,:id_causa,:texto)");
+		query.setParameter("id", id);
+		query.setParameter("id_causa", id_causa);
+		query.setParameter("texto", texto);
+		query.executeUpdate();
+	}
+
+	@DELETE
+	@Path("/deleteAT_INCIDENTES_CAUSAS/{id}")
+	public void deleteAT_INCIDENTES_CAUSAS(@PathParam("id") Integer id) {
+		Query query = entityManager
+				.createNativeQuery("DELETE FROM AT_INCIDENTES_CAUSAS where ID_INCIDENTE = :id");
+		query.setParameter("id", id);
 		query.executeUpdate();
 	}
 
@@ -8060,7 +8143,9 @@ public class SIRB_2 {
 				|| tabela.equals("QUA_MC_EQUIPAMENTOS_FICHEIROS")
 				|| tabela.equals("QUA_MC_GABARITOS_FICHEIROS")
 				|| tabela.equals("QUA_MC_MOV_CALIB_EQUIP_FICHEIROS")
-				|| tabela.equals("QUA_MC_DERROGACOES_FICHEIROS")) {
+				|| tabela.equals("QUA_MC_DERROGACOES_FICHEIROS")
+				|| tabela.equals("AT_OCORRENCIAS_ANEXOS")
+				|| tabela.equals("AT_INCIDENTES_ANEXOS")) {
 			select = "CONCAT(a.FICHEIRO_1,a.FICHEIRO_2) as FICHEIRO";
 		}
 

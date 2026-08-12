@@ -26,6 +26,18 @@ public class AT_DIC_CAUSAS_ACIDENTE {
 	private Timestamp DATA_MODIF;
 	@Column(name = "UTZ_MODIF")
 	private Integer UTZ_MODIF;
+	/* Melhorias 2026-08 - Diagrama de Ishikawa.
+	 * CATEGORIA e a espinha do diagrama: PESSOAS, METODOS, ORGANIZACAO,
+	 * MAQUINAS, AMBIENTE, MATERIAIS. Causas anteriores ao diagrama tem
+	 * CATEGORIA a null e INATIVO a 1 (mantidas so para historico). */
+	@Column(name = "CATEGORIA")
+	private String CATEGORIA;
+	@Column(name = "ORDEM")
+	private Integer ORDEM;
+	@Column(name = "INATIVO")
+	private Boolean INATIVO;
+	@Column(name = "PERMITE_TEXTO")
+	private Boolean PERMITE_TEXTO;
 
 	public Integer getID_CAUSAS_ACIDENTE() {
 		return ID_CAUSAS_ACIDENTE;
@@ -73,6 +85,40 @@ public class AT_DIC_CAUSAS_ACIDENTE {
 
 	public void setUTZ_MODIF(Integer uTZ_MODIF) {
 		UTZ_MODIF = uTZ_MODIF;
+	}
+
+	/* Melhorias 2026-08 */
+
+	public String getCATEGORIA() {
+		return CATEGORIA;
+	}
+
+	public void setCATEGORIA(String cATEGORIA) {
+		CATEGORIA = cATEGORIA;
+	}
+
+	public Integer getORDEM() {
+		return ORDEM;
+	}
+
+	public void setORDEM(Integer oRDEM) {
+		ORDEM = oRDEM;
+	}
+
+	public Boolean getINATIVO() {
+		return INATIVO;
+	}
+
+	public void setINATIVO(Boolean iNATIVO) {
+		INATIVO = iNATIVO;
+	}
+
+	public Boolean getPERMITE_TEXTO() {
+		return PERMITE_TEXTO;
+	}
+
+	public void setPERMITE_TEXTO(Boolean pERMITE_TEXTO) {
+		PERMITE_TEXTO = pERMITE_TEXTO;
 	}
 
 }

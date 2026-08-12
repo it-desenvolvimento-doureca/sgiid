@@ -344,6 +344,18 @@ public class SIRB {
 	private RC_MOV_RECLAMACAO_FORNECEDOR_PLANOS_ACCOESDao dao118;
 	@Inject
 	private AT_ENTREVISTAS_RESPONSAVELDao dao119;
+	/* Melhorias 2026-08 - Seguranca no Trabalho */
+	@Inject
+	private AT_ASSINATURAS_SIMILARESDao dao120;
+	@Inject
+	private AT_OCORRENCIAS_ANEXOSDao dao121;
+	/* Melhorias 2026-08 - Incidentes Industriais/Tecnologicos */
+	@Inject
+	private AT_INCIDENTESDao dao122;
+	@Inject
+	private AT_INCIDENTES_PESSOASDao dao123;
+	@Inject
+	private AT_INCIDENTES_ANEXOSDao dao124;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -2592,6 +2604,210 @@ public class SIRB {
 	public AT_TESTEMUNHAS updateAT_TESTEMUNHAS(final AT_TESTEMUNHAS AT_TESTEMUNHAS) {
 		AT_TESTEMUNHAS.setID_TESTEMUNHA(AT_TESTEMUNHAS.getID_TESTEMUNHA());
 		return dao76.update(AT_TESTEMUNHAS);
+	}
+
+	/************************************* AT_ASSINATURAS_SIMILARES */
+	@POST
+	@Path("/createAT_ASSINATURAS_SIMILARES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_ASSINATURAS_SIMILARES insertAT_ASSINATURAS_SIMILARES(final AT_ASSINATURAS_SIMILARES data) {
+		return dao120.create(data);
+	}
+
+	@GET
+	@Path("/getAT_ASSINATURAS_SIMILARESbyid/{id}")
+	@Produces("application/json")
+	public List<AT_ASSINATURAS_SIMILARES> getAT_ASSINATURAS_SIMILARESbyid(@PathParam("id") Integer id) {
+		return dao120.getbyid(id);
+	}
+
+	@GET
+	@Path("/getAT_ASSINATURAS_SIMILARES")
+	@Produces("application/json")
+	public List<AT_ASSINATURAS_SIMILARES> getAT_ASSINATURAS_SIMILARES() {
+		return dao120.getall();
+	}
+
+	@DELETE
+	@Path("/deleteAT_ASSINATURAS_SIMILARES/{id}")
+	public void deleteAT_ASSINATURAS_SIMILARES(@PathParam("id") Integer id) {
+		AT_ASSINATURAS_SIMILARES AT_ASSINATURAS_SIMILARES = new AT_ASSINATURAS_SIMILARES();
+		AT_ASSINATURAS_SIMILARES.setID(id);
+		dao120.delete(AT_ASSINATURAS_SIMILARES);
+	}
+
+	@PUT
+	@Path("/updateAT_ASSINATURAS_SIMILARES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_ASSINATURAS_SIMILARES updateAT_ASSINATURAS_SIMILARES(final AT_ASSINATURAS_SIMILARES AT_ASSINATURAS_SIMILARES) {
+		return dao120.update(AT_ASSINATURAS_SIMILARES);
+	}
+
+	/************************************* AT_OCORRENCIAS_ANEXOS */
+	@POST
+	@Path("/createAT_OCORRENCIAS_ANEXOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_OCORRENCIAS_ANEXOS insertAT_OCORRENCIAS_ANEXOS(final AT_OCORRENCIAS_ANEXOS data) {
+		return dao121.create(data);
+	}
+
+	@GET
+	@Path("/getAT_OCORRENCIAS_ANEXOSbyid/{id}")
+	@Produces("application/json")
+	public List<AT_OCORRENCIAS_ANEXOS> getAT_OCORRENCIAS_ANEXOSbyid(@PathParam("id") Integer id) {
+		return dao121.getbyid(id);
+	}
+
+	/* Listagem para o ecra: so metadados, sem o base64 do ficheiro. */
+	@GET
+	@Path("/getAT_OCORRENCIAS_ANEXOSbyocorrencia/{id}")
+	@Produces("application/json")
+	public List<Object[]> getAT_OCORRENCIAS_ANEXOSbyocorrencia(@PathParam("id") Integer id) {
+		return dao121.getbyOcorrencia(id);
+	}
+
+	/* Conteudo do anexo (data URL base64), para preview de imagem e download. */
+	@GET
+	@Path("/getAT_OCORRENCIAS_ANEXOScontent/{id}")
+	@Produces("text/plain")
+	public String getAT_OCORRENCIAS_ANEXOScontent(@PathParam("id") Integer id) {
+		return dao121.getConteudo(id);
+	}
+
+	@GET
+	@Path("/getAT_OCORRENCIAS_ANEXOS")
+	@Produces("application/json")
+	public List<AT_OCORRENCIAS_ANEXOS> getAT_OCORRENCIAS_ANEXOS() {
+		return dao121.getall();
+	}
+
+	@DELETE
+	@Path("/deleteAT_OCORRENCIAS_ANEXOS/{id}")
+	public void deleteAT_OCORRENCIAS_ANEXOS(@PathParam("id") Integer id) {
+		AT_OCORRENCIAS_ANEXOS AT_OCORRENCIAS_ANEXOS = new AT_OCORRENCIAS_ANEXOS();
+		AT_OCORRENCIAS_ANEXOS.setID(id);
+		dao121.delete(AT_OCORRENCIAS_ANEXOS);
+	}
+
+	@PUT
+	@Path("/updateAT_OCORRENCIAS_ANEXOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_OCORRENCIAS_ANEXOS updateAT_OCORRENCIAS_ANEXOS(final AT_OCORRENCIAS_ANEXOS AT_OCORRENCIAS_ANEXOS) {
+		return dao121.update(AT_OCORRENCIAS_ANEXOS);
+	}
+
+	/************************************* AT_INCIDENTES */
+	@POST
+	@Path("/createAT_INCIDENTES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES insertAT_INCIDENTES(final AT_INCIDENTES data) {
+		return dao122.create(data);
+	}
+
+	@GET
+	@Path("/getAT_INCIDENTESbyid/{id}")
+	@Produces("application/json")
+	public List<AT_INCIDENTES> getAT_INCIDENTESbyid(@PathParam("id") Integer id) {
+		return dao122.getbyid(id);
+	}
+
+	@GET
+	@Path("/getAT_INCIDENTES")
+	@Produces("application/json")
+	public List<AT_INCIDENTES> getAT_INCIDENTES() {
+		return dao122.getall();
+	}
+
+	/* Proximo numero de ficha do ano indicado (numeracao reinicia a cada ano). */
+	@GET
+	@Path("/getAT_INCIDENTESproximonumero/{ano}")
+	@Produces("application/json")
+	public Integer getAT_INCIDENTESproximonumero(@PathParam("ano") Integer ano) {
+		return dao122.proximoNumero(ano);
+	}
+
+	@DELETE
+	@Path("/deleteAT_INCIDENTES/{id}")
+	public void deleteAT_INCIDENTES(@PathParam("id") Integer id) {
+		AT_INCIDENTES AT_INCIDENTES = new AT_INCIDENTES();
+		AT_INCIDENTES.setID_INCIDENTE(id);
+		dao122.delete(AT_INCIDENTES);
+	}
+
+	@PUT
+	@Path("/updateAT_INCIDENTES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES updateAT_INCIDENTES(final AT_INCIDENTES AT_INCIDENTES) {
+		return dao122.update(AT_INCIDENTES);
+	}
+
+	/************************************* AT_INCIDENTES_PESSOAS */
+	@POST
+	@Path("/createAT_INCIDENTES_PESSOAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_PESSOAS insertAT_INCIDENTES_PESSOAS(final AT_INCIDENTES_PESSOAS data) {
+		return dao123.create(data);
+	}
+
+	@GET
+	@Path("/getAT_INCIDENTES_PESSOASbyid/{id}")
+	@Produces("application/json")
+	public List<AT_INCIDENTES_PESSOAS> getAT_INCIDENTES_PESSOASbyid(@PathParam("id") Integer id) {
+		return dao123.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteAT_INCIDENTES_PESSOAS/{id}")
+	public void deleteAT_INCIDENTES_PESSOAS(@PathParam("id") Integer id) {
+		AT_INCIDENTES_PESSOAS e = new AT_INCIDENTES_PESSOAS();
+		e.setID(id);
+		dao123.delete(e);
+	}
+
+	@PUT
+	@Path("/updateAT_INCIDENTES_PESSOAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_PESSOAS updateAT_INCIDENTES_PESSOAS(final AT_INCIDENTES_PESSOAS data) {
+		return dao123.update(data);
+	}
+
+	/************************************* AT_INCIDENTES_ANEXOS */
+	@POST
+	@Path("/createAT_INCIDENTES_ANEXOS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_ANEXOS insertAT_INCIDENTES_ANEXOS(final AT_INCIDENTES_ANEXOS data) {
+		return dao124.create(data);
+	}
+
+	@GET
+	@Path("/getAT_INCIDENTES_ANEXOSbyincidente/{id}")
+	@Produces("application/json")
+	public List<Object[]> getAT_INCIDENTES_ANEXOSbyincidente(@PathParam("id") Integer id) {
+		return dao124.getbyIncidente(id);
+	}
+
+	@GET
+	@Path("/getAT_INCIDENTES_ANEXOScontent/{id}")
+	@Produces("text/plain")
+	public String getAT_INCIDENTES_ANEXOScontent(@PathParam("id") Integer id) {
+		return dao124.getConteudo(id);
+	}
+
+	@DELETE
+	@Path("/deleteAT_INCIDENTES_ANEXOS/{id}")
+	public void deleteAT_INCIDENTES_ANEXOS(@PathParam("id") Integer id) {
+		AT_INCIDENTES_ANEXOS e = new AT_INCIDENTES_ANEXOS();
+		e.setID(id);
+		dao124.delete(e);
 	}
 
 	/************************************* PLANEAMENTO_LINHAS */
