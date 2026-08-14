@@ -2374,52 +2374,11 @@ public class SIRB_2 {
 		query.executeUpdate();
 	}
 
-	/*
-	 * Melhorias 2026-08 - Causas dos INCIDENTES (Diagrama de Ishikawa).
-	 * Reutiliza o dicionario AT_DIC_CAUSAS_ACIDENTE dos acidentes: as espinhas e
-	 * as causas sao as mesmas. Mesma forma e mesmos indices do endpoint dos
-	 * acidentes, para o componente Ishikawa servir os dois casos sem alteracoes.
-	 */
-	@GET
-	@Path("/getAT_INCIDENTES_CAUSAS/{id}")
-	@Produces("application/json")
-	public List<Object[]> getAT_INCIDENTES_CAUSAS(@PathParam("id") Integer id) {
-		Query query = entityManager.createNativeQuery(
-				"SELECT a.ID_CAUSAS_ACIDENTE, l.ID_INCIDENTE, a.DESCRICAO,"
-						+ " a.CATEGORIA, a.ORDEM, a.PERMITE_TEXTO, l.TEXTO_OUTRO"
-						+ " FROM AT_DIC_CAUSAS_ACIDENTE a"
-						+ " LEFT JOIN AT_INCIDENTES_CAUSAS l"
-						+ "   ON l.ID_CAUSAS_ACIDENTE = a.ID_CAUSAS_ACIDENTE"
-						+ "  AND l.ID_INCIDENTE = :id"
-						+ " WHERE (a.CATEGORIA IS NOT NULL AND ISNULL(a.INATIVO,0) = 0)"
-						+ "    OR l.ID_INCIDENTE IS NOT NULL"
-						+ " ORDER BY a.CATEGORIA, a.ORDEM, a.DESCRICAO");
-		query.setParameter("id", id);
-		return query.getResultList();
-	}
+	/* Melhorias 2026-08: os endpoints do Ishikawa para incidentes foram
+	 * removidos. A analise das causas dos incidentes passou a ser uma tabela
+	 * de linhas livres (AT_INCIDENTES_CAUSAS), com CRUD em SIRB.java.
+	 * O Diagrama de Ishikawa e exclusivo dos acidentes de trabalho. */
 
-	@GET
-	@Path("/insertAT_INCIDENTES_CAUSAS/{id}/{id_causa}")
-	@Produces("application/json")
-	public void insertAT_INCIDENTES_CAUSAS(@PathParam("id") Integer id,
-			@PathParam("id_causa") Integer id_causa, @QueryParam("texto") String texto) {
-		Query query = entityManager.createNativeQuery(
-				"INSERT INTO AT_INCIDENTES_CAUSAS (ID_INCIDENTE,ID_CAUSAS_ACIDENTE,TEXTO_OUTRO)"
-						+ " VALUES(:id,:id_causa,:texto)");
-		query.setParameter("id", id);
-		query.setParameter("id_causa", id_causa);
-		query.setParameter("texto", texto);
-		query.executeUpdate();
-	}
-
-	@DELETE
-	@Path("/deleteAT_INCIDENTES_CAUSAS/{id}")
-	public void deleteAT_INCIDENTES_CAUSAS(@PathParam("id") Integer id) {
-		Query query = entityManager
-				.createNativeQuery("DELETE FROM AT_INCIDENTES_CAUSAS where ID_INCIDENTE = :id");
-		query.setParameter("id", id);
-		query.executeUpdate();
-	}
 
 	/************************************* RH_DIC_EPI */
 

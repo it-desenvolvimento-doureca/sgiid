@@ -356,6 +356,10 @@ public class SIRB {
 	private AT_INCIDENTES_PESSOASDao dao123;
 	@Inject
 	private AT_INCIDENTES_ANEXOSDao dao124;
+	@Inject
+	private AT_INCIDENTES_CAUSASDao dao125;
+	@Inject
+	private AT_INCIDENTES_ACOESDao dao126;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -2808,6 +2812,70 @@ public class SIRB {
 		AT_INCIDENTES_ANEXOS e = new AT_INCIDENTES_ANEXOS();
 		e.setID(id);
 		dao124.delete(e);
+	}
+
+	/************************************* AT_INCIDENTES_CAUSAS */
+	@POST
+	@Path("/createAT_INCIDENTES_CAUSAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_CAUSAS insertAT_INCIDENTES_CAUSAS(final AT_INCIDENTES_CAUSAS data) {
+		return dao125.create(data);
+	}
+
+	@GET
+	@Path("/getAT_INCIDENTES_CAUSASbyid/{id}")
+	@Produces("application/json")
+	public List<AT_INCIDENTES_CAUSAS> getAT_INCIDENTES_CAUSASbyid(@PathParam("id") Integer id) {
+		return dao125.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateAT_INCIDENTES_CAUSAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_CAUSAS updateAT_INCIDENTES_CAUSAS(final AT_INCIDENTES_CAUSAS data) {
+		return dao125.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteAT_INCIDENTES_CAUSAS/{id}")
+	public void deleteAT_INCIDENTES_CAUSAS(@PathParam("id") Integer id) {
+		AT_INCIDENTES_CAUSAS e = new AT_INCIDENTES_CAUSAS();
+		e.setID(id);
+		dao125.delete(e);
+	}
+
+	/************************************* AT_INCIDENTES_ACOES */
+	@POST
+	@Path("/createAT_INCIDENTES_ACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_ACOES insertAT_INCIDENTES_ACOES(final AT_INCIDENTES_ACOES data) {
+		return dao126.create(data);
+	}
+
+	@GET
+	@Path("/getAT_INCIDENTES_ACOESbyid/{id}")
+	@Produces("application/json")
+	public List<AT_INCIDENTES_ACOES> getAT_INCIDENTES_ACOESbyid(@PathParam("id") Integer id) {
+		return dao126.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateAT_INCIDENTES_ACOES")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_ACOES updateAT_INCIDENTES_ACOES(final AT_INCIDENTES_ACOES data) {
+		return dao126.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteAT_INCIDENTES_ACOES/{id}")
+	public void deleteAT_INCIDENTES_ACOES(@PathParam("id") Integer id) {
+		AT_INCIDENTES_ACOES e = new AT_INCIDENTES_ACOES();
+		e.setID(id);
+		dao126.delete(e);
 	}
 
 	/************************************* PLANEAMENTO_LINHAS */

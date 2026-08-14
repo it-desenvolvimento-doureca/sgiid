@@ -45,6 +45,39 @@ public class ReportGenerator {
 		 */
 	}
 
+	/*
+	 * Melhorias 2026-08 - So compila o .jrxml quando e preciso.
+	 *
+	 * Antes recompilava-se em cada impressao, o que e trabalho repetido: o
+	 * .jasper resultante e sempre igual enquanto o .jrxml nao mudar.
+	 *
+	 * A deteccao e por MUDANCA da data do .jrxml, e nao por "data mais
+	 * recente". A diferenca importa: o .jasper no servidor tem a data da ultima
+	 * impressao, logo esta quase sempre a frente do .jrxml. Se se copiasse para
+	 * o servidor um .jrxml com a data original preservada (mais antiga), a
+	 * regra do "mais recente" nao compilava e servia o relatorio antigo em
+	 * silencio. Comparar com a ultima data observada apanha qualquer alteracao,
+	 * para tras ou para a frente.
+	 *
+	 * Custo: a primeira impressao de cada relatorio apos reiniciar o WildFly
+	 * compila uma vez. Todas as seguintes reaproveitam o .jasper.
+	 */
+	private static final java.util.Map<String, Long> datasCompiladas = new java.util.concurrent.ConcurrentHashMap<String, Long>();
+
+	private static void compilarSeNecessario(String jrxmlFileName, String jasperFileName) throws JRException {
+		File jrxml = new File(jrxmlFileName);
+		File jasper = new File(jasperFileName);
+
+		long dataActual = jrxml.lastModified();
+		Long dataCompilada = datasCompiladas.get(jrxmlFileName);
+
+		// se o .jrxml nao existe, deixa compilar para dar o erro habitual
+		if (!jasper.exists() || !jrxml.exists() || dataCompilada == null || dataCompilada.longValue() != dataActual) {
+			JasperCompileManager.compileReportToFile(jrxmlFileName, jasperFileName);
+			datasCompiladas.put(jrxmlFileName, Long.valueOf(dataActual));
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	public String relatorio(String format, String Name, Integer ID, String relatorio, String url2, String filepath,String subpasta,String CLIENTE,String DOCUMENTOS,String IDIOMA,List<HashMap<String, String>> dados)
 			throws JRException, SQLException {
@@ -61,7 +94,7 @@ public class ReportGenerator {
 		List<Bean> beans = new ArrayList<Bean>();
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(beans);
 
-		JasperCompileManager.compileReportToFile(jrxmlFileName, jasperFileName);
+		compilarSeNecessario(jrxmlFileName, jasperFileName);
 
 		try {
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");
@@ -157,7 +190,7 @@ public class ReportGenerator {
 		// List<Bean> beans = new ArrayList<Bean>();
 		// JRDataSource jrDataSource = new JRBeanCollectionDataSource(beans);
 
-		JasperCompileManager.compileReportToFile(jrxmlFileName, jasperFileName);
+		compilarSeNecessario(jrxmlFileName, jasperFileName);
 
 		/*try {
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");
@@ -234,7 +267,7 @@ public class ReportGenerator {
 		List<Bean> beans = new ArrayList<Bean>();
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(beans);
 
-		JasperCompileManager.compileReportToFile(jrxmlFileName, jasperFileName);
+		compilarSeNecessario(jrxmlFileName, jasperFileName);
 
 		try {
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");

@@ -21,6 +21,9 @@ public class AT_INCIDENTES_PESSOAS {
 	private Integer ID_INCIDENTE;
 	@Column(name = "NOME")
 	private String NOME;
+	/** N.o mecanografico da pessoa. */
+	@Column(name = "NUMERO")
+	private String NUMERO;
 	@Column(name = "SETOR")
 	private String SETOR;
 	@Column(name = "CARGO_FUNCAO")
@@ -48,6 +51,14 @@ public class AT_INCIDENTES_PESSOAS {
 
 	public void setNOME(String nOME) {
 		NOME = nOME;
+	}
+
+	public String getNUMERO() {
+		return NUMERO;
+	}
+
+	public void setNUMERO(String nUMERO) {
+		NUMERO = nUMERO;
 	}
 
 	public String getSETOR() {
