@@ -2498,4 +2498,165 @@ public class ConnectProgress {
 		return list;
 	}
 
+	// ============================================================
+	// MÓDULO EPI's - consulta de stock no SILVER
+	// ============================================================
+	// Ao contrário do resto desta classe, estes métodos usam PreparedStatement
+	// em vez de concatenar SQL.
+
+	/**
+	 * Stock total por artigo, para uma lista de referências.
+	 * Uma única query para toda a grelha de EPIs, em vez de N chamadas.
+	 */
+
+	/**
+	 * Pesquisa de artigos no SILVER para o autocomplete do PROREF.
+	 * Limitada a 50 resultados - o catálogo é grande e o campo é para procurar,
+	 * não para percorrer.
+	 */
+	public List<HashMap<String, String>> getArtigosEpiPorTermo(String url, String termo) throws SQLException {
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		String query = "SELECT TOP 50 PROREF, PRODES1, UNISTO FROM SDTPRA "
+				+ "WHERE PROREF LIKE ? OR PRODES1 LIKE ? ORDER BY PROREF";
+
+		try (Connection connection = getConnection(url);
+				PreparedStatement ps = connection.prepareStatement(query)) {
+			String filtro = "%" + (termo == null ? "" : termo) + "%";
+			ps.setString(1, filtro);
+			ps.setString(2, filtro);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					HashMap<String, String> x = new HashMap<>();
+					x.put("PROREF", rs.getString("PROREF"));
+					x.put("PRODES1", rs.getString("PRODES1"));
+					x.put("UNISTO", rs.getString("UNISTO"));
+					list.add(x);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	/**
+	 * Resolve uma etiqueta lida no levantamento de EPI.
+	 *
+	 * Decalcado de getDadosEtiquetaPintura, com duas diferenças deliberadas:
+	 *  - usa PreparedStatement em vez de concatenar SQL;
+	 *  - não restringe os armazéns. A versão da pintura filtra
+	 *    "LIECOD in (select COD_ARMAZEM from PIN_DIC_ARMAZEM)"; não existe
+	 *    equivalente para EPI, por isso considera qualquer armazém.
+	 *
+	 * Devolve também EXISTE_ETIQUETAS/ETIQUETAS: se houver outra etiqueta do
+	 * mesmo artigo que devia sair primeiro, o ecrã avisa.
+	 */
+	public List<HashMap<String, String>> getDadosEtiquetaEPI(String url, String etiqueta) throws SQLException {
+		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+
+		String query = "SELECT c.LOTDATVLF, a.PROREF, a.PRODES1, b.ETQEMBQTE, a.UNISTO, b.UNICOD, "
+				+ " b.EMPCOD, b.LIECOD, b.ETQORILOT1, b.INDREF, b.ETQNUMENR, c.LOTNUMENR, b.INDNUMENR, "
+				+ " b.DATCRE, b.ETQORIQTE1, c.LOTDATCRE "
+				// Zona de bloqueados: mesmo critério do consumo da pintura
+				+ " ,(SELECT count(*) FROM stodet x WHERE x.proref = a.PROREF AND x.LIECOD='DPCHI' "
+				+ "     AND x.empcod='ZONQUA' AND x.EMPCOD != b.EMPCOD AND lotqte > 0) TOTAL_ZONQUA "
+				+ "FROM SDTPRA a "
+				+ "INNER JOIN SETQDE b ON a.PROREF = b.PROREF "
+				+ "LEFT JOIN STOLOT c ON b.INDNUMENR = c.INDNUMENR AND b.ETQORILOT1 = c.LOTREF "
+				+ "WHERE b.ETQNUM = ? AND b.ETQETAT = 1 AND b.ETQSITSTO = 2";
+
+		try (Connection connection = getConnection(url);
+				PreparedStatement ps = connection.prepareStatement(query)) {
+			ps.setString(1, etiqueta);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					HashMap<String, String> x = new HashMap<>();
+					x.put("PROREF", rs.getString("PROREF"));
+					x.put("PRODES1", rs.getString("PRODES1"));
+					x.put("ETQEMBQTE", rs.getString("ETQEMBQTE"));
+					x.put("ETQORIQTE1", rs.getString("ETQORIQTE1"));
+					x.put("UNISTO", rs.getString("UNISTO"));
+					x.put("UNICOD", rs.getString("UNICOD"));
+					x.put("LIECOD", rs.getString("LIECOD"));
+					x.put("EMPCOD", rs.getString("EMPCOD"));
+					x.put("ETQORILOT1", rs.getString("ETQORILOT1"));
+					x.put("LOTNUMENR", rs.getString("LOTNUMENR"));
+					x.put("INDNUMENR", rs.getString("INDNUMENR"));
+					x.put("DATCRE", rs.getString("DATCRE"));
+					x.put("LOTDATVLF", rs.getString("LOTDATVLF"));
+					x.put("LOTDATCRE", rs.getString("LOTDATCRE"));
+					x.put("TOTAL_ZONQUA", rs.getString("TOTAL_ZONQUA"));
+
+					ArrayList<String> anteriores = getEtiquetasEpiAnteriores(url, etiqueta,
+							rs.getString("PROREF"), rs.getString("LOTDATCRE"), rs.getString("LOTDATVLF"));
+					if (anteriores != null) {
+						x.put("EXISTE_ETIQUETAS", anteriores.get(0));
+						x.put("ETIQUETAS", anteriores.get(1));
+					} else {
+						x.put("EXISTE_ETIQUETAS", "0");
+						x.put("ETIQUETAS", null);
+					}
+					list.add(x);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	/**
+	 * Etiquetas do mesmo artigo que deviam sair antes da lida (FEFO).
+	 *
+	 * Compara por validade (LOTDATVLF) e, quando o lote não tem validade,
+	 * pela data de criação (LOTDATCRE) - a mesma regra do consumo da pintura.
+	 *
+	 * Devolve [total, lista de ETQNUM separados por vírgula].
+	 */
+	public ArrayList<String> getEtiquetasEpiAnteriores(String url, String etiqueta, String PROREF,
+			String LOTDATCRE, String LOTDATVLF) throws SQLException {
+
+		if (etiqueta == null || PROREF == null) {
+			return null;
+		}
+		// Data de referência desta etiqueta: validade se existir, senão criação
+		String referencia = (LOTDATVLF != null && !LOTDATVLF.trim().isEmpty()) ? LOTDATVLF : LOTDATCRE;
+		if (referencia == null) {
+			return null;
+		}
+
+		String query = "SELECT COUNT(*) AS TOTAL, "
+				+ " STRING_AGG(CAST(b.ETQNUM AS NVARCHAR(MAX)), ',') AS ETQNUM "
+				+ "FROM SETQDE b "
+				+ "LEFT JOIN STOLOT c ON b.INDNUMENR = c.INDNUMENR AND b.ETQORILOT1 = c.LOTREF "
+				+ "WHERE b.ETQETAT = 1 AND b.ETQSITSTO = 2 AND b.ETQEMBQTE > 0 "
+				+ "  AND b.ETQNUM <> ? AND b.PROREF = ? "
+				+ "  AND ISNULL(c.LOTDATVLF, c.LOTDATCRE) < ?";
+
+		ArrayList<String> result = null;
+		try (Connection connection = getConnection(url);
+				PreparedStatement ps = connection.prepareStatement(query)) {
+			ps.setString(1, etiqueta);
+			ps.setString(2, PROREF);
+			ps.setString(3, referencia);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					result = new ArrayList<>();
+					result.add(0, rs.getString("TOTAL"));
+					result.add(1, rs.getString("ETQNUM"));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	/**
+	 * Detalhe do stock de um artigo: uma linha por armazém/lote, com validade.
+	 * LIECOD = armazém (Lieu stockage); EMPCOD = localização dentro do armazém.
+	 * Ordenado por validade, servindo também de base ao FEFO.
+	 */
+
 }

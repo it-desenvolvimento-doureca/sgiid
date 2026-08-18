@@ -29,4 +29,18 @@ public class GER_EVENTOS_CONFDao extends GenericDaoJpaImpl<GER_EVENTOS_CONF, Int
 
 	}
 
+	/**
+	 * Evento por página e momento.
+	 * Evita fixar o ID no código (como o ecrã de dívidas faz com getbyID(32)),
+	 * que se parte se o evento for recriado noutro ambiente.
+	 * Não faz join a GER_MODULO para o evento aparecer mesmo sem módulo definido.
+	 */
+	public List<GER_EVENTOS_CONF> getbypaginamomento(String pagina, String momento) {
+		Query query = entityManager.createQuery(
+				"select a from GER_EVENTOS_CONF a where a.PAGINA = :pagina and a.MOMENTO = :momento");
+		query.setParameter("pagina", pagina);
+		query.setParameter("momento", momento);
+		return query.getResultList();
+	}
+
 }

@@ -28,5 +28,4 @@ public class RH_DIC_EPIDao extends GenericDaoJpaImpl<RH_DIC_EPI, Integer> implem
 		return data;
 
 	}
-
 }

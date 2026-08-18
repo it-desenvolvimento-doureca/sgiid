@@ -4440,6 +4440,41 @@ public class SIRB {
 		return dao24.create(data);
 	}
 
+	/**
+	 * Apaga e reinsere todas as linhas do perfil num unico pedido/transacao.
+	 */
+	@POST
+	@Path("/replaceGER_PERFIL_LIN/{id}")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public Integer replaceGER_PERFIL_LIN(@PathParam("id") Integer id, final List<GER_PERFIL_LIN> data) {
+		dao24.replaceAll(id, data);
+		return data == null ? 0 : data.size();
+	}
+
+	/**
+	 * Grava o perfil completo (cabecalho + todas as linhas de acessos) num unico
+	 * pedido/transacao. Cria o cabecalho se vier sem ID, senao actualiza-o.
+	 * Devolve o cabecalho gravado para o ecra saber o ID atribuido.
+	 */
+	@POST
+	@Path("/gravarGER_PERFIL")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public GER_PERFIL_CAB gravarGER_PERFIL(final GER_PERFIL_DTO data) {
+		GER_PERFIL_CAB perfil = data.getPERFIL();
+
+		if (perfil.getID_PERFIL_CAB() == null) {
+			perfil = dao23.create(perfil);
+		} else {
+			perfil = dao23.update(perfil);
+		}
+
+		dao24.replaceAll(perfil.getID_PERFIL_CAB(), data.getLINHAS());
+
+		return perfil;
+	}
+
 	@GET
 	@Path("/getGER_PERFIL_LIN")
 	@Produces("application/json")

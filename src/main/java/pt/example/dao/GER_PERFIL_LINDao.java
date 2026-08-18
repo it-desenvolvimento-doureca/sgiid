@@ -31,6 +31,30 @@ public class GER_PERFIL_LINDao extends GenericDaoJpaImpl<GER_PERFIL_LIN, Integer
 
 	}
 
+	/**
+	 * Substitui, numa unica transacao, todas as linhas de acessos de um perfil.
+	 */
+	public void replaceAll(Integer id, List<GER_PERFIL_LIN> linhas) {
+		delete(id);
+		entityManager.flush();
+
+		if (linhas == null) {
+			return;
+		}
+
+		int count = 0;
+		for (GER_PERFIL_LIN linha : linhas) {
+			linha.setID_PERFIL_LIN(null);
+			linha.setID_PERFIL_CAB(id);
+			entityManager.persist(linha);
+			if (++count % 100 == 0) {
+				entityManager.flush();
+				entityManager.clear();
+			}
+		}
+		entityManager.flush();
+	}
+
 	public void delete(Integer id) {
 		Query query = entityManager.createQuery("Delete from GER_PERFIL_LIN a where a.ID_PERFIL_CAB = :id");
 		query.setParameter("id", id);

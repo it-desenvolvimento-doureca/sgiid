@@ -1,9 +1,17 @@
 package pt.example.rest;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import pt.example.bootstrap.ConnectProgress;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,6 +21,31 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import pt.example.dao.QUA_EPI_DIC_FAMILIADao;
+import pt.example.dao.QUA_EPI_DIC_EPIDao;
+import pt.example.dao.QUA_EPI_LOCALDao;
+import pt.example.dao.QUA_EPI_LOCAL_RESPDao;
+import pt.example.entity.QUA_EPI_LOCAL;
+import pt.example.dao.RH_SECTORES_EPI_FAMILIADao;
+import pt.example.dao.QUA_EPI_FUNCDao;
+import pt.example.dao.QUA_EPI_MOV_PEDIDODao;
+import pt.example.dao.QUA_EPI_MOV_PEDIDO_LINDao;
+import pt.example.dao.QUA_EPI_MOV_PEDIDO_HISTDao;
+import pt.example.dao.GER_EVENTOS_CONFDao;
+import pt.example.entity.GER_EVENTOS_CONF;
+import pt.example.dao.QUA_EPI_MOV_ENTREGADao;
+import pt.example.dao.QUA_EPI_MOV_ENTREGA_ETIQDao;
+import pt.example.entity.QUA_EPI_MOV_ENTREGA;
+import pt.example.entity.QUA_EPI_MOV_ENTREGA_ETIQ;
+import pt.example.entity.QUA_EPI_ENTREGA_DTO;
+import pt.example.entity.QUA_EPI_MOV_PEDIDO;
+import pt.example.entity.QUA_EPI_MOV_PEDIDO_LIN;
+import pt.example.entity.QUA_EPI_MOV_PEDIDO_HIST;
+import pt.example.entity.QUA_EPI_DIC_FAMILIA;
+import pt.example.entity.QUA_EPI_DIC_EPI;
+import pt.example.entity.QUA_EPI_LOCAL_RESP;
+import pt.example.entity.RH_SECTORES_EPI_FAMILIA;
+import pt.example.entity.QUA_EPI_FUNC;
 import pt.example.dao.QUA_MC_DIC_SECCOESDao;
 import pt.example.dao.QUA_MC_DIC_RESP_VALIDODao;
 import pt.example.dao.QUA_MC_DIC_TIPO_CALIBRDao;
@@ -109,6 +142,37 @@ public class SIRB_4 {
 	@Inject private QUA_MC_DECLARACOES_NCDao dao28;
 	@Inject private QUA_MC_GABARITOS_FICHEIROSDao dao29;
 	@Inject private QUA_MC_MOV_VERIF_GABARITO_FICHEIROSDao dao30;
+	// Módulo EPI's
+	@Inject private QUA_EPI_DIC_FAMILIADao daoEpi1;
+	@Inject private QUA_EPI_DIC_EPIDao daoEpi2;
+	@Inject private QUA_EPI_LOCALDao daoEpi3;
+	@Inject private QUA_EPI_LOCAL_RESPDao daoEpi4;
+	@Inject private RH_SECTORES_EPI_FAMILIADao daoEpi5;
+	@Inject private QUA_EPI_FUNCDao daoEpi6;
+	@Inject private QUA_EPI_MOV_PEDIDODao daoEpi7;
+	@Inject private QUA_EPI_MOV_PEDIDO_LINDao daoEpi8;
+	@Inject private QUA_EPI_MOV_PEDIDO_HISTDao daoEpi9;
+	@Inject private GER_EVENTOS_CONFDao daoEventos;
+	@Inject private pt.example.dao.GER_CONF_CONSUMOS_EPIS_SILVERDao daoConfEpi;
+	@Inject private QUA_EPI_MOV_ENTREGADao daoEpi10;
+	@Inject private QUA_EPI_MOV_ENTREGA_ETIQDao daoEpi11;
+
+	@PersistenceContext(unitName = "persistenceUnit")
+	private EntityManager entityManager;
+
+	/**
+	 * URL de ligação ao SILVER, lida de GER_PARAMETROS.
+	 * Equivalente ao SIRB.getURLSILVER(), mas a selecionar a coluna pelo nome
+	 * em vez de por posição (o original usa content[2]).
+	 */
+	private String getURLSILVER() {
+		Query q = entityManager.createNativeQuery("select top 1 URL_SILVER from GER_PARAMETROS");
+		List<?> dados = q.getResultList();
+		if (dados == null || dados.isEmpty() || dados.get(0) == null) {
+			return "";
+		}
+		return dados.get(0).toString();
+	}
 
 	/************************************* QUA_MC_DIC_ESTADO_METROLOGICO */
 	@POST
@@ -1194,5 +1258,846 @@ public class SIRB_4 {
 		QUA_MC_MOV_VERIF_SALA e = new QUA_MC_MOV_VERIF_SALA();
 		e.setID_VERIF_SALA(id);
 		dao19.delete(e);
+	}
+
+	// ============================================================
+	// MÓDULO EPI's - Parametrização
+	// ============================================================
+	// Nota: os ecrãs fazem soft delete (update com ATIVO = 0). Os endpoints
+	// DELETE abaixo apagam fisicamente e existem só por consistência do padrão.
+
+	// ---------- Famílias de EPI ----------
+
+	@POST
+	@Path("/createQUA_EPI_DIC_FAMILIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_DIC_FAMILIA insertQUA_EPI_DIC_FAMILIA(final QUA_EPI_DIC_FAMILIA data) {
+		return daoEpi1.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_DIC_FAMILIA")
+	@Produces("application/json")
+	public List<QUA_EPI_DIC_FAMILIA> getQUA_EPI_DIC_FAMILIA() {
+		return daoEpi1.getall();
+	}
+
+	@GET
+	@Path("/getQUA_EPI_DIC_FAMILIAbyid/{id}")
+	@Produces("application/json")
+	public List<QUA_EPI_DIC_FAMILIA> getQUA_EPI_DIC_FAMILIAbyid(@PathParam("id") Integer id) {
+		return daoEpi1.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_EPI_DIC_FAMILIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_DIC_FAMILIA updateQUA_EPI_DIC_FAMILIA(final QUA_EPI_DIC_FAMILIA data) {
+		return daoEpi1.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_EPI_DIC_FAMILIA/{id}")
+	public void deleteQUA_EPI_DIC_FAMILIA(@PathParam("id") Integer id) {
+		QUA_EPI_DIC_FAMILIA e = new QUA_EPI_DIC_FAMILIA();
+		e.setID_FAMILIA(id);
+		daoEpi1.delete(e);
+	}
+
+	// ---------- EPIs ----------
+
+	@POST
+	@Path("/createQUA_EPI_DIC_EPI")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_DIC_EPI insertQUA_EPI_DIC_EPI(final QUA_EPI_DIC_EPI data) {
+		return daoEpi2.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_DIC_EPI")
+	@Produces("application/json")
+	public List<QUA_EPI_DIC_EPI> getQUA_EPI_DIC_EPI() {
+		return daoEpi2.getall();
+	}
+
+	// Lista para a grelha, com a família resolvida
+	@GET
+	@Path("/getQUA_EPI_DIC_EPI_LISTA")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_DIC_EPI_LISTA() {
+		return daoEpi2.getlista();
+	}
+
+	// EPIs de uma família - usado no separador da ficha do funcionário
+	@GET
+	@Path("/getQUA_EPI_DIC_EPIbyfamilia/{id}")
+	@Produces("application/json")
+	public List<QUA_EPI_DIC_EPI> getQUA_EPI_DIC_EPIbyfamilia(@PathParam("id") Integer id) {
+		return daoEpi2.getbyfamilia(id);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_DIC_EPIbyid/{id}")
+	@Produces("application/json")
+	public List<QUA_EPI_DIC_EPI> getQUA_EPI_DIC_EPIbyid(@PathParam("id") Integer id) {
+		return daoEpi2.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_EPI_DIC_EPI")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_DIC_EPI updateQUA_EPI_DIC_EPI(final QUA_EPI_DIC_EPI data) {
+		return daoEpi2.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_EPI_DIC_EPI/{id}")
+	public void deleteQUA_EPI_DIC_EPI(@PathParam("id") Integer id) {
+		QUA_EPI_DIC_EPI e = new QUA_EPI_DIC_EPI();
+		e.setID_EPI(id);
+		daoEpi2.delete(e);
+	}
+
+	// ---------- Stock ----------
+	// O stock vem do SILVER dentro das próprias queries (SILVER.dbo.STODET),
+	// como já se faz no PIN_MOV_PREPARACAO_LINHADao. Não há chamada JDBC à
+	// parte: o total já vem na lista de EPIs.
+
+	/**
+	 * Detalhe do stock de um EPI: uma linha por armazém/lote, com validade.
+	 * LIECOD = armazém; EMPCOD = localização dentro do armazém.
+	 */
+	@GET
+	@Path("/getQUA_EPI_STOCK_DETALHE/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_STOCK_DETALHE(@PathParam("id") Integer id) {
+		return daoEpi2.getstockdetalhe(id);
+	}
+
+	// ---------- Responsáveis por local ----------
+	// Os locais são os GER_LOCAIS existentes (os mesmos de RH_SECTORES.local).
+	// Não há dicionário de locais próprio do módulo EPI.
+
+	@POST
+	@Path("/createQUA_EPI_LOCAL_RESP")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_LOCAL_RESP insertQUA_EPI_LOCAL_RESP(final QUA_EPI_LOCAL_RESP data) {
+		return daoEpi4.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_LOCAL_RESP")
+	@Produces("application/json")
+	public List<QUA_EPI_LOCAL_RESP> getQUA_EPI_LOCAL_RESP() {
+		return daoEpi4.getall();
+	}
+
+	// Pesquisa de artigos no SILVER, para o autocomplete do PROREF
+	@GET
+	@Path("/getQUA_EPI_ARTIGOS_SILVER/{termo}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getQUA_EPI_ARTIGOS_SILVER(@PathParam("termo") String termo)
+			throws SQLException {
+		ConnectProgress connectionProgress = new ConnectProgress();
+		return connectionProgress.getArtigosEpiPorTermo(getURLSILVER(), termo);
+	}
+
+	// ---------- Locais EPI (subconjunto escolhido dos GER_LOCAIS) ----------
+
+	@POST
+	@Path("/createQUA_EPI_LOCAL")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_LOCAL insertQUA_EPI_LOCAL(final QUA_EPI_LOCAL data) {
+		return daoEpi3.create(data);
+	}
+
+	// Locais EPI escolhidos, com descrição e contagem de responsáveis
+	@GET
+	@Path("/getQUA_EPI_LOCAL_LISTA")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_LOCAL_LISTA() {
+		return daoEpi3.getlista();
+	}
+
+	// GER_LOCAIS ainda não escolhidos - dropdown de "Adicionar"
+	@GET
+	@Path("/getQUA_EPI_LOCAL_DISPONIVEIS")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_LOCAL_DISPONIVEIS() {
+		return daoEpi3.getdisponiveis();
+	}
+
+	@PUT
+	@Path("/updateQUA_EPI_LOCAL")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_LOCAL updateQUA_EPI_LOCAL(final QUA_EPI_LOCAL data) {
+		return daoEpi3.update(data);
+	}
+
+	// Responsáveis de um local EPI, com nome e email resolvidos
+	@GET
+	@Path("/getQUA_EPI_LOCAL_RESPbylocal/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_LOCAL_RESPbylocal(@PathParam("id") Integer id) {
+		return daoEpi4.getbylocal(id);
+	}
+
+	// Locais onde um utilizador é responsável - base da regra de visibilidade
+	@GET
+	@Path("/getQUA_EPI_LOCAISbyutz/{id}")
+	@Produces("application/json")
+	public List<Integer> getQUA_EPI_LOCAISbyutz(@PathParam("id") Integer id) {
+		return daoEpi4.getlocaisbyutz(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_EPI_LOCAL_RESP")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_LOCAL_RESP updateQUA_EPI_LOCAL_RESP(final QUA_EPI_LOCAL_RESP data) {
+		return daoEpi4.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_EPI_LOCAL_RESP/{id}")
+	public void deleteQUA_EPI_LOCAL_RESP(@PathParam("id") Integer id) {
+		QUA_EPI_LOCAL_RESP e = new QUA_EPI_LOCAL_RESP();
+		e.setID(id);
+		daoEpi4.delete(e);
+	}
+
+	// ---------- Famílias de EPI por sector ----------
+
+	@POST
+	@Path("/createRH_SECTORES_EPI_FAMILIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_SECTORES_EPI_FAMILIA insertRH_SECTORES_EPI_FAMILIA(final RH_SECTORES_EPI_FAMILIA data) {
+		return daoEpi5.create(data);
+	}
+
+	@GET
+	@Path("/getRH_SECTORES_EPI_FAMILIA")
+	@Produces("application/json")
+	public List<RH_SECTORES_EPI_FAMILIA> getRH_SECTORES_EPI_FAMILIA() {
+		return daoEpi5.getall();
+	}
+
+	// Famílias configuradas num sector
+	@GET
+	@Path("/getRH_SECTORES_EPI_FAMILIAbysector/{id}")
+	@Produces("application/json")
+	public List<Object[]> getRH_SECTORES_EPI_FAMILIAbysector(@PathParam("id") Integer id) {
+		return daoEpi5.getbysector(id);
+	}
+
+	@PUT
+	@Path("/updateRH_SECTORES_EPI_FAMILIA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public RH_SECTORES_EPI_FAMILIA updateRH_SECTORES_EPI_FAMILIA(final RH_SECTORES_EPI_FAMILIA data) {
+		return daoEpi5.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteRH_SECTORES_EPI_FAMILIA/{id}")
+	public void deleteRH_SECTORES_EPI_FAMILIA(@PathParam("id") Integer id) {
+		RH_SECTORES_EPI_FAMILIA e = new RH_SECTORES_EPI_FAMILIA();
+		e.setID(id);
+		daoEpi5.delete(e);
+	}
+
+	// ---------- EPIs por funcionário ----------
+
+	@POST
+	@Path("/createQUA_EPI_FUNC")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_FUNC insertQUA_EPI_FUNC(final QUA_EPI_FUNC data) {
+		return daoEpi6.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_FUNC")
+	@Produces("application/json")
+	public List<QUA_EPI_FUNC> getQUA_EPI_FUNC() {
+		return daoEpi6.getall();
+	}
+
+	// Linhas do separador EPI's da ficha do funcionário (derivadas do sector)
+	@GET
+	@Path("/getQUA_EPI_FUNCbyfuncionario/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_FUNCbyfuncionario(@PathParam("id") Integer id) {
+		return daoEpi6.getbyfuncionario(id);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_FUNCbyid/{id}")
+	@Produces("application/json")
+	public List<QUA_EPI_FUNC> getQUA_EPI_FUNCbyid(@PathParam("id") Integer id) {
+		return daoEpi6.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateQUA_EPI_FUNC")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_FUNC updateQUA_EPI_FUNC(final QUA_EPI_FUNC data) {
+		return daoEpi6.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_EPI_FUNC/{id}")
+	public void deleteQUA_EPI_FUNC(@PathParam("id") Integer id) {
+		QUA_EPI_FUNC e = new QUA_EPI_FUNC();
+		e.setID(id);
+		daoEpi6.delete(e);
+	}
+
+	// ============================================================
+	// MÓDULO EPI's - Pedidos
+	// ============================================================
+
+	@POST
+	@Path("/createQUA_EPI_MOV_PEDIDO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_MOV_PEDIDO insertQUA_EPI_MOV_PEDIDO(final QUA_EPI_MOV_PEDIDO data) {
+		return daoEpi7.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_MOV_PEDIDO")
+	@Produces("application/json")
+	public List<QUA_EPI_MOV_PEDIDO> getQUA_EPI_MOV_PEDIDO() {
+		return daoEpi7.getall();
+	}
+
+	/**
+	 * Lista de pedidos visíveis para o utilizador.
+	 * A regra de visibilidade é aplicada na query, nunca no frontend.
+	 */
+	@GET
+	@Path("/getQUA_EPI_MOV_PEDIDO_LISTA/{utz}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_MOV_PEDIDO_LISTA(@PathParam("utz") Integer utz) {
+		return daoEpi7.getlista(utz);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_MOV_PEDIDObyid/{id}")
+	@Produces("application/json")
+	public List<QUA_EPI_MOV_PEDIDO> getQUA_EPI_MOV_PEDIDObyid(@PathParam("id") Integer id) {
+		return daoEpi7.getbyid(id);
+	}
+
+	// Sector/turno do utilizador autenticado, para pré-preencher o pedido
+	@GET
+	@Path("/getQUA_EPI_SECTOR_UTZ/{utz}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_SECTOR_UTZ(@PathParam("utz") Integer utz) {
+		return daoEpi7.getsectordoutilizador(utz);
+	}
+
+	// Sector/turno do destinatário, para o pedido feito na ficha do funcionário
+	// Nome distinto de getQUA_EPI_SECTOR_FUNC, que devolve os funcionarios de um sector.
+	@GET
+	@Path("/getQUA_EPI_SECTOR_DO_FUNC/{func}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_SECTOR_DO_FUNC(@PathParam("func") Integer func) {
+		return daoEpi7.getsectordofuncionario(func);
+	}
+
+	// Dados para o email de notificação (campos do template do evento)
+	@GET
+	@Path("/getQUA_EPI_DADOS_NOTIFICACAO/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_DADOS_NOTIFICACAO(@PathParam("id") Integer id) {
+		return daoEpi7.getdadosnotificacao(id);
+	}
+
+	// Local EPI provável de um sector, para encaminhar o pedido logo à criação
+	@GET
+	@Path("/getQUA_EPI_LOCAL_DO_SECTOR/{sector}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_LOCAL_DO_SECTOR(@PathParam("sector") Integer sector) {
+		return daoEpi7.getlocalepidosector(sector);
+	}
+
+	// Funcionários ativos de um sector - dropdown de destinatário
+	@GET
+	@Path("/getQUA_EPI_SECTOR_FUNC/{sector}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_SECTOR_FUNC(@PathParam("sector") Integer sector) {
+		return daoEpi7.getfuncionariosdosector(sector);
+	}
+
+	@PUT
+	@Path("/updateQUA_EPI_MOV_PEDIDO")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_MOV_PEDIDO updateQUA_EPI_MOV_PEDIDO(final QUA_EPI_MOV_PEDIDO data) {
+		return daoEpi7.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_EPI_MOV_PEDIDO/{id}")
+	public void deleteQUA_EPI_MOV_PEDIDO(@PathParam("id") Integer id) {
+		QUA_EPI_MOV_PEDIDO e = new QUA_EPI_MOV_PEDIDO();
+		e.setID_PEDIDO(id);
+		daoEpi7.delete(e);
+	}
+
+	// ---------- Linhas do pedido ----------
+
+	@POST
+	@Path("/createQUA_EPI_MOV_PEDIDO_LIN")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_MOV_PEDIDO_LIN insertQUA_EPI_MOV_PEDIDO_LIN(final QUA_EPI_MOV_PEDIDO_LIN data) {
+		return daoEpi8.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_MOV_PEDIDO_LINbypedido/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_MOV_PEDIDO_LINbypedido(@PathParam("id") Integer id) {
+		return daoEpi8.getbypedido(id);
+	}
+
+	/**
+	 * Valida uma linha antes de a gravar: devolução pendente do EPI anterior
+	 * e duração de uso ultrapassada.
+	 */
+	@GET
+	@Path("/getQUA_EPI_VALIDA_LINHA/{func}/{epi}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_VALIDA_LINHA(@PathParam("func") Integer func, @PathParam("epi") Integer epi) {
+		return daoEpi8.validalinha(func, epi);
+	}
+
+	@PUT
+	@Path("/updateQUA_EPI_MOV_PEDIDO_LIN")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_MOV_PEDIDO_LIN updateQUA_EPI_MOV_PEDIDO_LIN(final QUA_EPI_MOV_PEDIDO_LIN data) {
+		return daoEpi8.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteQUA_EPI_MOV_PEDIDO_LIN/{id}")
+	public void deleteQUA_EPI_MOV_PEDIDO_LIN(@PathParam("id") Integer id) {
+		QUA_EPI_MOV_PEDIDO_LIN e = new QUA_EPI_MOV_PEDIDO_LIN();
+		e.setID_LINHA(id);
+		daoEpi8.delete(e);
+	}
+
+	// ---------- Histórico do pedido ----------
+
+	@POST
+	@Path("/createQUA_EPI_MOV_PEDIDO_HIST")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_MOV_PEDIDO_HIST insertQUA_EPI_MOV_PEDIDO_HIST(final QUA_EPI_MOV_PEDIDO_HIST data) {
+		return daoEpi9.create(data);
+	}
+
+	@GET
+	@Path("/getQUA_EPI_MOV_PEDIDO_HISTbypedido/{id}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_MOV_PEDIDO_HISTbypedido(@PathParam("id") Integer id) {
+		return daoEpi9.getbypedido(id);
+	}
+
+	// ============================================================
+	// MÓDULO EPI's - Levantamento / Entrega
+	// ============================================================
+
+	/**
+	 * Pedidos prontos para levantamento num local (ACEITE, agendados até hoje,
+	 * ainda sem entrega).
+	 */
+	@GET
+	@Path("/getQUA_EPI_PEDIDOS_LEVANTAMENTO/{local}/{utz}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_PEDIDOS_LEVANTAMENTO(@PathParam("local") Integer local,
+			@PathParam("utz") Integer utz) {
+		return daoEpi10.getparalevantamento(local, utz);
+	}
+
+	/**
+	 * Resolve uma etiqueta lida no levantamento.
+	 * Devolve os dados do artigo no SILVER e, em EXISTE_ETIQUETAS/ETIQUETAS,
+	 * se havia outra que devia sair primeiro (FEFO).
+	 */
+	@GET
+	@Path("/getDadosEtiquetaEPI/{etiqueta}")
+	@Produces("application/json")
+	public List<HashMap<String, String>> getDadosEtiquetaEPI(@PathParam("etiqueta") String etiqueta)
+			throws SQLException {
+		ConnectProgress connectionProgress = new ConnectProgress();
+		return connectionProgress.getDadosEtiquetaEPI(getURLSILVER(), etiqueta);
+	}
+
+	/**
+	 * Fecho da entrega, numa só operação.
+	 *
+	 * Grava a entrega e as etiquetas, debita cada etiqueta no SILVER
+	 * (UPDATE SETQDE.ETQEMBQTE via EXEC_SINCRO), passa o pedido a ENTREGUE e
+	 * carimba DATA_SINCRO_SILVER.
+	 *
+	 * O débito no SILVER é feito por JDBC, fora da transação JTA: se falhar a
+	 * meio, a entrega fica gravada mas sem DATA_SINCRO_SILVER, que é o sinal
+	 * de que é preciso reconciliar. Preferiu-se isto a perder o registo da
+	 * entrega já assinada.
+	 */
+	@POST
+	@Path("/createQUA_EPI_ENTREGA_COMPLETA")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public QUA_EPI_MOV_ENTREGA createQUA_EPI_ENTREGA_COMPLETA(final QUA_EPI_ENTREGA_DTO dto) throws SQLException {
+		boolean concluir = Boolean.TRUE.equals(dto.getCONCLUIR());
+		QUA_EPI_MOV_ENTREGA entrega = dto.getENTREGA();
+		entrega.setATIVO(true);
+		entrega.setESTADO(concluir ? "CONCLUIDA" : "RASCUNHO");
+		if (entrega.getDATA_HORA_ENTREGA() == null) {
+			entrega.setDATA_HORA_ENTREGA(new java.sql.Timestamp(System.currentTimeMillis()));
+		}
+
+		// Regravar um rascunho reaproveita a entrega e substitui as etiquetas,
+		// para não acumular linhas de gravações sucessivas.
+		List<QUA_EPI_MOV_ENTREGA> rascunhos = daoEpi10.getrascunho(entrega.getID_PEDIDO());
+		if (!rascunhos.isEmpty()) {
+			entrega.setID_ENTREGA(rascunhos.get(0).getID_ENTREGA());
+			daoEpi10.apagaretiquetas(entrega.getID_ENTREGA());
+			entrega = daoEpi10.update(entrega);
+		} else {
+			entrega = daoEpi10.create(entrega);
+		}
+
+		if (dto.getETIQUETAS() != null) {
+			for (QUA_EPI_MOV_ENTREGA_ETIQ etiq : dto.getETIQUETAS()) {
+				etiq.setID_ENTREGA(entrega.getID_ENTREGA());
+				etiq.setATIVO(true);
+				daoEpi11.create(etiq);
+			}
+		}
+
+		// Só a conclusão mexe no SILVER e fecha o pedido. Gravar é apenas
+		// guardar o trabalho feito até ali.
+		if (!concluir) {
+			return entrega;
+		}
+
+		String url = getURLSILVER();
+		ConnectProgress connectionProgress = new ConnectProgress();
+		boolean sincronizouTudo = true;
+
+		if (dto.getETIQUETAS() != null) {
+			for (QUA_EPI_MOV_ENTREGA_ETIQ etiq : dto.getETIQUETAS()) {
+				// Débito no SILVER: a etiqueta fica com a quantidade final
+				if (etiq.getETQNUM() != null && etiq.getQUANT_FINAL() != null) {
+					try {
+						connectionProgress.EXEC_SINCRO(etiq.getETQNUM(),
+								Float.valueOf(etiq.getQUANT_FINAL().floatValue()), url);
+					} catch (Exception e) {
+						e.printStackTrace();
+						sincronizouTudo = false;
+					}
+				}
+			}
+		}
+
+		if (sincronizouTudo) {
+			entrega.setDATA_SINCRO_SILVER(new java.sql.Timestamp(System.currentTimeMillis()));
+			entrega = daoEpi10.update(entrega);
+		}
+
+		// Pedido passa a ENTREGUE
+		List<QUA_EPI_MOV_PEDIDO> pedidos = daoEpi7.getbyid(entrega.getID_PEDIDO());
+		if (!pedidos.isEmpty()) {
+			QUA_EPI_MOV_PEDIDO p = pedidos.get(0);
+			String estadoAnterior = p.getESTADO();
+			p.setESTADO("ENTREGUE");
+			p.setUTZ_MODIF(entrega.getUTZ_CRIA());
+			daoEpi7.update(p);
+
+			// Fecho do pedido no historico, com a data efetiva da entrega
+			QUA_EPI_MOV_PEDIDO_HIST h = new QUA_EPI_MOV_PEDIDO_HIST();
+			h.setID_PEDIDO(entrega.getID_PEDIDO());
+			h.setDATA_HORA(entrega.getDATA_HORA_ENTREGA());
+			h.setID_UTILIZADOR(entrega.getUTZ_CRIA());
+			h.setESTADO_ANTERIOR(estadoAnterior);
+			h.setESTADO_NOVO("ENTREGUE");
+			int nEtiquetas = dto.getETIQUETAS() == null ? 0 : dto.getETIQUETAS().size();
+			h.setOBSERVACOES("Levantamento efetuado com " + nEtiquetas + " etiqueta(s).");
+			h.setUTZ_CRIA(entrega.getUTZ_CRIA());
+			h.setDATA_CRIA(new java.sql.Date(System.currentTimeMillis()));
+			h.setATIVO(true);
+			daoEpi9.create(h);
+		}
+
+		// Por ultimo: o ficheiro de consumo nao pode por em causa a entrega,
+		// que a esta altura ja esta gravada e o stock debitado.
+		if (dto.getETIQUETAS() != null && !dto.getETIQUETAS().isEmpty()) {
+			gerarFicheiroConsumoEPI(entrega, dto.getETIQUETAS());
+		}
+
+		return entrega;
+	}
+
+	/** Rascunho de entrega de um pedido, para repor o ecrã do levantamento. */
+	@GET
+	@Path("/getQUA_EPI_ENTREGA_RASCUNHO/{pedido}")
+	@Produces("application/json")
+	public List<QUA_EPI_MOV_ENTREGA> getQUA_EPI_ENTREGA_RASCUNHO(@PathParam("pedido") Integer pedido) {
+		return daoEpi10.getrascunho(pedido);
+	}
+
+	/** Entrega já concluída de um pedido, para consulta do que foi entregue. */
+	@GET
+	@Path("/getQUA_EPI_ENTREGA_CONCLUIDA/{pedido}")
+	@Produces("application/json")
+	public List<QUA_EPI_MOV_ENTREGA> getQUA_EPI_ENTREGA_CONCLUIDA(@PathParam("pedido") Integer pedido) {
+		return daoEpi10.getconcluida(pedido);
+	}
+
+	/** Etiquetas já gravadas numa entrega. */
+	@GET
+	@Path("/getQUA_EPI_ENTREGA_ETIQUETAS/{entrega}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_ENTREGA_ETIQUETAS(@PathParam("entrega") Integer entrega) {
+		return daoEpi10.getetiquetasdaentrega(entrega);
+	}
+
+	/**
+	 * Gera o ficheiro de consumo para o SILVER, no formato de largura fixa do
+	 * consumo da pintura.
+	 *
+	 * Diferença face à pintura: ali a secção, subsecção e referência composta
+	 * saem da OF; uma entrega de EPI não tem OF, por isso vêm todas de
+	 * GER_CONF_CONSUMOS_EPIS_SILVER - a mesma solução usada na manutenção.
+	 *
+	 * Se a configuração não estiver preenchida, não gera nada e não falha: a
+	 * entrega já está gravada e o stock debitado.
+	 */
+	private void gerarFicheiroConsumoEPI(QUA_EPI_MOV_ENTREGA entrega,
+			List<QUA_EPI_MOV_ENTREGA_ETIQ> etiquetas) {
+		try {
+			pt.example.entity.GER_CONF_CONSUMOS_EPIS_SILVER conf = daoConfEpi.getconf();
+			if (conf == null || vazio(conf.getSECCAO_EPI()) || vazio(conf.getSUBSECCAO_EPI())
+					|| vazio(conf.getREF_COMPOSTO_EPI())) {
+				// Sem configuração não há ficheiro - fica registado no log
+				System.out.println("[EPI] Consumo nao gerado: GER_CONF_CONSUMOS_EPIS_SILVER por preencher.");
+				return;
+			}
+
+			String seccao = conf.getSECCAO_EPI();
+			String subseccao = conf.getSUBSECCAO_EPI();
+			String refComposto = conf.getREF_COMPOSTO_EPI();
+			String of = conf.getOF_EPI() == null ? "" : conf.getOF_EPI();
+
+			java.text.SimpleDateFormat fData = new java.text.SimpleDateFormat("yyyyMMdd");
+			java.text.SimpleDateFormat fHora = new java.text.SimpleDateFormat("HHmmss");
+			java.util.Date agora = new java.util.Date();
+			String datatual = fData.format(agora);
+			String horatual = fHora.format(agora);
+			String sequencia = sequenciaFicheiro();
+
+			StringBuilder data = new StringBuilder();
+			for (QUA_EPI_MOV_ENTREGA_ETIQ e : etiquetas) {
+				data.append("01        ");                              // Sociedade
+				data.append(datatual);                                  // Data suivi
+				data.append(sequencia);                                 // Nº sequência
+				data.append("    ");                                    // Linha de produção
+				data.append("1");                                       // Tipo Nº OF
+				data.append(preencher(of, 10));                         // Nº OF
+				data.append("1");                                       // Tipo operação
+				data.append("0010");                                    // Nº operação
+				data.append("1");                                       // Posição
+				data.append(preencher(seccao, 10));                     // Secção
+				data.append(preencher(subseccao, 10));                  // Subsecção
+				data.append("  ");                                      // Nº equipa
+				data.append("    ");                                    // Tipo recurso
+				data.append("          ");                              // Código recurso
+				data.append("   C");                                    // Estabelecimento + tipo
+				data.append(datatual).append(horatual);                 // Início
+				data.append(datatual).append(horatual);                 // Fim
+				data.append("1");                                       // Origem componente
+				data.append(preencher(refComposto, 17));                // Referência composto
+				data.append("          ");                              // Variante composto 1
+				data.append("          ");                              // Variante composto 2
+				data.append("          ");                              // Índice do composto
+				data.append("000000000");                               // Nº registo Csé
+				data.append("     ");                                   // Nº de rang
+				data.append(preencher(e.getPROREF(), 17));              // Referência componente
+				data.append("          ");                              // Variante componente 1
+				data.append("          ");                              // Variante componente 2
+				data.append("          ");                              // Índice do componente
+				data.append("000000000");                               // Nº registo Cst
+				data.append("1");                                       // Tipo quantidade
+				data.append(quantidade(e.getCONSUMIR()));               // Quantidade
+				data.append("-");                                       // Sinal: consumo
+				data.append(preencher(e.getUNISTO(), 4));               // Unidade
+				data.append("               ");                         // Quantidade US2
+				data.append(preencher(e.getLIECOD(), 10));              // Lugar origem
+				data.append(preencher(e.getEMPCOD(), 10));              // Localização origem
+				data.append(preencher(e.getETQORILOT1(), 35));          // Referência do lote
+				data.append(numerico(e.getLOTNUMENR(), 9));             // Nº lote interno
+				data.append(preencher(e.getETQNUM(), 10));              // Nº etiqueta
+				data.append("000000000");                               // Nº registo etiqueta
+				data.append(preencher("EPI " + entrega.getID_PEDIDO(), 40)); // Texto livre
+				data.append("\r\n");
+			}
+
+			if (data.length() == 0) {
+				return;
+			}
+
+			String pasta = conf.getPASTA_FICHEIRO();
+			if (vazio(pasta)) {
+				pasta = pastaFicheiroPadrao();
+			}
+			if (vazio(pasta)) {
+				System.out.println("[EPI] Consumo nao gerado: pasta de destino por definir.");
+				return;
+			}
+
+			String nome = "CONSUMO_EPI_" + entrega.getID_ENTREGA() + "_"
+					+ new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(agora) + ".txt";
+			java.io.File dir = new java.io.File(pasta);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			java.io.File ficheiro = new java.io.File(dir, nome);
+			java.io.FileWriter fw = new java.io.FileWriter(ficheiro);
+			fw.write(data.toString());
+			fw.close();
+
+		} catch (Exception ex) {
+			// Não pode derrubar a entrega, que já está gravada e assinada
+			ex.printStackTrace();
+		}
+	}
+
+	private boolean vazio(String s) {
+		return s == null || s.trim().isEmpty();
+	}
+
+	/** Preenche à direita com espaços até ao tamanho fixo do campo. */
+	private String preencher(String valor, int tamanho) {
+		String v = valor == null ? "" : valor;
+		StringBuilder sb = new StringBuilder(v);
+		while (sb.length() < tamanho) {
+			sb.append(' ');
+		}
+		return sb.substring(0, tamanho);
+	}
+
+	/** Preenche à esquerda com zeros. */
+	private String numerico(String valor, int tamanho) {
+		String v = valor == null ? "" : valor.trim();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < tamanho; i++) {
+			sb.append('0');
+		}
+		String s = sb.toString() + v;
+		return s.substring(s.length() - tamanho);
+	}
+
+	/** Quantidade no formato do SILVER: 11 inteiros + 4 decimais + 2 espaços. */
+	private String quantidade(java.math.BigDecimal q) {
+		if (q == null) {
+			return "000000000000000  ";
+		}
+		String r = String.format(java.util.Locale.US, "%.3f", q.doubleValue());
+		String[] p = r.split("\\.");
+		String inteiro = numerico(p.length > 0 ? p[0] : "0", 11);
+		String decimal = (p.length > 1 ? p[1] : "") + "0000";
+		decimal = decimal.substring(0, 4);
+		return (inteiro + decimal + "  ").substring(0, 17);
+	}
+
+	/** Sequência diária de ficheiros, partilhada com os restantes módulos. */
+	private String sequenciaFicheiro() {
+		Query q = entityManager.createNativeQuery(
+			"select top 1 NUMERO_SEQUENCIA from GER_SEQUENCIA_FICHEIRO "
+			+ "where DATA_SEQUENCIA = CONVERT(date, GETDATE())");
+		List<?> dados = q.getResultList();
+		if (dados.isEmpty()) {
+			entityManager.createNativeQuery(
+				"INSERT INTO GER_SEQUENCIA_FICHEIRO (NUMERO_SEQUENCIA, DATA_SEQUENCIA) "
+				+ "VALUES (1, CONVERT(date, GETDATE()))").executeUpdate();
+			return "000000001";
+		}
+		int val = Integer.parseInt(dados.get(0).toString()) + 1;
+		entityManager.createNativeQuery(
+			"UPDATE GER_SEQUENCIA_FICHEIRO SET NUMERO_SEQUENCIA = " + val
+			+ " where DATA_SEQUENCIA = CONVERT(date, GETDATE())").executeUpdate();
+		return numerico(String.valueOf(val), 9);
+	}
+
+	/** Pasta de ficheiros configurada em GER_PARAMETROS. */
+	private String pastaFicheiroPadrao() {
+		Query q = entityManager.createNativeQuery("select top 1 PASTA_FICHEIRO from GER_PARAMETROS");
+		List<?> dados = q.getResultList();
+		if (dados.isEmpty() || dados.get(0) == null) {
+			return null;
+		}
+		return dados.get(0).toString();
+	}
+
+	/**
+	 * Template de email configurado para uma página/momento.
+	 * Usado pelos eventos do módulo EPI (epis_pedidos + ACEITAR/REJEITAR),
+	 * evitando fixar o ID_EVENTO no código.
+	 */
+	@GET
+	@Path("/getGER_EVENTOS_CONFbypagina/{pagina}/{momento}")
+	@Produces("application/json")
+	public List<GER_EVENTOS_CONF> getGER_EVENTOS_CONFbypagina(@PathParam("pagina") String pagina,
+			@PathParam("momento") String momento) {
+		return daoEventos.getbypaginamomento(pagina, momento);
+	}
+
+	// ============================================================
+	// MÓDULO EPI's - Análises (Consumos / Stocks)
+	// ============================================================
+
+	/**
+	 * Consumos entre datas. Colaborador e EPI são opcionais: 0 = todos.
+	 * Datas em yyyy-MM-dd.
+	 */
+	@GET
+	@Path("/getQUA_EPI_CONSUMOS/{dataIni}/{dataFim}/{func}/{epi}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_CONSUMOS(@PathParam("dataIni") String dataIni,
+			@PathParam("dataFim") String dataFim, @PathParam("func") Integer func,
+			@PathParam("epi") Integer epi) {
+		return daoEpi10.getconsumos(dataIni, dataFim, func, epi);
+	}
+
+	// Histórico de EPIs de uma pessoa, com indicação dos que tem atualmente
+	@GET
+	@Path("/getQUA_EPI_HISTORICO/{func}")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_HISTORICO(@PathParam("func") Integer func) {
+		return daoEpi10.gethistoricopessoa(func);
+	}
+
+	// Stocks de todos os EPIs, com validade mais próxima e lotes expirados
+	@GET
+	@Path("/getQUA_EPI_STOCKS")
+	@Produces("application/json")
+	public List<Object[]> getQUA_EPI_STOCKS() {
+		return daoEpi10.getstocks();
 	}
 }
