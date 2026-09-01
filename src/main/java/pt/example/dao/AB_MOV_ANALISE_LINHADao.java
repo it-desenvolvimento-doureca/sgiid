@@ -74,7 +74,7 @@ public class AB_MOV_ANALISE_LINHADao extends GenericDaoJpaImpl<AB_MOV_ANALISE_LI
 				 * +
 				 * " (select c.LIMITE_VERDE_SUP from AB_DIC_BANHO_COMPONENTE c where c.ID_BANHO = :id_banho and c.ID_COMPONENTE=a.ID_COMPONENTE and (c.DATA_FIM >= GETDATE() or c.DATA_FIM is null)  and c.DATA_INICIO <= GETDATE()) as LIMITE_VERDE_SUP, "
 				 */
-				+ " (select d.MEDIDA from AB_DIC_UNIDADE_MEDIDA d, AB_DIC_BANHO_COMPONENTE f where d.ID_MEDIDA = f.ID_UNIDADE_COMPONENTE and a.ID_COMPONENTE = f.ID_COMPONENTE and  f.ID_BANHO = :id_banho and f.INATIVO != 1 and (f.DATA_FIM >= GETDATE() or f.DATA_FIM is null)  and f.DATA_INICIO <= GETDATE()) as Medida "
+				+ " (select max(d.MEDIDA) from AB_DIC_UNIDADE_MEDIDA d, AB_DIC_BANHO_COMPONENTE f where d.ID_MEDIDA = f.ID_UNIDADE_COMPONENTE and a.ID_COMPONENTE = f.ID_COMPONENTE and  f.ID_BANHO = :id_banho and f.INATIVO != 1 and (f.DATA_FIM >= GETDATE() or f.DATA_FIM is null)  and f.DATA_INICIO <= GETDATE()) as Medida "
 				+ "from AB_MOV_ANALISE_LINHA a,AB_DIC_COMPONENTE b " + "where a.ID_COMPONENTE = b.ID_COMPONENTE and "
 				+ "a.ID_ANALISE = :id and a.ID_COMPONENTE = b.ID_COMPONENTE  "
 				+ "order by b.DATA_CRIA,b.ID_COMPONENTE");
