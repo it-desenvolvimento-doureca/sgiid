@@ -1,4 +1,4 @@
-package pt.example.entity;
+﻿package pt.example.entity;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -22,7 +22,7 @@ public class QUA_MOV_AUDITORIAS {
 	@Column(name = "ANO")
 	private Integer ANO;
 	@Column(name = "DATA_MODIF")
-	private Date DATA_MODIF;
+	private Timestamp DATA_MODIF;
 	@Column(name = "UTZ_MODIF")
 	private Integer UTZ_MODIF;
 	@Column(name = "QUANTIDADE_REALIZADA_MES_1")
@@ -62,7 +62,7 @@ public class QUA_MOV_AUDITORIAS {
 		return ANO;
 	}
 
-	public Date getDATA_MODIF() {
+	public Timestamp getDATA_MODIF() {
 		return DATA_MODIF;
 	}
 
@@ -130,7 +130,7 @@ public class QUA_MOV_AUDITORIAS {
 		ANO = aNO;
 	}
 
-	public void setDATA_MODIF(Date dATA_MODIF) {
+	public void setDATA_MODIF(Timestamp dATA_MODIF) {
 		DATA_MODIF = dATA_MODIF;
 	}
 
@@ -187,3 +187,4 @@ public class QUA_MOV_AUDITORIAS {
 	}
 
 }
+

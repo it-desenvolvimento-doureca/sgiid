@@ -1,4 +1,4 @@
-package pt.example.entity;
+﻿package pt.example.entity;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -21,11 +21,11 @@ public class QUA_DIC_TIPOS_AUDITORIA
 	@Column(name = "DESCRICAO")
     private String DESCRICAO;
 	@Column(name = "DATA_CRIA")
-    private Date DATA_CRIA;
+    private Timestamp DATA_CRIA;
 	@Column(name = "DATA_MODIF")
-    private Date DATA_MODIF;
+    private Timestamp DATA_MODIF;
 	@Column(name = "DATA_ANULA")
-    private Date DATA_ANULA;
+    private Timestamp DATA_ANULA;
 	@Column(name = "UTZ_CRIA")
     private Integer UTZ_CRIA;
 	@Column(name = "UTZ_MODIF")
@@ -41,13 +41,13 @@ public class QUA_DIC_TIPOS_AUDITORIA
 	public String getDESCRICAO() {
 		return DESCRICAO;
 	}
-	public Date getDATA_CRIA() {
+	public Timestamp getDATA_CRIA() {
 		return DATA_CRIA;
 	}
-	public Date getDATA_MODIF() {
+	public Timestamp getDATA_MODIF() {
 		return DATA_MODIF;
 	}
-	public Date getDATA_ANULA() {
+	public Timestamp getDATA_ANULA() {
 		return DATA_ANULA;
 	}
 	public Integer getUTZ_CRIA() {
@@ -68,13 +68,13 @@ public class QUA_DIC_TIPOS_AUDITORIA
 	public void setDESCRICAO(String dESCRICAO) {
 		DESCRICAO = dESCRICAO;
 	}
-	public void setDATA_CRIA(Date dATA_CRIA) {
+	public void setDATA_CRIA(Timestamp dATA_CRIA) {
 		DATA_CRIA = dATA_CRIA;
 	}
-	public void setDATA_MODIF(Date dATA_MODIF) {
+	public void setDATA_MODIF(Timestamp dATA_MODIF) {
 		DATA_MODIF = dATA_MODIF;
 	}
-	public void setDATA_ANULA(Date dATA_ANULA) {
+	public void setDATA_ANULA(Timestamp dATA_ANULA) {
 		DATA_ANULA = dATA_ANULA;
 	}
 	public void setUTZ_CRIA(Integer uTZ_CRIA) {

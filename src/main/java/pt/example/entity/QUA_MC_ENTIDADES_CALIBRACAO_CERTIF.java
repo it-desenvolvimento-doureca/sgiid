@@ -1,6 +1,7 @@
-package pt.example.entity;
+﻿package pt.example.entity;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,15 +33,15 @@ public class QUA_MC_ENTIDADES_CALIBRACAO_CERTIF {
 	@Column(name = "UTZ_CRIA")
 	private Integer UTZ_CRIA;
 	@Column(name = "DATA_CRIA")
-	private Date DATA_CRIA;
+	private Timestamp DATA_CRIA;
 	@Column(name = "UTZ_MODIF")
 	private Integer UTZ_MODIF;
 	@Column(name = "DATA_MODIF")
-	private Date DATA_MODIF;
+	private Timestamp DATA_MODIF;
 	@Column(name = "UTZ_ANULA")
 	private Integer UTZ_ANULA;
 	@Column(name = "DATA_ANULA")
-	private Date DATA_ANULA;
+	private Timestamp DATA_ANULA;
 	@Column(name = "ATIVO")
 	private Boolean ATIVO;
 
@@ -62,16 +63,17 @@ public class QUA_MC_ENTIDADES_CALIBRACAO_CERTIF {
 	public void setVALIDADE(Date v) { VALIDADE = v; }
 	public Integer getUTZ_CRIA() { return UTZ_CRIA; }
 	public void setUTZ_CRIA(Integer v) { UTZ_CRIA = v; }
-	public Date getDATA_CRIA() { return DATA_CRIA; }
-	public void setDATA_CRIA(Date v) { DATA_CRIA = v; }
+	public Timestamp getDATA_CRIA() { return DATA_CRIA; }
+	public void setDATA_CRIA(Timestamp v) { DATA_CRIA = v; }
 	public Integer getUTZ_MODIF() { return UTZ_MODIF; }
 	public void setUTZ_MODIF(Integer v) { UTZ_MODIF = v; }
-	public Date getDATA_MODIF() { return DATA_MODIF; }
-	public void setDATA_MODIF(Date v) { DATA_MODIF = v; }
+	public Timestamp getDATA_MODIF() { return DATA_MODIF; }
+	public void setDATA_MODIF(Timestamp v) { DATA_MODIF = v; }
 	public Integer getUTZ_ANULA() { return UTZ_ANULA; }
 	public void setUTZ_ANULA(Integer v) { UTZ_ANULA = v; }
-	public Date getDATA_ANULA() { return DATA_ANULA; }
-	public void setDATA_ANULA(Date v) { DATA_ANULA = v; }
+	public Timestamp getDATA_ANULA() { return DATA_ANULA; }
+	public void setDATA_ANULA(Timestamp v) { DATA_ANULA = v; }
 	public Boolean getATIVO() { return ATIVO; }
 	public void setATIVO(Boolean v) { ATIVO = v; }
 }
+

@@ -20,7 +20,15 @@ public class QUA_MC_DECLARACOES_NCDao extends GenericDaoJpaImpl<QUA_MC_DECLARACO
 	}
 
 	public List<QUA_MC_DECLARACOES_NC> getbyid(Integer id) {
-		Query query = entityManager.createQuery("Select a from QUA_MC_DECLARACOES_NC a where a.ID_DECLARACAO = :id");
+		Query query = entityManager.createNativeQuery(
+			"SELECT a.*, " +
+			"COALESCE(e.DESIGNACAO, g.NOME_GABARITO) as MEIO_CONTROLO, " +
+			"e.DESIGNACAO as EQUIP_DESIGNACAO, " +
+			"g.NOME_GABARITO as NOME_GABARITO " +
+			"FROM QUA_MC_DECLARACOES_NC a " +
+			"LEFT JOIN QUA_MC_EQUIPAMENTOS e ON e.ID_EQUIPAMENTO = a.ID_EQUIPAMENTO " +
+			"LEFT JOIN QUA_MC_GABARITOS g ON g.ID_GABARITO = a.ID_GABARITO " +
+			"WHERE a.ID_DECLARACAO = :id", QUA_MC_DECLARACOES_NC.class);
 		query.setParameter("id", id);
 		return query.getResultList();
 	}

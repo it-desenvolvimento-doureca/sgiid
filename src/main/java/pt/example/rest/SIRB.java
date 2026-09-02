@@ -360,6 +360,8 @@ public class SIRB {
 	private AT_INCIDENTES_CAUSASDao dao125;
 	@Inject
 	private AT_INCIDENTES_ACOESDao dao126;
+	@Inject
+	private AT_INCIDENTES_ASSINATURASDao dao127;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -2781,6 +2783,39 @@ public class SIRB {
 	@Produces("application/json")
 	public AT_INCIDENTES_PESSOAS updateAT_INCIDENTES_PESSOAS(final AT_INCIDENTES_PESSOAS data) {
 		return dao123.update(data);
+	}
+
+	/************************************* AT_INCIDENTES_ASSINATURAS */
+	/* Melhorias 2026-08-24 - assinaturas dos trabalhadores em postos similares */
+	@POST
+	@Path("/createAT_INCIDENTES_ASSINATURAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_ASSINATURAS insertAT_INCIDENTES_ASSINATURAS(final AT_INCIDENTES_ASSINATURAS data) {
+		return dao127.create(data);
+	}
+
+	@GET
+	@Path("/getAT_INCIDENTES_ASSINATURASbyid/{id}")
+	@Produces("application/json")
+	public List<AT_INCIDENTES_ASSINATURAS> getAT_INCIDENTES_ASSINATURASbyid(@PathParam("id") Integer id) {
+		return dao127.getbyid(id);
+	}
+
+	@DELETE
+	@Path("/deleteAT_INCIDENTES_ASSINATURAS/{id}")
+	public void deleteAT_INCIDENTES_ASSINATURAS(@PathParam("id") Integer id) {
+		AT_INCIDENTES_ASSINATURAS e = new AT_INCIDENTES_ASSINATURAS();
+		e.setID(id);
+		dao127.delete(e);
+	}
+
+	@PUT
+	@Path("/updateAT_INCIDENTES_ASSINATURAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public AT_INCIDENTES_ASSINATURAS updateAT_INCIDENTES_ASSINATURAS(final AT_INCIDENTES_ASSINATURAS data) {
+		return dao127.update(data);
 	}
 
 	/************************************* AT_INCIDENTES_ANEXOS */

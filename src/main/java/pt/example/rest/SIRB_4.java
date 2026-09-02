@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -12,6 +13,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import pt.example.bootstrap.ConnectProgress;
+import pt.example.bootstrap.ReportGenerator;
+import pt.example.bootstrap.SendEmail;
+import pt.example.entity.EMAIL;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -76,6 +80,11 @@ import pt.example.dao.QUA_MC_DERROGACOESDao;
 import pt.example.dao.QUA_MC_DERROGACOES_ACOESDao;
 import pt.example.dao.QUA_MC_DERROGACOES_FICHEIROSDao_MC;
 import pt.example.dao.QUA_MC_DECLARACOES_NCDao;
+import pt.example.dao.QUA_MC_SECCOES_CHEFESDao;
+import pt.example.dao.GER_UTILIZADORESDao;
+import pt.example.entity.QUA_MC_SECCOES_CHEFES;
+import pt.example.entity.GER_UTILIZADORES;
+import java.util.Map;
 
 import pt.example.entity.QUA_MC_DIC_SECCOES;
 import pt.example.entity.QUA_MC_DIC_RESP_VALIDACAO;
@@ -156,6 +165,8 @@ public class SIRB_4 {
 	@Inject private pt.example.dao.GER_CONF_CONSUMOS_EPIS_SILVERDao daoConfEpi;
 	@Inject private QUA_EPI_MOV_ENTREGADao daoEpi10;
 	@Inject private QUA_EPI_MOV_ENTREGA_ETIQDao daoEpi11;
+	@Inject private QUA_MC_SECCOES_CHEFESDao daoSeccoesChefes;
+	@Inject private GER_UTILIZADORESDao daoUtilizadores;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	private EntityManager entityManager;
@@ -1840,7 +1851,7 @@ public class SIRB_4 {
 			int nEtiquetas = dto.getETIQUETAS() == null ? 0 : dto.getETIQUETAS().size();
 			h.setOBSERVACOES("Levantamento efetuado com " + nEtiquetas + " etiqueta(s).");
 			h.setUTZ_CRIA(entrega.getUTZ_CRIA());
-			h.setDATA_CRIA(new java.sql.Date(System.currentTimeMillis()));
+			h.setDATA_CRIA(new java.sql.Timestamp(System.currentTimeMillis()));
 			h.setATIVO(true);
 			daoEpi9.create(h);
 		}
@@ -2099,5 +2110,101 @@ public class SIRB_4 {
 	@Produces("application/json")
 	public List<Object[]> getQUA_EPI_STOCKS() {
 		return daoEpi10.getstocks();
+	}
+
+	// QUA_MC_SECCOES_CHEFES endpoints
+	@GET
+	@Path("/getChefesSecao/{idSeccao}")
+	@Produces("application/json")
+	public List<Map<String, Object>> getChefesSecao(@PathParam("idSeccao") Integer idSeccao) {
+		List<Object[]> resultados = daoSeccoesChefes.getChefesSecao(idSeccao);
+		List<Map<String, Object>> chefes = new ArrayList<>();
+		for (Object[] row : resultados) {
+			Map<String, Object> chefe = new HashMap<>();
+			chefe.put("ID_SECCAO", row[0]);
+			chefe.put("ID_UTILIZADOR", row[1]);
+			chefe.put("EMAIL", row[2]);
+			chefe.put("NOME_UTILIZADOR", row[3]);
+			chefes.add(chefe);
+		}
+		return chefes;
+	}
+
+	@POST
+	@Path("/adicionarChefe")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public void adicionarChefe(Map<String, Object> data) {
+		Integer idSeccao = ((Number) data.get("idSeccao")).intValue();
+		Integer idUtilizador = ((Number) data.get("idUtilizador")).intValue();
+		daoSeccoesChefes.adicionarChefe(idSeccao, idUtilizador);
+	}
+
+	@DELETE
+	@Path("/removerChefe/{idSeccao}/{idUtilizador}")
+	@Produces("application/json")
+	public void removerChefe(@PathParam("idSeccao") Integer idSeccao, @PathParam("idUtilizador") Integer idUtilizador) {
+		daoSeccoesChefes.removerChefe(idSeccao, idUtilizador);
+	}
+
+	@GET
+	@Path("/getAllUtilizadores")
+	@Produces("application/json")
+	public List<GER_UTILIZADORES> getAllUtilizadores() {
+		return daoUtilizadores.getAll();
+	}
+
+	// Enviar email com relatório de declaração NC
+	@POST
+	@Path("/enviarEmailComDeclaracao")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public Map<String, Object> enviarEmailComDeclaracao(Map<String, Object> data) {
+		Map<String, Object> resultado = new HashMap<>();
+		try {
+			Integer idDeclaracao = ((Number) data.get("idDeclaracao")).intValue();
+			String para = (String) data.get("para");
+			String assunto = (String) data.get("assunto");
+			String mensagem = (String) data.get("mensagem");
+
+			String filename = System.currentTimeMillis() + "";
+			String filepath = "sgiid";
+
+			// Gerar PDF via ReportGenerator
+			pt.example.bootstrap.ReportGenerator reportGen = new pt.example.bootstrap.ReportGenerator();
+			reportGen.relatorio("pdf", filename, idDeclaracao, "declaracao_nc_mc", getURL(), filepath, "", null, null, null, null);
+
+			// Criar e enviar email com anexo
+			EMAIL email = new EMAIL();
+			email.setDE(data.get("de") != null ? data.get("de").toString() : "");
+			email.setPARA(para);
+			email.setBCC("");
+			email.setASSUNTO(assunto);
+			email.setMENSAGEM(mensagem);
+			email.setNOME_FICHEIRO(filename);
+
+			// Enviar email (SendEmail adiciona automaticamente .pdf ao nome_ficheiro)
+			SendEmail send = new SendEmail();
+			send.enviarEmail(email.getDE(), email.getPARA(), email.getASSUNTO(), email.getMENSAGEM(),
+				email.getNOME_FICHEIRO(), null, "sgiid", null, email.getBCC());
+
+			resultado.put("sucesso", true);
+			resultado.put("mensagem", "Email enviado com sucesso");
+		} catch (Exception e) {
+			resultado.put("sucesso", false);
+			resultado.put("mensagem", "Erro ao enviar email: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return resultado;
+	}
+
+	public String getURL() {
+		String url = "";
+		Query query_folder = entityManager.createNativeQuery("select top 1 * from GER_PARAMETROS a");
+		List<Object[]> dados_folder = query_folder.getResultList();
+		for (Object[] content : dados_folder) {
+			url = content[3].toString();
+		}
+		return url;
 	}
 }

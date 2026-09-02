@@ -1,6 +1,7 @@
-package pt.example.entity;
+﻿package pt.example.entity;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,11 +48,11 @@ public class QUA_MC_DERROGACOES {
 	@JsonProperty("ID_EQUIPAMENTO") private Integer ID_EQUIPAMENTO;
 	@JsonProperty("ID_GABARITO") private Integer ID_GABARITO;
 	@JsonProperty("UTZ_CRIA") private Integer UTZ_CRIA;
-	@JsonProperty("DATA_CRIA") private Date DATA_CRIA;
+	@JsonProperty("DATA_CRIA") private Timestamp DATA_CRIA;
 	@JsonProperty("UTZ_MODIF") private Integer UTZ_MODIF;
-	@JsonProperty("DATA_MODIF") private Date DATA_MODIF;
+	@JsonProperty("DATA_MODIF") private Timestamp DATA_MODIF;
 	@JsonProperty("UTZ_ANULA") private Integer UTZ_ANULA;
-	@JsonProperty("DATA_ANULA") private Date DATA_ANULA;
+	@JsonProperty("DATA_ANULA") private Timestamp DATA_ANULA;
 	@JsonProperty("ATIVO") private Boolean ATIVO;
 
 	public Integer getID_DERROGACAO() { return ID_DERROGACAO; }
@@ -87,10 +88,12 @@ public class QUA_MC_DERROGACOES {
 	public Integer getID_EQUIPAMENTO() { return ID_EQUIPAMENTO; } public void setID_EQUIPAMENTO(Integer v) { ID_EQUIPAMENTO = v; }
 	public Integer getID_GABARITO() { return ID_GABARITO; } public void setID_GABARITO(Integer v) { ID_GABARITO = v; }
 	public Integer getUTZ_CRIA() { return UTZ_CRIA; } public void setUTZ_CRIA(Integer v) { UTZ_CRIA = v; }
-	public Date getDATA_CRIA() { return DATA_CRIA; } public void setDATA_CRIA(Date v) { DATA_CRIA = v; }
+	public Timestamp getDATA_CRIA() { return DATA_CRIA; } public void setDATA_CRIA(Timestamp v) { DATA_CRIA = v; }
 	public Integer getUTZ_MODIF() { return UTZ_MODIF; } public void setUTZ_MODIF(Integer v) { UTZ_MODIF = v; }
-	public Date getDATA_MODIF() { return DATA_MODIF; } public void setDATA_MODIF(Date v) { DATA_MODIF = v; }
+	public Timestamp getDATA_MODIF() { return DATA_MODIF; } public void setDATA_MODIF(Timestamp v) { DATA_MODIF = v; }
 	public Integer getUTZ_ANULA() { return UTZ_ANULA; } public void setUTZ_ANULA(Integer v) { UTZ_ANULA = v; }
-	public Date getDATA_ANULA() { return DATA_ANULA; } public void setDATA_ANULA(Date v) { DATA_ANULA = v; }
+	public Timestamp getDATA_ANULA() { return DATA_ANULA; } public void setDATA_ANULA(Timestamp v) { DATA_ANULA = v; }
 	public Boolean getATIVO() { return ATIVO; } public void setATIVO(Boolean v) { ATIVO = v; }
 }
+
+

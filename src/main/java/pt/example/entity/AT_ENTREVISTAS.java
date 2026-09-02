@@ -15,6 +15,8 @@ public class AT_ENTREVISTAS {
 	public Integer ID_OCORRENCIA;
 	public String NOME;
 	public String FUNCAO;
+	/** Melhorias 2026-08: n mecanografico, substitui a Funcao no ecra. */
+	public String NUMERO;
 	public String TESTEMUNHO;
 
 	@Id
@@ -37,6 +39,15 @@ public class AT_ENTREVISTAS {
 	@Column(name = "FUNCAO")
 	public String getFUNCAO() {
 		return FUNCAO;
+	}
+
+	@Column(name = "NUMERO")
+	public String getNUMERO() {
+		return NUMERO;
+	}
+
+	public void setNUMERO(String nUMERO) {
+		NUMERO = nUMERO;
 	}
 
 	public void setID_ENTREVISTA(Integer iD_ENTREVISTA) {
