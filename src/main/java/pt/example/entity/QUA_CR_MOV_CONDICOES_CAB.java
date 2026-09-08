@@ -1,0 +1,71 @@
+package pt.example.entity;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@Entity
+@Table(name = "QUA_CR_MOV_CONDICOES_CAB")
+public class QUA_CR_MOV_CONDICOES_CAB {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonProperty("ID_CONDICOES_CAB")
+	private Integer ID_CONDICOES_CAB;
+	@JsonProperty("ID_RELATORIO")
+	private Integer ID_RELATORIO;
+	@JsonProperty("NUM_PECAS")
+	private Integer NUM_PECAS;
+	@JsonProperty("SUPERFICIE")
+	private BigDecimal SUPERFICIE;
+	@JsonProperty("OBSERVACOES")
+	private String OBSERVACOES;
+	@JsonProperty("ID_ACCESS_LEGADO")
+	private Integer ID_ACCESS_LEGADO;
+	@JsonProperty("UTZ_CRIA")
+	private Integer UTZ_CRIA;
+	@JsonProperty("DATA_CRIA")
+	private Timestamp DATA_CRIA;
+	@JsonProperty("UTZ_MODIF")
+	private Integer UTZ_MODIF;
+	@JsonProperty("DATA_MODIF")
+	private Timestamp DATA_MODIF;
+	@JsonProperty("UTZ_ANULA")
+	private Integer UTZ_ANULA;
+	@JsonProperty("DATA_ANULA")
+	private Timestamp DATA_ANULA;
+	@JsonProperty("ATIVO")
+	private Boolean ATIVO;
+
+	public Integer getID_CONDICOES_CAB() { return ID_CONDICOES_CAB; }
+	public void setID_CONDICOES_CAB(Integer v) { ID_CONDICOES_CAB = v; }
+	public Integer getID_RELATORIO() { return ID_RELATORIO; }
+	public void setID_RELATORIO(Integer v) { ID_RELATORIO = v; }
+	public Integer getNUM_PECAS() { return NUM_PECAS; }
+	public void setNUM_PECAS(Integer v) { NUM_PECAS = v; }
+	public BigDecimal getSUPERFICIE() { return SUPERFICIE; }
+	public void setSUPERFICIE(BigDecimal v) { SUPERFICIE = v; }
+	public String getOBSERVACOES() { return OBSERVACOES; }
+	public void setOBSERVACOES(String v) { OBSERVACOES = v; }
+	public Integer getID_ACCESS_LEGADO() { return ID_ACCESS_LEGADO; }
+	public void setID_ACCESS_LEGADO(Integer v) { ID_ACCESS_LEGADO = v; }
+	public Integer getUTZ_CRIA() { return UTZ_CRIA; }
+	public void setUTZ_CRIA(Integer v) { UTZ_CRIA = v; }
+	public Timestamp getDATA_CRIA() { return DATA_CRIA; }
+	public void setDATA_CRIA(Timestamp v) { DATA_CRIA = v; }
+	public Integer getUTZ_MODIF() { return UTZ_MODIF; }
+	public void setUTZ_MODIF(Integer v) { UTZ_MODIF = v; }
+	public Timestamp getDATA_MODIF() { return DATA_MODIF; }
+	public void setDATA_MODIF(Timestamp v) { DATA_MODIF = v; }
+	public Integer getUTZ_ANULA() { return UTZ_ANULA; }
+	public void setUTZ_ANULA(Integer v) { UTZ_ANULA = v; }
+	public Timestamp getDATA_ANULA() { return DATA_ANULA; }
+	public void setDATA_ANULA(Timestamp v) { DATA_ANULA = v; }
+	public Boolean getATIVO() { return ATIVO; }
+	public void setATIVO(Boolean v) { ATIVO = v; }
+}
