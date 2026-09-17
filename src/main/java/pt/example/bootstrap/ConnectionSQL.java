@@ -13,22 +13,16 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import javax.persistence.Query;
 
 
 
 public class ConnectionSQL {
 
-	static java.sql.Connection globalconnection = null;
-	
-	
 	public static String getURL() {
 		String url = null;
 		try {
@@ -42,37 +36,18 @@ public class ConnectionSQL {
 		}
 		return url;
 	}
-	
-	
-	
-	private static Connection getConnection() {
+
+
+
+	// Devolve sempre uma conexao nova. Quem chama e responsavel por a fechar,
+	// obrigatoriamente com try-with-resources.
+	private static Connection getConnection() throws SQLException {
 		try {
-
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			
-			//"jdbc:sqlserver://192.168.40.126:54447;databaseName=SGIID_DEV;User=sa;Password=DourecA2@;"
-			globalconnection = DriverManager.getConnection(getURL());
-
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			try {
-				globalconnection.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			// System.exit(1);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			try {
-				globalconnection.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			// System.exit(2);
-		} finally {
-			// connection.close();
+			throw new SQLException("Driver JDBC do SQL Server nao encontrado", e);
 		}
-		return globalconnection;
+		return DriverManager.getConnection(getURL());
 	}
 
 	public static List<String> GetData() {
@@ -89,17 +64,8 @@ public class ConnectionSQL {
 				//System.out.println(coffeeName);
 				x.add(coffeeName);
 			}
-			stmt.close();
-			rs.close();
-			connection.close();
-			// globalconnection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			try {
-				globalconnection.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 		return x;
 	}
@@ -107,21 +73,18 @@ public class ConnectionSQL {
 	public static boolean atualizadata(Timestamp data_ficheiro, String nomeficheiro) throws ParseException {
 		String query = "Select top 1 * from CART_ULTIMO_FICHEIRO ";
 
-		List<String> x = new ArrayList<>();
+		try (Connection connection = getConnection();
+				Statement stmt = connection.createStatement()) {
 
-		// Usa sempre assim que fecha os resources automaticamente
-		try {
-			Connection connection = getConnection();
-
-			Statement stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
 			int size = 0;
 			String date_bd = null;
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-			while (rs.next()) {
-				size++;
-				date_bd = rs.getString("DATA_ULTIMO_FICHEIRO");
+			try (ResultSet rs = stmt.executeQuery(query)) {
+				while (rs.next()) {
+					size++;
+					date_bd = rs.getString("DATA_ULTIMO_FICHEIRO");
+				}
 			}
 
 			if (size == 0) {
@@ -140,17 +103,8 @@ public class ConnectionSQL {
 
 			}
 
-			stmt.close();
-			rs.close();
-			connection.close();
-			// globalconnection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			try {
-				globalconnection.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 		String[] words = nomeficheiro.split("_");
 		String CARREGAR_ID = words[0];
@@ -160,8 +114,6 @@ public class ConnectionSQL {
 	public static boolean VerificaDados(String CARREGAR_ID) {
 		String query = "Select  * from CART_CAB where CARREGAR_ID = '" + CARREGAR_ID + "'";
 
-		List<String> x = new ArrayList<>();
-
 		// Usa sempre assim que fecha os resources automaticamente
 		try (Connection connection = getConnection();
 				Statement stmt = connection.createStatement();
@@ -170,25 +122,9 @@ public class ConnectionSQL {
 			while (rs.next()) {
 				size++;
 			}
-			if (size > 0) {
-				stmt.close();
-				rs.close();
-				connection.close();
-				return false;
-			} else {
-				stmt.close();
-				rs.close();
-				connection.close();
-				return true;
-			}
-			// globalconnection.close();
+			return size == 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			try {
-				globalconnection.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 		return false;
 	}
@@ -197,11 +133,15 @@ public class ConnectionSQL {
 
 		StringBuilder sql = new StringBuilder("INSERT INTO ").append(tabela).append(" (");
 		StringBuilder placeholders = new StringBuilder();
+		List<String> valores = new ArrayList<>(dictMap.size());
 		Integer id = null;
 
-		for (Iterator<String> iter = dictMap.keySet().iterator(); iter.hasNext();) {
-			sql.append(iter.next());
+		// Uma unica passagem para garantir que colunas e valores ficam pela mesma ordem
+		for (Iterator<Map.Entry<String, String>> iter = dictMap.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry<String, String> entry = iter.next();
+			sql.append(entry.getKey());
 			placeholders.append("?");
+			valores.add(entry.getValue());
 
 			if (iter.hasNext()) {
 				sql.append(",");
@@ -209,20 +149,21 @@ public class ConnectionSQL {
 			}
 		}
 
-		try {
-			Connection connection = getConnection();
-			if (ID != null)
-				sql.append("," + campo);
-			sql.append(") VALUES (");
-			sql.append(placeholders);
-			if (ID != null)
-				sql.append("," + ID);
-			sql.append(")");
-			// System.out.println(sql);
-			PreparedStatement stmt = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
-			int i = 1;
+		if (ID != null)
+			sql.append("," + campo);
+		sql.append(") VALUES (");
+		sql.append(placeholders);
+		if (ID != null)
+			sql.append("," + ID);
+		sql.append(")");
+		// System.out.println(sql);
 
-			for (String value : dictMap.values()) {
+		try (Connection connection = getConnection();
+				PreparedStatement stmt = connection.prepareStatement(sql.toString(),
+						Statement.RETURN_GENERATED_KEYS)) {
+
+			int i = 1;
+			for (String value : valores) {
 				stmt.setString(i++, value);
 			}
 
@@ -242,11 +183,6 @@ public class ConnectionSQL {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			try {
-				globalconnection.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 		return id;
 	}
