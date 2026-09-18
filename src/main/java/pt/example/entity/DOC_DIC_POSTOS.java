@@ -41,6 +41,19 @@ public class DOC_DIC_POSTOS {
 	private String IMPRESSORA;
 	@JsonProperty("ID_MAQUINA")
 	private Integer ID_MAQUINA;
+	/**
+	 * Maquina de INJECAO deste posto (INJ_DIC_MAQUINAS.ID).
+	 *
+	 * Coluna propria e nao reaproveitamento do ID_MAQUINA acima, que aponta
+	 * para o PR_DIC_MAQUINAS_MATRIX. Com duas tabelas de maquinas, um ID
+	 * polimorfico faria um posto mal configurado apontar em silencio para a
+	 * maquina errada.
+	 *
+	 * E isto que liga o tablet de injecao a sua maquina: o servidor resolve o
+	 * posto pelo IP de quem se liga e chega aqui.
+	 */
+	@JsonProperty("ID_MAQUINA_INJECAO")
+	private Integer ID_MAQUINA_INJECAO;
 	@JsonProperty("MULTIPOSTO")
 	private Boolean MULTIPOSTO;
 	@JsonProperty("POSTO_ATUAL")
@@ -144,6 +157,14 @@ public class DOC_DIC_POSTOS {
 
 	public void setID_MAQUINA(Integer iD_MAQUINA) {
 		ID_MAQUINA = iD_MAQUINA;
+	}
+
+	public Integer getID_MAQUINA_INJECAO() {
+		return ID_MAQUINA_INJECAO;
+	}
+
+	public void setID_MAQUINA_INJECAO(Integer id) {
+		ID_MAQUINA_INJECAO = id;
 	}
 
 	public Boolean getMULTIPOSTO() {

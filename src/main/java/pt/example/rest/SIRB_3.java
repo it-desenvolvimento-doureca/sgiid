@@ -264,6 +264,10 @@ public class SIRB_3 {
 	private PIN_MOV_CONSUMO_TINTAS_LINHASDao daoConsumoTintasLinhas;
 	@Inject
 	private PIN_MOV_RECEITAS_PRESSOESDao daoPressoes;
+	@Inject
+	private INJ_DIC_MAQUINASDao daoInjMaquinas;
+	@Inject
+	private INJ_DIC_MAQUINAS_VARDao daoInjVariaveis;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -8199,5 +8203,95 @@ public class SIRB_3 {
 			data.getID_PLANO_DIARIO_PINTURA(),
 			data.getDIA()
 		);
+	}
+	/************************************* INJ_DIC_MAQUINAS
+	 *
+	 * Maquinas de injecao, lidas pelo coletor do tablet.
+	 *
+	 * A PASSWORD NUNCA VAI PARA O BROWSER: o DAO apaga-a nas leituras e, na
+	 * gravacao, mantem a que la esta quando o ecra manda o campo vazio. Ver
+	 * INJ_DIC_MAQUINASDao.
+	 */
+	@POST
+	@Path("/createINJ_DIC_MAQUINAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public INJ_DIC_MAQUINAS insertINJ_DIC_MAQUINAS(final INJ_DIC_MAQUINAS data) {
+		return daoInjMaquinas.create(data);
+	}
+
+	@GET
+	@Path("/getINJ_DIC_MAQUINAS")
+	@Produces("application/json")
+	public List<INJ_DIC_MAQUINAS> getINJ_DIC_MAQUINAS() {
+		return daoInjMaquinas.getall();
+	}
+
+	@GET
+	@Path("/getINJ_DIC_MAQUINASbyid/{id}")
+	@Produces("application/json")
+	public List<INJ_DIC_MAQUINAS> getINJ_DIC_MAQUINASbyid(@PathParam("id") Integer id) {
+		return daoInjMaquinas.getbyid(id);
+	}
+
+	@PUT
+	@Path("/updateINJ_DIC_MAQUINAS")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public INJ_DIC_MAQUINAS updateINJ_DIC_MAQUINAS(final INJ_DIC_MAQUINAS data) {
+		return daoInjMaquinas.guardar(data);
+	}
+
+	/*
+	 * NAO ha delete de maquinas. Uma maquina apagada levaria atras os ciclos
+	 * gravados (INJ_MOV_CICLOS), as variaveis e os trabalhos que lhe apontam.
+	 * Para tirar uma maquina de servico poe-se ATIVO = 0: o coletor deixa de a
+	 * ler e o historico fica de pe.
+	 */
+
+	/************************************* INJ_DIC_MAQUINAS_VAR */
+	@POST
+	@Path("/createINJ_DIC_MAQUINAS_VAR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public INJ_DIC_MAQUINAS_VAR insertINJ_DIC_MAQUINAS_VAR(final INJ_DIC_MAQUINAS_VAR data) {
+		return daoInjVariaveis.create(data);
+	}
+
+	@GET
+	@Path("/getINJ_DIC_MAQUINAS_VAR")
+	@Produces("application/json")
+	public List<INJ_DIC_MAQUINAS_VAR> getINJ_DIC_MAQUINAS_VAR() {
+		return daoInjVariaveis.getall();
+	}
+
+	@GET
+	@Path("/getINJ_DIC_MAQUINAS_VARbyid/{id}")
+	@Produces("application/json")
+	public List<INJ_DIC_MAQUINAS_VAR> getINJ_DIC_MAQUINAS_VARbyid(@PathParam("id") Integer id) {
+		return daoInjVariaveis.getbyid(id);
+	}
+
+	@GET
+	@Path("/getINJ_DIC_MAQUINAS_VARbytipo/{tipo}")
+	@Produces("application/json")
+	public List<INJ_DIC_MAQUINAS_VAR> getINJ_DIC_MAQUINAS_VARbytipo(@PathParam("tipo") String tipo) {
+		return daoInjVariaveis.getbytipo(tipo);
+	}
+
+	@PUT
+	@Path("/updateINJ_DIC_MAQUINAS_VAR")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public INJ_DIC_MAQUINAS_VAR updateINJ_DIC_MAQUINAS_VAR(final INJ_DIC_MAQUINAS_VAR data) {
+		return daoInjVariaveis.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteINJ_DIC_MAQUINAS_VAR/{id}")
+	public void deleteINJ_DIC_MAQUINAS_VAR(@PathParam("id") Integer id) {
+		INJ_DIC_MAQUINAS_VAR var = new INJ_DIC_MAQUINAS_VAR();
+		var.setID(id);
+		daoInjVariaveis.delete(var);
 	}
 }

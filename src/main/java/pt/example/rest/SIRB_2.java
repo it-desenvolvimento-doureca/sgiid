@@ -1139,12 +1139,25 @@ public class SIRB_2 {
 		String TIPO = firstMap.get("TIPO");
 
 		Query query_folder = entityManager.createNativeQuery("DECLARE @SEMANA int = " + SEMANA
-				+ ";DECLARE @TIPO varchar(50) = '" + TIPO + "'; " + " DECLARE @ANO int = " + ANO + "; "
-				+ "select a.ID_PLANEAMENTO_PRODUCAO_CAB,CAST(a.DATA_CRIA as date) DATA_CRIA ,a.DATA_MRP,a.N_MRP,a.ID_LINHA,a.ESTADO,a.NUMERO_SEMANAS "
-				+ "from PR_PLANEAMENTO_PRODUCAO_CAB a "
-				+ "where CAST((SELECT MIN(CAST(value AS INT)) FROM STRING_SPLIT(SEMANAS, ',')) AS INT) = @SEMANA "
-				+ "and YEAR(DATEADD(DAY, 4 - ((DATEPART(WEEKDAY, a.DATA_MRP) + @@DATEFIRST - 2) % 7 + 1), a.DATA_MRP)) = @ANO and ativo = 1 AND (((@TIPO = 'Cromagem' ) AND ( a.ID_LINHA in (1,2,3))) OR ((@TIPO = 'Pintura' ) AND ( a.ID_LINHA in (4)))) "
-				+ "order by a.ID_PLANEAMENTO_PRODUCAO_CAB desc");
+				+ "; DECLARE @TIPO varchar(50) = '" + TIPO + "'; " + "DECLARE @ANO int = " + ANO + "; "
+
+				+ "SELECT " + "a.ID_PLANEAMENTO_PRODUCAO_CAB, " + "CAST(a.DATA_CRIA AS date) DATA_CRIA, "
+				+ "a.DATA_MRP, " + "a.N_MRP, " + "a.ID_LINHA, " + "a.ESTADO, " + "a.NUMERO_SEMANAS "
+
+				+ "FROM PR_PLANEAMENTO_PRODUCAO_CAB a "
+
+				+ "WHERE DATEPART(ISO_WEEK, dbo.GetPrimeiraSemanaPlaneamento(" + "    a.DATA_MRP, "
+				+ "    a.NUMERO_SEMANAS, " + "    0, " + "    a.ID_PLANEAMENTO_PRODUCAO_CAB" + ")) = @SEMANA "
+
+				+ "AND YEAR(dbo.GetPrimeiraSemanaPlaneamento(" + "    a.DATA_MRP, " + "    a.NUMERO_SEMANAS, "
+				+ "    0, " + "    a.ID_PLANEAMENTO_PRODUCAO_CAB" + ")) = @ANO "
+
+				+ "AND a.ATIVO = 1 "
+
+				+ "AND (" + "    (@TIPO = 'Cromagem' AND a.ID_LINHA IN (1,2,3)) " + "    OR "
+				+ "    (@TIPO = 'Pintura' AND a.ID_LINHA IN (4)) " + ") "
+
+				+ "ORDER BY a.ID_PLANEAMENTO_PRODUCAO_CAB DESC");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -2320,20 +2333,17 @@ public class SIRB_2 {
 	 * acrescentadas no fim.
 	 *
 	 * Devolve as causas do diagrama (CATEGORIA preenchida e nao inativas) mais as
-	 * causas antigas que ja estejam ligadas a esta ocorrencia, para que os
-	 * registos historicos continuem a mostrar e a imprimir o que foi assinalado.
+	 * causas antigas que ja estejam ligadas a esta ocorrencia, para que os registos
+	 * historicos continuem a mostrar e a imprimir o que foi assinalado.
 	 */
 	public List<Object[]> getAT_OCORRENCIAS_CAUSAS_ACIDENTE(@PathParam("id") Integer id) {
-		Query query_folder = entityManager.createNativeQuery(
-				"SELECT a.ID_CAUSAS_ACIDENTE, l.ID_OCORRENCIA, a.DESCRICAO,"
-						+ " a.CATEGORIA, a.ORDEM, a.PERMITE_TEXTO, l.TEXTO_OUTRO"
-						+ " FROM AT_DIC_CAUSAS_ACIDENTE a"
+		Query query_folder = entityManager
+				.createNativeQuery("SELECT a.ID_CAUSAS_ACIDENTE, l.ID_OCORRENCIA, a.DESCRICAO,"
+						+ " a.CATEGORIA, a.ORDEM, a.PERMITE_TEXTO, l.TEXTO_OUTRO" + " FROM AT_DIC_CAUSAS_ACIDENTE a"
 						+ " LEFT JOIN AT_OCORRENCIAS_CAUSAS_ACIDENTE l"
-						+ "   ON l.ID_CAUSAS_ACIDENTE = a.ID_CAUSAS_ACIDENTE"
-						+ "  AND l.ID_OCORRENCIA = :id"
+						+ "   ON l.ID_CAUSAS_ACIDENTE = a.ID_CAUSAS_ACIDENTE" + "  AND l.ID_OCORRENCIA = :id"
 						+ " WHERE (a.CATEGORIA IS NOT NULL AND ISNULL(a.INATIVO,0) = 0)"
-						+ "    OR l.ID_OCORRENCIA IS NOT NULL"
-						+ " ORDER BY a.CATEGORIA, a.ORDEM, a.DESCRICAO");
+						+ "    OR l.ID_OCORRENCIA IS NOT NULL" + " ORDER BY a.CATEGORIA, a.ORDEM, a.DESCRICAO");
 		query_folder.setParameter("id", id);
 		List<Object[]> dados_folder = query_folder.getResultList();
 		return dados_folder;
@@ -2374,11 +2384,12 @@ public class SIRB_2 {
 		query.executeUpdate();
 	}
 
-	/* Melhorias 2026-08: os endpoints do Ishikawa para incidentes foram
-	 * removidos. A analise das causas dos incidentes passou a ser uma tabela
-	 * de linhas livres (AT_INCIDENTES_CAUSAS), com CRUD em SIRB.java.
-	 * O Diagrama de Ishikawa e exclusivo dos acidentes de trabalho. */
-
+	/*
+	 * Melhorias 2026-08: os endpoints do Ishikawa para incidentes foram removidos.
+	 * A analise das causas dos incidentes passou a ser uma tabela de linhas livres
+	 * (AT_INCIDENTES_CAUSAS), com CRUD em SIRB.java. O Diagrama de Ishikawa e
+	 * exclusivo dos acidentes de trabalho.
+	 */
 
 	/************************************* RH_DIC_EPI */
 
@@ -2823,7 +2834,8 @@ public class SIRB_2 {
 
 	// Helper: converte tristate (null/true/false) para Integer (null/1/0)
 	private Integer toTriState(String value) {
-		if (value == null || value.equals("null")) return null;
+		if (value == null || value.equals("null"))
+			return null;
 		return "true".equals(value) ? 1 : 0;
 	}
 
@@ -2871,22 +2883,26 @@ public class SIRB_2 {
 		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
 		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
 
-		// Inlinar datas no SQL como literais para evitar problema do jTDS com null Date (envia varbinary)
-		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
-		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
-		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
-		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+		// Inlinar datas no SQL como literais para evitar problema do jTDS com null Date
+		// (envia varbinary)
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null
+				&& DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'"
+						: "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null
+				&& DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'"
+						: "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null
+				&& DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'"
+						: "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null
+				&& DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'"
+						: "NULL";
 
 		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_GERAL "
 				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO,:REFERENCIA, :ETIQUETA, "
 				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
 				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
-				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
-				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, " + dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
 				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
 
 		javax.persistence.Query query = entityManager.createNativeQuery(sql);
@@ -2958,22 +2974,26 @@ public class SIRB_2 {
 		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
 		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
 
-		// Inlinar datas no SQL como literais para evitar problema do jTDS com null Date (envia varbinary)
-		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
-		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
-		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
-		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+		// Inlinar datas no SQL como literais para evitar problema do jTDS com null Date
+		// (envia varbinary)
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null
+				&& DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'"
+						: "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null
+				&& DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'"
+						: "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null
+				&& DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'"
+						: "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null
+				&& DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'"
+						: "NULL";
 
 		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_GERAL_MURO "
 				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO,:REFERENCIA, :ETIQUETA, "
 				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
 				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
-				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
-				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, " + dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
 				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
 
 		javax.persistence.Query query = entityManager.createNativeQuery(sql);
@@ -3041,22 +3061,26 @@ public class SIRB_2 {
 		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
 		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
 
-		// Inlinar datas no SQL como literais para evitar problema do jTDS com null Date (envia varbinary)
-		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
-		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
-		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
-		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+		// Inlinar datas no SQL como literais para evitar problema do jTDS com null Date
+		// (envia varbinary)
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null
+				&& DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'"
+						: "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null
+				&& DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'"
+						: "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null
+				&& DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'"
+						: "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null
+				&& DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'"
+						: "NULL";
 
 		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_PROGRESSO "
 				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO, :REFERENCIA, :ETIQUETA, "
 				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
 				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
-				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
-				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, " + dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
 				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
 
 		javax.persistence.Query query = entityManager.createNativeQuery(sql);
@@ -3093,74 +3117,73 @@ public class SIRB_2 {
 	@Path("/getQUA_MURO_QUALIDADE_ETIQUETA_DETALHE")
 	@Produces("application/json")
 	public List<Object[]> getQUA_MURO_QUALIDADE_ETIQUETA_DETALHE(final List<HashMap<String, String>> dados) {
-	    HashMap<String, String> firstMap = dados.get(0);
+		HashMap<String, String> firstMap = dados.get(0);
 
-	    String DATA_MES = firstMap.get("data_mes");
-	    String DATA_INI = firstMap.get("data_ini");
-	    String DATA_FIM = firstMap.get("data_fim");
-	    String ID_UTZ = firstMap.get("id_utz");
-	    String ID_UTZ_TRABALHO = firstMap.get("id_utz_trabalho");
-	    String ETIQUETA = firstMap.get("etiqueta");
+		String DATA_MES = firstMap.get("data_mes");
+		String DATA_INI = firstMap.get("data_ini");
+		String DATA_FIM = firstMap.get("data_fim");
+		String ID_UTZ = firstMap.get("id_utz");
+		String ID_UTZ_TRABALHO = firstMap.get("id_utz_trabalho");
+		String ETIQUETA = firstMap.get("etiqueta");
 
-	    boolean filtrarPorMes = DATA_MES != null && !DATA_MES.equals("null") && !DATA_MES.isEmpty();
-	    boolean filtrarPorData = !filtrarPorMes
-	            && DATA_INI != null && !DATA_INI.equals("null") && !DATA_INI.isEmpty()
-	            && DATA_FIM != null && !DATA_FIM.equals("null") && !DATA_FIM.isEmpty();
-	    boolean filtrarPorUtz = ID_UTZ != null && !ID_UTZ.equals("null") && !ID_UTZ.isEmpty();
-	    boolean filtrarPorUtzTrabalho = ID_UTZ_TRABALHO != null && !ID_UTZ_TRABALHO.equals("null") && !ID_UTZ_TRABALHO.isEmpty();
+		boolean filtrarPorMes = DATA_MES != null && !DATA_MES.equals("null") && !DATA_MES.isEmpty();
+		boolean filtrarPorData = !filtrarPorMes && DATA_INI != null && !DATA_INI.equals("null") && !DATA_INI.isEmpty()
+				&& DATA_FIM != null && !DATA_FIM.equals("null") && !DATA_FIM.isEmpty();
+		boolean filtrarPorUtz = ID_UTZ != null && !ID_UTZ.equals("null") && !ID_UTZ.isEmpty();
+		boolean filtrarPorUtzTrabalho = ID_UTZ_TRABALHO != null && !ID_UTZ_TRABALHO.equals("null")
+				&& !ID_UTZ_TRABALHO.isEmpty();
 
-	    String dataFiltroSql;
-	    if (filtrarPorMes) {
-	        dataFiltroSql = "AND FORMAT(a.DATA_HORA_CRIA, 'yyyy-MM') = :DATA_MES ";
-	    } else if (filtrarPorData) {
-	        dataFiltroSql = "AND a.DATA_HORA_CRIA BETWEEN CAST(:DATA_INI AS DATETIME) AND DATEADD(SECOND, 86399, CAST(:DATA_FIM AS DATETIME)) ";
-	    } else {
-	        dataFiltroSql = "";
-	    }
+		String dataFiltroSql;
+		if (filtrarPorMes) {
+			dataFiltroSql = "AND FORMAT(a.DATA_HORA_CRIA, 'yyyy-MM') = :DATA_MES ";
+		} else if (filtrarPorData) {
+			dataFiltroSql = "AND a.DATA_HORA_CRIA BETWEEN CAST(:DATA_INI AS DATETIME) AND DATEADD(SECOND, 86399, CAST(:DATA_FIM AS DATETIME)) ";
+		} else {
+			dataFiltroSql = "";
+		}
 
-	    String sql = "SELECT a.TESTE_DIMENSIONAL, a.OPERARIO_FORMACAO, a.ORIGEM_RECLAMACAO, a.DATA_ORIGEM_RECLAMACAO, "
-	            + "a.STOCK_ETIQUETA_30, a.DEFEITOS_INJECAO, a.DEVOLUCAO_CLIENTE, a.GAMA_EMBALAGEM_INCORRETA, "
-	            + "a.MODO_DEGRADADO, a.VERIFICACAO_QUANT_EMBALAGEM, a.DATA_DEVOLUCAO_CLIENTE, a.ENSAIO_DIA, "
-	            + "a.MODO_DEGRADADO_MOTIVO, a.ID_OF_CAB, "
-	            + "STRING_AGG(CAST(x.ID_UTZ AS VARCHAR) + ' - ' + x.NOME_UTZ, '; ') "
-	            + "WITHIN GROUP (ORDER BY x.ID_UTZ) AS OPERARIOS_CAIXA,OF_NUM, ( select count(*) from GER_EVENTO m where m.ID_ORIGEM = a.ID_OF_CAB and m.CAMPO_ORIGEM = 'ID_OF_CAB' ) TOTAL_MENSAGENS, "
-            + "( SELECT STRING_AGG(t.OP, '; ') WITHIN GROUP (ORDER BY t.OP) "
-            + "FROM ( SELECT DISTINCT CAST(bx.ID_UTZ_CRIA AS VARCHAR) + ' - ' + bx.NOME_UTZ_CRIA AS OP "
-            + "FROM RP_OF_OP_CAB ax "
-            + "INNER JOIN RP_OF_OP_FUNC bx ON ax.ID_OP_CAB = bx.ID_OP_CAB "
-            + "WHERE ax.ID_OF_CAB = a.ID_OF_CAB "
-            + "AND bx.ID_UTZ_CRIA IS NOT NULL AND bx.ID_UTZ_CRIA <> '' ) t ) AS OPERARIOS_MURO "
-	            + "FROM RP_OF_CAB a "
-	            + "LEFT JOIN RP_OF_OPERARIOS_CAIXA x ON x.ID_OF_CAB = a.ID_OF_CAB "
-	            + "WHERE a.ESTADO NOT IN ('A') "
-	            + dataFiltroSql
-	            + "AND a.OP_COD_ORIGEM = '100' "
-	            + "AND a.ETIQUETA = :ETIQUETA "
-	            + (filtrarPorUtz ? "AND a.ID_OF_CAB IN (SELECT ID_OF_CAB FROM RP_OF_OPERARIOS_CAIXA WHERE ID_UTZ = :ID_UTZ) " : "")
-	            + (filtrarPorUtzTrabalho ? "AND a.ID_OF_CAB IN (SELECT ID_OF_CAB FROM RP_OF_OP_CAB ax inner join RP_OF_OP_FUNC bx on ax.ID_OP_CAB = bx.ID_OP_CAB WHERE bx.ID_UTZ_CRIA = :ID_UTZ_TRABALHO) " : "")
-	            + "GROUP BY a.TESTE_DIMENSIONAL, a.OPERARIO_FORMACAO, a.ORIGEM_RECLAMACAO, a.DATA_ORIGEM_RECLAMACAO, "
-	            + "a.STOCK_ETIQUETA_30, a.DEFEITOS_INJECAO, a.DEVOLUCAO_CLIENTE, a.GAMA_EMBALAGEM_INCORRETA, "
-	            + "a.MODO_DEGRADADO, a.VERIFICACAO_QUANT_EMBALAGEM, a.DATA_DEVOLUCAO_CLIENTE, a.ENSAIO_DIA, "
-	            + "a.MODO_DEGRADADO_MOTIVO, a.ID_OF_CAB,OF_NUM "
-	            + "ORDER BY a.ID_OF_CAB";
+		String sql = "SELECT a.TESTE_DIMENSIONAL, a.OPERARIO_FORMACAO, a.ORIGEM_RECLAMACAO, a.DATA_ORIGEM_RECLAMACAO, "
+				+ "a.STOCK_ETIQUETA_30, a.DEFEITOS_INJECAO, a.DEVOLUCAO_CLIENTE, a.GAMA_EMBALAGEM_INCORRETA, "
+				+ "a.MODO_DEGRADADO, a.VERIFICACAO_QUANT_EMBALAGEM, a.DATA_DEVOLUCAO_CLIENTE, a.ENSAIO_DIA, "
+				+ "a.MODO_DEGRADADO_MOTIVO, a.ID_OF_CAB, "
+				+ "STRING_AGG(CAST(x.ID_UTZ AS VARCHAR) + ' - ' + x.NOME_UTZ, '; ') "
+				+ "WITHIN GROUP (ORDER BY x.ID_UTZ) AS OPERARIOS_CAIXA,OF_NUM, ( select count(*) from GER_EVENTO m where m.ID_ORIGEM = a.ID_OF_CAB and m.CAMPO_ORIGEM = 'ID_OF_CAB' ) TOTAL_MENSAGENS, "
+				+ "( SELECT STRING_AGG(t.OP, '; ') WITHIN GROUP (ORDER BY t.OP) "
+				+ "FROM ( SELECT DISTINCT CAST(bx.ID_UTZ_CRIA AS VARCHAR) + ' - ' + bx.NOME_UTZ_CRIA AS OP "
+				+ "FROM RP_OF_OP_CAB ax " + "INNER JOIN RP_OF_OP_FUNC bx ON ax.ID_OP_CAB = bx.ID_OP_CAB "
+				+ "WHERE ax.ID_OF_CAB = a.ID_OF_CAB "
+				+ "AND bx.ID_UTZ_CRIA IS NOT NULL AND bx.ID_UTZ_CRIA <> '' ) t ) AS OPERARIOS_MURO "
+				+ "FROM RP_OF_CAB a " + "LEFT JOIN RP_OF_OPERARIOS_CAIXA x ON x.ID_OF_CAB = a.ID_OF_CAB "
+				+ "WHERE a.ESTADO NOT IN ('A') " + dataFiltroSql + "AND a.OP_COD_ORIGEM = '100' "
+				+ "AND a.ETIQUETA = :ETIQUETA "
+				+ (filtrarPorUtz
+						? "AND a.ID_OF_CAB IN (SELECT ID_OF_CAB FROM RP_OF_OPERARIOS_CAIXA WHERE ID_UTZ = :ID_UTZ) "
+						: "")
+				+ (filtrarPorUtzTrabalho
+						? "AND a.ID_OF_CAB IN (SELECT ID_OF_CAB FROM RP_OF_OP_CAB ax inner join RP_OF_OP_FUNC bx on ax.ID_OP_CAB = bx.ID_OP_CAB WHERE bx.ID_UTZ_CRIA = :ID_UTZ_TRABALHO) "
+						: "")
+				+ "GROUP BY a.TESTE_DIMENSIONAL, a.OPERARIO_FORMACAO, a.ORIGEM_RECLAMACAO, a.DATA_ORIGEM_RECLAMACAO, "
+				+ "a.STOCK_ETIQUETA_30, a.DEFEITOS_INJECAO, a.DEVOLUCAO_CLIENTE, a.GAMA_EMBALAGEM_INCORRETA, "
+				+ "a.MODO_DEGRADADO, a.VERIFICACAO_QUANT_EMBALAGEM, a.DATA_DEVOLUCAO_CLIENTE, a.ENSAIO_DIA, "
+				+ "a.MODO_DEGRADADO_MOTIVO, a.ID_OF_CAB,OF_NUM " + "ORDER BY a.ID_OF_CAB";
 
-	    javax.persistence.Query query = entityManager.createNativeQuery(sql);
-	    if (filtrarPorMes) {
-	        query.setParameter("DATA_MES", DATA_MES);
-	    } else if (filtrarPorData) {
-	        query.setParameter("DATA_INI", DATA_INI);
-	        query.setParameter("DATA_FIM", DATA_FIM);
-	    }
-	    query.setParameter("ETIQUETA", ETIQUETA);
-	    if (filtrarPorUtz) {
-	        query.setParameter("ID_UTZ", ID_UTZ);
-	    }
-	    
-	    if (filtrarPorUtzTrabalho) {
-	        query.setParameter("ID_UTZ_TRABALHO", ID_UTZ_TRABALHO);
-	    }
+		javax.persistence.Query query = entityManager.createNativeQuery(sql);
+		if (filtrarPorMes) {
+			query.setParameter("DATA_MES", DATA_MES);
+		} else if (filtrarPorData) {
+			query.setParameter("DATA_INI", DATA_INI);
+			query.setParameter("DATA_FIM", DATA_FIM);
+		}
+		query.setParameter("ETIQUETA", ETIQUETA);
+		if (filtrarPorUtz) {
+			query.setParameter("ID_UTZ", ID_UTZ);
+		}
 
-	    return query.getResultList();
+		if (filtrarPorUtzTrabalho) {
+			query.setParameter("ID_UTZ_TRABALHO", ID_UTZ_TRABALHO);
+		}
+
+		return query.getResultList();
 	}
 
 	@POST
@@ -3196,21 +3219,24 @@ public class SIRB_2 {
 		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
 		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
 
-		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
-		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
-		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
-		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null
+				&& DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'"
+						: "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null
+				&& DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'"
+						: "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null
+				&& DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'"
+						: "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null
+				&& DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'"
+						: "NULL";
 
 		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_REFERENCIA "
 				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO, :REFERENCIA, :ETIQUETA, "
 				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
 				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
-				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
-				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, " + dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
 				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
 
 		javax.persistence.Query query = entityManager.createNativeQuery(sql);
@@ -3274,21 +3300,24 @@ public class SIRB_2 {
 		String DATA_DEVOLUCAO_CLIENTE_FIM = firstMap.get("data_devolucao_cliente_fim");
 		String MOTIVO_MODO_DEGRADADO = firstMap.get("motivo_modo_degradado");
 
-		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null && DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'" : "NULL";
-		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null && DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'" : "NULL";
-		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null && DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'" : "NULL";
-		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null && DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}"))
-				? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'" : "NULL";
+		String dataOrigemIniSql = (DATA_ORIGEM_RECLAMACAO_INI != null
+				&& DATA_ORIGEM_RECLAMACAO_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_INI + "'"
+						: "NULL";
+		String dataOrigemFimSql = (DATA_ORIGEM_RECLAMACAO_FIM != null
+				&& DATA_ORIGEM_RECLAMACAO_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_ORIGEM_RECLAMACAO_FIM + "'"
+						: "NULL";
+		String dataDevolucaoIniSql = (DATA_DEVOLUCAO_CLIENTE_INI != null
+				&& DATA_DEVOLUCAO_CLIENTE_INI.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_INI + "'"
+						: "NULL";
+		String dataDevolucaoFimSql = (DATA_DEVOLUCAO_CLIENTE_FIM != null
+				&& DATA_DEVOLUCAO_CLIENTE_FIM.matches("\\d{4}-\\d{2}-\\d{2}")) ? "'" + DATA_DEVOLUCAO_CLIENTE_FIM + "'"
+						: "NULL";
 
 		String sql = "EXEC SP_QUA_MURO_QUALIDADE_ANALISE_CADENCIAS "
 				+ ":DATA_INI, :DATA_FIM, :UNIDADE, :SECTOR, :FUNCIONARIO, :FAMILIA_DEFEITO, :REFERENCIA, :ETIQUETA, "
 				+ ":TESTE_DIMENSIONAL, :OPERARIO_FORMACAO, :ORIGEM_RECLAMACAO, :STOCK_ETIQUETA_30, "
 				+ ":DEFEITOS_INJECAO, :DEVOLUCAO_CLIENTE, :GAMA_EMBALAGEM_INCORRETA, :MODO_DEGRADADO, "
-				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, "
-				+ dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
+				+ ":ENSAIO_DIA, :VERIFICACAO_QUANT_EMBALAGEM, " + dataOrigemIniSql + ", " + dataOrigemFimSql + ", "
 				+ dataDevolucaoIniSql + ", " + dataDevolucaoFimSql + ", :MOTIVO_MODO_DEGRADADO";
 
 		javax.persistence.Query query = entityManager.createNativeQuery(sql);
@@ -3322,13 +3351,13 @@ public class SIRB_2 {
 	@Path("/getGER_EVENTObyidOrigem/{id}/{campo}")
 	@Produces("application/json")
 	public List<Object[]> getGER_EVENTO_idOrigem(@PathParam("id") Integer id, @PathParam("campo") String campo) {
-		Query query = entityManager.createNativeQuery("Select ID_EVENTO,ID_ORIGEM,ID_UTZ_CRIA,NOME_UTZ_CRIA,MENSAGEM,ASSUNTO,FORMAT(DATA_HORA_CRIA,'yyyy-MM-dd HH:mm') as DATA_HORA_CRIA from GER_EVENTO a where a.ID_ORIGEM = :id and CAMPO_ORIGEM= :campo order by DATA_HORA_CRIA desc");
+		Query query = entityManager.createNativeQuery(
+				"Select ID_EVENTO,ID_ORIGEM,ID_UTZ_CRIA,NOME_UTZ_CRIA,MENSAGEM,ASSUNTO,FORMAT(DATA_HORA_CRIA,'yyyy-MM-dd HH:mm') as DATA_HORA_CRIA from GER_EVENTO a where a.ID_ORIGEM = :id and CAMPO_ORIGEM= :campo order by DATA_HORA_CRIA desc");
 		query.setParameter("id", id);
 		query.setParameter("campo", campo);
 		List<Object[]> data = query.getResultList();
 		return data;
 	}
-
 
 	/************************************* GER_REFERENCIAS_FASTRESPONSE_REJEICOES */
 	@POST
@@ -4825,20 +4854,24 @@ public class SIRB_2 {
 	@Produces("application/json")
 	public List<String> simularPeriodicidade(final MAN_MOV_MANUTENCAO_PLANOS data, @PathParam("n") int n) {
 		List<String> datas = new ArrayList<>();
-		if (data.getDATA_INICIO() == null || data.getTIPO_REPETICAO() == null || data.getREPETIR() == null) return datas;
+		if (data.getDATA_INICIO() == null || data.getTIPO_REPETICAO() == null || data.getREPETIR() == null)
+			return datas;
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String diasParam = (data.getDIAS_SEMANA() == null || data.getDIAS_SEMANA().equals("null")) ? "NULL" : "'" + data.getDIAS_SEMANA() + "'";
+		String diasParam = (data.getDIAS_SEMANA() == null || data.getDIAS_SEMANA().equals("null")) ? "NULL"
+				: "'" + data.getDIAS_SEMANA() + "'";
 		String dataInicio = sdf.format(data.getDATA_INICIO());
 
 		try {
-			Query q = entityManager.createNativeQuery(
-				"EXEC MAN_SIMULAR_PERIODICIDADE '" + dataInicio + "', " + data.getREPETIR() + ", '" + data.getTIPO_REPETICAO() + "', " + diasParam + ", " + n);
+			Query q = entityManager.createNativeQuery("EXEC MAN_SIMULAR_PERIODICIDADE '" + dataInicio + "', "
+					+ data.getREPETIR() + ", '" + data.getTIPO_REPETICAO() + "', " + diasParam + ", " + n);
 			List<?> results = q.getResultList();
 			for (Object r : results) {
-				if (r != null) datas.add(r.toString().substring(0, 10));
+				if (r != null)
+					datas.add(r.toString().substring(0, 10));
 			}
-		} catch (Exception e) { }
+		} catch (Exception e) {
+		}
 
 		return datas;
 	}
@@ -5347,11 +5380,9 @@ public class SIRB_2 {
 			return new ArrayList<>();
 
 		Query query = entityManager.createNativeQuery(
-			"SELECT p.ID, t.DESCRICAO_PT, CONVERT(VARCHAR(5), p.TEMPO_ESTIMADO, 108) AS TEMPO_ESTIMADO, p.DATA_PROXIMA_REALIZADA " +
-			"FROM MAN_MOV_MANUTENCAO_PLANOS p " +
-			"LEFT JOIN GT_DIC_TAREFAS t ON p.ID_ACAO = t.ID " +
-			"WHERE p.ID IN (" + ids + ") " +
-			"ORDER BY t.DESCRICAO_PT");
+				"SELECT p.ID, t.DESCRICAO_PT, CONVERT(VARCHAR(5), p.TEMPO_ESTIMADO, 108) AS TEMPO_ESTIMADO, p.DATA_PROXIMA_REALIZADA "
+						+ "FROM MAN_MOV_MANUTENCAO_PLANOS p " + "LEFT JOIN GT_DIC_TAREFAS t ON p.ID_ACAO = t.ID "
+						+ "WHERE p.ID IN (" + ids + ") " + "ORDER BY t.DESCRICAO_PT");
 
 		List<Object[]> rows = query.getResultList();
 		List<HashMap<String, Object>> result = new ArrayList<>();
@@ -7121,7 +7152,8 @@ public class SIRB_2 {
 		String ANO = firstMap.get("ANO");
 		String DEPARTAMENTO = firstMap.get("DEPARTAMENTO");
 
-		Query query_folder = entityManager.createNativeQuery("EXEC PE_GET_HISTORICO_GRAFICO_DEPT " + ANO + ", N'" + DEPARTAMENTO.replace("'", "''") + "'");
+		Query query_folder = entityManager.createNativeQuery(
+				"EXEC PE_GET_HISTORICO_GRAFICO_DEPT " + ANO + ", N'" + DEPARTAMENTO.replace("'", "''") + "'");
 
 		List<Object[]> dados_folder = query_folder.getResultList();
 
@@ -8098,12 +8130,9 @@ public class SIRB_2 {
 			select = "CONCAT(a.FICHEIRO_1,a.FICHEIRO_2) as FICHEIRO";
 		}
 
-		if (tabela.equals("QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS")
-				|| tabela.equals("QUA_MC_EQUIPAMENTOS_FICHEIROS")
-				|| tabela.equals("QUA_MC_GABARITOS_FICHEIROS")
-				|| tabela.equals("QUA_MC_MOV_CALIB_EQUIP_FICHEIROS")
-				|| tabela.equals("QUA_MC_DERROGACOES_FICHEIROS")
-				|| tabela.equals("AT_OCORRENCIAS_ANEXOS")
+		if (tabela.equals("QUA_MC_ENTIDADES_CALIBRACAO_FICHEIROS") || tabela.equals("QUA_MC_EQUIPAMENTOS_FICHEIROS")
+				|| tabela.equals("QUA_MC_GABARITOS_FICHEIROS") || tabela.equals("QUA_MC_MOV_CALIB_EQUIP_FICHEIROS")
+				|| tabela.equals("QUA_MC_DERROGACOES_FICHEIROS") || tabela.equals("AT_OCORRENCIAS_ANEXOS")
 				|| tabela.equals("AT_INCIDENTES_ANEXOS")) {
 			select = "CONCAT(a.FICHEIRO_1,a.FICHEIRO_2) as FICHEIRO";
 		}
@@ -9987,7 +10016,8 @@ public class SIRB_2 {
 	@GET
 	@Path("/getMAN_DIC_TIPO_CLASSIFICACAO_PEDIDObyid/{id}")
 	@Produces("application/json")
-	public List<MAN_DIC_TIPO_CLASSIFICACAO_PEDIDO> getMAN_DIC_TIPO_CLASSIFICACAO_PEDIDObyid(@PathParam("id") Integer id) {
+	public List<MAN_DIC_TIPO_CLASSIFICACAO_PEDIDO> getMAN_DIC_TIPO_CLASSIFICACAO_PEDIDObyid(
+			@PathParam("id") Integer id) {
 		return dao95b.getbyid(id);
 	}
 
@@ -10048,12 +10078,12 @@ public class SIRB_2 {
 	@Path("/getMAN_PEDIDOS_SLA_STATUS/{idPedido}")
 	@Produces("application/json")
 	public List<Object[]> getMAN_PEDIDOS_SLA_STATUS(@PathParam("idPedido") Integer idPedido) {
-		Query query = entityManager.createNativeQuery(
-				"SELECT ID_MANUTENCAO_CAB, TIPO_CLASSIFICACAO_PEDIDO, DATA_HORA_PEDIDO, ESTADO, "
-				+ "NIVEL_IMPACTO, NIVEL_URGENCIA, PRIORIDADE_INCIDENTE, PRIORIDADE_INTERVENCAO, "
-				+ "TEMPO_RESPOSTA_HORAS, TEMPO_RESOLUCAO_HORAS, DATA_HORA_RESPOSTA, DATA_HORA_RESOLUCAO_REAL, "
-				+ "ESTADO_SLA_RESPOSTA, ESTADO_SLA_RESOLUCAO, HORAS_UTEIS_DECORRIDAS "
-				+ "FROM VW_MAN_PEDIDOS_SLA_STATUS WHERE ID_MANUTENCAO_CAB = :id")
+		Query query = entityManager
+				.createNativeQuery("SELECT ID_MANUTENCAO_CAB, TIPO_CLASSIFICACAO_PEDIDO, DATA_HORA_PEDIDO, ESTADO, "
+						+ "NIVEL_IMPACTO, NIVEL_URGENCIA, PRIORIDADE_INCIDENTE, PRIORIDADE_INTERVENCAO, "
+						+ "TEMPO_RESPOSTA_HORAS, TEMPO_RESOLUCAO_HORAS, DATA_HORA_RESPOSTA, DATA_HORA_RESOLUCAO_REAL, "
+						+ "ESTADO_SLA_RESPOSTA, ESTADO_SLA_RESOLUCAO, HORAS_UTEIS_DECORRIDAS "
+						+ "FROM VW_MAN_PEDIDOS_SLA_STATUS WHERE ID_MANUTENCAO_CAB = :id")
 				.setParameter("id", idPedido);
 		return query.getResultList();
 	}
@@ -10062,9 +10092,9 @@ public class SIRB_2 {
 	@Path("/getMAN_PEDIDOS_SLA_LISTA")
 	@Produces("application/json")
 	public List<Object[]> getMAN_PEDIDOS_SLA_LISTA() {
-		Query query = entityManager.createNativeQuery(
-				"SELECT ID_MANUTENCAO_CAB, ESTADO_SLA_RESPOSTA, ESTADO_SLA_RESOLUCAO "
-				+ "FROM VW_MAN_PEDIDOS_SLA_STATUS");
+		Query query = entityManager
+				.createNativeQuery("SELECT ID_MANUTENCAO_CAB, ESTADO_SLA_RESPOSTA, ESTADO_SLA_RESOLUCAO "
+						+ "FROM VW_MAN_PEDIDOS_SLA_STATUS");
 		return query.getResultList();
 	}
 
