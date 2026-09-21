@@ -268,6 +268,14 @@ public class SIRB_3 {
 	private INJ_DIC_MAQUINASDao daoInjMaquinas;
 	@Inject
 	private INJ_DIC_MAQUINAS_VARDao daoInjVariaveis;
+	@Inject
+	private MoldeSilverDao daoMoldesSilver;
+	@Inject
+	private ReferenciaSilverDao daoReferenciasSilver;
+	@Inject
+	private INJ_DIC_MOLDE_REFDao daoInjMoldeRefs;
+	@Inject
+	private INJ_DIC_TIPO_PARAGEMDao daoInjParagens;
 
 	@PersistenceContext(unitName = "persistenceUnit")
 	protected EntityManager entityManager;
@@ -8293,5 +8301,124 @@ public class SIRB_3 {
 		INJ_DIC_MAQUINAS_VAR var = new INJ_DIC_MAQUINAS_VAR();
 		var.setID(id);
 		daoInjVariaveis.delete(var);
+	}
+
+	/************************************* MOLDES
+	 *
+	 * Os moldes sao LIDOS DO SILVER, no momento. Nao ha tabela de moldes do
+	 * nosso lado: uma copia desactualiza-se, e nem o SILVER_BI tem o SDTGOO —
+	 * a leitura vai ao Progress pelo servidor ligado.
+	 *
+	 * O que e nosso e so a configuracao: que referencias cada molde produz e
+	 * com quantas cavidades.
+	 */
+	@GET
+	@Path("/getMoldesSilver")
+	@Produces("application/json")
+	public List<MoldeSilver> getMoldesSilver() {
+		return daoMoldesSilver.procurar("");
+	}
+
+	@GET
+	@Path("/getMoldesSilver/{texto}")
+	@Produces("application/json")
+	public List<MoldeSilver> getMoldesSilverProcurar(@PathParam("texto") String texto) {
+		return daoMoldesSilver.procurar(texto);
+	}
+
+	/**
+	 * Referencias de peca do Silver, para nao se escreverem a mao.
+	 *
+	 * Uma referencia mal escrita nao da erro: so faz a contagem automatica
+	 * nunca encontrar a configuracao.
+	 */
+	@GET
+	@Path("/getReferenciasSilver/{texto}")
+	@Produces("application/json")
+	public List<ReferenciaSilver> getReferenciasSilver(@PathParam("texto") String texto) {
+		return daoReferenciasSilver.procurar(texto);
+	}
+
+	/************************************* INJ_DIC_MOLDE_REF */
+
+	/** As referencias configuradas de um molde, pela referencia dele. */
+	@GET
+	@Path("/getINJ_DIC_MOLDE_REFbymolde/{ref}")
+	@Produces("application/json")
+	public List<INJ_DIC_MOLDE_REF> getINJ_DIC_MOLDE_REFbymolde(@PathParam("ref") String ref) {
+		return daoInjMoldeRefs.getbymolde(ref);
+	}
+
+	/**
+	 * Os moldes que ja tem configuracao — e por onde o ecra comeca.
+	 *
+	 * Vem com a descricao do Silver: so a referencia nao diz nada a ninguem.
+	 */
+	@GET
+	@Path("/getINJ_DIC_MOLDE_REFconfigurados")
+	@Produces("application/json")
+	public List<MoldeSilver> getINJ_DIC_MOLDE_REFconfigurados() {
+		return daoMoldesSilver.configurados();
+	}
+
+	@POST
+	@Path("/createINJ_DIC_MOLDE_REF")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public INJ_DIC_MOLDE_REF insertINJ_DIC_MOLDE_REF(final INJ_DIC_MOLDE_REF data) {
+		return daoInjMoldeRefs.create(data);
+	}
+
+	@PUT
+	@Path("/updateINJ_DIC_MOLDE_REF")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public INJ_DIC_MOLDE_REF updateINJ_DIC_MOLDE_REF(final INJ_DIC_MOLDE_REF data) {
+		return daoInjMoldeRefs.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteINJ_DIC_MOLDE_REF/{id}")
+	public void deleteINJ_DIC_MOLDE_REF(@PathParam("id") Integer id) {
+		INJ_DIC_MOLDE_REF r = new INJ_DIC_MOLDE_REF();
+		r.setID(id);
+		daoInjMoldeRefs.delete(r);
+	}
+
+	/************************************* INJ_DIC_TIPO_PARAGEM
+	 *
+	 * Lista escrita a mao: cria-se, edita-se e apaga-se aqui. Apagar nao
+	 * estraga o historico — a paragem registada copia o codigo e a descricao
+	 * no momento, nao aponta para esta tabela.
+	 */
+	@GET
+	@Path("/getINJ_DIC_TIPO_PARAGEM")
+	@Produces("application/json")
+	public List<INJ_DIC_TIPO_PARAGEM> getINJ_DIC_TIPO_PARAGEM() {
+		return daoInjParagens.getall();
+	}
+
+	@POST
+	@Path("/createINJ_DIC_TIPO_PARAGEM")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public INJ_DIC_TIPO_PARAGEM insertINJ_DIC_TIPO_PARAGEM(final INJ_DIC_TIPO_PARAGEM data) {
+		return daoInjParagens.create(data);
+	}
+
+	@PUT
+	@Path("/updateINJ_DIC_TIPO_PARAGEM")
+	@Consumes("*/*")
+	@Produces("application/json")
+	public INJ_DIC_TIPO_PARAGEM updateINJ_DIC_TIPO_PARAGEM(final INJ_DIC_TIPO_PARAGEM data) {
+		return daoInjParagens.update(data);
+	}
+
+	@DELETE
+	@Path("/deleteINJ_DIC_TIPO_PARAGEM/{id}")
+	public void deleteINJ_DIC_TIPO_PARAGEM(@PathParam("id") Integer id) {
+		INJ_DIC_TIPO_PARAGEM t = new INJ_DIC_TIPO_PARAGEM();
+		t.setID(id);
+		daoInjParagens.delete(t);
 	}
 }

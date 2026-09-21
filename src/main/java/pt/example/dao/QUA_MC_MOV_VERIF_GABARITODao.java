@@ -12,7 +12,7 @@ public class QUA_MC_MOV_VERIF_GABARITODao extends GenericDaoJpaImpl<QUA_MC_MOV_V
 
 	public List<QUA_MC_MOV_VERIF_GABARITO> getbyGabarito(Integer idGabarito) {
 		Query query = entityManager.createQuery(
-			"Select a from QUA_MC_MOV_VERIF_GABARITO a where a.ID_GABARITO = :id order by a.DATA_VERIFICACAO desc");
+			"Select a from QUA_MC_MOV_VERIF_GABARITO a where a.ID_GABARITO = :id order by a.NUM asc");
 		query.setParameter("id", idGabarito);
 		return query.getResultList();
 	}
