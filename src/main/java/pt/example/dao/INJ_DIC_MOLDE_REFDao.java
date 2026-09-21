@@ -45,19 +45,4 @@ public class INJ_DIC_MOLDE_REFDao extends GenericDaoJpaImpl<INJ_DIC_MOLDE_REF, I
 		List<INJ_DIC_MOLDE_REF> data = query.getResultList();
 		return data;
 	}
-
-	/**
-	 * Os moldes que ja tem configuracao.
-	 *
-	 * E por aqui que o ecra comeca: sao ~2800 moldes no Silver e quase todos
-	 * nunca serao usados na injecao. Mostrar primeiro os configurados poupa uma
-	 * pesquisa a quem so quer corrigir o que ja la esta.
-	 */
-	public List<String> getmoldesconfigurados() {
-		Query query = entityManager.createQuery(
-				"Select distinct a.REF_MOLDE from INJ_DIC_MOLDE_REF a order by a.REF_MOLDE ");
-		@SuppressWarnings("unchecked")
-		List<String> data = query.getResultList();
-		return data;
-	}
 }
